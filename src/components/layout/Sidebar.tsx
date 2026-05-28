@@ -8,6 +8,16 @@ import { PlanUsageBar } from "@/components/ui/PlanUsageBar";
 import { cn } from "@/lib/utils";
 
 const NAV = [
+type NavItem = {
+  to: string;
+  label: string;
+  icon: typeof Home;
+  badge?: string;
+  highlight?: boolean;
+};
+type NavGroup = { section: string; items: NavItem[] };
+
+const NAV: NavGroup[] = [
   { section: "Main", items: [
     { to: "/app/dashboard", label: "Dashboard", icon: Home },
     { to: "/app/discover",  label: "Discover Leads", icon: Search },
