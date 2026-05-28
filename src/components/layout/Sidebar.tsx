@@ -7,7 +7,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { PlanUsageBar } from "@/components/ui/PlanUsageBar";
 import { cn } from "@/lib/utils";
 
-const NAV = [
 type NavItem = {
   to: string;
   label: string;
