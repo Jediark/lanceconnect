@@ -14,6 +14,12 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppUpgradeRouteImport } from './routes/app.upgrade'
+import { Route as AppTemplatesRouteImport } from './routes/app.templates'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppPipelineRouteImport } from './routes/app.pipeline'
+import { Route as AppDiscoverRouteImport } from './routes/app.discover'
+import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -40,40 +46,122 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppUpgradeRoute = AppUpgradeRouteImport.update({
+  id: '/upgrade',
+  path: '/upgrade',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTemplatesRoute = AppTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPipelineRoute = AppPipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDiscoverRoute = AppDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/register': typeof RegisterRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/discover': typeof AppDiscoverRoute
+  '/app/pipeline': typeof AppPipelineRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/templates': typeof AppTemplatesRoute
+  '/app/upgrade': typeof AppUpgradeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/register': typeof RegisterRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/discover': typeof AppDiscoverRoute
+  '/app/pipeline': typeof AppPipelineRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/templates': typeof AppTemplatesRoute
+  '/app/upgrade': typeof AppUpgradeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/register': typeof RegisterRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/discover': typeof AppDiscoverRoute
+  '/app/pipeline': typeof AppPipelineRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/templates': typeof AppTemplatesRoute
+  '/app/upgrade': typeof AppUpgradeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/login' | '/onboarding' | '/register'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/onboarding'
+    | '/register'
+    | '/app/dashboard'
+    | '/app/discover'
+    | '/app/pipeline'
+    | '/app/settings'
+    | '/app/templates'
+    | '/app/upgrade'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/login' | '/onboarding' | '/register'
-  id: '__root__' | '/' | '/app' | '/login' | '/onboarding' | '/register'
+  to:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/onboarding'
+    | '/register'
+    | '/app/dashboard'
+    | '/app/discover'
+    | '/app/pipeline'
+    | '/app/settings'
+    | '/app/templates'
+    | '/app/upgrade'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/login'
+    | '/onboarding'
+    | '/register'
+    | '/app/dashboard'
+    | '/app/discover'
+    | '/app/pipeline'
+    | '/app/settings'
+    | '/app/templates'
+    | '/app/upgrade'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRoute
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   RegisterRoute: typeof RegisterRoute
@@ -116,12 +204,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/upgrade': {
+      id: '/app/upgrade'
+      path: '/upgrade'
+      fullPath: '/app/upgrade'
+      preLoaderRoute: typeof AppUpgradeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/templates': {
+      id: '/app/templates'
+      path: '/templates'
+      fullPath: '/app/templates'
+      preLoaderRoute: typeof AppTemplatesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pipeline': {
+      id: '/app/pipeline'
+      path: '/pipeline'
+      fullPath: '/app/pipeline'
+      preLoaderRoute: typeof AppPipelineRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/discover': {
+      id: '/app/discover'
+      path: '/discover'
+      fullPath: '/app/discover'
+      preLoaderRoute: typeof AppDiscoverRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/dashboard': {
+      id: '/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppDiscoverRoute: typeof AppDiscoverRoute
+  AppPipelineRoute: typeof AppPipelineRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTemplatesRoute: typeof AppTemplatesRoute
+  AppUpgradeRoute: typeof AppUpgradeRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppDashboardRoute: AppDashboardRoute,
+  AppDiscoverRoute: AppDiscoverRoute,
+  AppPipelineRoute: AppPipelineRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTemplatesRoute: AppTemplatesRoute,
+  AppUpgradeRoute: AppUpgradeRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRoute,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   RegisterRoute: RegisterRoute,
