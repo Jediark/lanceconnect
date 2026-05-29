@@ -108,14 +108,11 @@
   .font-mono-data { font-family: var(--font-mono); }
 
   .text-gradient-brand {
-    background: linear-gradient(135deg, #0D9488 0%, #06B6D4 50%, #10B981 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--primary);
   }
 
   .bg-gradient-brand {
-    background: linear-gradient(135deg, #0D9488 0%, #06B6D4 55%, #10B981 100%);
+    background-color: var(--primary);
   }
 
   .bg-grid-pattern {

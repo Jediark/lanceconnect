@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Grid3X3, List, Search, X, MapPin, Copy } from "lucide-react";
+import { Grid3X3, List, Search, X, MapPin, Copy, Star, Phone, Mail, Globe, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { LeadCard } from "@/components/ui/LeadCard";
@@ -132,7 +132,7 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
               <td className="px-4 py-3"><OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} /></td>
               <td className="px-4 py-3">{l.hasWebsite ? <span className="text-emerald-600">✓ Yes</span> : <span className="text-red-600">✗ No</span>}</td>
               <td className="px-4 py-3 font-mono-data text-xs">{l.phone}</td>
-              <td className="px-4 py-3 text-amber-600">⭐ {l.googleRating}</td>
+              <td className="px-4 py-3 text-amber-600"><span className="inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> {l.googleRating}</span></td>
               <td className="px-4 py-3 text-right">
                 <button onClick={(e) => { e.stopPropagation(); saveLead(l); toast.success("Saved"); }} disabled={savedIds.has(l.id)} className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/20 disabled:opacity-50">
                   {savedIds.has(l.id) ? "Saved" : "Save"}
@@ -173,21 +173,21 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
               <OpportunityScore score={lead.opportunityScore} />
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-border">
-              <div className="h-full bg-gradient-brand" style={{ width: `${lead.opportunityScore}%` }} />
+              <div className="h-full bg-primary" style={{ width: `${lead.opportunityScore}%` }} />
             </div>
           </div>
 
           <div className="space-y-2 rounded-xl bg-muted/40 p-4 text-sm">
             <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {lead.address}</p>
             <p className="flex items-center justify-between gap-2">
-              <span className="font-mono-data">📞 {lead.phone}</span>
+              <span className="inline-flex items-center gap-2 font-mono-data"><Phone className="h-3.5 w-3.5 text-muted-foreground" /> {lead.phone}</span>
               <button onClick={() => { navigator.clipboard?.writeText(lead.phone); toast.success("Copied"); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-accent">
                 <Copy className="h-3 w-3" /> Copy
               </button>
             </p>
-            <p>📧 {lead.email ?? <span className="italic text-muted-foreground">Not found</span>}</p>
-            <p>🌐 {lead.websiteUrl ?? <span className="italic text-muted-foreground">No website</span>}</p>
-            <p>⭐ {lead.googleRating} · {lead.reviewCount} reviews</p>
+            <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /> {lead.email ?? <span className="italic text-muted-foreground">Not found</span>}</p>
+            <p className="flex items-center gap-2"><Globe className="h-4 w-4 text-muted-foreground" /> {lead.websiteUrl ?? <span className="italic text-muted-foreground">No website</span>}</p>
+            <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500" /> {lead.googleRating} · {lead.reviewCount} reviews</p>
           </div>
 
           <div>
@@ -195,7 +195,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
             <ul className="mt-2 space-y-1.5 text-sm">
               {reasons.map((r) => (
                 <li key={r.label} className="flex items-center justify-between rounded-md bg-emerald-50 px-3 py-1.5 text-emerald-800">
-                  <span>✅ {r.label}</span>
+                  <span className="inline-flex items-center gap-2"><Check className="h-4 w-4" /> {r.label}</span>
                   <span className="font-mono-data text-xs font-semibold">+{r.pts} pts</span>
                 </li>
               ))}

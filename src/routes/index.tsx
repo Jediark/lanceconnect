@@ -147,7 +147,7 @@ function HowItWorks() {
         <p className="mt-3 text-muted-foreground">A simple workflow built around how freelancers actually find clients.</p>
       </div>
       <div className="relative mt-12 grid gap-6 md:grid-cols-4">
-        <div className="absolute left-0 right-0 top-7 hidden h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent md:block" />
+        <div className="absolute left-0 right-0 top-7 hidden h-px bg-border md:block" />
         {steps.map((s, i) => (
           <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6 shadow-card">
             <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-gradient-brand text-white">

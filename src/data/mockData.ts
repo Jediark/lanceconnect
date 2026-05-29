@@ -106,10 +106,10 @@ export const COUNTRIES = [
 ];
 
 export const STATUS_META: Record<PipelineStatus, { label: string; emoji: string; color: string; ring: string }> = {
-  new:           { label: "New",            emoji: "🆕", color: "bg-slate-100 text-slate-700",       ring: "border-l-slate-400" },
-  contacted:     { label: "Contacted",      emoji: "📞", color: "bg-blue-100 text-blue-700",         ring: "border-l-blue-500" },
-  interested:    { label: "Interested",     emoji: "💡", color: "bg-indigo-100 text-indigo-700",     ring: "border-l-indigo-500" },
-  proposal_sent: { label: "Proposal Sent",  emoji: "📨", color: "bg-amber-100 text-amber-700",       ring: "border-l-amber-500" },
-  won:           { label: "Won",            emoji: "🏆", color: "bg-emerald-100 text-emerald-700",   ring: "border-l-emerald-500" },
-  lost:          { label: "Lost",           emoji: "❌", color: "bg-red-100 text-red-700",           ring: "border-l-red-400" },
+  new:           { label: "New",            emoji: "●", color: "bg-slate-100 text-slate-700",       ring: "border-l-slate-400" },
+  contacted:     { label: "Contacted",      emoji: "↗", color: "bg-blue-100 text-blue-700",         ring: "border-l-blue-500" },
+  interested:    { label: "Interested",     emoji: "✦", color: "bg-indigo-100 text-indigo-700",     ring: "border-l-indigo-500" },
+  proposal_sent: { label: "Proposal Sent",  emoji: "✉", color: "bg-amber-100 text-amber-700",       ring: "border-l-amber-500" },
+  won:           { label: "Won",            emoji: "✓", color: "bg-emerald-100 text-emerald-700",   ring: "border-l-emerald-500" },
+  lost:          { label: "Lost",           emoji: "✕", color: "bg-red-100 text-red-700",           ring: "border-l-red-400" },
 };
