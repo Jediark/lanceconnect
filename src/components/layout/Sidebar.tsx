@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Home, Search, Kanban, Mail, Sparkles, Settings as SettingsIcon, Crown, Zap, Menu, X,
+  Home, Search, Kanban, Mail, Sparkles, Settings as SettingsIcon, Crown, Menu, X,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlanUsageBar } from "@/components/ui/PlanUsageBar";
+import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -41,9 +42,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     <aside className="flex h-full w-60 shrink-0 flex-col bg-sidebar text-sidebar-foreground">
       <div className="flex items-center justify-between px-5 pb-4 pt-5">
         <Link to="/app/dashboard" className="flex items-center gap-2 text-sidebar-active">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-brand">
-            <Zap className="h-4 w-4 text-white" />
-          </span>
+          <Logo size={32} />
           <span className="font-display text-base font-bold">FreelanceConnect</span>
         </Link>
         {onClose && (

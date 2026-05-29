@@ -58,7 +58,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.21 0.04 265);
 
-  --primary: oklch(0.585 0.214 277);        /* #6366F1 indigo */
+  --primary: oklch(0.62 0.13 195);          /* #0D9488 teal */
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.21 0.04 265);
@@ -70,9 +70,9 @@
   --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(0.92 0.01 255);
   --input: oklch(0.92 0.01 255);
-  --ring: oklch(0.585 0.214 277);
+  --ring: oklch(0.62 0.13 195);
 
-  --brand: oklch(0.585 0.214 277);          /* #6366F1 */
+  --brand: oklch(0.62 0.13 195);            /* #0D9488 teal */
   --brand-foreground: oklch(0.99 0 0);
   --success: oklch(0.7 0.16 165);           /* #10B981 emerald */
   --warn: oklch(0.78 0.16 70);              /* #F59E0B amber */
@@ -108,25 +108,25 @@
   .font-mono-data { font-family: var(--font-mono); }
 
   .text-gradient-brand {
-    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%);
+    background: linear-gradient(135deg, #0D9488 0%, #06B6D4 50%, #10B981 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
   .bg-gradient-brand {
-    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+    background: linear-gradient(135deg, #0D9488 0%, #06B6D4 55%, #10B981 100%);
   }
 
   .bg-grid-pattern {
     background-image:
-      linear-gradient(to right, rgba(99, 102, 241, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
+      linear-gradient(to right, rgba(13, 148, 136, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(13, 148, 136, 0.08) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
   .shadow-card { box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06); }
-  .shadow-card-hover { box-shadow: 0 4px 6px -1px rgba(15,23,42,0.08), 0 10px 20px -10px rgba(99,102,241,0.18); }
+  .shadow-card-hover { box-shadow: 0 4px 6px -1px rgba(15,23,42,0.08), 0 10px 20px -10px rgba(13,148,136,0.22); }
 
   @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }
