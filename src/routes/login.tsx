@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Zap, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Login — FreelanceConnect" }] }),
@@ -14,11 +15,9 @@ export function AuthSplit({ children, title }: { children: React.ReactNode; titl
       <div className="relative hidden overflow-hidden bg-sidebar p-12 text-sidebar-active lg:flex lg:flex-col lg:justify-between">
         <div className="absolute inset-0 bg-grid-pattern opacity-10" />
         <div className="absolute -top-20 left-20 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-pink-500/20 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
         <Link to="/" className="relative flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-brand">
-            <Zap className="h-5 w-5 text-white" />
-          </span>
+          <Logo size={36} />
           <span className="font-display text-lg font-bold">FreelanceConnect</span>
         </Link>
         <div className="relative">
