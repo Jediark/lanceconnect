@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play, Search, Sparkles, Star, Target, Users, Zap } from "lucide-react";
+import { ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play, Search, Sparkles, Star, Target, Users } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { CATEGORIES } from "@/data/mockData";
 
 export const Route = createFileRoute("/")({
@@ -19,9 +20,7 @@ function Nav() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-brand">
-            <Zap className="h-4 w-4 text-white" />
-          </span>
+          <Logo size={32} />
           <span className="font-display text-base font-bold">FreelanceConnect</span>
         </Link>
         <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
@@ -61,7 +60,7 @@ function Hero() {
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-60" />
       <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-      <div className="absolute -right-32 top-40 h-72 w-72 rounded-full bg-pink-300/20 blur-3xl" />
+      <div className="absolute -right-32 top-40 h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl" />
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-16 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-24">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
@@ -324,9 +323,7 @@ function Footer() {
         <div className="grid gap-8 md:grid-cols-5">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-brand">
-                <Zap className="h-4 w-4 text-white" />
-              </span>
+              <Logo size={32} />
               <span className="font-display font-bold">FreelanceConnect</span>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">Lead generation built for freelancers worldwide.</p>
