@@ -132,7 +132,7 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
               <td className="px-4 py-3"><OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} /></td>
               <td className="px-4 py-3">{l.hasWebsite ? <span className="text-emerald-600">✓ Yes</span> : <span className="text-red-600">✗ No</span>}</td>
               <td className="px-4 py-3 font-mono-data text-xs">{l.phone}</td>
-              <td className="px-4 py-3 text-amber-600">⭐ {l.googleRating}</td>
+// SENTINEL
               <td className="px-4 py-3 text-right">
                 <button onClick={(e) => { e.stopPropagation(); saveLead(l); toast.success("Saved"); }} disabled={savedIds.has(l.id)} className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/20 disabled:opacity-50">
                   {savedIds.has(l.id) ? "Saved" : "Save"}
