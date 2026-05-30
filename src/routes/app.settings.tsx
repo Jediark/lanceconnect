@@ -25,7 +25,7 @@ function SettingsLayout() {
           {TABS.map(t => {
             const active = t.exact ? pathname === t.to || pathname === "/app/settings/" : pathname === t.to;
             return (
-              <Link key={t.to} to={t.to} className={cn("whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition", active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
+              <Link key={t.to} to={t.to as any} className={cn("whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition", active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
                 {t.label}
               </Link>
             );
