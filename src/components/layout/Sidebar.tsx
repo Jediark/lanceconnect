@@ -25,7 +25,7 @@ const NAV: NavGroup[] = [
   ]},
   { section: "Tools", items: [
     { to: "/app/templates", label: "Templates", icon: Mail },
-    { to: "/app/upgrade",   label: "AI Generator", icon: Sparkles, badge: "Pro" },
+    { to: "/app/ai-generator", label: "AI Generator", icon: Sparkles, badge: "Pro" },
   ]},
   { section: "Account", items: [
     { to: "/app/settings",  label: "Settings", icon: SettingsIcon },
@@ -97,7 +97,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
           Upgrade now
         </Link>
         <div className="flex items-center gap-2 px-1 pt-1">
-          <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-brand text-xs font-semibold text-white">
+          <div className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
             {user.fullName.split(" ").map((n) => n[0]).join("")}
           </div>
           <div className="min-w-0 leading-tight">
