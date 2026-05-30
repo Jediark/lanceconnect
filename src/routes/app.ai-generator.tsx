@@ -17,7 +17,7 @@ const CHANNELS = ["Email","WhatsApp","LinkedIn DM","Phone script"] as const;
 
 function AIPage() {
   const { user } = useAuth();
-  const isPro = user?.plan === "pro" || user?.plan === "agency";
+  const isPro = (user?.plan as string) === "pro" || (user?.plan as string) === "agency";
   const [leadId, setLeadId] = useState(MOCK_LEADS[0].id);
   const [tone, setTone] = useState<typeof TONES[number]>("Friendly");
   const [lang, setLang] = useState<typeof LANGS[number]>("English");

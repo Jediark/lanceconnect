@@ -35,6 +35,12 @@ import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppPipelineRouteImport } from './routes/app.pipeline'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppAiGeneratorRouteImport } from './routes/app.ai-generator'
+import { Route as AppSettingsIndexRouteImport } from './routes/app.settings.index'
+import { Route as AppSettingsSubscriptionRouteImport } from './routes/app.settings.subscription'
+import { Route as AppSettingsProfileRouteImport } from './routes/app.settings.profile'
+import { Route as AppSettingsNotificationsRouteImport } from './routes/app.settings.notifications'
+import { Route as AppSettingsDangerZoneRouteImport } from './routes/app.settings.danger-zone'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -166,6 +172,37 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAiGeneratorRoute = AppAiGeneratorRouteImport.update({
+  id: '/ai-generator',
+  path: '/ai-generator',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
+const AppSettingsSubscriptionRoute = AppSettingsSubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
+const AppSettingsProfileRoute = AppSettingsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
+const AppSettingsNotificationsRoute =
+  AppSettingsNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AppSettingsRoute,
+  } as any)
+const AppSettingsDangerZoneRoute = AppSettingsDangerZoneRouteImport.update({
+  id: '/danger-zone',
+  path: '/danger-zone',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -184,16 +221,22 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/pipeline': typeof AppPipelineRoute
-  '/app/settings': typeof AppSettingsRoute
+  '/app/settings': typeof AppSettingsRouteWithChildren
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
+  '/app/settings/notifications': typeof AppSettingsNotificationsRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/subscription': typeof AppSettingsSubscriptionRoute
+  '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -211,16 +254,21 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/pipeline': typeof AppPipelineRoute
-  '/app/settings': typeof AppSettingsRoute
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app': typeof AppIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
+  '/app/settings/notifications': typeof AppSettingsNotificationsRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/subscription': typeof AppSettingsSubscriptionRoute
+  '/app/settings': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -240,16 +288,22 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/pipeline': typeof AppPipelineRoute
-  '/app/settings': typeof AppSettingsRoute
+  '/app/settings': typeof AppSettingsRouteWithChildren
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
+  '/app/settings/notifications': typeof AppSettingsNotificationsRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/subscription': typeof AppSettingsSubscriptionRoute
+  '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -270,6 +324,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/verify-email'
+    | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
     | '/app/pipeline'
@@ -280,6 +335,11 @@ export interface FileRouteTypes {
     | '/freelancers/$slug'
     | '/app/'
     | '/blog/'
+    | '/app/settings/danger-zone'
+    | '/app/settings/notifications'
+    | '/app/settings/profile'
+    | '/app/settings/subscription'
+    | '/app/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,16 +357,21 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/verify-email'
+    | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
     | '/app/pipeline'
-    | '/app/settings'
     | '/app/templates'
     | '/app/upgrade'
     | '/blog/$slug'
     | '/freelancers/$slug'
     | '/app'
     | '/blog'
+    | '/app/settings/danger-zone'
+    | '/app/settings/notifications'
+    | '/app/settings/profile'
+    | '/app/settings/subscription'
+    | '/app/settings'
   id:
     | '__root__'
     | '/'
@@ -325,6 +390,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/verify-email'
+    | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
     | '/app/pipeline'
@@ -335,6 +401,11 @@ export interface FileRouteTypes {
     | '/freelancers/$slug'
     | '/app/'
     | '/blog/'
+    | '/app/settings/danger-zone'
+    | '/app/settings/notifications'
+    | '/app/settings/profile'
+    | '/app/settings/subscription'
+    | '/app/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -543,24 +614,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/ai-generator': {
+      id: '/app/ai-generator'
+      path: '/ai-generator'
+      fullPath: '/app/ai-generator'
+      preLoaderRoute: typeof AppAiGeneratorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings/': {
+      id: '/app/settings/'
+      path: '/'
+      fullPath: '/app/settings/'
+      preLoaderRoute: typeof AppSettingsIndexRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/subscription': {
+      id: '/app/settings/subscription'
+      path: '/subscription'
+      fullPath: '/app/settings/subscription'
+      preLoaderRoute: typeof AppSettingsSubscriptionRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/profile': {
+      id: '/app/settings/profile'
+      path: '/profile'
+      fullPath: '/app/settings/profile'
+      preLoaderRoute: typeof AppSettingsProfileRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/notifications': {
+      id: '/app/settings/notifications'
+      path: '/notifications'
+      fullPath: '/app/settings/notifications'
+      preLoaderRoute: typeof AppSettingsNotificationsRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/danger-zone': {
+      id: '/app/settings/danger-zone'
+      path: '/danger-zone'
+      fullPath: '/app/settings/danger-zone'
+      preLoaderRoute: typeof AppSettingsDangerZoneRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
   }
 }
 
+interface AppSettingsRouteChildren {
+  AppSettingsDangerZoneRoute: typeof AppSettingsDangerZoneRoute
+  AppSettingsNotificationsRoute: typeof AppSettingsNotificationsRoute
+  AppSettingsProfileRoute: typeof AppSettingsProfileRoute
+  AppSettingsSubscriptionRoute: typeof AppSettingsSubscriptionRoute
+  AppSettingsIndexRoute: typeof AppSettingsIndexRoute
+}
+
+const AppSettingsRouteChildren: AppSettingsRouteChildren = {
+  AppSettingsDangerZoneRoute: AppSettingsDangerZoneRoute,
+  AppSettingsNotificationsRoute: AppSettingsNotificationsRoute,
+  AppSettingsProfileRoute: AppSettingsProfileRoute,
+  AppSettingsSubscriptionRoute: AppSettingsSubscriptionRoute,
+  AppSettingsIndexRoute: AppSettingsIndexRoute,
+}
+
+const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
+  AppSettingsRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppAiGeneratorRoute: typeof AppAiGeneratorRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
   AppPipelineRoute: typeof AppPipelineRoute
-  AppSettingsRoute: typeof AppSettingsRoute
+  AppSettingsRoute: typeof AppSettingsRouteWithChildren
   AppTemplatesRoute: typeof AppTemplatesRoute
   AppUpgradeRoute: typeof AppUpgradeRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAiGeneratorRoute: AppAiGeneratorRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDiscoverRoute: AppDiscoverRoute,
   AppPipelineRoute: AppPipelineRoute,
-  AppSettingsRoute: AppSettingsRoute,
+  AppSettingsRoute: AppSettingsRouteWithChildren,
   AppTemplatesRoute: AppTemplatesRoute,
   AppUpgradeRoute: AppUpgradeRoute,
   AppIndexRoute: AppIndexRoute,

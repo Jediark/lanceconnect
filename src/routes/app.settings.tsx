@@ -7,13 +7,13 @@ export const Route = createFileRoute("/app/settings")({
   component: SettingsLayout,
 });
 
-const TABS = [
+const TABS: { to: string; label: string; exact?: boolean }[] = [
   { to: "/app/settings", label: "Overview", exact: true },
   { to: "/app/settings/profile", label: "Profile" },
   { to: "/app/settings/subscription", label: "Subscription" },
   { to: "/app/settings/notifications", label: "Notifications" },
   { to: "/app/settings/danger-zone", label: "Danger Zone" },
-] as const;
+];
 
 function SettingsLayout() {
   const pathname = useRouterState({ select: s => s.location.pathname });
