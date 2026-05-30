@@ -45,7 +45,7 @@ function CategoryPage() {
           <h2 className="mt-4 font-display text-3xl font-bold">What we detect</h2>
           <p className="mt-3 text-muted-foreground">FreelanceConnect's scoring engine specifically looks for the signals that mean a business is ready to hire {cat.label.toLowerCase()}:</p>
           <ul className="mt-5 space-y-2">
-            {cat.problems.map(p => (
+            {cat.problems.map((p: string) => (
               <li key={p} className="flex gap-3 rounded-xl border border-border bg-card p-3 text-sm"><span className="text-primary">●</span>{p}</li>
             ))}
           </ul>
@@ -55,7 +55,7 @@ function CategoryPage() {
           <h2 className="mt-4 font-display text-3xl font-bold">Example leads</h2>
           <p className="mt-3 text-muted-foreground">A snapshot of the kind of businesses you'll see on day one.</p>
           <div className="mt-5 space-y-3">
-            {cat.sampleBusinesses.map(b => (
+            {cat.sampleBusinesses.map((b: {name:string;reason:string}) => (
               <div key={b.name} className="rounded-xl border border-border bg-card p-4">
                 <p className="font-semibold">{b.name}</p>
                 <p className="mt-1 text-sm text-muted-foreground"><span className="text-primary">Why:</span> {b.reason}</p>

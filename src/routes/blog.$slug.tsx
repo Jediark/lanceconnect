@@ -53,7 +53,7 @@ function BlogPost() {
         </div>
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1fr_240px] lg:px-8">
           <div className="space-y-5 text-base leading-relaxed text-foreground/85">
-            {post.body.split("\n\n").map((para, i) => <p key={i}>{para}</p>)}
+            {post.body.split("\n\n").map((para: string, i: number) => <p key={i}>{para}</p>)}
             <hr className="my-8 border-border"/>
             <div className="rounded-2xl border border-border bg-paper p-6">
               <p className="font-display text-lg font-semibold">Stop refreshing job boards.</p>
