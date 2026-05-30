@@ -13,9 +13,8 @@ export function AuthSplit({ children, title }: { children: React.ReactNode; titl
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden overflow-hidden bg-sidebar p-12 text-sidebar-active lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-        <div className="absolute -top-20 left-20 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
+        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1200&q=80" alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />
+        <div className="absolute inset-0 bg-sidebar/70" />
         <Link to="/" className="relative flex items-center gap-2">
           <Logo size={36} />
           <span className="font-display text-lg font-bold">FreelanceConnect</span>
@@ -84,7 +83,7 @@ function LoginPage() {
           </button>
         </div>
         <div className="flex justify-end">
-          <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>
+          <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
         </div>
         <button type="submit" className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
           Log In
