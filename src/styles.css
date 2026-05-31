@@ -84,11 +84,18 @@
   --ink: oklch(0.22 0.02 50);
   --cream: oklch(0.97 0.012 80);
 
-  --sidebar: oklch(0.22 0.02 50);           /* deep ink navy-brown */
+  --sidebar: oklch(0.18 0.015 50);          /* deeper ink, Linear-like */
   --sidebar-foreground: oklch(0.72 0.02 60);
   --sidebar-active: oklch(0.99 0 0);
-  --sidebar-hover: oklch(0.3 0.025 55);
-  --sidebar-border: oklch(0.3 0.025 55);
+  --sidebar-hover: oklch(0.26 0.02 55);
+  --sidebar-border: oklch(0.28 0.02 55);
+
+  /* Near-black canvas for Vercel/Linear-style dark sections */
+  --ink-bg: oklch(0.16 0.012 50);
+  --ink-bg-2: oklch(0.21 0.015 55);
+  --ink-fg: oklch(0.97 0.005 80);
+  --ink-muted: oklch(0.68 0.015 60);
+  --ink-border: oklch(0.28 0.02 55);
 }
 
 @layer base {
