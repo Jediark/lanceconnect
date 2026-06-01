@@ -11,6 +11,8 @@ export function MarketingNav() {
     { to: "/pricing", label: "Pricing" },
     { to: "/blog", label: "Blog" },
     { to: "/about", label: "About" },
+    { to: "/contact", label: "Contact" },
+    { to: "/changelog", label: "Changelog" },
   ];
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
