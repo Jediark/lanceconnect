@@ -439,3 +439,84 @@ function CTA() {
     </section>
   );
 }
+
+/* ────────────────────────────────────────────────────────────
+   STATS — bold numbers band with background image
+   ──────────────────────────────────────────────────────────── */
+function Stats() {
+  const stats = [
+    { k: "150+", v: "Countries covered" },
+    { k: "240k", v: "Businesses scored monthly" },
+    { k: "34%", v: "Average reply rate" },
+    { k: "4.8/5", v: "Customer satisfaction" },
+  ];
+  return (
+    <section className="relative overflow-hidden border-y border-border">
+      <div className="absolute inset-0">
+        <img src={IMG.marketStall} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-[color:var(--ink-bg)]/85" />
+      </div>
+      <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center text-white">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">By the numbers</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            A real product, with real traction.
+          </h2>
+        </div>
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.k} className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur">
+              <p className="font-display text-4xl font-semibold text-white md:text-5xl">{s.k}</p>
+              <p className="mt-2 text-sm text-white/75">{s.v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   FAQ — expandable, no library, calm
+   ──────────────────────────────────────────────────────────── */
+function FAQ() {
+  const faqs = [
+    { q: "How is FreelanceConnect different from a job board?", a: "Job boards wait for clients to post. We do the opposite — we surface businesses who don't yet know they need you, and give you their contact details so you can reach out first." },
+    { q: "Do I need any sales experience?", a: "No. Every lead comes with a ready-made outreach template tuned to your skill — email, phone script, and DM. Pro adds an AI writer that personalises each message." },
+    { q: "Which countries do you cover?", a: "150+ countries. We have especially strong coverage of Nigeria, Italy, India, UK, France, Argentina, Malaysia, and Canada, with daily refreshed data." },
+    { q: "What if I don't find any leads?", a: "Every plan includes a 'no leads, no charge' guarantee in your first month. If your first 10 leads aren't useful, we refund you in full." },
+    { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel from your dashboard in one click. You keep access until the end of your billing period." },
+    { q: "Is my data private?", a: "Absolutely. We never share your account info, your saved leads, or your outreach history with anyone. Read our Privacy Policy for full details." },
+  ];
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <section className="mx-auto max-w-4xl px-4 py-24 lg:px-8">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">FAQ</p>
+        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">Questions, answered honestly</h2>
+        <p className="mt-3 text-muted-foreground">Still curious? <Link to="/contact" className="text-primary underline-offset-4 hover:underline">Talk to a human</Link>.</p>
+      </div>
+      <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-card">
+        {faqs.map((f, i) => {
+          const isOpen = open === i;
+          return (
+            <div key={f.q}>
+              <button
+                onClick={() => setOpen(isOpen ? null : i)}
+                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+              >
+                <span className="font-display text-base font-semibold md:text-lg">{f.q}</span>
+                {isOpen ? <Minus className="h-4 w-4 shrink-0 text-muted-foreground" /> : <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />}
+              </button>
+              {isOpen && (
+                <div className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground animate-fade-in">
+                  {f.a}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
