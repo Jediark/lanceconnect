@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
-  Search, Sparkles, Star, Target, Users, Phone, Building2, MapPin,
+  Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
 } from "lucide-react";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
+import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
 import { IMG } from "@/data/content";
 
@@ -21,12 +23,15 @@ export const Route = createFileRoute("/")({
     <MarketingShell>
       <Hero />
       <LogoStrip />
+      <HeroCarousel />
       <ProductShowcase />
+      <Stats />
       <HowItWorks />
       <Features />
       <WhoFor />
       <Testimonials />
       <Pricing />
+      <FAQ />
       <CTA />
     </MarketingShell>
   ),
