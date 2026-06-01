@@ -103,7 +103,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Reusable simple page header for inner marketing pages */
+/** Reusable simple page header for inner marketing pages. Uses a full-bleed background image. */
 export function PageHeader({
   eyebrow,
   title,
@@ -116,24 +116,20 @@ export function PageHeader({
   image?: string;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-paper">
-      <div className="absolute inset-0 bg-dot-pattern opacity-40" />
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
-        <div>
-          {eyebrow && (
-            <span className="inline-block rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
-              {eyebrow}
-            </span>
-          )}
-          <h1 className="mt-4 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">{title}</h1>
-          {subtitle && <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">{subtitle}</p>}
-        </div>
-        {image && (
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-2xl bg-primary/10" />
-            <img src={image} alt="" className="relative aspect-[4/3] w-full rounded-2xl object-cover shadow-xl" loading="lazy" />
-          </div>
+    <section className="relative overflow-hidden border-b border-border">
+      <div className="absolute inset-0">
+        {image && <img src={image} alt="" className="h-full w-full object-cover" />}
+        <div className="absolute inset-0 bg-[color:var(--ink-bg)]/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[color:var(--ink-bg)]/40 to-[color:var(--ink-bg)]/70" />
+      </div>
+      <div className="relative mx-auto max-w-5xl px-4 py-20 text-center text-white lg:px-8 lg:py-28">
+        {eyebrow && (
+          <span className="inline-block rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white/90 backdrop-blur">
+            {eyebrow}
+          </span>
         )}
+        <h1 className="mt-5 font-display text-4xl font-semibold tracking-[-0.02em] md:text-5xl lg:text-6xl">{title}</h1>
+        {subtitle && <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">{subtitle}</p>}
       </div>
     </section>
   );

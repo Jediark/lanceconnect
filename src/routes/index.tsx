@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
-  Search, Sparkles, Star, Target, Users, Phone, Building2, MapPin,
+  Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
 } from "lucide-react";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
+import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
 import { IMG } from "@/data/content";
 
@@ -21,12 +23,15 @@ export const Route = createFileRoute("/")({
     <MarketingShell>
       <Hero />
       <LogoStrip />
+      <HeroCarousel />
       <ProductShowcase />
+      <Stats />
       <HowItWorks />
       <Features />
       <WhoFor />
       <Testimonials />
       <Pricing />
+      <FAQ />
       <CTA />
     </MarketingShell>
   ),
@@ -38,47 +43,56 @@ export const Route = createFileRoute("/")({
 function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border">
-      <div className="absolute inset-0 bg-dot-pattern opacity-30" />
-      <div className="relative mx-auto grid max-w-7xl gap-14 px-4 py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:px-8 lg:py-28">
-        <div className="flex flex-col justify-center">
-          <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse-dot" />
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img
+          src={IMG.workspace}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[color:var(--ink-bg)]/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--ink-bg)]/95 via-[color:var(--ink-bg)]/70 to-transparent" />
+      </div>
+
+      <div className="relative mx-auto grid max-w-7xl gap-14 px-4 py-24 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:px-8 lg:py-36">
+        <div className="flex flex-col justify-center text-white">
+          <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
             Now scanning leads in 150+ countries
           </span>
-          <h1 className="mt-6 font-display text-[2.75rem] font-semibold leading-[1.03] tracking-[-0.03em] md:text-6xl lg:text-[4.25rem]">
+          <h1 className="mt-6 font-display text-[2.75rem] font-semibold leading-[1.03] tracking-[-0.03em] md:text-6xl lg:text-[4.5rem]">
             Find clients.
             <br />
             <span className="text-primary">Win work.</span>
             <br />
             Without the chase.
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 md:text-lg">
             FreelanceConnect scans the internet for businesses that need your skills —
             then hands you their phone numbers, emails, and a ready-made way in.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:bg-foreground/90">
+            <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90">
               Start for free <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold hover:bg-accent">
+            <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/20">
               <Play className="h-4 w-4" /> See how it works
             </Link>
           </div>
-          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-success" /> No credit card</span>
-            <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-success" /> 10 free leads instantly</span>
-            <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-success" /> Cancel anytime</span>
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-white/70">
+            <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> No credit card</span>
+            <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> 10 free leads instantly</span>
+            <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Cancel anytime</span>
           </div>
         </div>
 
-        <div className="relative">
+        <div className="relative hidden lg:block">
           <img
             src={IMG.heroFreelancer}
             alt="A freelancer working on her laptop from her studio"
-            className="relative aspect-[4/5] w-full rounded-2xl border border-border object-cover shadow-2xl"
+            className="aspect-[4/5] w-full rounded-2xl border border-white/10 object-cover shadow-2xl"
           />
-          {/* Floating real-data callouts (Apollo-inspired) */}
-          <div className="absolute -left-5 bottom-10 hidden w-64 rounded-xl border border-border bg-card p-4 shadow-2xl sm:block">
+          <div className="absolute -left-5 bottom-10 w-64 rounded-xl border border-border bg-card p-4 shadow-2xl">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-success animate-pulse-dot" />
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">8 new leads</p>
@@ -86,7 +100,7 @@ function Hero() {
             <p className="mt-2 text-sm font-semibold">Web Dev · Milan, Italy</p>
             <p className="mt-1 text-xs text-muted-foreground">Bakeries & studios with no website</p>
           </div>
-          <div className="absolute -right-5 top-10 hidden rounded-xl border border-border bg-card p-4 shadow-2xl sm:block">
+          <div className="absolute -right-5 top-10 rounded-xl border border-border bg-card p-4 shadow-2xl">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Avg reply rate</p>
             <p className="mt-1 font-display text-2xl font-bold">34%</p>
             <p className="text-[11px] text-success">+18% vs cold outreach</p>
@@ -421,6 +435,87 @@ function CTA() {
             See pricing
           </Link>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   STATS — bold numbers band with background image
+   ──────────────────────────────────────────────────────────── */
+function Stats() {
+  const stats = [
+    { k: "150+", v: "Countries covered" },
+    { k: "240k", v: "Businesses scored monthly" },
+    { k: "34%", v: "Average reply rate" },
+    { k: "4.8/5", v: "Customer satisfaction" },
+  ];
+  return (
+    <section className="relative overflow-hidden border-y border-border">
+      <div className="absolute inset-0">
+        <img src={IMG.marketStall} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-[color:var(--ink-bg)]/85" />
+      </div>
+      <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center text-white">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">By the numbers</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            A real product, with real traction.
+          </h2>
+        </div>
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.k} className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur">
+              <p className="font-display text-4xl font-semibold text-white md:text-5xl">{s.k}</p>
+              <p className="mt-2 text-sm text-white/75">{s.v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   FAQ — expandable, no library, calm
+   ──────────────────────────────────────────────────────────── */
+function FAQ() {
+  const faqs = [
+    { q: "How is FreelanceConnect different from a job board?", a: "Job boards wait for clients to post. We do the opposite — we surface businesses who don't yet know they need you, and give you their contact details so you can reach out first." },
+    { q: "Do I need any sales experience?", a: "No. Every lead comes with a ready-made outreach template tuned to your skill — email, phone script, and DM. Pro adds an AI writer that personalises each message." },
+    { q: "Which countries do you cover?", a: "150+ countries. We have especially strong coverage of Nigeria, Italy, India, UK, France, Argentina, Malaysia, and Canada, with daily refreshed data." },
+    { q: "What if I don't find any leads?", a: "Every plan includes a 'no leads, no charge' guarantee in your first month. If your first 10 leads aren't useful, we refund you in full." },
+    { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel from your dashboard in one click. You keep access until the end of your billing period." },
+    { q: "Is my data private?", a: "Absolutely. We never share your account info, your saved leads, or your outreach history with anyone. Read our Privacy Policy for full details." },
+  ];
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <section className="mx-auto max-w-4xl px-4 py-24 lg:px-8">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">FAQ</p>
+        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">Questions, answered honestly</h2>
+        <p className="mt-3 text-muted-foreground">Still curious? <Link to="/contact" className="text-primary underline-offset-4 hover:underline">Talk to a human</Link>.</p>
+      </div>
+      <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-card">
+        {faqs.map((f, i) => {
+          const isOpen = open === i;
+          return (
+            <div key={f.q}>
+              <button
+                onClick={() => setOpen(isOpen ? null : i)}
+                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+              >
+                <span className="font-display text-base font-semibold md:text-lg">{f.q}</span>
+                {isOpen ? <Minus className="h-4 w-4 shrink-0 text-muted-foreground" /> : <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />}
+              </button>
+              {isOpen && (
+                <div className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground animate-fade-in">
+                  {f.a}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
