@@ -32,6 +32,7 @@ export const Route = createFileRoute("/")({
       <WhoFor />
       <Testimonials />
       <Pricing />
+      <BlogTeaser />
       <FAQ />
       <CTA />
     </MarketingShell>
