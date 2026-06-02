@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
@@ -7,7 +8,7 @@ import {
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
-import { IMG } from "@/data/content";
+import { IMG, BLOG_POSTS } from "@/data/content";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/")({
       <WhoFor />
       <Testimonials />
       <Pricing />
+      <BlogTeaser />
       <FAQ />
       <CTA />
     </MarketingShell>
@@ -40,46 +42,140 @@ export const Route = createFileRoute("/")({
 /* ────────────────────────────────────────────────────────────
    HERO — Linear/Stripe calm, real human imagery, no gradients
    ──────────────────────────────────────────────────────────── */
+const HERO_SLIDES = [
+  {
+    img: IMG.workspace,
+    eyebrow: "Now scanning leads in 150+ countries",
+    title: <>Find clients. <span className="text-primary">Win work.</span><br/>Without the chase.</>,
+    sub: "FreelanceConnect scans the internet for businesses that need your skills — then hands you their phone numbers, emails, and a ready-made way in.",
+  },
+  {
+    img: IMG.marketStall,
+    eyebrow: "Real leads · Real cities",
+    title: <>Local businesses,<br/><span className="text-primary">ready to hire</span> today.</>,
+    sub: "From bakeries in Lyon to studios in Lagos — we surface the businesses already searching for what you do.",
+  },
+  {
+    img: IMG.coffeeShop,
+    eyebrow: "Built for working freelancers",
+    title: <>Stop pitching cold.<br/>Start <span className="text-primary">conversations</span>.</>,
+    sub: "Every lead comes with a scored opportunity, a verified contact, and an outreach script written for your craft.",
+  },
+  {
+    img: IMG.team,
+    eyebrow: "Loved in 50+ countries",
+    title: <>One workspace.<br/>Every <span className="text-primary">client win</span>, tracked.</>,
+    sub: "Discover, contact, and close — in a single, calm dashboard built by freelancers, for freelancers.",
+  },
+];
+
 function Hero() {
+  const [emblaRef, embla] = useEmblaCarousel({ loop: true, duration: 28 });
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (!embla) return;
+    const onSelect = () => setIndex(embla.selectedScrollSnap());
+    embla.on("select", onSelect);
+    const id = setInterval(() => embla.scrollNext(), 6500);
+    return () => { embla.off("select", onSelect); clearInterval(id); };
+  }, [embla]);
+
   return (
     <section className="relative overflow-hidden border-b border-border">
-      {/* Background image — full bleed, single focal point */}
-      <div className="absolute inset-0">
-        <img
-          src={IMG.workspace}
-          alt=""
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-[color:var(--ink-bg)]/80" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[color:var(--ink-bg)]/70 via-[color:var(--ink-bg)]/55 to-[color:var(--ink-bg)]/90" />
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex">
+          {HERO_SLIDES.map((s, i) => (
+            <div key={i} className="relative min-w-0 shrink-0 grow-0 basis-full">
+              {/* Background */}
+              <div className="absolute inset-0">
+                <img src={s.img} alt="" className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-[color:var(--ink-bg)]/82" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[color:var(--ink-bg)]/70 via-[color:var(--ink-bg)]/55 to-[color:var(--ink-bg)]/95" />
+              </div>
+              <div className="relative mx-auto max-w-5xl px-4 py-28 text-center text-white lg:px-8 lg:py-44">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
+                  {s.eyebrow}
+                </span>
+                <h1 className="mx-auto mt-8 max-w-4xl font-display text-[2.5rem] font-semibold leading-[1.02] tracking-[-0.035em] md:text-6xl lg:text-[5rem]">
+                  {s.title}
+                </h1>
+                <p className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">{s.sub}</p>
+                <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+                  <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90">
+                    Start for free <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/20">
+                    <Play className="h-4 w-4" /> See how it works
+                  </Link>
+                </div>
+                <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs text-white/70">
+                  <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> No credit card</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> 10 free leads instantly</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Cancel anytime</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="relative mx-auto max-w-5xl px-4 py-28 text-center text-white lg:px-8 lg:py-44">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
-          Now scanning leads in 150+ countries
-        </span>
-        <h1 className="mx-auto mt-8 max-w-4xl font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.035em] md:text-6xl lg:text-[5.25rem]">
-          Find clients. <span className="text-primary">Win work.</span>
-          <br />
-          Without the chase.
-        </h1>
-        <p className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">
-          FreelanceConnect scans the internet for businesses that need your skills —
-          then hands you their phone numbers, emails, and a ready-made way in.
-        </p>
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90">
-            Start for free <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/20">
-            <Play className="h-4 w-4" /> See how it works
+      {/* Dots */}
+      <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center gap-2">
+        {HERO_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => embla?.scrollTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            className={`h-1.5 rounded-full transition-all ${i === index ? "w-8 bg-white" : "w-2 bg-white/40"}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BlogTeaser() {
+  const posts = BLOG_POSTS.slice(0, 3);
+  return (
+    <section className="border-y border-border bg-paper py-24">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">From the journal</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+              Field notes from working freelancers.
+            </h2>
+            <p className="mt-3 text-muted-foreground">Real scripts, real numbers, real clients — written by the people doing the work.</p>
+          </div>
+          <Link to="/blog" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+            Read the blog <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs text-white/70">
-          <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> No credit card</span>
-          <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> 10 free leads instantly</span>
-          <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Cancel anytime</span>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {posts.map((p) => (
+            <Link
+              key={p.slug}
+              to="/blog/$slug"
+              params={{ slug: p.slug }}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-card-hover"
+            >
+              <div className="overflow-hidden">
+                <img src={p.cover} alt={p.title} loading="lazy" className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+              </div>
+              <div className="flex flex-1 flex-col p-6">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">{p.category}</span>
+                <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.excerpt}</p>
+                <div className="mt-5 flex items-center gap-2 border-t border-border pt-4 text-xs text-muted-foreground">
+                  <img src={p.authorAvatar} alt={p.author} className="h-6 w-6 rounded-full object-cover" />
+                  <span>{p.author} · {p.readMins} min read</span>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
