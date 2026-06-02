@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
@@ -7,7 +8,7 @@ import {
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
-import { IMG } from "@/data/content";
+import { IMG, BLOG_POSTS } from "@/data/content";
 
 export const Route = createFileRoute("/")({
   head: () => ({
