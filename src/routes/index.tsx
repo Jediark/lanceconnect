@@ -419,12 +419,139 @@ function HowItWorks() {
   );
 }
 
-/* ────────────────────────────────────────────────────────────
-   FEATURES
-   ──────────────────────────────────────────────────────────── */
+const FEATURES_LIST = [
+  {
+    id: 1,
+    icon: Globe2,
+    title: "🌍 Global Lead Discovery",
+    desc: "Find any business in any street in 150+ countries. Get access to verified pipelines of clients in seconds.",
+    gridClass: "lg:col-start-1 lg:row-start-1 lg:col-span-1",
+    connector: () => (
+      <div className="absolute top-1/2 -right-3 w-6 h-0.5 border-t border-dashed border-primary/45 -translate-y-1/2 lg:block hidden z-0">
+        <span className="absolute top-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-right" />
+      </div>
+    ),
+    footer: () => (
+      <div className="space-y-2 border-t border-border/60 pt-4 font-mono text-xs text-[#64748B] w-full">
+        <div className="flex justify-between"><span>Leads indexed</span><span className="text-white font-semibold">2.4M+</span></div>
+        <div className="flex justify-between"><span>Countries covered</span><span className="text-white font-semibold">150+</span></div>
+      </div>
+    )
+  },
+  {
+    id: 2,
+    icon: BarChart3,
+    title: "📊 Opportunity Scoring",
+    desc: "0–100 scores based on how badly they need what you sell. Hot leads float to the top.",
+    gridClass: "lg:col-start-2 lg:row-start-1 lg:col-span-1",
+    connector: () => (
+      <div className="absolute top-1/2 -right-3 w-6 h-0.5 border-t border-dashed border-primary/45 -translate-y-1/2 lg:block hidden z-0">
+        <span className="absolute top-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-right" />
+      </div>
+    ),
+    footer: () => (
+      <div className="flex items-center gap-2 mt-4 w-full">
+        <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">94 🔥 Hot Lead</span>
+      </div>
+    )
+  },
+  {
+    id: 3,
+    icon: Phone,
+    title: "📞 Verified Contacts",
+    desc: "Phone numbers, emails, and direct WhatsApp links copy-ready right next to every lead.",
+    gridClass: "lg:col-start-3 lg:row-start-1 lg:col-span-1",
+    connector: () => (
+      <div className="absolute left-1/2 -bottom-3 w-0.5 h-6 border-l border-dashed border-primary/45 -translate-x-1/2 lg:block hidden z-0">
+        <span className="absolute left-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-down" />
+      </div>
+    ),
+    footer: () => (
+      <div className="flex items-center gap-2 mt-4 font-mono text-[10px] text-slate-400 bg-[#080B14] border border-border px-3 py-1.5 rounded-lg w-full justify-between">
+        <span>📞 +234 802...</span>
+        <span className="text-emerald-500 font-semibold">✓ Verified</span>
+      </div>
+    )
+  },
+  {
+    id: 4,
+    icon: Sparkles,
+    title: "🤖 AI Outreach (Pro)",
+    desc: "Claude-powered personalized messages for every lead. Generates email, phone script, LinkedIn DM in seconds.",
+    gridClass: "lg:col-start-3 lg:row-start-2 lg:col-span-1",
+    connector: () => (
+      <div className="absolute top-1/2 -left-3 w-6 h-0.5 border-t border-dashed border-primary/45 -translate-y-1/2 lg:block hidden z-0">
+        <span className="absolute top-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-left" />
+      </div>
+    ),
+    footer: () => (
+      <div className="flex flex-col gap-2 w-full mt-2">
+        <div className="flex gap-2">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#080B14] text-primary border border-border">Email</span>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#080B14] text-slate-400">WhatsApp</span>
+        </div>
+        <div className="w-full bg-[#080B14] border border-border rounded-xl p-2.5 font-mono text-[8px] text-slate-400 max-h-[85px] overflow-hidden select-none">
+          <p className="text-[#64748B]">// Generated intro</p>
+          <p className="mt-0.5 text-primary">Hi Mario, I noticed your business has...</p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 5,
+    icon: Bookmark,
+    title: "📋 CRM Pipeline",
+    desc: "Track leads from saved to won without complex CRM bloat. Simple, clean, and fast.",
+    gridClass: "lg:col-start-2 lg:row-start-2 lg:col-span-1",
+    connector: () => (
+      <div className="absolute top-1/2 -left-3 w-6 h-0.5 border-t border-dashed border-primary/45 -translate-y-1/2 lg:block hidden z-0">
+        <span className="absolute top-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-left" />
+      </div>
+    ),
+    footer: () => (
+      <div className="flex gap-1.5 mt-4 w-full">
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">New</span>
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-500/20">Contacted</span>
+      </div>
+    )
+  },
+  {
+    id: 6,
+    icon: Globe,
+    title: "🏪 Online Opportunities",
+    desc: "LinkedIn, Indeed, Reddit remote opportunities consolidated for remote freelancers.",
+    gridClass: "lg:col-start-1 lg:row-start-2 lg:col-span-1",
+    connector: () => (
+      <div className="absolute left-1/2 -bottom-3 w-0.5 h-6 border-l border-dashed border-primary/45 -translate-x-1/2 lg:block hidden z-0">
+        <span className="absolute left-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-down" />
+      </div>
+    ),
+    footer: () => (
+      <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-1.5 rounded border border-purple-500/20 mt-4 text-center block w-full">
+        Remote channels auto-scraped
+      </span>
+    )
+  },
+  {
+    id: 7,
+    icon: Users,
+    title: "👥 All Freelancer Skills Covered",
+    desc: "Whether you build websites, write copy, design brands, manage socials, edit video, or handle virtual tasks, we have custom opportunity models for you.",
+    gridClass: "lg:col-start-1 lg:row-start-3 lg:col-span-3 lg:w-full lg:max-w-none",
+    connector: () => null,
+    footer: () => (
+      <div className="flex flex-wrap gap-1.5 mt-4 text-[9px] font-mono text-[#CBD5E1] w-full">
+        {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev"].map(tag => (
+          <span key={tag} className="px-2 py-0.5 rounded bg-[#080B14] border border-border">{tag}</span>
+        ))}
+      </div>
+    )
+  }
+];
+
 function Features() {
   return (
-    <section id="features" className="border-y border-border bg-[#0F172A]/30 py-24">
+    <section id="features" className="border-y border-border bg-[#0F172A]/30 py-24 select-none">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-2xl text-center mb-16">
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
@@ -434,132 +561,103 @@ function Features() {
           <p className="mt-4 text-slate-400">No bloat. Just the tools freelancers actually use to win work.</p>
         </div>
 
-        {/* Bento Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 auto-rows-[auto] lg:auto-rows-[250px]">
-          {/* Card 1: Global Discovery (Tall, span 2 rows) */}
-          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card lg:row-span-2 flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
-            <div>
-              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
-                <Globe2 className="h-6 w-6" />
+        {/* Desktop Layout: Snake Grid */}
+        <div className="hidden lg:grid gap-6 lg:grid-cols-3 auto-rows-[280px] relative z-10">
+          {FEATURES_LIST.map((card) => {
+            const Icon = card.icon;
+            const FooterComponent = card.footer;
+            const ConnectorComponent = card.connector;
+            return (
+              <div 
+                key={card.id} 
+                className={`relative rounded-2xl border border-border bg-[#0F172A]/80 p-6 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300 z-10 ${card.gridClass}`}
+              >
+                {card.id === 7 ? (
+                  <div className="flex items-center justify-between gap-8 w-full h-full text-left">
+                    <div className="max-w-md">
+                      <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        {card.desc}
+                      </p>
+                    </div>
+                    <div className="flex-1 max-w-lg">
+                      <FooterComponent />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
+                      <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                        {card.desc}
+                      </p>
+                    </div>
+                    <FooterComponent />
+                  </>
+                )}
+                <ConnectorComponent />
               </div>
-              <h3 className="font-display text-xl font-bold text-white mb-3">🌍 Global Lead Discovery</h3>
-              <p className="text-sm text-slate-400 leading-relaxed mb-6">
-                Find any business in any street in 150+ countries. Get access to verified pipelines of clients in seconds.
-              </p>
-            </div>
-            <div className="space-y-2 border-t border-border/60 pt-6 font-mono text-xs text-[#64748B]">
-              <div className="flex justify-between"><span>Leads indexed</span><span className="text-white font-semibold">2.4M+</span></div>
-              <div className="flex justify-between"><span>Countries covered</span><span className="text-white font-semibold">150+</span></div>
-            </div>
-          </div>
+            );
+          })}
+        </div>
 
-          {/* Card 2: Opportunity Score (Normal) */}
-          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
-            <div>
-              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-emerald-500/10 text-emerald-500 mb-4 group-hover:bg-emerald-500 group-hover:text-black transition duration-300">
-                <BarChart3 className="h-5 w-5" />
-              </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">📊 Opportunity Scoring</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                0–100 scores based on how badly they need what you sell. Hot leads float to the top.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4">
-              <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">94 🔥 Hot Lead</span>
-            </div>
-          </div>
-
-          {/* Card 3: Verified Contacts (Normal) */}
-          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
-            <div>
-              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-indigo-500/10 text-indigo-400 mb-4 group-hover:bg-indigo-500 group-hover:text-white transition duration-300">
-                <Phone className="h-5 w-5" />
-              </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">📞 Verified Contacts</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Phone numbers, emails, and direct WhatsApp links copy-ready right next to every lead.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 mt-4 font-mono text-[10px] text-slate-400 bg-[#080B14] border border-border px-3 py-1.5 rounded-lg w-full justify-between">
-              <span>📞 +234 802...</span>
-              <span className="text-emerald-500 font-semibold">✓ Verified</span>
-            </div>
-          </div>
-
-          {/* Card 4: AI Outreach Generator (Wide, span 2 columns) */}
-          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card lg:col-span-2 flex flex-col md:flex-row gap-6 justify-between group hover:border-[#6366F1]/30 transition duration-300">
-            <div className="max-w-md flex flex-col justify-between">
-              <div>
-                <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
-                  <Sparkles className="h-5 w-5" />
+        {/* Mobile/Tablet Layout: Infinite Horizontal Scroll Ticker */}
+        <div className="lg:hidden relative w-full overflow-hidden py-4">
+          <div className="flex gap-6 animate-ticker w-max hover:[animation-play-state:paused] cursor-pointer">
+            {/* Set 1 */}
+            {FEATURES_LIST.map((card) => {
+              const Icon = card.icon;
+              const FooterComponent = card.footer;
+              return (
+                <div 
+                  key={`m1-${card.id}`} 
+                  className="w-[280px] shrink-0 rounded-2xl border border-border bg-[#0F172A]/80 p-6 shadow-card flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
+                    <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                      {card.desc}
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <FooterComponent />
+                  </div>
                 </div>
-                <h3 className="font-display text-lg font-bold text-white mb-2">🤖 AI Outreach Generator (Pro)</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Claude-powered personalized messages for every lead. Generates email, phone script, LinkedIn DM, or WhatsApp message in seconds.
-                </p>
-              </div>
-              <div className="flex gap-2 mt-4">
-                <span className="text-[10px] font-mono px-2 py-1 rounded bg-[#080B14] text-primary border border-border">Email</span>
-                <span className="text-[10px] font-mono px-2 py-1 rounded bg-[#080B14] text-slate-400">Phone Script</span>
-                <span className="text-[10px] font-mono px-2 py-1 rounded bg-[#080B14] text-slate-400">LinkedIn</span>
-              </div>
-            </div>
-            <div className="flex-1 w-full bg-[#080B14] border border-border rounded-xl p-4 font-mono text-[10px] text-slate-400 max-h-[140px] overflow-hidden select-none">
-              <p className="text-[#64748B]">// Generated intro</p>
-              <p className="mt-1">Hi Mario,</p>
-              <p className="mt-1.5 text-primary">I noticed Mario's Ristorante does not have a website. I've designed websites for restaurants in Naples that...</p>
-            </div>
-          </div>
-
-          {/* Card 5: CRM Pipeline (Normal) */}
-          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
-            <div>
-              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-amber-500/10 text-amber-500 mb-4 group-hover:bg-amber-500 group-hover:text-black transition duration-300">
-                <Bookmark className="h-5 w-5" />
-              </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">📋 CRM Pipeline</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Track leads from saved to won without complex CRM bloat. Simple, clean, and fast.
-              </p>
-            </div>
-            <div className="flex gap-1.5 mt-4">
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">New</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-500/20">Contacted</span>
-            </div>
-          </div>
-
-          {/* Card 6: Online Opportunities (Normal) */}
-          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
-            <div>
-              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-purple-500/10 text-purple-400 mb-4 group-hover:bg-purple-500 group-hover:text-black transition duration-300">
-                <Globe className="h-5 w-5" />
-              </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">🏪 Online Opportunities</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                LinkedIn, Indeed, Reddit remote opportunities consolidated for remote freelancers.
-              </p>
-            </div>
-            <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20 mt-4 text-center">
-              Remote channels auto-scraped
-            </span>
-          </div>
-
-          {/* Card 7: All Freelancer Skills (Wide, span 2 columns) */}
-          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card lg:col-span-2 flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
-            <div>
-              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-[#10B981]/10 text-[#10B981] mb-4 group-hover:bg-[#10B981] group-hover:text-black transition duration-300">
-                <Users className="h-5 w-5" />
-              </div>
-              <h3 className="font-display text-lg font-bold text-white mb-2">👥 All Freelancer Skills Covered</h3>
-              <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                Whether you build websites, write copy, design brands, manage socials, edit video, or handle virtual tasks, we have custom opportunity models for you.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2 text-[10px] font-mono text-[#CBD5E1]">
-              {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev"].map(tag => (
-                <span key={tag} className="px-2 py-1 rounded bg-[#080B14] border border-border">{tag}</span>
-              ))}
-            </div>
+              );
+            })}
+            {/* Set 2 for infinite effect */}
+            {FEATURES_LIST.map((card) => {
+              const Icon = card.icon;
+              const FooterComponent = card.footer;
+              return (
+                <div 
+                  key={`m2-${card.id}`} 
+                  className="w-[280px] shrink-0 rounded-2xl border border-border bg-[#0F172A]/80 p-6 shadow-card flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
+                    <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                      {card.desc}
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <FooterComponent />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
