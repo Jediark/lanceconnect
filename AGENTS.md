@@ -177,3 +177,34 @@ npx tsc --noEmit
 # Build check
 npm run build
 ```
+
+---
+
+## COMPLETED
+
+- [x] Logo SVG component with two-node connector (`src/components/Logo.tsx`)
+- [x] Favicon SVG (32x32) (`public/favicon.svg`)
+- [x] Types system (`src/types/index.ts`)
+- [x] Validation schemas (`src/lib/validations.ts`)
+- [x] Supabase client (`src/lib/supabase.ts`)
+- [x] Filter store (`src/store/filterStore.ts`)
+- [x] Search components (`src/components/search/SearchBar.tsx`)
+- [x] Database schema (`supabase/migrations/001_initial_schema.sql`)
+- [x] Environment variables (`.env.example`)
+- [x] Home page hero with human mosaic + floating animations (Framer Motion)
+- [x] Stats bar 
+- [x] All pages renamed to "LanceConnect"
+- [x] Slogan: "The Meeting Point for Freelancers and Clients" in all headers/footers
+
+## TODO (Frontend Remaining)
+
+- [ ] Add Framer Motion to remaining sections
+- [ ] Polish About/How It Works/Features pages with bento grids
+- [ ] Polish Pricing page (add credit pack section)
+- [ ] Polish all system pages (404, 500, maintenance)
+
+## BACKEND (Deferred - after frontend complete)
+
+- [ ] Supabase Edge Functions for lead search
+- [ ] Google Places API integration
+- [ ] Stripe webhook integration
