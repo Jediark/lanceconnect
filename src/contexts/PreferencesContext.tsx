@@ -312,6 +312,10 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
       case "GBP":
         return Math.round(usdAmount * 0.8).toString();
       case "NGN":
+        if (usdAmount === 7) return "10,000";
+        if (usdAmount === 6) return "8,000";
+        if (usdAmount === 20) return "30,000";
+        if (usdAmount === 16) return "24,000";
         return (usdAmount * 1500).toLocaleString();
       case "BRL":
         return (usdAmount * 5).toLocaleString();
