@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
@@ -77,20 +78,19 @@ const HUMAN_IMAGES = [
 ];
 
 function HeroWithMosaic() {
-  const [emblaRef, embla] = useEmblaCarousel({ loop: true, duration: 28 });
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (!embla) return;
-    const onSelect = () => setIndex(embla.selectedScrollSnap());
-    embla.on("select", onSelect);
-    const id = setInterval(() => embla.scrollNext(), 6500);
-    return () => { embla.off("select", onSelect); clearInterval(id); };
-  }, [embla]);
+  const floatVariants = {
+    animate: {
+      y: [0, -12, 0],
+      transition: { duration: 4, repeat: Infinity, ease: "easeInOut" as const, delay: 0 },
+    },
+  };
 
   return (
-    <section className="relative overflow-hidden border-b border-border">
-      <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
+    <section className="relative overflow-hidden border-b border-border bg-sidebar/95">
+      <div className="absolute inset-0 opacity-10">
+        <div className="h-full w-full" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, var(--primary) 0.5px, transparent 1px)", backgroundSize: "40px 40px" }} />
+      </div>
+      <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="text-[11px] font-mono-data text-muted-foreground uppercase tracking-widest">
@@ -120,18 +120,21 @@ function HeroWithMosaic() {
           <div className="relative h-[400px] lg:h-[500px]">
             <div className="relative h-full w-full">
               {HUMAN_IMAGES.map((img, i) => (
-                <div
+                <motion.div
                   key={i}
-                  className="absolute h-20 w-20 rounded-full overflow-hidden ring-2 ring-primary/30"
-                  style={{ top: img.top, left: img.left, animationDelay: `${img.delay}s` }}
+                  className="absolute h-20 w-20 rounded-full overflow-hidden ring-2 ring-primary/30 shadow-card"
+                  style={{ top: img.top, left: img.left }}
+                  variants={floatVariants}
+                  animate="animate"
+                  transition={{ delay: i * 0.5, duration: 4, repeat: Infinity }}
                 >
-                  <img src={img.src} alt={img.name} className="h-full w-full object-cover" />
-                </div>
+                  <img src={img.src} alt={img.name} className="h-full w-full object-cover" loading="lazy" />
+                </motion.div>
               ))}
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-10 left-10 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-400">🔥 94 Hot Lead</div>
-                <div className="absolute bottom-16 right-12 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400">📞 +234 802...</div>
-                <div className="absolute top-24 right-8 rounded-full bg-red-500/20 px-3 py-1 text-xs font-medium text-red-400">❌ No website</div>
+                <div className="absolute top-10 left-10 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-400 backdrop-blur">🔥 94 Hot Lead</div>
+                <div className="absolute bottom-16 right-12 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400 backdrop-blur">📞 +234 802...</div>
+                <div className="absolute top-24 right-8 rounded-full bg-red-500/20 px-3 py-1 text-xs font-medium text-red-400 backdrop-blur">❌ No website</div>
               </div>
             </div>
           </div>
