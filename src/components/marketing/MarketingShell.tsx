@@ -49,8 +49,8 @@ export function MarketingNav() {
       )}
         <header className="border-b border-border bg-[#080B14] w-full py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-8">
-          <Link to="/" className="flex items-center gap-2">
-            <LanceConnectLogo size={32} showSlogan={false} />
+          <Link to="/" className="flex items-center">
+            <img src="/logo-navy.png" alt="LanceConnect" className="h-10 md:h-12 w-auto object-contain" />
           </Link>
           
           <div className="hidden lg:flex items-center gap-6">
@@ -197,12 +197,8 @@ export function MarketingFooter() {
       <div className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
         <div className="grid gap-10 md:grid-cols-5">
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2">
-              <Logo size={28} />
-              <div>
-                <span className="font-display text-sm font-bold">LanceConnect</span>
-                <p className="text-[10px] text-muted-foreground">The Meeting Point for Freelancers and Clients</p>
-              </div>
+            <Link to="/" className="flex items-center mb-4">
+              <img src="/logo-white.png" alt="LanceConnect" className="h-10 md:h-12 w-auto object-contain" />
             </Link>
             <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
               Lead generation built by freelancers, for freelancers. Find businesses that need your skills in 150+ countries.
