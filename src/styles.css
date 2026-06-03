@@ -101,10 +101,10 @@
 html.light {
   --background: #ffffff;
   --foreground: #020617;
-  --card: #ffffff;
-  --card-foreground: #334155;
-  --popover: #ffffff;
-  --popover-foreground: #334155;
+  --card: #0B0F19; /* premium black-blue/dark navy card background */
+  --card-foreground: #F8FAFC; /* white card text */
+  --popover: #0B0F19;
+  --popover-foreground: #F8FAFC;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
   --accent: #f1f5f9;
@@ -154,6 +154,34 @@ html.light .bg-dot-pattern {
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+  }
+
+  /* Ensure all cards have dark background and white/light text in both modes */
+  .bg-card, [class*="bg-card"] {
+    background-color: var(--card) !important;
+    color: var(--card-foreground) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+  .bg-card h1, .bg-card h2, .bg-card h3, .bg-card h4, .bg-card h5, .bg-card h6,
+  [class*="bg-card"] h1, [class*="bg-card"] h2, [class*="bg-card"] h3, [class*="bg-card"] h4, [class*="bg-card"] h5, [class*="bg-card"] h6 {
+    color: #ffffff !important;
+  }
+  .bg-card p, [class*="bg-card"] p,
+  .bg-card span, [class*="bg-card"] span,
+  .bg-card li, [class*="bg-card"] li {
+    color: #94a3b8 !important;
+  }
+  .bg-card a, [class*="bg-card"] a {
+    color: #ffffff !important;
+  }
+  .bg-card .text-primary, [class*="bg-card"] .text-primary {
+    color: var(--primary) !important;
+  }
+  .bg-card .text-success, [class*="bg-card"] .text-success {
+    color: var(--success) !important;
+  }
+  .bg-card .text-white, [class*="bg-card"] .text-white {
+    color: #ffffff !important;
   }
 }
 

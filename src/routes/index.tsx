@@ -90,9 +90,9 @@ function HeroWithMosaic() {
         <img 
           src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2000&q=80" 
           alt="" 
-          className="h-full w-full object-cover opacity-15 mix-blend-luminosity"
+          className="h-full w-full object-cover opacity-[0.03] dark:opacity-[0.08] mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/50 to-background" />
       </div>
 
       <div className="absolute inset-0 opacity-20 z-0">
@@ -104,10 +104,10 @@ function HeroWithMosaic() {
             <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
               {t("hero_eyebrow")}
             </p>
-            <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
+            <h1 className="font-display text-4xl font-extrabold text-foreground mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
               {t("hero_title")}
             </h1>
-            <p className="mt-6 text-base text-slate-400 max-w-lg leading-relaxed">
+            <p className="mt-6 text-base text-muted-foreground max-w-lg leading-relaxed">
               {t("hero_sub")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -380,7 +380,7 @@ function ProductShowcase() {
             { k: "34%", v: "average reply rate using our templates" },
           ].map((s) => (
             <div key={s.k} className="border-l-2 pl-4" style={{ borderColor: "var(--ink-border)" }}>
-              <p className="font-display text-3xl font-semibold text-white">{s.k}</p>
+              <p className="font-display text-3xl font-semibold text-foreground">{s.k}</p>
               <p className="mt-1">{s.v}</p>
             </div>
           ))}
@@ -664,8 +664,8 @@ function Features() {
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
             // what.we.give.you
           </p>
-          <h2 className="font-display text-4xl font-extrabold text-white">Everything you need to get clients</h2>
-          <p className="mt-4 text-slate-400">No bloat. Just the tools freelancers actually use to win work.</p>
+          <h2 className="font-display text-4xl font-extrabold text-foreground">Everything you need to get clients</h2>
+          <p className="mt-4 text-muted-foreground">No bloat. Just the tools freelancers actually use to win work.</p>
         </div>
 
         {/* Desktop Layout: Snake Grid */}
@@ -843,8 +843,8 @@ function LeadScannerSandbox() {
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
             {t("sandbox_eyebrow")}
           </p>
-          <h2 className="font-display text-4xl font-extrabold text-white">{t("sandbox_title")}</h2>
-          <p className="mt-4 text-slate-400">
+          <h2 className="font-display text-4xl font-extrabold text-foreground">{t("sandbox_title")}</h2>
+          <p className="mt-4 text-muted-foreground">
             {t("sandbox_sub")}
           </p>
         </div>
@@ -1085,10 +1085,10 @@ function GlobalReach() {
             <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
               // we.are.everywhere
             </p>
-            <h2 className="font-display text-3xl font-extrabold text-white tracking-tight leading-tight">
+             <h2 className="font-display text-3xl font-extrabold text-foreground tracking-tight leading-tight">
               Freelancers in every country.<br className="hidden sm:inline" /> Leads in every city.
             </h2>
-            <p className="mt-4 text-sm text-slate-400 leading-relaxed max-w-md">
+            <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-md">
               A truly global ecosystem matching local clients with global freelance talent. We scan 150+ countries in real-time.
             </p>
             
@@ -1260,8 +1260,8 @@ function Pricing() {
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
             // simple.pricing
           </p>
-          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">{t("pricing_title")}</h2>
-          <p className="mt-4 text-slate-400">{t("pricing_sub")}</p>
+          <h2 className="font-display text-4xl font-extrabold text-foreground tracking-tight">{t("pricing_title")}</h2>
+          <p className="mt-4 text-muted-foreground">{t("pricing_sub")}</p>
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {plans.map((p) => (
@@ -1334,10 +1334,10 @@ function Stats() {
     { k: "4.8/5", v: "Customer satisfaction" },
   ];
   return (
-    <section className="relative overflow-hidden border-y border-border">
+    <section className="relative overflow-hidden border-y border-border bg-[#080B14]">
       <div className="absolute inset-0">
-        <img src={IMG.team} alt="" className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-[color:var(--ink-bg)]/85" />
+        <img src={IMG.team} alt="" className="h-full w-full object-cover opacity-15 mix-blend-luminosity" />
+        <div className="absolute inset-0 bg-[#080B14]/85" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8">
         <div className="mx-auto max-w-2xl text-center text-white">
@@ -1348,7 +1348,7 @@ function Stats() {
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s) => (
-            <div key={s.k} className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur">
+            <div key={s.k} className="rounded-2xl border border-white/10 bg-[#0B0F19]/80 p-6 backdrop-blur">
               <p className="font-display text-4xl font-semibold text-white md:text-5xl">{s.k}</p>
               <p className="mt-2 text-sm text-white/75">{s.v}</p>
             </div>

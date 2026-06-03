@@ -23,23 +23,17 @@ export function Logo({ className, size = 32 }: LogoProps) {
   );
 }
 
-export function LanceConnectLogo({ className, showText = true, showSlogan = true, size = 32 }: { className?: string; showText?: boolean; showSlogan?: boolean; size?: number }) {
+import { usePreferences } from "@/contexts/PreferencesContext";
+
+export function LanceConnectLogo({ className }: { className?: string }) {
+  const { theme } = usePreferences();
+  const logoSrc = theme === "light" ? "/logo-navy.png" : "/logo-white.png";
+
   return (
-    <div className={cn("flex items-center gap-3.5", className)}>
-      <Logo size={size} />
-      {showText && (
-        <div className="flex flex-col">
-          <div className="flex items-baseline leading-none">
-            <span className="font-display text-xl font-bold text-foreground">Lance</span>
-            <span className="font-display text-xl font-bold" style={{ color: "#2563eb" }}>Connect</span>
-          </div>
-          {showSlogan && (
-            <span className="font-mono text-[9px] text-[#64748B] mt-1 whitespace-nowrap leading-none tracking-tight">
-              The Meeting Point for Freelancers and Clients
-            </span>
-          )}
-        </div>
-      )}
-    </div>
+    <img 
+      src={logoSrc} 
+      alt="LanceConnect Logo" 
+      className={cn("h-7 md:h-8.5 w-auto object-contain", className)} 
+    />
   );
 }
