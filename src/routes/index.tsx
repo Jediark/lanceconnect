@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import useEmblaCarousel from "embla-carousel-react";
+import {
+  ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
+  Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
+} from "lucide-react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
@@ -78,13 +80,6 @@ const HUMAN_IMAGES = [
 ];
 
 function HeroWithMosaic() {
-  const floatVariants = {
-    animate: {
-      y: [0, -12, 0],
-      transition: { duration: 4, repeat: Infinity, ease: "easeInOut" as const, delay: 0 },
-    },
-  };
-
   return (
     <section className="relative overflow-hidden border-b border-border bg-sidebar/95">
       <div className="absolute inset-0 opacity-10">
@@ -120,17 +115,21 @@ function HeroWithMosaic() {
           <div className="relative h-[400px] lg:h-[500px]">
             <div className="relative h-full w-full">
               {HUMAN_IMAGES.map((img, i) => (
-                <motion.div
+                <div
                   key={i}
-                  className="absolute h-20 w-20 rounded-full overflow-hidden ring-2 ring-primary/30 shadow-card"
-                  style={{ top: img.top, left: img.left }}
-                  variants={floatVariants}
-                  animate="animate"
-                  transition={{ delay: i * 0.5, duration: 4, repeat: Infinity }}
+                  className="absolute h-20 w-20 rounded-full overflow-hidden ring-2 ring-primary/30 shadow-card animate-float"
+                  style={{ top: img.top, left: img.left, animationDelay: `${i * 0.5}s` }}
                 >
                   <img src={img.src} alt={img.name} className="h-full w-full object-cover" loading="lazy" />
-                </motion.div>
+                </div>
               ))}
+              <style>{`
+                @keyframes float {
+                  0%, 100% { transform: translateY(0); }
+                  50% { transform: translateY(-12px); }
+                }
+                .animate-float { animation: float 4s ease-in-out infinite; }
+              `}</style>
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-10 left-10 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-400 backdrop-blur">🔥 94 Hot Lead</div>
                 <div className="absolute bottom-16 right-12 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400 backdrop-blur">📞 +234 802...</div>
