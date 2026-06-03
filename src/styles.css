@@ -61,8 +61,8 @@
   --popover: #0F172A;
   --popover-foreground: #CBD5E1;
 
-  /* Indigo primary and emerald secondary */
-  --primary: #6366F1;
+  /* Connect blue primary and emerald secondary */
+  --primary: #2563eb;
   --primary-foreground: #F8FAFC;
   --secondary: #10B981;
   --secondary-foreground: #080B14;
@@ -72,11 +72,11 @@
   --accent-foreground: #F8FAFC;
   --destructive: #EF4444;
   --destructive-foreground: #F8FAFC;
-  --border: rgba(99,102,241,0.15);
-  --input: rgba(99,102,241,0.15);
-  --ring: #6366F1;
+  --border: rgba(37,99,235,0.15);
+  --input: rgba(37,99,235,0.15);
+  --ring: #2563eb;
 
-  --brand: #6366F1;
+  --brand: #2563eb;
   --brand-foreground: #F8FAFC;
   --success: #10B981;
   --warn: #F59E0B;
@@ -87,15 +87,15 @@
   --sidebar: #080B14;
   --sidebar-foreground: #CBD5E1;
   --sidebar-active: #F8FAFC;
-  --sidebar-hover: rgba(99,102,241,0.06);
-  --sidebar-border: rgba(99,102,241,0.15);
+  --sidebar-hover: rgba(37,99,235,0.06);
+  --sidebar-border: rgba(37,99,235,0.15);
 
   /* Near-black canvas and layout tokens */
   --ink-bg: #080B14;
   --ink-bg-2: #0F172A;
   --ink-fg: #F8FAFC;
   --ink-muted: #64748B;
-  --ink-border: rgba(99,102,241,0.15);
+  --ink-border: rgba(37,99,235,0.15);
 }
 
 @layer base {
@@ -128,18 +128,18 @@
 
   .bg-grid-pattern {
     background-image:
-      linear-gradient(to right, rgba(99, 102, 241, 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgba(37, 99, 235, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(37, 99, 235, 0.04) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
   .bg-dot-pattern {
-    background-image: radial-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(37, 99, 235, 0.07) 1px, transparent 1px);
     background-size: 18px 18px;
   }
 
   .shadow-card { box-shadow: 0 1px 3px rgba(8,11,20,0.5), 0 1px 2px rgba(8,11,20,0.3); }
-  .shadow-card-hover { box-shadow: 0 4px 6px -1px rgba(8,11,20,0.6), 0 10px 20px -10px rgba(99,102,241,0.3); }
+  .shadow-card-hover { box-shadow: 0 4px 6px -1px rgba(8,11,20,0.6), 0 10px 20px -10px rgba(37, 99, 235, 0.3); }
 
   @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }
