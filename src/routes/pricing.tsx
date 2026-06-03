@@ -47,6 +47,17 @@ function PricingPage() {
   return (
     <MarketingShell>
       <PageHeader eyebrow="Pricing" title="Honest pricing. Built for freelancers." subtitle="No 'contact sales'. No annual lock-ins. Cancel anytime. 14-day money-back guarantee on every paid plan." image={IMG.coffeeShop}/>
+
+      {/* Monthly/Annual Toggle */}
+      <section className="mx-auto max-w-7xl px-4 pt-8 lg:px-8">
+        <div className="flex justify-center">
+          <div className="inline-flex rounded-full border border-border bg-card p-1">
+            <button className="rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">Monthly</button>
+            <button className="rounded-full px-4 py-1.5 text-xs font-medium">Annual <span className="ml-1 text-emerald-500">−20%</span></button>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {plans.map(p => (
@@ -58,6 +69,28 @@ function PricingPage() {
               <Link to="/register" className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-border bg-background hover:bg-accent"}`}>{p.cta}</Link>
             </div>
           ))}
+        </div>
+
+        {/* Credit Packs Section */}
+        <div className="mt-16">
+          <p className="text-[11px] font-mono-data text-muted-foreground uppercase tracking-widest mb-4">
+            // pay.as.you.go
+          </p>
+          <h3 className="font-display text-2xl font-bold mb-6">Prefer credit packs?</h3>
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              { leads: "50 leads", price: "₦5,000", usd: "$5" },
+              { leads: "200 leads", price: "₦15,000", usd: "$15", popular: true },
+              { leads: "500 leads", price: "₦30,000", usd: "$30" },
+            ].map((c) => (
+              <div key={c.leads} className={`rounded-2xl border bg-card p-5 text-center ${c.popular ? "border-primary" : "border-border"}`}>
+                {c.popular && <span className="inline-block mb-2 text-[10px] font-bold uppercase text-primary">Most popular</span>}
+                <p className="font-display text-lg font-semibold">{c.leads}</p>
+                <p className="mt-1 font-mono-data text-xl">{c.price} <span className="text-xs text-muted-foreground">{c.usd}</span></p>
+                <button className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">Buy credits</button>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-16 overflow-x-auto rounded-2xl border border-border bg-card">
