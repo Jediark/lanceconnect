@@ -1,13 +1,25 @@
 import { Link } from "@tanstack/react-router";
 import { Logo, LanceConnectLogo } from "@/components/Logo";
-import { Menu, X, ArrowUp, MessageSquare, Send, Search, ExternalLink, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowUp, MessageSquare, Send, Search, ExternalLink, ArrowRight, Globe } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { usePreferences, Language, Currency } from "@/contexts/PreferencesContext";
 
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
   const { language, setLanguage, currency, setCurrency, t } = usePreferences();
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+        setSettingsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const links = [
     { to: "/", label: t("nav_home") },
@@ -18,6 +30,8 @@ export function MarketingNav() {
     { to: "/portfolio", label: t("nav_portfolio") },
     { to: "/contact", label: t("nav_contact") },
   ];
+
+  const desktopLinks = links.filter((l) => l.to !== "/");
 
   return (
     <div className="w-full shrink-0 sticky top-0 z-50">
@@ -41,7 +55,7 @@ export function MarketingNav() {
           
           <div className="hidden lg:flex items-center gap-6">
             <nav className="flex items-center gap-5 text-sm text-slate-400">
-              {links.map((l) => (
+              {desktopLinks.map((l) => (
                 <Link key={l.to} to={l.to} className="hover:text-white transition-colors animate-fade-in" activeProps={{ className: "text-white font-semibold" }}>
                   {l.label}
                 </Link>
@@ -51,42 +65,63 @@ export function MarketingNav() {
             <div className="h-4 w-px bg-border/40" />
 
             <div className="flex items-center gap-3">
-              {/* CMD+K Search Button */}
+              {/* CMD+K Search Icon Button */}
               <button 
                 onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
-                className="flex items-center gap-2 border border-border/40 bg-[#0F172A]/60 px-3 py-1.5 rounded-lg text-slate-500 hover:text-white transition cursor-pointer text-xs font-mono"
+                className="p-2 text-slate-400 hover:text-white hover:bg-[#0F172A]/40 rounded-lg border border-border/40 transition cursor-pointer"
                 aria-label="Search"
+                title="Search (⌘K)"
               >
-                <Search className="h-3.5 w-3.5" />
-                <span>Search...</span>
-                <kbd className="bg-slate-950 border border-slate-800 rounded px-1.5 text-[9px]">⌘K</kbd>
+                <Search className="h-4 w-4" />
               </button>
 
-              {/* Language Switcher */}
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as Language)}
-                className="bg-[#0F172A]/60 border border-border/40 hover:border-border rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 focus:outline-none transition cursor-pointer"
-              >
-                <option value="en">EN</option>
-                <option value="fr">FR</option>
-                <option value="it">IT</option>
-                <option value="es">ES</option>
-                <option value="pt">PT</option>
-              </select>
+              {/* Globe Settings Dropdown */}
+              <div className="relative" ref={settingsRef}>
+                <button
+                  onClick={() => setSettingsOpen(!settingsOpen)}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border/40 bg-[#0F172A]/40 text-slate-400 hover:text-white transition cursor-pointer text-xs font-medium"
+                  aria-label="Settings"
+                >
+                  <Globe className="h-4 w-4" />
+                  <span className="font-mono text-[10px] tracking-tight">{language.toUpperCase()} · {currency}</span>
+                </button>
 
-              {/* Currency Switcher */}
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value as Currency)}
-                className="bg-[#0F172A]/60 border border-border/40 hover:border-border rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 focus:outline-none transition cursor-pointer"
-              >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="NGN">NGN (₦)</option>
-                <option value="BRL">BRL (R$)</option>
-              </select>
+                {settingsOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-[#0F172A] p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Preferences</p>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-[10px] text-slate-400 mb-1 font-medium">Language</label>
+                        <select
+                          value={language}
+                          onChange={(e) => setLanguage(e.target.value as Language)}
+                          className="w-full bg-[#080B14] border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
+                        >
+                          <option value="en">English (EN)</option>
+                          <option value="fr">Français (FR)</option>
+                          <option value="it">Italiano (IT)</option>
+                          <option value="es">Español (ES)</option>
+                          <option value="pt">Português (PT)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-slate-400 mb-1 font-medium">Currency</label>
+                        <select
+                          value={currency}
+                          onChange={(e) => setCurrency(e.target.value as Currency)}
+                          className="w-full bg-[#080B14] border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
+                        >
+                          <option value="USD">USD ($)</option>
+                          <option value="EUR">EUR (€)</option>
+                          <option value="GBP">GBP (£)</option>
+                          <option value="NGN">NGN (₦)</option>
+                          <option value="BRL">BRL (R$)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-accent hover:text-white transition-colors">{t("nav_login")}</Link>
               <Link to="/register" className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-black hover:bg-white/90 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">{t("nav_start_free")}</Link>
