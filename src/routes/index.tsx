@@ -13,16 +13,17 @@ import { IMG, BLOG_POSTS } from "@/data/content";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LanceConnect — Find clients. Win work. Grow your freelance business." },
-      { name: "description", content: "LanceConnect scans the internet for businesses that need your skills and hands you their contact details. Free plan with 10 leads — no credit card required." },
-      { property: "og:title", content: "LanceConnect — Lead generation for freelancers" },
-      { property: "og:description", content: "Find local businesses that need your skills. Built for freelancers in 150+ countries." },
+      { title: "LanceConnect — The Meeting Point for Freelancers and Clients" },
+      { name: "description", content: "LanceConnect finds businesses that need your skills anywhere in the world, and hands you their contact details." },
+      { property: "og:title", content: "LanceConnect" },
+      { property: "og:description", content: "The Meeting Point for Freelancers and Clients" },
       { property: "og:image", content: IMG.heroFreelancer },
     ],
   }),
   component: () => (
     <MarketingShell>
-      <Hero />
+      <HeroWithMosaic />
+      <StatsBar />
       <LogoStrip />
       <HeroCarousel />
       <ProductShowcase />
@@ -39,9 +40,6 @@ export const Route = createFileRoute("/")({
   ),
 });
 
-/* ────────────────────────────────────────────────────────────
-   HERO — Linear/Stripe calm, real human imagery, no gradients
-   ──────────────────────────────────────────────────────────── */
 const HERO_SLIDES = [
   {
     img: IMG.workspace,
@@ -69,7 +67,16 @@ const HERO_SLIDES = [
   },
 ];
 
-function Hero() {
+const HUMAN_IMAGES = [
+  { src: IMG.face1, name: "Taiwo", skills: ["Web Dev 🇳🇬"], top: "10%", left: "5%", delay: 0 },
+  { src: IMG.face2, name: "Maria", skills: ["Copywriter 🇧🇷"], top: "25%", left: "85%", delay: 0.5 },
+  { src: IMG.face3, name: "James", skills: ["SEO 🇰🇪"], top: "55%", left: "5%", delay: 1 },
+  { src: IMG.face4, name: "Priya", skills: ["Designer 🇮🇳"], top: "70%", left: "80%", delay: 1.5 },
+  { src: IMG.face5, name: "Alex", skills: ["Marketer 🇬🇧"], top: "40%", left: "70%", delay: 2 },
+  { src: IMG.face6, name: "Sofia", skills: ["Video 🇦🇷"], top: "15%", left: "75%", delay: 2.5 },
+];
+
+function HeroWithMosaic() {
   const [emblaRef, embla] = useEmblaCarousel({ loop: true, duration: 28 });
   const [index, setIndex] = useState(0);
 
@@ -83,56 +90,88 @@ function Hero() {
 
   return (
     <section className="relative overflow-hidden border-b border-border">
-      <div ref={emblaRef} className="overflow-hidden">
-        <div className="flex">
-          {HERO_SLIDES.map((s, i) => (
-            <div key={i} className="relative min-w-0 shrink-0 grow-0 basis-full">
-              {/* Background */}
-              <div className="absolute inset-0">
-                <img src={s.img} alt="" className="h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-[color:var(--ink-bg)]/82" />
-                <div className="absolute inset-0 bg-gradient-to-b from-[color:var(--ink-bg)]/70 via-[color:var(--ink-bg)]/55 to-[color:var(--ink-bg)]/95" />
-              </div>
-              <div className="relative mx-auto max-w-5xl px-4 py-28 text-center text-white lg:px-8 lg:py-44">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
-                  {s.eyebrow}
-                </span>
-                <h1 className="mx-auto mt-8 max-w-4xl font-display text-[2.5rem] font-semibold leading-[1.02] tracking-[-0.035em] md:text-6xl lg:text-[5rem]">
-                  {s.title}
-                </h1>
-                <p className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">{s.sub}</p>
-                <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-                  <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90">
-                    Start for free <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/20">
-                    <Play className="h-4 w-4" /> See how it works
-                  </Link>
+      <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          <div>
+            <p className="text-[11px] font-mono-data text-muted-foreground uppercase tracking-widest">
+              // find.clients.globally
+            </p>
+            <h1 className="font-display text-4xl font-bold text-foreground mt-3 sm:text-5xl lg:text-6xl">
+              The Meeting Point<br/>for Freelancers<br/>and Clients.
+            </h1>
+            <p className="mt-4 text-base text-muted-foreground max-w-lg">
+              Stop waiting for work to come to you. LanceConnect finds businesses that need your skills anywhere in the world and hands you their direct contacts.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+                Get 10 Free Leads <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">
+                <Play className="h-4 w-4" /> Watch Demo
+              </Link>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> No credit card</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Instant access</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Cancel anytime</span>
+            </div>
+          </div>
+
+          <div className="relative h-[400px] lg:h-[500px]">
+            <div className="relative h-full w-full">
+              {HUMAN_IMAGES.map((img, i) => (
+                <div
+                  key={i}
+                  className="absolute h-20 w-20 rounded-full overflow-hidden ring-2 ring-primary/30"
+                  style={{ top: img.top, left: img.left, animationDelay: `${img.delay}s` }}
+                >
+                  <img src={img.src} alt={img.name} className="h-full w-full object-cover" />
                 </div>
-                <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs text-white/70">
-                  <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> No credit card</span>
-                  <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> 10 free leads instantly</span>
-                  <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Cancel anytime</span>
-                </div>
+              ))}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-10 left-10 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-400">🔥 94 Hot Lead</div>
+                <div className="absolute bottom-16 right-12 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400">📞 +234 802...</div>
+                <div className="absolute top-24 right-8 rounded-full bg-red-500/20 px-3 py-1 text-xs font-medium text-red-400">❌ No website</div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StatsBar() {
+  const stats = [
+    { k: "2.4M+", v: "Leads Found" },
+    { k: "150+", v: "Countries" },
+    { k: "89%", v: "Accuracy" },
+    { k: "$0", v: "Commission" },
+  ];
+
+  const [counts, setCounts] = useState({ leads: 0, countries: 0, accuracy: 0, commission: 0 });
+
+  useEffect(() => {
+    const duration = 2000;
+    const timer = setTimeout(() => {
+      setCounts({ leads: 240, countries: 150, accuracy: 89, commission: 0 });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="bg-sidebar/90 backdrop-blur-sm border-b border-sidebar-border">
+      <div className="mx-auto max-w-7xl px-4 py-4 lg:px-8">
+        <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
+          {stats.map((s, i) => (
+            <div key={s.v} className="text-center">
+              <p className="font-mono-data text-2xl font-bold text-primary">{counts.leads || s.k}</p>
+              <p className="text-[10px] text-sidebar-foreground uppercase tracking-wider">{s.v}</p>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Dots */}
-      <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center gap-2">
-        {HERO_SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => embla?.scrollTo(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${i === index ? "w-8 bg-white" : "w-2 bg-white/40"}`}
-          />
-        ))}
-      </div>
-    </section>
+    </div>
   );
 }
 
