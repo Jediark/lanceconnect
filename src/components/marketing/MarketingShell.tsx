@@ -36,46 +36,47 @@ export function MarketingNav() {
       <header className="border-b border-border bg-[#080B14] w-full py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <LanceConnectLogo size={32} />
+            <LanceConnectLogo size={32} showSlogan={false} />
           </Link>
           
-          <nav className="hidden items-center gap-7 text-sm text-slate-400 md:flex">
+          <nav className="hidden items-center gap-4 lg:gap-6 text-xs lg:text-sm text-slate-400 md:flex">
             {links.map((l) => (
-              <Link key={l.to} to={l.to} className="hover:text-white transition-colors" activeProps={{ className: "text-white font-semibold" }}>
+              <Link key={l.to} to={l.to} className="hover:text-white transition-colors animate-fade-in" activeProps={{ className: "text-white font-semibold" }}>
                 {l.label}
               </Link>
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 md:flex">
-            {/* CMD+K Search Button */}
+          <div className="hidden items-center gap-2 lg:gap-3 md:flex">
+            {/* CMD+K Search Button - Responsive sizing */}
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
-              className="flex items-center gap-2 border border-border/40 bg-[#0F172A]/60 px-3 py-1.5 rounded-lg text-slate-500 hover:text-white transition cursor-pointer text-xs font-mono"
+              className="flex items-center gap-2 border border-border/40 bg-[#0F172A]/60 p-2 lg:px-3 lg:py-1.5 rounded-lg text-slate-500 hover:text-white transition cursor-pointer text-xs font-mono"
+              aria-label="Search"
             >
               <Search className="h-3.5 w-3.5" />
-              <span>Search...</span>
-              <kbd className="bg-slate-950 border border-slate-800 rounded px-1 text-[9px]">⌘K</kbd>
+              <span className="hidden lg:inline">Search...</span>
+              <kbd className="hidden lg:inline bg-slate-950 border border-slate-800 rounded px-1.5 text-[9px]">⌘K</kbd>
             </button>
 
             {/* Language Switcher */}
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as Language)}
-              className="bg-[#0F172A]/60 border border-border/40 hover:border-border rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 focus:outline-none transition cursor-pointer"
+              className="bg-[#0F172A]/60 border border-border/40 hover:border-border rounded-lg px-1.5 py-1.5 text-[10px] lg:text-xs font-medium text-slate-300 focus:outline-none transition cursor-pointer"
             >
-              <option value="en">🇺🇸 EN</option>
-              <option value="fr">🇫🇷 FR</option>
-              <option value="it">🇮🇹 IT</option>
-              <option value="es">🇪🇸 ES</option>
-              <option value="pt">🇧🇷 PT</option>
+              <option value="en">EN</option>
+              <option value="fr">FR</option>
+              <option value="it">IT</option>
+              <option value="es">ES</option>
+              <option value="pt">PT</option>
             </select>
 
             {/* Currency Switcher */}
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value as Currency)}
-              className="bg-[#0F172A]/60 border border-border/40 hover:border-border rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 focus:outline-none transition cursor-pointer"
+              className="bg-[#0F172A]/60 border border-border/40 hover:border-border rounded-lg px-1.5 py-1.5 text-[10px] lg:text-xs font-medium text-slate-300 focus:outline-none transition cursor-pointer"
             >
               <option value="USD">USD ($)</option>
               <option value="EUR">EUR (€)</option>
@@ -84,8 +85,8 @@ export function MarketingNav() {
               <option value="BRL">BRL (R$)</option>
             </select>
 
-            <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-accent hover:text-white transition-colors">{t("nav_login")}</Link>
-            <Link to="/register" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap">{t("nav_start_free")}</Link>
+            <Link to="/login" className="rounded-lg px-2 py-1.5 lg:px-3 text-xs lg:text-sm font-medium text-slate-300 hover:bg-accent hover:text-white transition-colors">{t("nav_login")}</Link>
+            <Link to="/register" className="rounded-lg bg-primary px-2.5 py-1.5 lg:px-3.5 text-xs lg:text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap">{t("nav_start_free")}</Link>
           </div>
 
           <button onClick={() => setOpen(!open)} className="md:hidden rounded-lg p-2 text-slate-300 hover:bg-accent" aria-label="Menu">

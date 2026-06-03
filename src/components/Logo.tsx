@@ -23,7 +23,7 @@ export function Logo({ className, size = 32 }: LogoProps) {
   );
 }
 
-export function LanceConnectLogo({ className, showText = true, size = 32 }: { className?: string; showText?: boolean; size?: number }) {
+export function LanceConnectLogo({ className, showText = true, showSlogan = true, size = 32 }: { className?: string; showText?: boolean; showSlogan?: boolean; size?: number }) {
   return (
     <div className={cn("flex items-center gap-3.5", className)}>
       <Logo size={size} />
@@ -33,9 +33,11 @@ export function LanceConnectLogo({ className, showText = true, size = 32 }: { cl
             <span className="font-display text-xl font-bold text-foreground">Lance</span>
             <span className="font-display text-xl font-bold" style={{ color: "#6366F1" }}>Connect</span>
           </div>
-          <span className="font-mono text-[9px] text-[#64748B] mt-1 whitespace-nowrap leading-none tracking-tight">
-            The Meeting Point for Freelancers and Clients
-          </span>
+          {showSlogan && (
+            <span className="font-mono text-[9px] text-[#64748B] mt-1 whitespace-nowrap leading-none tracking-tight">
+              The Meeting Point for Freelancers and Clients
+            </span>
+          )}
         </div>
       )}
     </div>
