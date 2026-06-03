@@ -8,11 +8,11 @@ export function MarketingNav() {
   const [bannerOpen, setBannerOpen] = useState(true);
   const links = [
     { to: "/", label: "Home" },
-    { to: "/features", label: "Features" },
+    { to: "/about", label: "About" },
     { to: "/how-it-works", label: "How it works" },
     { to: "/pricing", label: "Pricing" },
     { to: "/blog", label: "Blog" },
-    { to: "/about", label: "About" },
+    { to: "/portfolio", label: "Portfolio" },
     { to: "/contact", label: "Contact" },
   ];
   return (
@@ -69,7 +69,7 @@ export function MarketingNav() {
 
 export function MarketingFooter() {
   const cols = [
-    { title: "Product", links: [["Features","/features"],["Pricing","/pricing"],["How it works","/how-it-works"],["Changelog","/changelog"]] as const },
+    { title: "Product", links: [["Portfolio","/portfolio"],["Pricing","/pricing"],["How it works","/how-it-works"],["Changelog","/changelog"]] as const },
     { title: "Company", links: [["About","/about"],["Blog","/blog"],["Contact","/contact"]] as const },
     { title: "For Freelancers", links: [["Web Developers","/freelancers/web-developers"],["Designers","/freelancers/designers"],["Copywriters","/freelancers/copywriters"],["SEO Specialists","/freelancers/seo-specialists"]] as const },
     { title: "Legal", links: [["Privacy Policy","/privacy"],["Terms of Service","/terms"]] as const },

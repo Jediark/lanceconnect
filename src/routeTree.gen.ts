@@ -16,6 +16,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as LoginRouteImport } from './routes/login'
@@ -79,6 +80,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/maintenance': typeof MaintenanceRoute
   '/onboarding': typeof OnboardingRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/maintenance': typeof MaintenanceRoute
   '/onboarding': typeof OnboardingRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
@@ -317,6 +325,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/maintenance': typeof MaintenanceRoute
   '/onboarding': typeof OnboardingRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
@@ -357,6 +366,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/maintenance'
     | '/onboarding'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/register'
@@ -394,6 +404,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/maintenance'
     | '/onboarding'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/register'
@@ -431,6 +442,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/maintenance'
     | '/onboarding'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/register'
@@ -470,6 +482,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MaintenanceRoute: typeof MaintenanceRoute
   OnboardingRoute: typeof OnboardingRoute
+  PortfolioRoute: typeof PortfolioRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
@@ -531,6 +544,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -797,6 +817,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MaintenanceRoute: MaintenanceRoute,
   OnboardingRoute: OnboardingRoute,
+  PortfolioRoute: PortfolioRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RegisterRoute: RegisterRoute,
