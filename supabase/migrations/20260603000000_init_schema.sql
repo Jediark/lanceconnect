@@ -1,13 +1,12 @@
 -- ============================================================
--- LANCECONNECT DATABASE SCHEMA v1.0
--- Run in Supabase SQL Editor / Local Migration
+-- LANCECONNECT DATABASE SCHEMA v1.1 (Idempotent)
+-- Safe to re-run in Supabase SQL Editor
 -- ============================================================
 
 -- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pg_trgm";      -- For fuzzy text search
-CREATE EXTENSION IF NOT EXISTS "btree_gin";    -- For composite indexes
-CREATE EXTENSION IF NOT EXISTS "pg_stat_statements"; -- Query monitoring
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+CREATE EXTENSION IF NOT EXISTS "btree_gin";
 
 -- ============================================================
 -- TABLE 1: PROFILES (extends Supabase auth.users)
@@ -17,8 +16,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   email                   TEXT NOT NULL,
   full_name               TEXT,
   avatar_url              TEXT,
-  
-  -- Freelancer configuration
   freelancer_category     TEXT NOT NULL DEFAULT 'web_dev' CHECK (
     freelancer_category IN (
       'web_dev', 'designer', 'copywriter', 'seo',
@@ -30,8 +27,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   website_url             TEXT,
   country                 TEXT,
   city                    TEXT,
-  
-  -- Subscription management
   plan                    TEXT NOT NULL DEFAULT 'free' CHECK (
     plan IN ('free', 'starter', 'pro', 'agency')
   ),
@@ -39,27 +34,21 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   stripe_subscription_id  TEXT UNIQUE,
   subscription_status     TEXT DEFAULT 'inactive',
   subscription_end_date   TIMESTAMPTZ,
-  
-  -- Usage tracking
   leads_used_this_month   INTEGER NOT NULL DEFAULT 0,
   leads_limit             INTEGER NOT NULL DEFAULT 10,
   credits_balance         INTEGER NOT NULL DEFAULT 0,
   month_reset_date        DATE NOT NULL DEFAULT DATE_TRUNC('month', NOW())::DATE,
-  
-  -- Security
   last_login_at           TIMESTAMPTZ,
   login_count             INTEGER DEFAULT 0,
   is_banned               BOOLEAN DEFAULT false,
   ban_reason              TEXT,
-  
-  -- Metadata
   onboarding_completed    BOOLEAN DEFAULT false,
   preferred_language      TEXT DEFAULT 'en',
   created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Trigger for auto-updating updated_at
+-- Trigger function for auto-updating updated_at
 CREATE OR REPLACE FUNCTION public.update_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -68,6 +57,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS profiles_updated_at ON public.profiles;
 CREATE TRIGGER profiles_updated_at
   BEFORE UPDATE ON public.profiles
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
@@ -77,16 +67,12 @@ CREATE TRIGGER profiles_updated_at
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.leads (
   id                    UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  
-  -- Business Identity
   business_name         TEXT NOT NULL,
   business_type         TEXT,
   industry              TEXT NOT NULL,
   description           TEXT,
-  
-  -- Location (indexed for geo queries)
   country               TEXT NOT NULL,
-  country_code          TEXT,  -- ISO 2-letter: NG, GB, IN
+  country_code          TEXT,
   state_province        TEXT,
   city                  TEXT NOT NULL,
   district              TEXT,
@@ -95,28 +81,22 @@ CREATE TABLE IF NOT EXISTS public.leads (
   latitude              DECIMAL(10,7),
   longitude             DECIMAL(10,7),
   timezone              TEXT,
-  
-  -- Contact Information
   phone                 TEXT,
   phone_verified        BOOLEAN DEFAULT false,
   phone_verified_at     TIMESTAMPTZ,
-  phone_whatsapp_link   TEXT,  -- wa.me/+countrycode...
+  phone_whatsapp_link   TEXT,
   email                 TEXT,
   email_verified        BOOLEAN DEFAULT false,
   email_verified_at     TIMESTAMPTZ,
   email_confidence      TEXT CHECK (email_confidence IN ('verified', 'likely', 'unverified')),
-  
-  -- Web Presence
   website_url           TEXT,
   has_website           BOOLEAN NOT NULL DEFAULT false,
-  website_live          BOOLEAN,         -- HTTP ping result
-  website_score         INTEGER,         -- PageSpeed 0-100
-  website_mobile_ok     BOOLEAN,         -- Mobile friendly?
-  website_has_ssl       BOOLEAN,         -- HTTPS?
-  website_screenshot    TEXT,            -- URL to screenshot
+  website_live          BOOLEAN,
+  website_score         INTEGER,
+  website_mobile_ok     BOOLEAN,
+  website_has_ssl       BOOLEAN,
+  website_screenshot    TEXT,
   website_load_time_ms  INTEGER,
-  
-  -- Social Media Presence (from Maigret)
   has_facebook          BOOLEAN DEFAULT false,
   facebook_url          TEXT,
   has_instagram         BOOLEAN DEFAULT false,
@@ -128,39 +108,30 @@ CREATE TABLE IF NOT EXISTS public.leads (
   has_youtube           BOOLEAN DEFAULT false,
   social_scan_done      BOOLEAN DEFAULT false,
   social_scanned_at     TIMESTAMPTZ,
-  
-  -- Google Maps Signals
   google_place_id       TEXT UNIQUE,
   google_maps_url       TEXT,
   google_rating         DECIMAL(2,1) CHECK (google_rating BETWEEN 0 AND 5),
   google_review_count   INTEGER DEFAULT 0,
   google_photo_url      TEXT,
   google_categories     TEXT[],
-  
-  -- Opportunity Scoring
   opportunity_score     INTEGER CHECK (opportunity_score BETWEEN 0 AND 100),
-  score_breakdown       JSONB,  -- { no_website: 40, low_rating: 20, ... }
-  
-  -- Data Source & Quality
+  score_breakdown       JSONB,
   source                TEXT NOT NULL DEFAULT 'google_maps',
   data_quality_score    INTEGER CHECK (data_quality_score BETWEEN 0 AND 100),
   is_verified           BOOLEAN DEFAULT false,
   is_active             BOOLEAN DEFAULT true,
-  
-  -- Cache Management
   last_verified_at      TIMESTAMPTZ,
   cache_expires_at      TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '30 days'),
   fetch_count           INTEGER DEFAULT 1,
-  
   created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+DROP TRIGGER IF EXISTS leads_updated_at ON public.leads;
 CREATE TRIGGER leads_updated_at
   BEFORE UPDATE ON public.leads
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
--- Performance indexes
 CREATE INDEX IF NOT EXISTS idx_leads_industry        ON public.leads(industry);
 CREATE INDEX IF NOT EXISTS idx_leads_country         ON public.leads(country);
 CREATE INDEX IF NOT EXISTS idx_leads_city            ON public.leads(LOWER(city));
@@ -170,8 +141,6 @@ CREATE INDEX IF NOT EXISTS idx_leads_place_id        ON public.leads(google_plac
 CREATE INDEX IF NOT EXISTS idx_leads_cache_expires   ON public.leads(cache_expires_at);
 CREATE INDEX IF NOT EXISTS idx_leads_country_city    ON public.leads(country, LOWER(city));
 CREATE INDEX IF NOT EXISTS idx_leads_industry_country ON public.leads(industry, country);
-
--- Full text search index
 CREATE INDEX IF NOT EXISTS idx_leads_name_search ON public.leads USING GIN(to_tsvector('english', business_name));
 
 -- ============================================================
@@ -181,8 +150,6 @@ CREATE TABLE IF NOT EXISTS public.user_leads (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id         UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   lead_id         UUID NOT NULL REFERENCES public.leads(id) ON DELETE CASCADE,
-  
-  -- Pipeline CRM
   status          TEXT NOT NULL DEFAULT 'new' CHECK (status IN (
     'new', 'contacted', 'interested', 'proposal_sent',
     'won', 'lost', 'not_relevant'
@@ -190,18 +157,15 @@ CREATE TABLE IF NOT EXISTS public.user_leads (
   notes           TEXT,
   follow_up_date  DATE,
   deal_value      DECIMAL(10,2),
-  
-  -- Tracking
   contacted_at    TIMESTAMPTZ,
   responded_at    TIMESTAMPTZ,
   won_at          TIMESTAMPTZ,
-  
   saved_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  
   UNIQUE(user_id, lead_id)
 );
 
+DROP TRIGGER IF EXISTS user_leads_updated_at ON public.user_leads;
 CREATE TRIGGER user_leads_updated_at
   BEFORE UPDATE ON public.user_leads
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
@@ -222,7 +186,7 @@ CREATE TABLE IF NOT EXISTS public.outreach_templates (
   ),
   subject     TEXT,
   body        TEXT NOT NULL,
-  variables   TEXT[],  -- ['business_name', 'city', 'your_name']
+  variables   TEXT[],
   is_default  BOOLEAN DEFAULT false,
   use_count   INTEGER DEFAULT 0,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -244,8 +208,7 @@ CREATE TABLE IF NOT EXISTS public.ai_messages (
   tokens_used   INTEGER,
   model         TEXT DEFAULT 'gemini-1.5-flash',
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  
-  UNIQUE(user_id, lead_id, channel, tone)  -- Cache per combo
+  UNIQUE(user_id, lead_id, channel, tone)
 );
 
 CREATE INDEX IF NOT EXISTS idx_ai_messages_user ON public.ai_messages(user_id);
@@ -271,7 +234,7 @@ CREATE TABLE IF NOT EXISTS public.credit_transactions (
   id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id             UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   type                TEXT NOT NULL CHECK (type IN ('purchase', 'consumption', 'refund', 'bonus')),
-  amount              INTEGER NOT NULL,  -- positive = credit, negative = debit
+  amount              INTEGER NOT NULL,
   balance_after       INTEGER NOT NULL,
   description         TEXT,
   stripe_payment_id   TEXT,
@@ -284,14 +247,13 @@ CREATE INDEX IF NOT EXISTS idx_credits_user ON public.credit_transactions(user_i
 -- ============================================================
 -- TABLE 8: RATE_LIMIT_LOG (prevent abuse)
 -- ============================================================
-CREATE TABLE public.rate_limit_log (
+CREATE TABLE IF NOT EXISTS public.rate_limit_log (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id     UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
   ip_address  INET,
   endpoint    TEXT NOT NULL,
   count       INTEGER DEFAULT 1,
   window_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  
   UNIQUE(user_id, endpoint, window_start)
 );
 
@@ -302,10 +264,10 @@ CREATE INDEX IF NOT EXISTS idx_rate_limit_window   ON public.rate_limit_log(wind
 -- ============================================================
 -- TABLE 9: AUDIT_LOG (security compliance)
 -- ============================================================
-CREATE TABLE public.audit_log (
+CREATE TABLE IF NOT EXISTS public.audit_log (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id     UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-  action      TEXT NOT NULL,  -- 'lead.searched', 'lead.saved', 'plan.upgraded'
+  action      TEXT NOT NULL,
   entity_type TEXT,
   entity_id   UUID,
   metadata    JSONB,
@@ -320,9 +282,9 @@ CREATE INDEX IF NOT EXISTS idx_audit_action     ON public.audit_log(action, crea
 -- ============================================================
 -- TABLE 10: SYSTEM_JOBS (background job tracking)
 -- ============================================================
-CREATE TABLE public.system_jobs (
+CREATE TABLE IF NOT EXISTS public.system_jobs (
   id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  type          TEXT NOT NULL,  -- 'bulk_fetch', 'social_scan', 'cache_refresh'
+  type          TEXT NOT NULL,
   status        TEXT NOT NULL DEFAULT 'pending' CHECK (
     status IN ('pending', 'running', 'completed', 'failed')
   ),
@@ -349,7 +311,15 @@ ALTER TABLE public.rate_limit_log      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.audit_log           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.system_jobs         ENABLE ROW LEVEL SECURITY;
 
+-- ============================================================
+-- RLS POLICIES (drop first to make idempotent)
+-- ============================================================
+
 -- PROFILES policies
+DROP POLICY IF EXISTS "Users read own profile"   ON public.profiles;
+DROP POLICY IF EXISTS "Users update own profile"  ON public.profiles;
+DROP POLICY IF EXISTS "Users insert own profile"  ON public.profiles;
+
 CREATE POLICY "Users read own profile"
   ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users update own profile"
@@ -357,35 +327,52 @@ CREATE POLICY "Users update own profile"
 CREATE POLICY "Users insert own profile"
   ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
--- LEADS policies (all authenticated users can read)
+-- LEADS policies
+DROP POLICY IF EXISTS "Authenticated users read leads" ON public.leads;
+DROP POLICY IF EXISTS "Service role manages leads"     ON public.leads;
+
 CREATE POLICY "Authenticated users read leads"
   ON public.leads FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Service role manages leads"
   ON public.leads FOR ALL TO service_role USING (true);
 
 -- USER_LEADS policies
+DROP POLICY IF EXISTS "Users manage own pipeline" ON public.user_leads;
+
 CREATE POLICY "Users manage own pipeline"
   ON public.user_leads FOR ALL USING (auth.uid() = user_id);
 
 -- TEMPLATES policies
+DROP POLICY IF EXISTS "Users manage own templates" ON public.outreach_templates;
+
 CREATE POLICY "Users manage own templates"
   ON public.outreach_templates FOR ALL USING (auth.uid() = user_id);
 
 -- AI_MESSAGES policies
+DROP POLICY IF EXISTS "Users manage own ai messages" ON public.ai_messages;
+
 CREATE POLICY "Users manage own ai messages"
   ON public.ai_messages FOR ALL USING (auth.uid() = user_id);
 
 -- SEARCH_HISTORY policies
+DROP POLICY IF EXISTS "Users read own search history" ON public.search_history;
+
 CREATE POLICY "Users read own search history"
   ON public.search_history FOR ALL USING (auth.uid() = user_id);
 
 -- CREDIT_TRANSACTIONS policies
+DROP POLICY IF EXISTS "Users read own transactions"   ON public.credit_transactions;
+DROP POLICY IF EXISTS "Service role manages credits"  ON public.credit_transactions;
+
 CREATE POLICY "Users read own transactions"
   ON public.credit_transactions FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Service role manages credits"
   ON public.credit_transactions FOR ALL TO service_role USING (true);
 
--- AUDIT_LOG policies (read-only for users)
+-- AUDIT_LOG policies
+DROP POLICY IF EXISTS "Users read own audit log"      ON public.audit_log;
+DROP POLICY IF EXISTS "Service role writes audit log"  ON public.audit_log;
+
 CREATE POLICY "Users read own audit log"
   ON public.audit_log FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Service role writes audit log"
@@ -410,7 +397,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE TRIGGER on_auth_user_created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
@@ -433,7 +421,7 @@ DECLARE
   v_profile public.profiles%ROWTYPE;
 BEGIN
   SELECT * INTO v_profile FROM public.profiles WHERE id = p_user_id;
-  
+
   -- Reset monthly if needed
   IF v_profile.month_reset_date < DATE_TRUNC('month', NOW())::DATE THEN
     UPDATE public.profiles SET leads_used_this_month = 0,
@@ -441,17 +429,17 @@ BEGIN
     WHERE id = p_user_id;
     v_profile.leads_used_this_month := 0;
   END IF;
-  
+
   -- Check subscription limit
   IF v_profile.leads_used_this_month + p_count <= v_profile.leads_limit THEN
     RETURN TRUE;
   END IF;
-  
+
   -- Check credits balance
   IF v_profile.credits_balance >= p_count THEN
     RETURN TRUE;
   END IF;
-  
+
   RETURN FALSE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
