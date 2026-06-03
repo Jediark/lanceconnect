@@ -117,7 +117,7 @@ export const FREELANCER_CATEGORIES: {
 }[] = [
   { slug: "web-developers", label: "Web Developers", emoji: "💻", image: IMG.webDev,
     tagline: "Find local businesses still running on a Facebook page.",
-    description: "Every week, FreelanceConnect surfaces hundreds of restaurants, salons, plumbers and clinics in your area that have no website — or a broken one from 2014. Reach them before someone else does.",
+    description: "Every week, LanceConnect surfaces hundreds of restaurants, salons, plumbers and clinics in your area that have no website — or a broken one from 2014. Reach them before someone else does.",
     problems: ["No website at all", "Outdated WordPress with broken links", "No mobile-friendly version", "No online booking form"],
     sampleBusinesses: [{name:"Boulangerie Dupont, Lyon",reason:"4.9★ on Google, no website"},{name:"Mario's Ristorante, Naples",reason:"Facebook-only presence"},{name:"Lagos Hair Studio",reason:"Website returns 502"}],
   },

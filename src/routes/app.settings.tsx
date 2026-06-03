@@ -3,7 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/settings")({
-  head: () => ({ meta: [{ title: "Settings — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Settings — LanceConnect" }] }),
   component: SettingsLayout,
 });
 

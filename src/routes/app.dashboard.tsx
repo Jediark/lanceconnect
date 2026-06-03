@@ -8,7 +8,7 @@ import { OpportunityScore } from "@/components/ui/OpportunityScore";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/app/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — LanceConnect" }] }),
   component: Dashboard,
 });
 

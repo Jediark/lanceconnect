@@ -10,7 +10,7 @@ import { STATUS_META, type PipelineStatus } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/pipeline")({
-  head: () => ({ meta: [{ title: "My Pipeline — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "My Pipeline — LanceConnect" }] }),
   component: PipelinePage,
 });
 

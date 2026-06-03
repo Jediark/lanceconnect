@@ -13,9 +13,9 @@ import { IMG, BLOG_POSTS } from "@/data/content";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FreelanceConnect — Find clients. Win work. Grow your freelance business." },
-      { name: "description", content: "FreelanceConnect scans the internet for businesses that need your skills and hands you their contact details. Free plan with 10 leads — no credit card required." },
-      { property: "og:title", content: "FreelanceConnect — Lead generation for freelancers" },
+      { title: "LanceConnect — Find clients. Win work. Grow your freelance business." },
+      { name: "description", content: "LanceConnect scans the internet for businesses that need your skills and hands you their contact details. Free plan with 10 leads — no credit card required." },
+      { property: "og:title", content: "LanceConnect — Lead generation for freelancers" },
       { property: "og:description", content: "Find local businesses that need your skills. Built for freelancers in 150+ countries." },
       { property: "og:image", content: IMG.heroFreelancer },
     ],
@@ -47,7 +47,7 @@ const HERO_SLIDES = [
     img: IMG.workspace,
     eyebrow: "Now scanning leads in 150+ countries",
     title: <>Find clients. <span className="text-primary">Win work.</span><br/>Without the chase.</>,
-    sub: "FreelanceConnect scans the internet for businesses that need your skills — then hands you their phone numbers, emails, and a ready-made way in.",
+    sub: "LanceConnect scans the internet for businesses that need your skills — then hands you their phone numbers, emails, and a ready-made way in.",
   },
   {
     img: IMG.marketStall,
@@ -237,7 +237,7 @@ function ProductShowcase() {
               <span className="h-2.5 w-2.5 rounded-full bg-red-400/60" />
               <span className="h-2.5 w-2.5 rounded-full bg-amber-400/60" />
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/60" />
-              <span className="ml-3">app.freelanceconnect.com / discover</span>
+              <span className="ml-3">app.LanceConnect.com / discover</span>
             </div>
             <span className="font-mono-data">3 of 247 leads</span>
           </div>
@@ -552,7 +552,7 @@ function Stats() {
    ──────────────────────────────────────────────────────────── */
 function FAQ() {
   const faqs = [
-    { q: "How is FreelanceConnect different from a job board?", a: "Job boards wait for clients to post. We do the opposite — we surface businesses who don't yet know they need you, and give you their contact details so you can reach out first." },
+    { q: "How is LanceConnect different from a job board?", a: "Job boards wait for clients to post. We do the opposite — we surface businesses who don't yet know they need you, and give you their contact details so you can reach out first." },
     { q: "Do I need any sales experience?", a: "No. Every lead comes with a ready-made outreach template tuned to your skill — email, phone script, and DM. Pro adds an AI writer that personalises each message." },
     { q: "Which countries do you cover?", a: "150+ countries. We have especially strong coverage of Nigeria, Italy, India, UK, France, Argentina, Malaysia, and Canada, with daily refreshed data." },
     { q: "What if I don't find any leads?", a: "Every plan includes a 'no leads, no charge' guarantee in your first month. If your first 10 leads aren't useful, we refund you in full." },

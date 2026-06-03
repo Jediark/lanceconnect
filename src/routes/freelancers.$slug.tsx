@@ -11,7 +11,7 @@ export const Route = createFileRoute("/freelancers/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: loaderData ? [
-      { title: `Find clients as a ${loaderData.cat.label.toLowerCase()} — FreelanceConnect` },
+      { title: `Find clients as a ${loaderData.cat.label.toLowerCase()} — LanceConnect` },
       { name: "description", content: loaderData.cat.tagline },
       { property: "og:title", content: `For ${loaderData.cat.label}` },
       { property: "og:description", content: loaderData.cat.tagline },
@@ -43,7 +43,7 @@ function CategoryPage() {
         <div>
           <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-warn/15 text-warn"><AlertCircle className="h-6 w-6"/></div>
           <h2 className="mt-4 font-display text-3xl font-bold">What we detect</h2>
-          <p className="mt-3 text-muted-foreground">FreelanceConnect's scoring engine specifically looks for the signals that mean a business is ready to hire {cat.label.toLowerCase()}:</p>
+          <p className="mt-3 text-muted-foreground">LanceConnect's scoring engine specifically looks for the signals that mean a business is ready to hire {cat.label.toLowerCase()}:</p>
           <ul className="mt-5 space-y-2">
             {cat.problems.map((p: string) => (
               <li key={p} className="flex gap-3 rounded-xl border border-border bg-card p-3 text-sm"><span className="text-primary">●</span>{p}</li>

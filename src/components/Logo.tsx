@@ -5,7 +5,7 @@ export function Logo({ className, size = 32 }: { className?: string; size?: numb
   return (
     <img
       src={logoUrl}
-      alt="FreelanceConnect"
+      alt="LanceConnect"
       width={size}
       height={size}
       className={cn("object-contain", className)}

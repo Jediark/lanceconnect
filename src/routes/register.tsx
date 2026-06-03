@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AuthSplit } from "./login";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({ meta: [{ title: "Create account — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Create account — LanceConnect" }] }),
   component: RegisterPage,
 });
 

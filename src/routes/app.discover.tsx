@@ -11,7 +11,7 @@ import { usePipeline } from "@/contexts/PipelineContext";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/discover")({
-  head: () => ({ meta: [{ title: "Discover Leads — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
   component: Discover,
 });
 
@@ -151,7 +151,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   const reasons = [
     !lead.hasWebsite && { label: "No website", pts: 40 },
     lead.googleRating < 4 && { label: "Below average rating", pts: 20 },
-    lead.reviewCount < 20 && { label: "Very few reviews", pts: 15 },
+    lead.googleReviewCount < 20 && { label: "Very few reviews", pts: 15 },
     { label: "Active on Google Maps", pts: 10 },
   ].filter(Boolean) as { label: string; pts: number }[];
 
@@ -187,7 +187,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
             </p>
             <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /> {lead.email ?? <span className="italic text-muted-foreground">Not found</span>}</p>
             <p className="flex items-center gap-2"><Globe className="h-4 w-4 text-muted-foreground" /> {lead.websiteUrl ?? <span className="italic text-muted-foreground">No website</span>}</p>
-            <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500" /> {lead.googleRating} · {lead.reviewCount} reviews</p>
+            <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500" /> {lead.googleRating} · {lead.googleReviewCount} reviews</p>
           </div>
 
           <div>

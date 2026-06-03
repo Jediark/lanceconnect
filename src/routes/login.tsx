@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Login — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Login — LanceConnect" }] }),
   component: LoginPage,
 });
 
@@ -17,7 +17,7 @@ export function AuthSplit({ children, title }: { children: React.ReactNode; titl
         <div className="absolute inset-0 bg-sidebar/70" />
         <Link to="/" className="relative flex items-center gap-2">
           <Logo size={36} />
-          <span className="font-display text-lg font-bold">FreelanceConnect</span>
+          <span className="font-display text-lg font-bold">LanceConnect</span>
         </Link>
         <div className="relative">
           <h2 className="font-display text-3xl font-bold leading-tight">Join 10,000+ freelancers finding clients daily.</h2>

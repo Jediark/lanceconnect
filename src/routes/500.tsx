@@ -3,14 +3,14 @@ import { Logo } from "@/components/Logo";
 import { RotateCw } from "lucide-react";
 
 export const Route = createFileRoute("/500")({
-  head: () => ({ meta: [{ title: "Something broke — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Something broke — LanceConnect" }] }),
   component: ServerError,
 });
 
 function ServerError() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
-      <Link to="/" className="flex items-center gap-2"><Logo size={36}/><span className="font-display text-lg font-bold">FreelanceConnect</span></Link>
+      <Link to="/" className="flex items-center gap-2"><Logo size={36}/><span className="font-display text-lg font-bold">LanceConnect</span></Link>
       <p className="mt-12 font-mono-data text-sm text-destructive">ERROR 500</p>
       <h1 className="mt-2 font-display text-5xl font-bold md:text-6xl">Something broke on our end.</h1>
       <p className="mt-4 max-w-md text-muted-foreground">Not your fault. We've already been notified and a real person in Buenos Aires is probably looking at it right now.</p>

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/unsubscribe")({
-  head: () => ({ meta: [{ title: "Unsubscribe — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Unsubscribe — LanceConnect" }] }),
   component: Unsub,
 });
 
@@ -13,7 +13,7 @@ function Unsub() {
   const [done, setDone] = useState(false);
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
-      <Link to="/" className="flex items-center gap-2"><Logo size={36}/><span className="font-display text-lg font-bold">FreelanceConnect</span></Link>
+      <Link to="/" className="flex items-center gap-2"><Logo size={36}/><span className="font-display text-lg font-bold">LanceConnect</span></Link>
       <div className="mt-12 grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"><Mail className="h-7 w-7"/></div>
       {done ? (
         <>

@@ -9,9 +9,9 @@ import { z } from "zod";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — FreelanceConnect" },
-      { name: "description", content: "Reach the FreelanceConnect team. We reply within 4 hours, 7 days a week." },
-      { property: "og:title", content: "Contact FreelanceConnect" },
+      { title: "Contact — LanceConnect" },
+      { name: "description", content: "Reach the LanceConnect team. We reply within 4 hours, 7 days a week." },
+      { property: "og:title", content: "Contact LanceConnect" },
     ],
   }),
   component: ContactPage,
@@ -48,7 +48,7 @@ function ContactPage() {
           <div className="rounded-2xl border border-border bg-card p-5">
             <Mail className="h-5 w-5 text-primary"/>
             <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Email</p>
-            <a href="mailto:hello@freelanceconnect.app" className="mt-1 block text-sm font-semibold hover:underline">hello@freelanceconnect.app</a>
+            <a href="mailto:hello@LanceConnect.app" className="mt-1 block text-sm font-semibold hover:underline">hello@LanceConnect.app</a>
           </div>
           <div className="rounded-2xl border border-border bg-card p-5">
             <Clock className="h-5 w-5 text-primary"/>

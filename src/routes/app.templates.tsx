@@ -6,7 +6,7 @@ import { MOCK_TEMPLATES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/templates")({
-  head: () => ({ meta: [{ title: "Outreach Templates — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Outreach Templates — LanceConnect" }] }),
   component: Templates,
 });
 

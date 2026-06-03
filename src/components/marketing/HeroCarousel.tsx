@@ -8,7 +8,7 @@ const SLIDES = [
   { img: IMG.marketStall,   kicker: "Naples, Italy",  title: "Sofia turned a local market into a portfolio of 8 brands.", meta: "Designer · Starter plan" },
   { img: IMG.coffeeShop,    kicker: "Buenos Aires, Argentina", title: "Lucas books 2 discovery calls a day from coffee shops.", meta: "Copywriter · Pro plan" },
   { img: IMG.workspace,     kicker: "Mumbai, India",  title: "Priya replaced her 9-to-5 in 5 months of freelance SEO.", meta: "SEO Specialist · Pro plan" },
-  { img: IMG.team,          kicker: "Toronto, Canada", title: "Alex grew an agency of 4 — every lead from FreelanceConnect.", meta: "Agency owner · Agency plan" },
+  { img: IMG.team,          kicker: "Toronto, Canada", title: "Alex grew an agency of 4 — every lead from LanceConnect.", meta: "Agency owner · Agency plan" },
 ];
 
 export function HeroCarousel() {

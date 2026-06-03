@@ -5,13 +5,13 @@ export type Lead = {
   industry: string;
   city: string;
   country: string;
-  address: string;
+  fullAddress: string;
   phone: string;
   email: string | null;
   websiteUrl: string | null;
   hasWebsite: boolean;
   googleRating: number;
-  reviewCount: number;
+  googleReviewCount: number;
   opportunityScore: number;
   source: string;
   savedAt: string | null;
@@ -29,14 +29,14 @@ export type PipelineStatus =
   | "lost";
 
 export const MOCK_LEADS: Lead[] = [
-  { id: "1", businessName: "Mario's Ristorante", businessType: "Restaurant", industry: "web_dev", city: "Naples", country: "Italy", address: "Via Toledo 45, Naples, Italy", phone: "+39 081 555 0123", email: null, websiteUrl: null, hasWebsite: false, googleRating: 3.2, reviewCount: 18, opportunityScore: 92, source: "google_places", savedAt: null, status: null },
-  { id: "2", businessName: "Lagos Hair Studio", businessType: "Beauty Salon", industry: "designer", city: "Lagos", country: "Nigeria", address: "14 Awolowo Road, Ikoyi, Lagos", phone: "+234 802 555 0198", email: "info@lagoshair.ng", websiteUrl: null, hasWebsite: false, googleRating: 4.5, reviewCount: 7, opportunityScore: 78, source: "google_places", savedAt: null, status: null },
-  { id: "3", businessName: "Smith & Sons Plumbing", businessType: "Contractor", industry: "seo", city: "Manchester", country: "United Kingdom", address: "8 Deansgate, Manchester, UK", phone: "+44 161 555 0145", email: null, websiteUrl: "http://smithplumbing.co.uk", hasWebsite: true, googleRating: 4.1, reviewCount: 34, opportunityScore: 61, source: "google_places", savedAt: null, status: null },
-  { id: "4", businessName: "Café Mirador", businessType: "Café", industry: "social_media", city: "Buenos Aires", country: "Argentina", address: "Av. Corrientes 1234, Buenos Aires", phone: "+54 11 5550 9988", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.7, reviewCount: 5, opportunityScore: 88, source: "google_places", savedAt: null, status: null },
-  { id: "5", businessName: "Dr. Patel Dental Clinic", businessType: "Dentist", industry: "copywriter", city: "Mumbai", country: "India", address: "Linking Road, Bandra West, Mumbai", phone: "+91 98200 55012", email: "drpatel@dentalclinic.in", websiteUrl: null, hasWebsite: false, googleRating: 3.8, reviewCount: 42, opportunityScore: 74, source: "google_places", savedAt: null, status: null },
-  { id: "6", businessName: "AutoFix Garage", businessType: "Auto Repair", industry: "web_dev", city: "Toronto", country: "Canada", address: "567 Yonge St, Toronto, ON", phone: "+1 416 555 0177", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.0, reviewCount: 89, opportunityScore: 55, source: "google_places", savedAt: null, status: null },
-  { id: "7", businessName: "Boulangerie Dupont", businessType: "Bakery", industry: "photography", city: "Lyon", country: "France", address: "23 Rue de la République, Lyon", phone: "+33 4 72 55 01 89", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.9, reviewCount: 3, opportunityScore: 96, source: "google_places", savedAt: null, status: null },
-  { id: "8", businessName: "Kuala Lumpur Yoga Studio", businessType: "Fitness Studio", industry: "video", city: "Kuala Lumpur", country: "Malaysia", address: "Bukit Bintang, Kuala Lumpur", phone: "+60 3-2142 5588", email: "hello@klyoga.my", websiteUrl: null, hasWebsite: false, googleRating: 4.6, reviewCount: 11, opportunityScore: 81, source: "google_places", savedAt: null, status: null },
+  { id: "1", businessName: "Mario's Ristorante", businessType: "Restaurant", industry: "web_dev", city: "Naples", country: "Italy", fullAddress: "Via Toledo 45, Naples, Italy", phone: "+39 081 555 0123", email: null, websiteUrl: null, hasWebsite: false, googleRating: 3.2, googleReviewCount: 18, opportunityScore: 92, source: "google_places", savedAt: null, status: null },
+  { id: "2", businessName: "Lagos Hair Studio", businessType: "Beauty Salon", industry: "designer", city: "Lagos", country: "Nigeria", fullAddress: "14 Awolowo Road, Ikoyi, Lagos", phone: "+234 802 555 0198", email: "info@lagoshair.ng", websiteUrl: null, hasWebsite: false, googleRating: 4.5, googleReviewCount: 7, opportunityScore: 78, source: "google_places", savedAt: null, status: null },
+  { id: "3", businessName: "Smith & Sons Plumbing", businessType: "Contractor", industry: "seo", city: "Manchester", country: "United Kingdom", fullAddress: "8 Deansgate, Manchester, UK", phone: "+44 161 555 0145", email: null, websiteUrl: "http://smithplumbing.co.uk", hasWebsite: true, googleRating: 4.1, googleReviewCount: 34, opportunityScore: 61, source: "google_places", savedAt: null, status: null },
+  { id: "4", businessName: "Café Mirador", businessType: "Café", industry: "social_media", city: "Buenos Aires", country: "Argentina", fullAddress: "Av. Corrientes 1234, Buenos Aires", phone: "+54 11 5550 9988", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.7, googleReviewCount: 5, opportunityScore: 88, source: "google_places", savedAt: null, status: null },
+  { id: "5", businessName: "Dr. Patel Dental Clinic", businessType: "Dentist", industry: "copywriter", city: "Mumbai", country: "India", fullAddress: "Linking Road, Bandra West, Mumbai", phone: "+91 98200 55012", email: "drpatel@dentalclinic.in", websiteUrl: null, hasWebsite: false, googleRating: 3.8, googleReviewCount: 42, opportunityScore: 74, source: "google_places", savedAt: null, status: null },
+  { id: "6", businessName: "AutoFix Garage", businessType: "Auto Repair", industry: "web_dev", city: "Toronto", country: "Canada", fullAddress: "567 Yonge St, Toronto, ON", phone: "+1 416 555 0177", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.0, googleReviewCount: 89, opportunityScore: 55, source: "google_places", savedAt: null, status: null },
+  { id: "7", businessName: "Boulangerie Dupont", businessType: "Bakery", industry: "photography", city: "Lyon", country: "France", fullAddress: "23 Rue de la République, Lyon", phone: "+33 4 72 55 01 89", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.9, googleReviewCount: 3, opportunityScore: 96, source: "google_places", savedAt: null, status: null },
+  { id: "8", businessName: "Kuala Lumpur Yoga Studio", businessType: "Fitness Studio", industry: "video", city: "Kuala Lumpur", country: "Malaysia", fullAddress: "Bukit Bintang, Kuala Lumpur", phone: "+60 3-2142 5588", email: "hello@klyoga.my", websiteUrl: null, hasWebsite: false, googleRating: 4.6, googleReviewCount: 11, opportunityScore: 81, source: "google_places", savedAt: null, status: null },
 ];
 
 export const MOCK_PIPELINE_LEADS: Lead[] = [
@@ -46,18 +46,6 @@ export const MOCK_PIPELINE_LEADS: Lead[] = [
   { ...MOCK_LEADS[4], savedAt: "2026-05-25", status: "proposal_sent", notes: "Sent proposal for $1,200 website", followUpDate: "2026-06-01" },
   { ...MOCK_LEADS[6], savedAt: "2026-05-26", status: "new", notes: "", followUpDate: null },
 ];
-
-export const MOCK_USER = {
-  id: "user-1",
-  fullName: "Alex Johnson",
-  email: "alex@example.com",
-  freelancerCategory: "web_dev",
-  plan: "free" as const,
-  leadsUsedThisMonth: 7,
-  leadsLimit: 10,
-  country: "Nigeria",
-  avatarUrl: null,
-};
 
 export const MOCK_STATS = {
   totalLeadsDiscovered: 247,

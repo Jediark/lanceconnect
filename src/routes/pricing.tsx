@@ -6,9 +6,9 @@ import { Check, Minus, Shield } from "lucide-react";
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Pricing — FreelanceConnect" },
+      { title: "Pricing — LanceConnect" },
       { name: "description", content: "Plans from $0 to $99/month. 14-day money-back guarantee. No credit card to start." },
-      { property: "og:title", content: "FreelanceConnect Pricing" },
+      { property: "og:title", content: "LanceConnect Pricing" },
       { property: "og:description", content: "Free, Starter, Pro, Agency. Simple, transparent." },
     ],
   }),

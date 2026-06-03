@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { MOCK_USER } from "@/data/mockData";
+import type { User } from "@/types";
 
-type User = typeof MOCK_USER;
 type AuthCtx = {
   user: User | null;
   isAuthenticated: boolean;
@@ -12,22 +11,34 @@ type AuthCtx = {
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
+const DEFAULT_USER: User = {
+  id: "user-1",
+  fullName: "Alex Johnson",
+  email: "alex@example.com",
+  freelancerCategory: "web_dev",
+  plan: "free",
+  leadsUsedThisMonth: 7,
+  leadsLimit: 10,
+  country: "Nigeria",
+  avatarUrl: null,
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const stored = localStorage.getItem("fc_auth");
-    if (stored === "1") setUser(MOCK_USER);
+    const stored = localStorage.getItem("lance_auth");
+    if (stored === "1") setUser(DEFAULT_USER);
   }, []);
 
   const login = () => {
-    setUser(MOCK_USER);
-    if (typeof window !== "undefined") localStorage.setItem("fc_auth", "1");
+    setUser(DEFAULT_USER);
+    if (typeof window !== "undefined") localStorage.setItem("lance_auth", "1");
   };
   const logout = () => {
     setUser(null);
-    if (typeof window !== "undefined") localStorage.removeItem("fc_auth");
+    if (typeof window !== "undefined") localStorage.removeItem("lance_auth");
   };
   const updateUser = (patch: Partial<User>) =>
     setUser((u) => (u ? { ...u, ...patch } : u));

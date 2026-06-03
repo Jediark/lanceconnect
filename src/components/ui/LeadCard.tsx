@@ -72,7 +72,7 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
         <span className="inline-flex items-center gap-1 text-amber-600">
           <Star className="h-3 w-3 fill-current" />
           <span className="font-mono-data">{lead.googleRating.toFixed(1)}</span>
-          <span className="text-muted-foreground">({lead.reviewCount})</span>
+          <span className="text-muted-foreground">({lead.googleReviewCount})</span>
         </span>
       </div>
 

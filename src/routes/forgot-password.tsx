@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 export const Route = createFileRoute("/forgot-password")({
-  head: () => ({ meta: [{ title: "Forgot password — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Forgot password — LanceConnect" }] }),
   component: ForgotPage,
 });
 

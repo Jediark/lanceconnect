@@ -4,7 +4,7 @@ import { MailCheck } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/verify-email")({
-  head: () => ({ meta: [{ title: "Verify your email — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Verify your email — LanceConnect" }] }),
   component: VerifyPage,
 });
 
@@ -16,7 +16,7 @@ function VerifyPage() {
         <p className="text-sm text-muted-foreground">We sent a confirmation link to your email address.</p>
       </div>
       <ol className="mt-5 space-y-2 text-sm text-foreground/80">
-        <li><span className="text-primary">1.</span> Open the email from <b>hello@freelanceconnect.app</b></li>
+        <li><span className="text-primary">1.</span> Open the email from <b>hello@LanceConnect.app</b></li>
         <li><span className="text-primary">2.</span> Click the "Confirm my email" button</li>
         <li><span className="text-primary">3.</span> You'll land on your dashboard</li>
       </ol>

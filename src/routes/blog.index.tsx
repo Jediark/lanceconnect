@@ -5,9 +5,9 @@ import { BLOG_POSTS } from "@/data/content";
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Blog — FreelanceConnect" },
+      { title: "Blog — LanceConnect" },
       { name: "description", content: "Real stories, scripts, and playbooks from freelancers who actually win clients." },
-      { property: "og:title", content: "FreelanceConnect Blog" },
+      { property: "og:title", content: "LanceConnect Blog" },
     ],
   }),
   component: BlogIndex,

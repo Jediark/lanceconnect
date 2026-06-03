@@ -43,7 +43,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
       <div className="flex items-center justify-between px-5 pb-4 pt-5">
         <Link to="/app/dashboard" className="flex items-center gap-2 text-sidebar-active">
           <Logo size={32} />
-          <span className="font-display text-base font-bold">FreelanceConnect</span>
+          <span className="font-display text-base font-bold">LanceConnect</span>
         </Link>
         {onClose && (
           <button onClick={onClose} className="text-sidebar-foreground lg:hidden">

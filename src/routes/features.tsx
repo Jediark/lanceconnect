@@ -6,9 +6,9 @@ import { Search, Filter, Star, Bookmark, Mail, Sparkles, BarChart3, Globe2, Phon
 export const Route = createFileRoute("/features")({
   head: () => ({
     meta: [
-      { title: "Features — FreelanceConnect" },
+      { title: "Features — LanceConnect" },
       { name: "description", content: "Deep dive into every feature: lead discovery, opportunity scoring, CRM pipeline, outreach templates, and the AI message writer." },
-      { property: "og:title", content: "FreelanceConnect Features" },
+      { property: "og:title", content: "LanceConnect Features" },
       { property: "og:description", content: "Every feature explained, with screenshots." },
     ],
   }),
@@ -27,7 +27,7 @@ const sections = [
 function FeaturesPage() {
   return (
     <MarketingShell>
-      <PageHeader eyebrow="Features" title="Every tool you need. Nothing you don't." subtitle="FreelanceConnect is built by freelancers — so it does only what helps you find and close clients. No CRM bloat. No sales-team jargon." image={IMG.heroLaptop} />
+      <PageHeader eyebrow="Features" title="Every tool you need. Nothing you don't." subtitle="LanceConnect is built by freelancers — so it does only what helps you find and close clients. No CRM bloat. No sales-team jargon." image={IMG.heroLaptop} />
       <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8 space-y-24">
         {sections.map((s, i) => (
           <div key={s.title} className={`grid gap-10 items-center lg:grid-cols-2 ${i % 2 === 1 ? "lg:[&>:first-child]:order-2" : ""}`}>

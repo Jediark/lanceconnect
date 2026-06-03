@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/upgrade")({
-  head: () => ({ meta: [{ title: "Upgrade — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Upgrade — LanceConnect" }] }),
   component: UpgradePage,
 });
 

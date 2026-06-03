@@ -19,7 +19,7 @@ export function MarketingNav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
           <Logo size={32} />
-          <span className="font-display text-base font-bold tracking-tight">FreelanceConnect</span>
+          <span className="font-display text-base font-bold tracking-tight">LanceConnect</span>
         </Link>
         <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
           {links.map((l) => (
@@ -67,7 +67,7 @@ export function MarketingFooter() {
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2">
               <Logo size={28} />
-              <span className="font-display text-sm font-bold">FreelanceConnect</span>
+              <span className="font-display text-sm font-bold">LanceConnect</span>
             </Link>
             <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
               Lead generation built by freelancers, for freelancers. Find businesses that need your skills in 150+ countries.
@@ -87,7 +87,7 @@ export function MarketingFooter() {
           ))}
         </div>
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} FreelanceConnect. Made by freelancers, for freelancers.</p>
+          <p>© {new Date().getFullYear()} LanceConnect. Made by freelancers, for freelancers.</p>
           <p>Crafted in Lagos · Naples · Buenos Aires</p>
         </div>
       </div>

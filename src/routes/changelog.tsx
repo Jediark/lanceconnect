@@ -5,7 +5,7 @@ import { CHANGELOG } from "@/data/content";
 export const Route = createFileRoute("/changelog")({
   head: () => ({
     meta: [
-      { title: "Changelog — FreelanceConnect" },
+      { title: "Changelog — LanceConnect" },
       { name: "description", content: "Every update we ship. Features, improvements, and fixes." },
     ],
   }),

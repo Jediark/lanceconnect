@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { MOCK_LEADS } from "@/data/mockData";
 
 export const Route = createFileRoute("/app/ai-generator")({
-  head: () => ({ meta: [{ title: "AI Outreach Writer — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "AI Outreach Writer — LanceConnect" }] }),
   component: AIPage,
 });
 

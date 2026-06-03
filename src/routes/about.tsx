@@ -6,9 +6,9 @@ import { Heart, Globe, Coffee, Compass } from "lucide-react";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — FreelanceConnect" },
+      { title: "About — LanceConnect" },
       { name: "description", content: "We're freelancers building the lead-gen tool we always wished existed. Meet the team." },
-      { property: "og:title", content: "About FreelanceConnect" },
+      { property: "og:title", content: "About LanceConnect" },
       { property: "og:description", content: "Built by freelancers across 6 countries, for freelancers everywhere." },
     ],
   }),
@@ -17,16 +17,16 @@ export const Route = createFileRoute("/about")({
       <PageHeader
         eyebrow="About us"
         title="Built by freelancers, for freelancers."
-        subtitle="We started FreelanceConnect because in 2023 we were freelancers ourselves, refreshing job boards at 11pm and wondering why finding clients was harder than doing the work."
+        subtitle="We started LanceConnect because in 2023 we were freelancers ourselves, refreshing job boards at 11pm and wondering why finding clients was harder than doing the work."
         image={IMG.team}
       />
       <section className="mx-auto max-w-4xl px-4 py-16 lg:px-8">
         <h2 className="font-display text-3xl font-bold">Our story</h2>
         <div className="mt-5 space-y-4 text-base leading-relaxed text-muted-foreground">
           <p>In Lagos, Taiwo was a junior web developer sending 30 cold emails a week and getting 2 replies. In São Paulo, Maria was a designer waiting on referrals that never came. In Nairobi, James was building SEO funnels for clients he found by walking into shops.</p>
-          <p>We met in a Slack group for freelancers in 2024, and within a month we'd built the first ugly version of what is now FreelanceConnect — a Python script that scraped Google Maps for businesses with no website, in our cities.</p>
+          <p>We met in a Slack group for freelancers in 2024, and within a month we'd built the first ugly version of what is now LanceConnect — a Python script that scraped Google Maps for businesses with no website, in our cities.</p>
           <p>It worked. Embarrassingly well. We each landed our first 3 clients in under two weeks. Then we showed it to a few friends. Then 50 freelancers were using it. Then we quit our other gigs to build this properly.</p>
-          <p>FreelanceConnect today is what we wished we'd had on day one of freelancing: a list of real businesses, in our city, that we could realistically help. Nothing fancy. Just the boring, useful thing.</p>
+          <p>LanceConnect today is what we wished we'd had on day one of freelancing: a list of real businesses, in our city, that we could realistically help. Nothing fancy. Just the boring, useful thing.</p>
         </div>
       </section>
 
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/about")({
           <h2 className="font-display text-3xl font-bold text-center">What we believe</h2>
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
-              {icon:Heart,title:"Real work, real clients",desc:"We hate fake leads. Every business in FreelanceConnect is verifiable on Google Maps."},
+              {icon:Heart,title:"Real work, real clients",desc:"We hate fake leads. Every business in LanceConnect is verifiable on Google Maps."},
               {icon:Globe,title:"Global by default",desc:"Lagos and London matter equally. Pricing is fair from day one."},
               {icon:Coffee,title:"Boring and useful",desc:"No AI buzzwords. Just tools that get you on the phone with a buyer."},
               {icon:Compass,title:"Freelancer-owned",desc:"No VCs telling us to add 'enterprise tier'. We answer to you."},

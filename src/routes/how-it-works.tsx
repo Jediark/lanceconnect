@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
-      { title: "How it works — FreelanceConnect" },
-      { name: "description", content: "Step-by-step: how FreelanceConnect helps freelancers go from a blank screen to booked calls." },
-      { property: "og:title", content: "How FreelanceConnect works" },
+      { title: "How it works — LanceConnect" },
+      { name: "description", content: "Step-by-step: how LanceConnect helps freelancers go from a blank screen to booked calls." },
+      { property: "og:title", content: "How LanceConnect works" },
       { property: "og:description", content: "A simple 5-step workflow for finding and winning freelance clients." },
     ],
   }),

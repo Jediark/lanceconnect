@@ -5,7 +5,7 @@ import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding")({
-  head: () => ({ meta: [{ title: "Welcome — FreelanceConnect" }] }),
+  head: () => ({ meta: [{ title: "Welcome — LanceConnect" }] }),
   component: Onboarding,
 });
 

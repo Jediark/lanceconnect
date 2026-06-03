@@ -62,9 +62,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "FreelanceConnect — Find clients. Win work." },
+      { title: "LanceConnect — Find clients. Win work." },
       { name: "description", content: "Lead generation built for freelancers worldwide. Find businesses that need your skills in 150+ countries." },
-      { property: "og:title", content: "FreelanceConnect" },
+      { property: "og:title", content: "LanceConnect" },
       { property: "og:description", content: "Lead generation for freelancers worldwide." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
