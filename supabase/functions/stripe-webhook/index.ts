@@ -2,6 +2,7 @@ import Stripe from 'https://esm.sh/stripe@12.0.0'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
+import { sendEmail, getUpgradeEmailHtml, getPaymentFailedEmailHtml } from '../_shared/email.ts'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -52,7 +53,6 @@ Deno.serve(async (req) => {
         if (checkoutType === 'credits') {
           const creditsAmount = parseInt(session.metadata?.credits_amount || '0')
           if (creditsAmount > 0) {
-            // Get current profile
             const { data: profile } = await supabase
               .from('profiles')
               .select('credits_balance')
@@ -61,13 +61,11 @@ Deno.serve(async (req) => {
 
             const newBalance = (profile?.credits_balance || 0) + creditsAmount
 
-            // Update user balance
             await supabase
               .from('profiles')
               .update({ credits_balance: newBalance })
               .eq('id', userId)
 
-            // Log credit transaction
             await supabase.from('credit_transactions').insert({
               user_id: userId,
               type: 'purchase',
@@ -83,7 +81,6 @@ Deno.serve(async (req) => {
           const subscriptionId = session.subscription as string
           const planName = session.metadata?.plan_name || 'starter'
 
-          // Get subscription details
           const subscription = await stripe.subscriptions.retrieve(subscriptionId)
           
           let leadsLimit = 10
@@ -91,7 +88,7 @@ Deno.serve(async (req) => {
           else if (planName === 'pro') leadsLimit = 500
           else if (planName === 'agency') leadsLimit = 2000
 
-          await supabase
+          const { data: profile } = await supabase
             .from('profiles')
             .update({
               plan: planName,
@@ -101,8 +98,20 @@ Deno.serve(async (req) => {
               leads_limit: leadsLimit
             })
             .eq('id', userId)
+            .select()
+            .single()
 
           console.log(`Activated plan ${planName} for user: ${userId}`)
+
+          // Send Upgrade Confirmation Email
+          if (profile) {
+            console.log(`Sending plan upgrade email to user: ${profile.email}`)
+            await sendEmail({
+              to: profile.email,
+              subject: 'LanceConnect Upgrade Confirmed! 🎉',
+              html: getUpgradeEmailHtml(profile.full_name || 'Freelancer', planName)
+            })
+          }
         }
         break
       }
@@ -111,10 +120,9 @@ Deno.serve(async (req) => {
         const subscription = event.data.object as Stripe.Subscription
         const customerId = subscription.customer as string
 
-        // Find profile by Stripe customer ID
         const { data: profile } = await supabase
           .from('profiles')
-          .select('id, plan')
+          .select('id, plan, email, full_name')
           .eq('stripe_customer_id', customerId)
           .single()
 
@@ -122,7 +130,6 @@ Deno.serve(async (req) => {
           const status = subscription.status
           const endDate = new Date(subscription.current_period_end * 1000).toISOString()
           
-          // Determine leads limit based on plan
           let leadsLimit = 10
           if (profile.plan === 'starter') leadsLimit = 100
           else if (profile.plan === 'pro') leadsLimit = 500
@@ -138,6 +145,15 @@ Deno.serve(async (req) => {
             .eq('id', profile.id)
 
           console.log(`Updated subscription status to ${status} for user: ${profile.id}`)
+
+          // Send payment failed notification if status turns unpaid/past_due
+          if (status === 'past_due' || status === 'unpaid') {
+            await sendEmail({
+              to: profile.email,
+              subject: 'Stripe Payment Failed Notice ⚠️',
+              html: getPaymentFailedEmailHtml(profile.full_name || 'Freelancer')
+            })
+          }
         }
         break
       }

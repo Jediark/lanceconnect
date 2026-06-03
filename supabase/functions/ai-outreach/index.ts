@@ -2,6 +2,14 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
+import { checkRateLimit } from '../_shared/ratelimit.ts'
+import { z } from 'https://esm.sh/zod@3.22.0'
+
+const requestSchema = z.object({
+  leadId: z.string().uuid(),
+  channel: z.enum(['email', 'phone_script', 'sms', 'linkedin']),
+  tone: z.enum(['casual', 'professional', 'bold']).optional().default('professional'),
+})
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -15,15 +23,20 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}))
-    const { leadId, channel, tone = 'professional' } = body
-
-    if (!leadId || !channel) {
-      throw new AppError('leadId and channel are required', 400, 'BAD_REQUEST')
+    const parsed = requestSchema.safeParse(body)
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'VALIDATION_FAILED', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
+
+    const { leadId, channel, tone } = parsed.data
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
+    const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY')
 
     if (!supabaseUrl || !supabaseServiceKey || !geminiApiKey) {
       throw new AppError('Server is not configured correctly', 500, 'MISCONFIGURED')
@@ -31,13 +44,29 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+    // Enforce Rate Limit: 50 requests/hour for AI outreach
+    const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
+    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, 'ai-outreach', 50, 3600)
+    if (!rateLimit.allowed) {
+      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
+    }
+
     // Fetch lead details
     const { data: lead } = await supabase.from('leads').select('*').eq('id', leadId).single()
     if (!lead) {
       throw new AppError('Lead not found', 404, 'NOT_FOUND')
     }
 
-    // Build the context prompt based on the signals
+    // Fetch user profile plan details
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan, full_name, email, welcome_email_sent')
+      .eq('id', user.id)
+      .single()
+
+    const plan = profile?.plan || 'free'
+    const userName = profile?.full_name || 'Freelancer'
+
     const prompt = `You are a world-class freelance marketer pitching your services. 
 Write a short, highly personalized ${channel} message in a ${tone} tone to ${lead.business_name}.
 Context:
@@ -53,48 +82,122 @@ Rules:
 - Focus on how you can solve their specific opportunity (e.g. build a website, improve rating, or run ads).
 - Provide a single, clear call to action.`
 
-    // Call Gemini API (using gemini-1.5-flash)
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
-        })
-      }
-    )
+    let generatedText = ''
+    let providerLabel = ''
+    let providerUsed = ''
 
-    if (!geminiRes.ok) {
-      const errorText = await geminiRes.text()
-      throw new Error(`Gemini API failed with status ${geminiRes.status}: ${errorText}`)
+    const usePremiumClaude = (plan === 'pro' || plan === 'agency') && anthropicApiKey
+
+    if (usePremiumClaude) {
+      try {
+        console.log(`Routing to premium Claude API for plan: ${plan}`)
+        const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': anthropicApiKey!,
+            'anthropic-version': '2023-06-01',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 500,
+            messages: [{ role: 'user', content: prompt }],
+          }),
+          signal: AbortSignal.timeout(8000), // 8-second timeout
+        })
+
+        if (claudeRes.ok) {
+          const resJson = await claudeRes.json()
+          generatedText = resJson.content?.[0]?.text || ''
+          providerLabel = '✦ Generated with Claude AI'
+          providerUsed = 'claude'
+        } else {
+          const errText = await claudeRes.text()
+          console.warn(`Claude API failed with status ${claudeRes.status}: ${errText}`)
+          throw new Error('Claude API error')
+        }
+      } catch (err) {
+        console.warn('Claude API timed out or failed. Falling back to Gemini...', err)
+        // Log Claude Fallback to Audit Log
+        await supabase
+          .from('audit_log')
+          .insert({
+            user_id: user.id,
+            action: 'ai.claude_fallback',
+            entity_type: 'ai',
+            entity_id: leadId,
+            metadata: { error: err instanceof Error ? err.message : String(err), tone, channel },
+            ip_address: ipAddress,
+            user_agent: req.headers.get('user-agent') || null,
+          })
+          .catch(() => {})
+      }
     }
 
-    const resJson = await geminiRes.json()
-    const generatedText = resJson.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    // Fallback to Gemini if Claude was skipped or failed
+    if (!generatedText) {
+      console.log('Routing to Gemini 1.5 Flash API...')
+      const geminiRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
+          }),
+        }
+      )
+
+      if (!geminiRes.ok) {
+        const errorText = await geminiRes.text()
+        throw new Error(`Gemini API failed with status ${geminiRes.status}: ${errorText}`)
+      }
+
+      const resJson = await geminiRes.json()
+      generatedText = resJson.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      providerLabel = '⚡ Generated with Gemini'
+      providerUsed = 'gemini'
+    }
 
     if (!generatedText) {
-      throw new Error('Gemini API returned an empty response')
+      throw new Error('AI Model returned an empty response')
     }
 
     // Cache the message
-    const { error: upsertError } = await supabase.from('ai_messages').upsert({
-      user_id: user.id,
-      lead_id: leadId,
-      channel,
-      tone,
-      message: generatedText.trim(),
-      model: 'gemini-1.5-flash'
-    }, { onConflict: 'user_id,lead_id,channel,tone' })
+    await supabase.from('ai_messages').upsert(
+      {
+        user_id: user.id,
+        lead_id: leadId,
+        channel,
+        tone,
+        message: generatedText.trim(),
+        model: providerUsed === 'claude' ? 'claude-sonnet-4-20250514' : 'gemini-1.5-flash',
+      },
+      { onConflict: 'user_id,lead_id,channel,tone' }
+    )
 
-    if (upsertError) {
-      console.error('Failed to cache AI message:', upsertError)
-    }
+    // Log Action to Audit Log
+    await supabase
+      .from('audit_log')
+      .insert({
+        user_id: user.id,
+        action: 'ai.message_generated',
+        entity_type: 'ai',
+        entity_id: leadId,
+        metadata: { provider: providerUsed, tone, channel },
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null,
+      })
+      .catch(() => {})
 
-    return new Response(JSON.stringify({ message: generatedText.trim() }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    return new Response(
+      JSON.stringify({
+        message: generatedText.trim(),
+        provider_label: providerLabel,
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   } catch (error) {
     return handleError(error)
   }

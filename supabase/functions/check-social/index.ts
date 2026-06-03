@@ -2,6 +2,12 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
+import { checkRateLimit } from '../_shared/ratelimit.ts'
+import { z } from 'https://esm.sh/zod@3.22.0'
+
+const requestSchema = z.object({
+  leadId: z.string().uuid()
+})
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -15,11 +21,15 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}))
-    const { leadId } = body
-
-    if (!leadId) {
-      throw new AppError('leadId is required', 400, 'BAD_REQUEST')
+    const parsed = requestSchema.safeParse(body)
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'VALIDATION_FAILED', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
+
+    const { leadId } = parsed.data
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -30,6 +40,13 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Enforce Rate Limit: 50 requests/hour for social check
+    const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
+    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, 'check-social', 50, 3600)
+    if (!rateLimit.allowed) {
+      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
+    }
 
     // Fetch lead details
     const { data: lead, error: fetchError } = await supabase
@@ -125,6 +142,17 @@ Deno.serve(async (req) => {
     } catch (scoreErr) {
       console.error('Failed to trigger score-opportunity after social check:', scoreErr)
     }
+
+    // Log Action to Audit Log
+    await supabase.from('audit_log').insert({
+      user_id: user.id,
+      action: 'lead.social_scanned',
+      entity_type: 'lead',
+      entity_id: leadId,
+      metadata: { username_searched: username },
+      ip_address: ipAddress,
+      user_agent: req.headers.get('user-agent') || null
+    }).catch(() => {})
 
     return new Response(JSON.stringify({ success: true, lead: updatedLead }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

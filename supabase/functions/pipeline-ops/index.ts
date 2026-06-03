@@ -2,6 +2,17 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
+import { checkRateLimit } from '../_shared/ratelimit.ts'
+import { z } from 'https://esm.sh/zod@3.22.0'
+
+const requestSchema = z.object({
+  action: z.enum(['save', 'update', 'delete']),
+  leadId: z.string().uuid(),
+  status: z.string().optional(),
+  notes: z.string().optional(),
+  followUpDate: z.string().nullable().optional(),
+  dealValue: z.number().nullable().optional()
+})
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -15,11 +26,15 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}))
-    const { action, leadId, status, notes, followUpDate, dealValue } = body
-
-    if (!leadId) {
-      throw new AppError('leadId is required', 400, 'BAD_REQUEST')
+    const parsed = requestSchema.safeParse(body)
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'VALIDATION_FAILED', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
+
+    const { action, leadId, status, notes, followUpDate, dealValue } = parsed.data
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -29,6 +44,13 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Enforce Rate Limit: 50 requests/hour for pipeline operations
+    const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
+    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, 'pipeline-ops', 50, 3600)
+    if (!rateLimit.allowed) {
+      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
+    }
 
     if (action === 'save') {
       const { data, error } = await supabase
@@ -47,6 +69,17 @@ Deno.serve(async (req) => {
         .single()
 
       if (error) throw error
+
+      // Log Action to Audit Log
+      await supabase.from('audit_log').insert({
+        user_id: user.id,
+        action: 'pipeline.lead_saved',
+        entity_type: 'lead',
+        entity_id: leadId,
+        metadata: { status: status || 'new' },
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null
+      }).catch(() => {})
 
       return new Response(JSON.stringify({ success: true, data }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -76,6 +109,17 @@ Deno.serve(async (req) => {
 
       if (error) throw error
 
+      // Log Action to Audit Log
+      await supabase.from('audit_log').insert({
+        user_id: user.id,
+        action: 'pipeline.status_updated',
+        entity_type: 'lead',
+        entity_id: leadId,
+        metadata: { status, dealValue, followUpDate },
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null
+      }).catch(() => {})
+
       return new Response(JSON.stringify({ success: true, data }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
@@ -89,6 +133,17 @@ Deno.serve(async (req) => {
         .eq('lead_id', leadId)
 
       if (error) throw error
+
+      // Log Action to Audit Log
+      await supabase.from('audit_log').insert({
+        user_id: user.id,
+        action: 'pipeline.lead_removed',
+        entity_type: 'lead',
+        entity_id: leadId,
+        metadata: {},
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null
+      }).catch(() => {})
 
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }

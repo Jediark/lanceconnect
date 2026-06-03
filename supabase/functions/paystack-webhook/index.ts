@@ -1,19 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
-import { createHash } from 'https://deno.land/std@0.203.0/crypto/mod.ts'
-
-/**
- * Paystack Webhook Edge Function
- * ================================
- * Handles Paystack webhook events:
- *  - charge.success      → Activate plan / credit credits
- *  - subscription.create → Track recurring subscription
- *  - subscription.disable → Downgrade to free plan
- *
- * Verifies HMAC-SHA512 signature for security.
- * Paystack webhook docs: https://paystack.com/docs/payments/webhooks/
- */
+import { sendEmail, getUpgradeEmailHtml, getPaymentFailedEmailHtml } from '../_shared/email.ts'
 
 async function verifyPaystackSignature(body: string, signature: string, secret: string): Promise<boolean> {
   const encoder = new TextEncoder()
@@ -65,9 +53,6 @@ Deno.serve(async (req) => {
     console.log(`Processing Paystack event: ${event.event}`)
 
     switch (event.event) {
-      // ───────────────────────────────────────────────
-      // One-time payment or first subscription charge
-      // ───────────────────────────────────────────────
       case 'charge.success': {
         const data = event.data
         const metadata = data.metadata || {}
@@ -123,7 +108,7 @@ Deno.serve(async (req) => {
           if (planName === 'individual') leadsLimit = 200
           else if (planName === 'company') leadsLimit = -1  // unlimited
 
-          await supabase
+          const { data: profile } = await supabase
             .from('profiles')
             .update({
               plan: planName,
@@ -133,28 +118,38 @@ Deno.serve(async (req) => {
               leads_limit: leadsLimit,
             })
             .eq('id', userId)
+            .select()
+            .single()
 
           console.log(`Activated plan "${planName}" for user: ${userId}`)
+
+          // Send Upgrade Confirmation Email
+          if (profile) {
+            console.log(`Sending plan upgrade email to user: ${profile.email}`)
+            await sendEmail({
+              to: profile.email,
+              subject: 'LanceConnect Upgrade Confirmed! 🎉',
+              html: getUpgradeEmailHtml(profile.full_name || 'Freelancer', planName)
+            })
+          }
         }
 
         // Log to audit
         await supabase.from('audit_log').insert({
           user_id: userId,
           action: 'paystack_charge_success',
+          entity_type: 'payment',
           meta: {
             reference,
             checkout_type: checkoutType,
             amount: data.amount,
             currency: data.currency,
           },
-        }).catch(() => { /* audit is best-effort */ })
+        }).catch(() => {})
 
         break
       }
 
-      // ───────────────────────────────────────────────
-      // Paystack Subscription created (recurring billing)
-      // ───────────────────────────────────────────────
       case 'subscription.create': {
         const data = event.data
         const customerCode = data.customer?.customer_code
@@ -182,9 +177,6 @@ Deno.serve(async (req) => {
         break
       }
 
-      // ───────────────────────────────────────────────
-      // Subscription cancelled / disabled
-      // ───────────────────────────────────────────────
       case 'subscription.disable': {
         const data = event.data
         const customerCode = data.customer?.customer_code
@@ -214,9 +206,6 @@ Deno.serve(async (req) => {
         break
       }
 
-      // ───────────────────────────────────────────────
-      // Recurring charge failed
-      // ───────────────────────────────────────────────
       case 'invoice.payment_failed': {
         const data = event.data
         const customerCode = data.customer?.customer_code
@@ -224,7 +213,7 @@ Deno.serve(async (req) => {
         if (customerCode) {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('id')
+            .select('id, email, full_name')
             .eq('paystack_customer_code', customerCode)
             .single()
 
@@ -235,6 +224,13 @@ Deno.serve(async (req) => {
               .eq('id', profile.id)
 
             console.log(`Payment failed for user: ${profile.id}`)
+
+            // Send Failed Payment Email
+            await sendEmail({
+              to: profile.email,
+              subject: 'Paystack Failed Payment Notice ⚠️',
+              html: getPaymentFailedEmailHtml(profile.full_name || 'Freelancer')
+            })
           }
         }
         break
@@ -244,7 +240,6 @@ Deno.serve(async (req) => {
         console.log(`Unhandled Paystack event: ${event.event}`)
     }
 
-    // Paystack expects 200 response
     return new Response(JSON.stringify({ received: true }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

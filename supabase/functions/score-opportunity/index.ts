@@ -2,6 +2,12 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
+import { checkRateLimit } from '../_shared/ratelimit.ts'
+import { z } from 'https://esm.sh/zod@3.22.0'
+
+const requestSchema = z.object({
+  leadId: z.string().uuid()
+})
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -15,11 +21,15 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}))
-    const { leadId } = body
-
-    if (!leadId) {
-      throw new AppError('leadId is required', 400, 'BAD_REQUEST')
+    const parsed = requestSchema.safeParse(body)
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'VALIDATION_FAILED', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
+
+    const { leadId } = parsed.data
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -29,6 +39,13 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Enforce Rate Limit: 50 requests/hour for scoring
+    const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
+    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, 'score-opportunity', 50, 3600)
+    if (!rateLimit.allowed) {
+      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
+    }
 
     // Fetch lead details
     const { data: lead, error: fetchError } = await supabase
@@ -49,7 +66,6 @@ Deno.serve(async (req) => {
       score += 40
       breakdown['no_website'] = 40
     } else {
-      // If website exists but has poor score
       const websiteScore = lead.website_score || 100
       if (websiteScore < 50) {
         score += 25
@@ -108,7 +124,6 @@ Deno.serve(async (req) => {
         breakdown[`missing_${missingSocials}_social_channels`] = socialPenalty
       }
     } else {
-      // Social presence check pending/missing
       score += 10
       breakdown['social_presence_unchecked'] = 10
     }
@@ -139,6 +154,17 @@ Deno.serve(async (req) => {
       .single()
 
     if (updateError) throw updateError
+
+    // Log Action to Audit Log
+    await supabase.from('audit_log').insert({
+      user_id: user.id,
+      action: 'lead.scored',
+      entity_type: 'lead',
+      entity_id: leadId,
+      metadata: { final_score: finalScore },
+      ip_address: ipAddress,
+      user_agent: req.headers.get('user-agent') || null
+    }).catch(() => {})
 
     return new Response(JSON.stringify({ success: true, lead: updatedLead }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
