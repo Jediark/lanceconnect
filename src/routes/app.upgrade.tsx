@@ -12,9 +12,8 @@ export const Route = createFileRoute("/app/upgrade")({
 
 const PLANS = [
   { name: "Free", monthly: 0, leads: "10", cta: "Current Plan", popular: false, features: ["Basic filters", "1 template", "1 seat"] },
-  { name: "Starter", monthly: 19, leads: "100", cta: "Get Started", popular: false, features: ["All filters", "5 templates", "CRM pipeline", "CSV export"] },
-  { name: "Pro", monthly: 49, leads: "500", cta: "Go Pro", popular: true, features: ["All Starter features", "Unlimited templates", "AI outreach writer", "Priority support"] },
-  { name: "Agency", monthly: 99, leads: "Unlimited", cta: "Scale Up", popular: false, features: ["All Pro features", "3 team seats", "API access", "White-label"] },
+  { name: "Individual", monthly: 5, leads: "200", cta: "Get Started", popular: true, features: ["All filters", "Unlimited templates", "CRM pipeline", "CSV export", "AI outreach writer"] },
+  { name: "Large Company", monthly: 20, leads: "Unlimited", cta: "Scale Up", popular: false, features: ["Everything in Individual", "3 team seats", "API access", "White-label option", "Priority support"] },
 ];
 
 function UpgradePage() {
@@ -39,7 +38,7 @@ function UpgradePage() {
           </div>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {PLANS.map((p) => {
             const price = annual ? Math.round(p.monthly * 0.8) : p.monthly;
             return (

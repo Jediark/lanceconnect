@@ -81,10 +81,20 @@ const HERO_MOSAIC = [
 function HeroWithMosaic() {
   return (
     <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28">
-      <div className="absolute inset-0 opacity-20">
+      {/* Background Image with Dark Overlay */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <img 
+          src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2000&q=80" 
+          alt="" 
+          className="h-full w-full object-cover opacity-15 mix-blend-luminosity"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#080B14]/40 via-[#080B14]/70 to-[#080B14]" />
+      </div>
+
+      <div className="absolute inset-0 opacity-20 z-0">
         <div className="h-full w-full bg-grid-pattern" />
       </div>
-      <div className="relative mx-auto max-w-7xl px-4 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div className="z-10">
             <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
@@ -711,9 +721,8 @@ function Testimonials() {
 function Pricing() {
   const plans = [
     { name: "Free", price: "0", leads: "10", popular: false, cta: "Start Free", features: ["Basic filters", "1 template", "1 team seat"] },
-    { name: "Starter", price: "19", leads: "100", popular: false, cta: "Get Started", features: ["All filters", "5 templates", "CRM pipeline", "CSV export"] },
-    { name: "Pro", price: "49", leads: "500", popular: true, cta: "Go Pro", features: ["Everything in Starter", "Unlimited templates", "AI outreach writer", "Priority support"] },
-    { name: "Agency", price: "99", leads: "Unlimited", popular: false, cta: "Scale Up", features: ["Everything in Pro", "3 team seats", "API access", "White-label option"] },
+    { name: "Individual", price: "5", leads: "200", popular: true, cta: "Get Started", features: ["All filters", "Unlimited templates", "CRM pipeline", "CSV export", "AI outreach writer"] },
+    { name: "Large Company", price: "20", leads: "Unlimited", popular: false, cta: "Scale Up", features: ["Everything in Individual", "3 team seats", "API access", "White-label option", "Priority support"] },
   ];
   return (
     <section id="pricing" className="border-y border-border bg-[#0F172A]/30 py-24">
@@ -725,7 +734,7 @@ function Pricing() {
           <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">Simple, transparent pricing</h2>
           <p className="mt-4 text-slate-400">Start free. Upgrade when you're winning work.</p>
         </div>
-        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {plans.map((p) => (
             <div key={p.name} className={`relative rounded-2xl border bg-[#0F172A]/80 p-7 ${p.popular ? "border-primary shadow-[0_0_25px_rgba(99,102,241,0.2)] lg:-translate-y-3" : "border-border"}`}>
               {p.popular && (
@@ -752,46 +761,6 @@ function Pricing() {
               </Link>
             </div>
           ))}
-        </div>
-
-        {/* Credit Packs Section */}
-        <div className="mt-20 border-t border-border/80 pt-16">
-          <div className="mx-auto max-w-2xl text-center mb-10">
-            <h3 className="font-display text-2xl font-bold text-white">Prefer pay-as-you-go?</h3>
-            <p className="mt-2 text-sm text-slate-400">Buy one-time credit packs to discover leads at your own pace. Perfect for regional markets.</p>
-          </div>
-          <div className="mx-auto max-w-4xl grid gap-5 sm:grid-cols-3">
-            {[
-              { leads: "50 Leads", priceLocal: "₦5,000", priceUsd: "$5", popular: false },
-              { leads: "200 Leads", priceLocal: "₦15,000", priceUsd: "$15", popular: true },
-              { leads: "500 Leads", priceLocal: "₦30,000", priceUsd: "$30", popular: false },
-            ].map((pack) => (
-              <div 
-                key={pack.leads} 
-                className={`relative rounded-xl border p-6 bg-[#0F172A]/80 shadow-md ${
-                  pack.popular ? "border-primary ring-1 ring-primary/20" : "border-border"
-                }`}
-              >
-                {pack.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
-                    Best Value
-                  </span>
-                )}
-                <p className="font-display text-sm font-semibold text-slate-400 uppercase tracking-wider">{pack.leads}</p>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="font-display text-3xl font-extrabold text-white">{pack.priceLocal}</span>
-                  <span className="text-xs font-mono text-slate-500">/ {pack.priceUsd} one-off</span>
-                </div>
-                <Link to="/register" className={`mt-6 block rounded-lg py-2 text-center text-xs font-semibold transition ${
-                  pack.popular 
-                    ? "bg-primary text-white hover:bg-primary/95" 
-                    : "border border-border bg-[#080B14] hover:bg-accent text-slate-300"
-                }`}>
-                  Buy Credits
-                </Link>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>

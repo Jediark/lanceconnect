@@ -7,9 +7,9 @@ export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
       { title: "Pricing — LanceConnect" },
-      { name: "description", content: "Plans from $0 to $99/month. 14-day money-back guarantee. No credit card to start." },
+      { name: "description", content: "Plans from $0 to $20/month. 14-day money-back guarantee. No credit card to start." },
       { property: "og:title", content: "LanceConnect Pricing" },
-      { property: "og:description", content: "Free, Starter, Pro, Agency. Simple, transparent." },
+      { property: "og:description", content: "Free, Individual, Large Company. Simple, transparent." },
     ],
   }),
   component: PricingPage,
@@ -17,22 +17,21 @@ export const Route = createFileRoute("/pricing")({
 
 const plans = [
   { name: "Free", price: 0, leads: "10 leads / month", cta: "Start free", popular: false },
-  { name: "Starter", price: 19, leads: "100 leads / month", cta: "Get Starter", popular: false },
-  { name: "Pro", price: 49, leads: "500 leads / month", cta: "Go Pro", popular: true },
-  { name: "Agency", price: 99, leads: "Unlimited", cta: "Scale up", popular: false },
+  { name: "Individual", price: 5, leads: "200 leads / month", cta: "Get Started", popular: true },
+  { name: "Large Company", price: 20, leads: "Unlimited", cta: "Scale up", popular: false },
 ];
 
 const matrix: { label: string; values: (boolean | string)[] }[] = [
-  { label: "Lead discovery", values: [true, true, true, true] },
-  { label: "Opportunity scoring", values: [true, true, true, true] },
-  { label: "CRM pipeline", values: [false, true, true, true] },
-  { label: "Templates", values: ["1", "5", "Unlimited", "Unlimited"] },
-  { label: "CSV export", values: [false, true, true, true] },
-  { label: "AI Outreach Writer", values: [false, false, true, true] },
-  { label: "Team seats", values: ["1", "1", "1", "3"] },
-  { label: "API access", values: [false, false, false, true] },
-  { label: "White-label option", values: [false, false, false, true] },
-  { label: "Priority support", values: [false, false, true, true] },
+  { label: "Lead discovery", values: [true, true, true] },
+  { label: "Opportunity scoring", values: [true, true, true] },
+  { label: "CRM pipeline", values: [false, true, true] },
+  { label: "Templates", values: ["1", "Unlimited", "Unlimited"] },
+  { label: "CSV export", values: [false, true, true] },
+  { label: "AI Outreach Writer", values: [false, true, true] },
+  { label: "Team seats", values: ["1", "1", "3"] },
+  { label: "API access", values: [false, false, true] },
+  { label: "White-label option", values: [false, false, true] },
+  { label: "Priority support", values: [false, true, true] },
 ];
 
 const faqs = [
@@ -59,7 +58,7 @@ function PricingPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {plans.map(p => (
             <div key={p.name} className={`relative rounded-2xl border bg-card p-6 ${p.popular ? "border-primary shadow-card-hover lg:-translate-y-3" : "border-border shadow-card"}`}>
               {p.popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">Most popular</span>}
@@ -69,28 +68,6 @@ function PricingPage() {
               <Link to="/register" className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-border bg-background hover:bg-accent"}`}>{p.cta}</Link>
             </div>
           ))}
-        </div>
-
-        {/* Credit Packs Section */}
-        <div className="mt-16">
-          <p className="text-[11px] font-mono-data text-muted-foreground uppercase tracking-widest mb-4">
-            // pay.as.you.go
-          </p>
-          <h3 className="font-display text-2xl font-bold mb-6">Prefer credit packs?</h3>
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              { leads: "50 leads", price: "₦5,000", usd: "$5" },
-              { leads: "200 leads", price: "₦15,000", usd: "$15", popular: true },
-              { leads: "500 leads", price: "₦30,000", usd: "$30" },
-            ].map((c) => (
-              <div key={c.leads} className={`rounded-2xl border bg-card p-5 text-center ${c.popular ? "border-primary" : "border-border"}`}>
-                {c.popular && <span className="inline-block mb-2 text-[10px] font-bold uppercase text-primary">Most popular</span>}
-                <p className="font-display text-lg font-semibold">{c.leads}</p>
-                <p className="mt-1 font-mono-data text-xl">{c.price} <span className="text-xs text-muted-foreground">{c.usd}</span></p>
-                <button className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">Buy credits</button>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="mt-16 overflow-x-auto rounded-2xl border border-border bg-card">
