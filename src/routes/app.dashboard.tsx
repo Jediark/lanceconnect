@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Search, TrendingUp, Compass, Activity, CheckCircle, Flame, Mail, Sparkles, Loader2, X, MapPin, Copy, Star, Phone, Globe, Check, Map, Download } from "lucide-react";
+import { ArrowRight, Search, TrendingUp, Compass, Activity, CheckCircle, Flame, Mail, Sparkles, Loader2, X, MapPin, Copy, Star, Phone, Globe, Check, Map, Download, Users, BarChart3, Target, MessageSquare } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
 import { usePipeline } from "@/contexts/PipelineContext";
@@ -9,7 +9,6 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
 
-// Country to Cities Suggester Map
 const COUNTRY_CITIES: Record<string, string[]> = {
   "Nigeria": ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano"],
   "Italy": ["Rome", "Milan", "Naples", "Florence", "Venice", "Turin"],
@@ -26,7 +25,7 @@ const COUNTRY_CITIES: Record<string, string[]> = {
   "Mexico": ["Mexico City", "Guadalajara", "Monterrey", "Cancún"],
   "South Africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria"],
   "Kenya": ["Nairobi", "Mombasa", "Kisumu", "Nakuru"],
-  "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"]
+  "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
 };
 
 export const Route = createFileRoute("/app/dashboard")({
@@ -49,15 +48,13 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [scansCount, setScansCount] = useState(0);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  
-  // Scraper search state
+
   const [quickCity, setQuickCity] = useState("");
   const [quickCategory, setQuickCategory] = useState("web_dev");
   const [quickCountry, setQuickCountry] = useState("Nigeria");
   const [results, setResults] = useState<Lead[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  // Outreach & Lead Detail state
   const [detail, setDetail] = useState<Lead | null>(null);
   const [generating, setGenerating] = useState(false);
   const [outreachDraft, setOutreachDraft] = useState("");
@@ -66,25 +63,20 @@ function Dashboard() {
   const [provider, setProvider] = useState("");
   const [savingId, setSavingId] = useState<string | null>(null);
 
-  // Greeting based on time
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
-  // Dynamic calculations from CRM
   const totalSaved = pipeline.length;
   const contactedCount = pipeline.filter((l) => l.status === "contacted").length;
   const wonCount = pipeline.filter((l) => l.status === "won").length;
   const conversionRate = totalSaved > 0 ? Math.round((wonCount / totalSaved) * 100) : 0;
 
-  // Get suggested cities for chosen country
   const suggestedCities = COUNTRY_CITIES[quickCountry] || [];
 
-  // Initial mount load
   useEffect(() => {
     if (!user) return;
 
     if (user.id === "user-1") {
-      // Mock data for demo mode
       setScansCount(14);
       setResults(MOCK_LEADS.slice(0, 4));
       setActivities([
@@ -96,7 +88,6 @@ function Dashboard() {
     }
 
     setLoading(true);
-    // 1. Fetch total search count from search history
     supabase
       .from("search_history")
       .select("id", { count: "exact" })
@@ -105,7 +96,6 @@ function Dashboard() {
         if (!error && count !== null) setScansCount(count);
       });
 
-    // 2. Load latest global leads as initial recommendations
     supabase
       .from("leads")
       .select("*")
@@ -132,13 +122,12 @@ function Dashboard() {
             createdAt: dbLead.created_at,
             source: dbLead.source || "google_maps",
             savedAt: null,
-            status: null
+            status: null,
           }));
           setResults(mapped);
         }
       });
 
-    // 3. Fetch recent activity from audit logs
     supabase
       .from("audit_log")
       .select("*")
@@ -161,7 +150,6 @@ function Dashboard() {
       });
   }, [user]);
 
-  // Handle lead discovery search
   const handleScraperSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!quickCity.trim()) {
@@ -180,17 +168,15 @@ function Dashboard() {
         setResults(filtered);
         setSearchLoading(false);
         setScansCount((prev) => prev + 1);
-        
-        // Append live activity logs
         setActivities((prev) => [
           {
             id: String(Date.now()),
             action: "lead.searched",
             entityType: "lead",
             metadata: { query: quickCategory, city: quickCity },
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           },
-          ...prev
+          ...prev,
         ]);
         toast.success(`Found ${filtered.length} leads in ${quickCity} (Demo Mode)`);
       }, 600);
@@ -198,14 +184,14 @@ function Dashboard() {
     }
 
     try {
-      const queryTerm = CATEGORIES.find(c => c.id === quickCategory)?.label || "local business";
+      const queryTerm = CATEGORIES.find((c) => c.id === quickCategory)?.label || "local business";
       const { data, error } = await supabase.functions.invoke("search-leads", {
         body: {
           query: queryTerm,
           city: quickCity,
           country: quickCountry,
-          limit: 12
-        }
+          limit: 12,
+        },
       });
       if (error) throw error;
       const rawLeads = data?.leads || [];
@@ -227,12 +213,11 @@ function Dashboard() {
         createdAt: dbLead.created_at,
         source: dbLead.source || "google_maps",
         savedAt: null,
-        status: null
+        status: null,
       }));
       setResults(mapped);
       setScansCount((prev) => prev + 1);
-      
-      // Update activity logs from database
+
       const { data: logData } = await supabase
         .from("audit_log")
         .select("*")
@@ -240,13 +225,15 @@ function Dashboard() {
         .order("created_at", { ascending: false })
         .limit(6);
       if (logData) {
-        setActivities(logData.map((d: any) => ({
-          id: d.id,
-          action: d.action,
-          entityType: d.entity_type,
-          metadata: d.metadata || {},
-          createdAt: d.created_at,
-        })));
+        setActivities(
+          logData.map((d: any) => ({
+            id: d.id,
+            action: d.action,
+            entityType: d.entity_type,
+            metadata: d.metadata || {},
+            createdAt: d.created_at,
+          })),
+        );
       }
 
       toast.success(`Found ${mapped.length} prospects in ${quickCity}!`);
@@ -258,7 +245,6 @@ function Dashboard() {
     }
   };
 
-  // Save lead handler
   const handleSaveLead = async (lead: Lead) => {
     setSavingId(lead.id);
     try {
@@ -276,19 +262,21 @@ function Dashboard() {
     const headers = ["Business Name", "Type", "City", "Country", "Address", "Phone", "Email", "Website", "Opportunity Score", "Google Rating", "Reviews"];
     const csvRows = [
       headers.join(","),
-      ...results.map(l => [
-        `"${l.businessName.replace(/"/g, '""')}"`,
-        `"${l.businessType.replace(/"/g, '""')}"`,
-        `"${l.city.replace(/"/g, '""')}"`,
-        `"${l.country.replace(/"/g, '""')}"`,
-        `"${l.fullAddress.replace(/"/g, '""')}"`,
-        `"${(l.phone || "").replace(/"/g, '""')}"`,
-        `"${(l.email || "").replace(/"/g, '""')}"`,
-        `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
-        l.opportunityScore,
-        l.googleRating,
-        l.googleReviewCount
-      ].join(","))
+      ...results.map((l) =>
+        [
+          `"${l.businessName.replace(/"/g, '""')}"`,
+          `"${l.businessType.replace(/"/g, '""')}"`,
+          `"${l.city.replace(/"/g, '""')}"`,
+          `"${l.country.replace(/"/g, '""')}"`,
+          `"${l.fullAddress.replace(/"/g, '""')}"`,
+          `"${(l.phone || "").replace(/"/g, '""')}"`,
+          `"${(l.email || "").replace(/"/g, '""')}"`,
+          `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
+          l.opportunityScore,
+          l.googleRating,
+          l.googleReviewCount,
+        ].join(","),
+      ),
     ];
     const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -301,7 +289,6 @@ function Dashboard() {
     toast.success("CSV Spreadsheet downloaded successfully!");
   };
 
-  // AI Pitch Generator
   const handleGenerate = async () => {
     if (!detail) return;
     setGenerating(true);
@@ -320,7 +307,6 @@ function Dashboard() {
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Failed to generate outreach pitch");
-      // Local fallback
       setOutreachDraft(`Hi ${detail.businessName} team,\n\nI was looking at your online presence in ${detail.city} and saw some opportunities...`);
       setProvider("Local fallback template");
     } finally {
@@ -333,17 +319,10 @@ function Dashboard() {
     toast.success("Outreach message copied to clipboard!");
   };
 
-  // Quota computations
   const leadsUsed = user?.leadsUsedThisMonth || 0;
   const leadsLimit = user?.leadsLimit || 10;
-  const usagePercentage = Math.min(100, Math.round((leadsUsed / leadsLimit) * 100));
+  const usagePercent = Math.min(100, Math.round((leadsUsed / leadsLimit) * 100));
 
-  // Circular progress dimensions
-  const radius = 52;
-  const circumference = 2 * Math.PI * radius;
-  const strokeOffset = circumference - (usagePercentage / 100) * circumference;
-
-  // Render score reasons
   const getScoreReasons = (lead: Lead) => {
     const reasons = [];
     if (!lead.hasWebsite) reasons.push({ label: "No website established", pts: 40 });
@@ -353,126 +332,122 @@ function Dashboard() {
     return reasons;
   };
 
+  const STATS = [
+    { label: "Searches Run", value: scansCount, icon: Search, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Leads Saved", value: totalSaved, icon: Users, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { label: "Contacted", value: contactedCount, icon: MessageSquare, color: "text-amber-500", bg: "bg-amber-500/10" },
+    { label: "Win Rate", value: `${conversionRate}%`, icon: Target, color: "text-violet-500", bg: "bg-violet-500/10" },
+  ];
+
   return (
     <>
       <Header title="Dashboard" />
       <div className="space-y-6 px-4 py-6 lg:px-8">
-        
-        {/* Welcome Header */}
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+
+        {/* Welcome */}
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="font-display text-2xl font-bold text-foreground">
               {greeting}, {(user?.fullName || "Freelancer").split(" ")[0]}
             </h2>
-            <p className="text-sm text-slate-500">
-              Welcome back to your client-finding command center.
+            <p className="mt-1 text-sm text-muted-foreground">
+              Find businesses that need your services. Search any city, any country.
             </p>
           </div>
-          <Link 
+          <Link
             to="/app/discover"
-            className="inline-flex items-center gap-1.5 self-start rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-primary/90 transition cursor-pointer"
+            className="inline-flex items-center gap-2 self-start rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 transition cursor-pointer"
           >
-            <Compass className="h-4 w-4" /> Discover Leads Map
+            <Compass className="h-4 w-4" /> Discover Leads
           </Link>
         </div>
 
-        {/* Premium Muted Stat Cards */}
+        {/* Stat Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
-            <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// total.scans</p>
-            <p className="mt-2 font-mono text-3xl font-bold text-foreground">{scansCount}</p>
-            <p className="mt-1 flex items-center gap-1 text-[10px] text-emerald-500 font-medium">
-              <TrendingUp className="h-3 w-3" /> Searches run
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
-            <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// saved.leads</p>
-            <p className="mt-2 font-mono text-3xl font-bold text-foreground">{totalSaved}</p>
-            <p className="mt-1 text-[10px] text-slate-500 font-medium">
-              In your CRM pipeline
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
-            <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// contacted</p>
-            <p className="mt-2 font-mono text-3xl font-bold text-foreground">{contactedCount}</p>
-            <p className="mt-1 text-[10px] text-slate-500 font-medium">
-              Outreach sent out
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
-            <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// win.rate</p>
-            <p className="mt-2 font-mono text-3xl font-bold text-foreground">{conversionRate}%</p>
-            <p className="mt-1 text-[10px] text-primary font-medium">
-              Saved leads closed
-            </p>
-          </div>
+          {STATS.map((s) => (
+            <div key={s.label} className="flex items-center gap-4 rounded-xl border border-border bg-card p-5">
+              <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${s.bg}`}>
+                <s.icon className={`h-5 w-5 ${s.color}`} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground leading-none">{s.value}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{s.label}</p>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Primary Action Deck: Lead Search & Active Opportunities */}
+        {/* Main grid */}
         <div className="grid gap-6 lg:grid-cols-3">
-          
-          {/* Main workspace panels */}
+
+          {/* Left: Search + Results */}
           <div className="lg:col-span-2 space-y-6">
-            
-            {/* Lead Scraper Console */}
-            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm">
-              <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <Search className="h-4 w-4 text-primary" /> Active Lead Scraper Console
-              </h3>
-              <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                Configure your search options and scan live maps databases for local business opportunities.
+
+            {/* Search Form */}
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h3 className="text-base font-semibold text-foreground">Find Clients</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Enter a business type and city to discover potential clients with contact details.
               </p>
-              
-              <form onSubmit={handleScraperSearch} className="mt-4 space-y-4">
+
+              <form onSubmit={handleScraperSearch} className="mt-5 space-y-4">
                 <div className="grid gap-3 sm:grid-cols-3">
                   <div>
-                    <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Freelancer Craft</label>
-                    <select 
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Business Type</label>
+                    <select
                       value={quickCategory}
                       onChange={(e) => setQuickCategory(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
                     >
-                      {CATEGORIES.map((c) => <option key={c.id} value={c.id} className="bg-background text-foreground">{c.label}</option>)}
+                      {CATEGORIES.map((c) => (
+                        <option key={c.id} value={c.id} className="bg-background text-foreground">
+                          {c.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Target Country</label>
-                    <select 
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Country</label>
+                    <select
                       value={quickCountry}
                       onChange={(e) => setQuickCountry(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
                     >
-                      {COUNTRIES.map((c) => <option key={c.code} value={c.name} className="bg-background text-foreground">{c.name}</option>)}
+                      {COUNTRIES.map((c) => (
+                        <option key={c.code} value={c.name} className="bg-background text-foreground">
+                          {c.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">City Name</label>
-                    <input 
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">City</label>
+                    <input
                       type="text"
                       required
-                      placeholder="Enter city..."
+                      placeholder="Enter city name..."
                       value={quickCity}
                       onChange={(e) => setQuickCity(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder-slate-600 focus:outline-none focus:border-primary transition font-mono"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
                     />
                   </div>
                 </div>
 
-                {/* Country city suggest blocks */}
+                {/* Suggested cities */}
                 {suggestedCities.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] pt-1">
-                    <span className="text-slate-500 font-medium">Suggested cities:</span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Popular cities:</span>
                     {suggestedCities.map((c) => (
                       <button
                         key={c}
                         type="button"
-                        onClick={() => { setQuickCity(c); toast.success(`Selected city: ${c}`); }}
-                        className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-medium text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
+                        onClick={() => {
+                          setQuickCity(c);
+                          toast.success(`Selected: ${c}`);
+                        }}
+                        className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-accent hover:border-primary/30 transition cursor-pointer"
                       >
                         {c}
                       </button>
@@ -480,95 +455,94 @@ function Dashboard() {
                   </div>
                 )}
 
-                <div className="flex justify-end pt-1">
-                  <button 
-                    type="submit" 
-                    disabled={searchLoading}
-                    className="flex items-center justify-center gap-1.5 rounded-lg bg-primary px-5 py-2 text-xs font-semibold text-white hover:bg-primary/95 transition disabled:opacity-50 cursor-pointer shadow-sm"
-                  >
-                    {searchLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />} Find Opportunities
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={searchLoading}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-white hover:bg-primary/90 transition disabled:opacity-50 cursor-pointer"
+                >
+                  {searchLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                  {searchLoading ? "Searching..." : "Search for Businesses"}
+                </button>
               </form>
             </div>
 
-            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm">
-              <div className="mb-4 flex items-center justify-between border-b border-border/40 pb-3 flex-wrap gap-2">
+            {/* Results Table */}
+            <div className="rounded-xl border border-border bg-card p-6">
+              <div className="mb-4 flex items-center justify-between flex-wrap gap-2">
                 <div>
-                  <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                    <Compass className="h-4 w-4 text-emerald-500" /> Discovered Clients List
-                  </h3>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Click any lead line to open details & draft custom AI outreach messages.</p>
+                  <h3 className="text-base font-semibold text-foreground">Results</h3>
+                  <p className="text-xs text-muted-foreground">{results.length} businesses found. Click a name for details.</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  {results.length > 0 && (
-                    <button
-                      onClick={downloadCSV}
-                      className="text-[10px] font-semibold bg-primary/10 border border-primary/20 text-primary px-2.5 py-0.5 rounded hover:bg-primary/20 flex items-center gap-1 cursor-pointer"
-                    >
-                      <Download className="h-3 w-3" /> Export CSV
-                    </button>
-                  )}
-                  <span className="text-[10px] font-mono text-muted-foreground bg-background px-2 py-0.5 rounded border border-border/50">{results.length} targets</span>
-                </div>
+                {results.length > 0 && (
+                  <button
+                    onClick={downloadCSV}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent transition cursor-pointer"
+                  >
+                    <Download className="h-3.5 w-3.5" /> Export CSV
+                  </button>
+                )}
               </div>
 
               {searchLoading ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-3">
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-xs font-mono text-muted-foreground animate-pulse">Scanning global map index...</p>
+                  <p className="text-sm text-muted-foreground">Scanning business directories...</p>
                 </div>
               ) : results.length === 0 ? (
-                 <div className="flex flex-col items-center justify-center py-16 text-center text-slate-500">
-                  <Map className="h-10 w-10 text-slate-500/50 mb-3" />
-                  <p className="text-sm font-medium text-foreground">No active opportunities loaded.</p>
-                  <p className="text-xs text-slate-500 mt-1 max-w-sm">Enter a target city and query parameters in the scraper console above to fetch real-time leads.</p>
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Map className="h-10 w-10 text-muted-foreground/40 mb-3" />
+                  <p className="text-sm font-medium text-foreground">No results yet</p>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-xs">Use the search form above to find businesses in any city worldwide.</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs">
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-border/40 text-slate-500 font-mono uppercase text-[10px] tracking-wider">
-                        <th className="pb-3 font-semibold">Business name</th>
-                        <th className="pb-3 font-semibold">Type</th>
-                        <th className="pb-3 font-semibold">Location</th>
-                        <th className="pb-3 font-semibold">Score</th>
-                        <th className="pb-3 font-semibold">Contact Details</th>
-                        <th className="pb-3 font-semibold text-right">Actions</th>
+                      <tr className="border-b border-border text-xs text-muted-foreground">
+                        <th className="pb-3 font-medium">Business</th>
+                        <th className="pb-3 font-medium">Location</th>
+                        <th className="pb-3 font-medium">Score</th>
+                        <th className="pb-3 font-medium">Contact</th>
+                        <th className="pb-3 font-medium text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border/20">
+                    <tbody className="divide-y divide-border">
                       {results.map((l) => (
-                        <tr key={l.id} className="hover:bg-background/40 transition group">
-                          <td className="py-3 font-semibold text-foreground max-w-[150px] truncate">
-                            <button onClick={() => setDetail(l)} className="hover:underline text-left cursor-pointer">
-                              {l.businessName}
+                        <tr key={l.id} className="hover:bg-accent/50 transition">
+                          <td className="py-3 pr-4">
+                            <button onClick={() => setDetail(l)} className="text-left cursor-pointer group">
+                              <p className="font-medium text-foreground group-hover:text-primary transition truncate max-w-[180px]">{l.businessName}</p>
+                              <p className="text-xs text-muted-foreground truncate max-w-[180px]">{l.businessType}</p>
                             </button>
                           </td>
-                          <td className="py-3 text-slate-500 max-w-[120px] truncate">{l.businessType}</td>
-                          <td className="py-3 text-slate-500">{l.city}, {l.country}</td>
-                          <td className="py-3">
+                          <td className="py-3 pr-4 text-muted-foreground text-xs">
+                            {l.city}, {l.country}
+                          </td>
+                          <td className="py-3 pr-4">
                             <OpportunityScore score={l.opportunityScore} size="sm" />
                           </td>
-                          <td className="py-3">
-                            <div className="flex items-center gap-1.5 text-slate-400">
-                              {l.websiteUrl ? <Globe className="h-3.5 w-3.5 text-emerald-500" /> : <X className="h-3.5 w-3.5 text-red-500" />}
-                              {l.email ? <Mail className="h-3.5 w-3.5 text-emerald-500" /> : <Mail className="h-3.5 w-3.5 text-slate-600" />}
-                              {l.phone ? <Phone className="h-3.5 w-3.5 text-emerald-500" /> : <Phone className="h-3.5 w-3.5 text-slate-600" />}
+                          <td className="py-3 pr-4">
+                            <div className="flex items-center gap-2">
+                              {l.websiteUrl ? <Globe className="h-3.5 w-3.5 text-emerald-500" /> : <Globe className="h-3.5 w-3.5 text-muted-foreground/30" />}
+                              {l.email ? <Mail className="h-3.5 w-3.5 text-emerald-500" /> : <Mail className="h-3.5 w-3.5 text-muted-foreground/30" />}
+                              {l.phone ? <Phone className="h-3.5 w-3.5 text-emerald-500" /> : <Phone className="h-3.5 w-3.5 text-muted-foreground/30" />}
                             </div>
                           </td>
                           <td className="py-3 text-right">
-                            <div className="flex justify-end gap-1.5">
-                              <button 
-                                onClick={() => { setDetail(l); setOutreachDraft(""); }}
-                                className="rounded bg-primary/10 border border-primary/20 px-2 py-1 text-[10px] font-bold text-primary hover:bg-primary/20 transition cursor-pointer"
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => {
+                                  setDetail(l);
+                                  setOutreachDraft("");
+                                }}
+                                className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
                               >
-                                Pitch AI
+                                AI Pitch
                               </button>
-                              <button 
+                              <button
                                 onClick={() => handleSaveLead(l)}
                                 disabled={savedIds.has(l.id) || savingId === l.id}
-                                className="rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 text-[10px] font-bold text-emerald-500 hover:bg-emerald-500/20 transition disabled:opacity-50 cursor-pointer"
+                                className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition disabled:opacity-50 cursor-pointer"
                               >
                                 {savingId === l.id ? "..." : savedIds.has(l.id) ? "Saved" : "Save"}
                               </button>
@@ -581,281 +555,247 @@ function Dashboard() {
                 </div>
               )}
             </div>
-
           </div>
 
-          {/* Right Panel Widgets */}
+          {/* Right Column */}
           <div className="space-y-6">
-            
-            {/* Quota Usage Gauge Widget */}
-            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm flex flex-col justify-between">
-              <div className="flex items-start justify-between border-b border-border/40 pb-3">
-                <div>
-                  <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider">Quota Meter</h3>
-                  <p className="text-[10px] text-slate-500">Monthly leads consumption</p>
-                </div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-1.5 py-0.5 rounded border border-border/50 bg-background">
+
+            {/* Quota */}
+            <div className="rounded-xl border border-border bg-card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-foreground">Monthly Quota</h3>
+                <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
                   {user?.plan?.toUpperCase() || "FREE"}
                 </span>
               </div>
 
-              {/* Circular Gauge */}
-              <div className="my-6 flex items-center justify-center gap-6">
-                <div className="relative h-28 w-28 shrink-0">
-                  <svg className="h-full w-full -rotate-90">
-                    <circle
-                      cx="56"
-                      cy="56"
-                      r={radius}
-                      className="stroke-slate-200 dark:stroke-slate-800 fill-none"
-                      strokeWidth="7"
-                    />
-                    <circle
-                      cx="56"
-                      cy="56"
-                      r={radius}
-                      className="stroke-primary fill-none transition-all duration-500 ease-out"
-                      strokeWidth="7"
-                      strokeDasharray={circumference}
-                      strokeDashoffset={strokeOffset}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  {/* Center text */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="font-mono text-xl font-bold text-foreground">{usagePercentage}%</span>
-                    <span className="text-[8px] font-mono uppercase tracking-wider text-slate-500">Used</span>
-                  </div>
-                </div>
-
-                <div className="flex-1 space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
-                  <div className="flex justify-between">
-                    <span>Used Leads:</span>
-                    <span className="font-mono font-bold text-foreground">{leadsUsed}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Limit:</span>
-                    <span className="font-mono text-slate-400">{leadsLimit}</span>
-                  </div>
-                  <div className="h-px bg-border/40 my-1" />
-                  <div className="flex justify-between">
-                    <span>Available:</span>
-                    <span className="font-mono font-bold text-emerald-500">{Math.max(0, leadsLimit - leadsUsed)}</span>
-                  </div>
-                </div>
+              <div className="mb-2 flex items-end justify-between text-sm">
+                <span className="text-muted-foreground">{leadsUsed} of {leadsLimit} leads used</span>
+                <span className="font-semibold text-foreground">{usagePercent}%</span>
               </div>
+              <div className="h-2 w-full rounded-full bg-accent overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+                  style={{ width: `${usagePercent}%` }}
+                />
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {Math.max(0, leadsLimit - leadsUsed)} searches remaining this month
+              </p>
 
               {user?.plan === "free" && (
-                <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-semibold text-amber-500 leading-none">Quota low</p>
-                    <p className="text-[9px] text-slate-500 mt-1 leading-snug">Get 100+ global lead lines and premium templates.</p>
-                  </div>
-                  <Link 
-                    to="/app/upgrade"
-                    className="rounded bg-amber-500 px-2.5 py-1 text-[10px] font-bold text-white hover:bg-amber-600 shrink-0 shadow transition cursor-pointer"
-                  >
-                    Upgrade
-                  </Link>
-                </div>
+                <Link
+                  to="/app/upgrade"
+                  className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-xs font-semibold text-white hover:bg-primary/90 transition cursor-pointer"
+                >
+                  Upgrade for More Leads
+                </Link>
               )}
             </div>
 
-            {/* Pipeline visualizer */}
-            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm flex flex-col justify-between">
-              <div className="border-b border-border/40 pb-3">
-                <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider">Campaign Pipeline</h3>
-                <p className="text-[10px] text-slate-500">CRM conversion stage progression</p>
-              </div>
-
-              <div className="my-6 grid gap-4 grid-cols-4 relative">
+            {/* Pipeline */}
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h3 className="text-sm font-semibold text-foreground mb-4">Pipeline Overview</h3>
+              <div className="space-y-3">
                 {[
-                  { stage: "New", count: pipeline.filter((l) => l.status === "new").length, color: "bg-blue-500" },
-                  { stage: "Contacted", count: contactedCount, color: "bg-amber-500" },
-                  { stage: "Reply", count: pipeline.filter((l) => l.status === "interested").length, color: "bg-purple-500" },
-                  { stage: "Won", count: wonCount, color: "bg-emerald-500" }
-                ].map((step) => (
-                  <div key={step.stage} className="flex flex-col items-center text-center relative z-10">
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold font-mono text-white ${step.color} shadow-md`}>
-                      {step.count}
+                  { label: "New Leads", count: pipeline.filter((l) => l.status === "new").length, color: "bg-blue-500" },
+                  { label: "Contacted", count: contactedCount, color: "bg-amber-500" },
+                  { label: "Interested", count: pipeline.filter((l) => l.status === "interested").length, color: "bg-violet-500" },
+                  { label: "Won", count: wonCount, color: "bg-emerald-500" },
+                ].map((stage) => (
+                  <div key={stage.label} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`h-2.5 w-2.5 rounded-full ${stage.color}`} />
+                      <span className="text-sm text-muted-foreground">{stage.label}</span>
                     </div>
-                    <span className="text-[10px] font-semibold text-foreground mt-2 leading-none">{step.stage}</span>
+                    <span className="text-sm font-semibold text-foreground">{stage.count}</span>
                   </div>
                 ))}
-                {/* Connector line */}
-                <div className="absolute top-[16px] left-[12.5%] right-[12.5%] h-0.5 bg-slate-200 dark:bg-slate-800 z-0" />
               </div>
-
-              <div className="text-center bg-background border border-border/40 p-2.5 rounded-xl text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
-                {wonCount > 0 ? (
-                  <span className="text-emerald-500 font-medium">
-                    Won {wonCount} high-paying freelance contracts
-                  </span>
-                ) : (
-                  <span>Keep saving prospects and sending AI pitches to convert won deals.</span>
-                )}
-              </div>
+              <Link
+                to="/app/pipeline"
+                className="mt-4 flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background py-2 text-xs font-medium text-foreground hover:bg-accent transition cursor-pointer"
+              >
+                View Full Pipeline <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
 
-            {/* Audit Logs activities list */}
-            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm flex flex-col justify-between">
-              <div className="border-b border-border/40 pb-3 mb-4">
-                <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <Activity className="h-4 w-4 text-primary" /> System Activity Logs
-                </h3>
-              </div>
+            {/* Activity Log */}
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h3 className="text-sm font-semibold text-foreground mb-4">Recent Activity</h3>
 
               {loading ? (
-                <div className="flex h-36 items-center justify-center">
+                <div className="flex h-24 items-center justify-center">
                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
                 </div>
               ) : activities.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 text-xs">No logs recorded yet.</div>
+                <p className="text-center py-6 text-xs text-muted-foreground">No activity yet. Start searching to see your history.</p>
               ) : (
                 <ul className="space-y-3">
                   {activities.map((act) => {
                     let desc = "";
-                    let icon = <CheckCircle className="h-3 w-3 text-slate-500 shrink-0" />;
+                    let icon = <CheckCircle className="h-4 w-4 text-muted-foreground shrink-0" />;
 
                     if (act.action === "lead.searched") {
-                      desc = `Scanned for ${act.metadata.query} in ${act.metadata.city}`;
-                      icon = <Search className="h-3 w-3 text-blue-500 shrink-0" />;
+                      desc = `Searched for ${act.metadata.query} in ${act.metadata.city}`;
+                      icon = <Search className="h-4 w-4 text-blue-500 shrink-0" />;
                     } else if (act.action === "pipeline.lead_saved") {
                       desc = `Saved ${act.metadata.business_name || "a lead"} to pipeline`;
-                      icon = <Flame className="h-3 w-3 text-amber-500 shrink-0" />;
+                      icon = <Flame className="h-4 w-4 text-amber-500 shrink-0" />;
                     } else if (act.action === "ai.message_generated") {
-                      desc = `Generated outreach message for ${act.metadata.business_name || "lead"}`;
-                      icon = <Sparkles className="h-3 w-3 text-purple-400 shrink-0" />;
+                      desc = `Generated pitch for ${act.metadata.business_name || "lead"}`;
+                      icon = <Sparkles className="h-4 w-4 text-violet-500 shrink-0" />;
                     } else {
-                      desc = `Triggered event: ${act.action}`;
+                      desc = `Event: ${act.action}`;
                     }
 
-                    const timeStr = act.createdAt
-                      ? new Date(act.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                      : "";
+                    const timeStr = act.createdAt ? new Date(act.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
 
                     return (
-                      <li key={act.id} className="flex items-start justify-between gap-3 text-[11px] border-b border-border/30 pb-2 last:border-0 last:pb-0">
-                        <div className="flex items-center gap-2 min-w-0">
-                          {icon}
-                          <span className="truncate text-slate-600 dark:text-slate-300 leading-none">{desc}</span>
+                      <li key={act.id} className="flex items-start gap-3">
+                        <div className="mt-0.5">{icon}</div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground truncate">{desc}</p>
+                          <p className="text-[11px] text-muted-foreground">{timeStr}</p>
                         </div>
-                        <span className="font-mono text-[8px] text-slate-500 whitespace-nowrap">{timeStr}</span>
                       </li>
                     );
                   })}
                 </ul>
               )}
             </div>
-
           </div>
-
         </div>
 
-        {/* Lead Pilot AI Outreach & Details Modal Overlay */}
+        {/* Lead Detail + AI Outreach Modal */}
         {detail && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDetail(null)} />
-            
-            {/* Modal Box */}
-            <div className="relative w-full max-w-lg rounded-2xl border border-border/40 bg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
-              <div className="flex items-start justify-between border-b border-border/40 pb-3">
+            <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="flex items-start justify-between mb-4">
                 <div className="min-w-0">
                   <h3 className="font-display text-lg font-bold text-foreground truncate">{detail.businessName}</h3>
-                  <p className="text-[10px] font-mono text-slate-500 uppercase mt-0.5 tracking-wider">{detail.businessType || "Local Business"}</p>
+                  <p className="text-sm text-muted-foreground">{detail.businessType || "Local Business"}</p>
                 </div>
-                <button onClick={() => setDetail(null)} className="rounded-lg p-1 hover:bg-accent text-slate-400 hover:text-foreground cursor-pointer text-slate-400">
+                <button onClick={() => setDetail(null)} className="rounded-lg p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer">
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
-              {/* Modal Core details scroll area */}
-              <div className="my-4 max-h-[60vh] overflow-y-auto space-y-4 pr-1">
-                
-                {/* Contact grid */}
-                <div className="grid gap-2 text-xs text-slate-600 dark:text-slate-300 border-b border-border/30 pb-3">
-                  <p className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-slate-500" /> {detail.fullAddress || `${detail.city}, ${detail.country}`}</p>
+              <div className="max-h-[60vh] overflow-y-auto space-y-4 pr-1">
+                {/* Contact details */}
+                <div className="space-y-2 text-sm border-b border-border pb-4">
+                  <p className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="h-4 w-4 shrink-0" /> {detail.fullAddress || `${detail.city}, ${detail.country}`}
+                  </p>
                   <div className="flex items-center justify-between">
-                    <p className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-slate-500" /> {detail.phone || "No phone number"}</p>
+                    <p className="flex items-center gap-2 text-muted-foreground">
+                      <Phone className="h-4 w-4 shrink-0" /> {detail.phone || "No phone"}
+                    </p>
                     {detail.phone && (
-                      <button onClick={() => { navigator.clipboard?.writeText(detail.phone); toast.success("Phone number copied!"); }} className="inline-flex items-center gap-1 rounded border border-border bg-background px-1.5 py-0.5 text-[9px] text-slate-500 hover:text-foreground cursor-pointer transition">
-                        <Copy className="h-2.5 w-2.5" /> Copy
+                      <button
+                        onClick={() => {
+                          navigator.clipboard?.writeText(detail.phone);
+                          toast.success("Phone copied!");
+                        }}
+                        className="inline-flex items-center gap-1 rounded border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                      >
+                        <Copy className="h-3 w-3" /> Copy
                       </button>
                     )}
                   </div>
-                  <p className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-slate-500" /> {detail.email || "No email address found"}</p>
-                  <p className="flex items-center gap-2"><Globe className="h-3.5 w-3.5 text-slate-500" /> {detail.websiteUrl ? <a href={detail.websiteUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">{detail.websiteUrl}</a> : "No website established"}</p>
-                  <p className="flex items-center gap-2"><Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" /> {detail.googleRating} · {detail.googleReviewCount} reviews</p>
+                  <p className="flex items-center gap-2 text-muted-foreground">
+                    <Mail className="h-4 w-4 shrink-0" /> {detail.email || "No email found"}
+                  </p>
+                  <p className="flex items-center gap-2 text-muted-foreground">
+                    <Globe className="h-4 w-4 shrink-0" />{" "}
+                    {detail.websiteUrl ? (
+                      <a href={detail.websiteUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                        {detail.websiteUrl}
+                      </a>
+                    ) : (
+                      "No website"
+                    )}
+                  </p>
+                  <p className="flex items-center gap-2 text-muted-foreground">
+                    <Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" /> {detail.googleRating} rating · {detail.googleReviewCount} reviews
+                  </p>
                 </div>
 
-                {/* Score breakdown reasons */}
-                <div>
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-slate-500">Scan Signals Analysis</p>
-                  <ul className="mt-2 space-y-1 text-xs">
-                    {getScoreReasons(detail).map((r) => (
-                      <li key={r.label} className="flex items-center justify-between rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-emerald-600 dark:text-emerald-400">
-                        <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5" /> {r.label}</span>
-                        <span className="font-mono text-[10px] font-bold">+{r.pts} pts</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {/* Opportunity signals */}
+                {getScoreReasons(detail).length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Opportunity Signals</p>
+                    <ul className="space-y-1.5">
+                      {getScoreReasons(detail).map((r) => (
+                        <li key={r.label} className="flex items-center justify-between rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400">
+                          <span className="flex items-center gap-2">
+                            <Check className="h-3.5 w-3.5" /> {r.label}
+                          </span>
+                          <span className="text-xs font-semibold">+{r.pts}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-                {/* Pitch Generator Workspace */}
-                <div className="border-t border-border/30 pt-4">
-                  <h4 className="text-[10px] font-mono uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-primary" /> Lead Pilot AI Outreach Generator
+                {/* AI Pitch Generator */}
+                <div className="border-t border-border pt-4">
+                  <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                    <Sparkles className="h-4 w-4 text-primary" /> AI Outreach Generator
                   </h4>
 
                   {outreachDraft ? (
-                    <div className="mt-3 space-y-2">
+                    <div className="mt-3 space-y-3">
                       <textarea
                         value={outreachDraft}
                         onChange={(e) => setOutreachDraft(e.target.value)}
-                        className="w-full h-36 rounded-lg border border-border bg-background p-3 text-xs font-sans text-foreground focus:outline-none focus:border-primary"
+                        className="w-full h-36 rounded-lg border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                       />
-                      <div className="flex items-center justify-between text-[9px] text-slate-500">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>{provider}</span>
                         <div className="flex gap-2">
-                          <button onClick={() => setOutreachDraft("")} className="rounded border border-border bg-background px-2.5 py-1 text-xs text-slate-500 hover:text-foreground cursor-pointer">Edit settings</button>
-                          <button onClick={copyDraft} className="rounded bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">Copy outreach pitch</button>
+                          <button onClick={() => setOutreachDraft("")} className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
+                            Reset
+                          </button>
+                          <button onClick={copyDraft} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">
+                            Copy Pitch
+                          </button>
                           {selectedChannel === "whatsapp" && detail.phone && (
                             <a
                               href={`https://wa.me/${detail.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="rounded bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition shadow-sm"
+                              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer"
                             >
-                              Send via WhatsApp
+                              WhatsApp
                             </a>
                           )}
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-3 rounded-xl border border-border bg-background p-3.5 space-y-3">
-                      <div className="flex items-center justify-between gap-3 flex-wrap text-xs">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-slate-500">Outreach Channel:</span>
-                          <select 
+                    <div className="mt-3 space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Channel</label>
+                          <select
                             value={selectedChannel}
                             onChange={(e) => setSelectedChannel(e.target.value as any)}
-                            className="bg-card border border-border rounded px-1.5 py-0.5 text-foreground text-[11px]"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
                           >
                             <option value="email">Email</option>
                             <option value="linkedin">LinkedIn DM</option>
-                            <option value="whatsapp">WhatsApp Message</option>
+                            <option value="whatsapp">WhatsApp</option>
                             <option value="phone_script">Phone Script</option>
                           </select>
                         </div>
-
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-slate-500">Tone:</span>
-                          <select 
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Tone</label>
+                          <select
                             value={selectedTone}
                             onChange={(e) => setSelectedTone(e.target.value as any)}
-                            className="bg-card border border-border rounded px-1.5 py-0.5 text-foreground text-[11px]"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
                           >
                             <option value="professional">Professional</option>
                             <option value="casual">Casual</option>
@@ -863,41 +803,38 @@ function Dashboard() {
                           </select>
                         </div>
                       </div>
-
                       <button
                         onClick={handleGenerate}
                         disabled={generating}
-                        className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/45 py-2 text-xs font-semibold text-primary cursor-pointer transition"
+                        className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary/90 transition cursor-pointer disabled:opacity-50"
                       >
                         {generating ? (
                           <>
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating outreach...
+                            <Loader2 className="h-4 w-4 animate-spin" /> Generating...
                           </>
                         ) : (
                           <>
-                            <Sparkles className="h-3.5 w-3.5" /> Compose Pitch with AI
+                            <Sparkles className="h-4 w-4" /> Generate Pitch
                           </>
                         )}
                       </button>
                     </div>
                   )}
                 </div>
-
               </div>
 
-              <div className="flex gap-2 pt-3 border-t border-border/40">
-                <button 
+              <div className="mt-4 pt-4 border-t border-border">
+                <button
                   onClick={() => handleSaveLead(detail)}
                   disabled={savedIds.has(detail.id)}
-                  className="w-full rounded-lg bg-primary py-2.5 text-xs font-semibold text-white hover:bg-primary/95 disabled:opacity-50 cursor-pointer"
+                  className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
                 >
-                  {savedIds.has(detail.id) ? "Prospect saved in CRM" : "Save to CRM Pipeline"}
+                  {savedIds.has(detail.id) ? "Already in CRM" : "Save to Pipeline"}
                 </button>
               </div>
             </div>
           </div>
         )}
-
       </div>
     </>
   );
