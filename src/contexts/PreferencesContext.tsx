@@ -304,22 +304,30 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("lanceconnect_lang", lang);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("lanceconnect_lang", lang);
+    }
   };
 
   const setCurrency = (curr: Currency) => {
     setCurrencyState(curr);
-    localStorage.setItem("lanceconnect_curr", curr);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("lanceconnect_curr", curr);
+    }
   };
 
   const setTheme = (t: "dark" | "light") => {
     setThemeState(t);
-    localStorage.setItem("lanceconnect_theme", t);
-    const root = document.documentElement;
-    if (t === "light") {
-      root.classList.add("light");
-    } else {
-      root.classList.remove("light");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("lanceconnect_theme", t);
+      const root = document.documentElement;
+      if (root) {
+        if (t === "light") {
+          root.classList.add("light");
+        } else {
+          root.classList.remove("light");
+        }
+      }
     }
   };
 
