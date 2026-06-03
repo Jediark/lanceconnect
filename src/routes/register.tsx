@@ -29,19 +29,32 @@ function GoogleSignup() {
   );
 }
 
+import { toast } from "sonner";
+
 function RegisterPage() {
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const nav = useNavigate();
   const [show, setShow] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
+  const [loading, setLoading] = useState(false);
+  
   const s = strength(pwd);
   const strengthLabel = ["", "Weak", "Fair", "Good", "Strong"][s];
   const strengthColor = ["bg-border", "bg-red-500", "bg-amber-500", "bg-indigo-500", "bg-emerald-500"][s];
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login();
-    nav({ to: "/onboarding" });
+    setLoading(true);
+    const { error } = await signup(email, pwd, fullName);
+    setLoading(false);
+    if (error) {
+      toast.error(error.message || "Failed to create account.");
+    } else {
+      toast.success("Account created successfully!");
+      nav({ to: "/onboarding" });
+    }
   };
 
   return (
@@ -52,10 +65,30 @@ function RegisterPage() {
         <span className="h-px flex-1 bg-border" /> or continue with email <span className="h-px flex-1 bg-border" />
       </div>
       <form onSubmit={submit} className="space-y-3">
-        <input required placeholder="Full Name" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
-        <input type="email" required placeholder="Email Address" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
+        <input 
+          required 
+          placeholder="Full Name" 
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" 
+        />
+        <input 
+          type="email" 
+          required 
+          placeholder="Email Address" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" 
+        />
         <div className="relative">
-          <input value={pwd} onChange={(e) => setPwd(e.target.value)} type={show ? "text" : "password"} required placeholder="Password" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
+          <input 
+            value={pwd} 
+            onChange={(e) => setPwd(e.target.value)} 
+            type={show ? "text" : "password"} 
+            required 
+            placeholder="Password" 
+            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30" 
+          />
           <button type="button" onClick={() => setShow((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
             {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -68,8 +101,12 @@ function RegisterPage() {
             <span className="text-[11px] text-muted-foreground">{strengthLabel}</span>
           </div>
         )}
-        <button type="submit" className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
-          Create Account
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        >
+          {loading ? "Creating Account..." : "Create Account"}
         </button>
       </form>
       <p className="mt-4 text-center text-[11px] text-muted-foreground">

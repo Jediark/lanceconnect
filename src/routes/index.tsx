@@ -685,8 +685,8 @@ function Features() {
                       <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                      <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
+                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
                         {card.desc}
                       </p>
                     </div>
@@ -700,8 +700,8 @@ function Features() {
                       <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
-                      <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                      <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
+                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed line-clamp-3">
                         {card.desc}
                       </p>
                     </div>
@@ -730,8 +730,8 @@ function Features() {
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
-                    <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                    <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
+                    <p className="text-xs md:text-sm text-slate-400 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
                   </div>
@@ -754,8 +754,8 @@ function Features() {
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-display text-base font-bold text-white mb-1.5">{card.title}</h3>
-                    <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                    <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
+                    <p className="text-xs md:text-sm text-slate-400 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
                   </div>

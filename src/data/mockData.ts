@@ -18,6 +18,8 @@ export type Lead = {
   status: PipelineStatus | null;
   notes?: string;
   followUpDate?: string | null;
+  dealValue?: number | null;
+  createdAt?: string;
 };
 
 export type PipelineStatus =

@@ -54,14 +54,34 @@ function GoogleButton({ label }: { label: string }) {
   );
 }
 
+import { toast } from "sonner";
+
 function LoginPage() {
   const { login } = useAuth();
   const nav = useNavigate();
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("alex@example.com");
+  const [password, setPassword] = useState("demo1234");
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login();
+    setLoading(true);
+    const { error } = await login(email, password);
+    setLoading(false);
+    if (error) {
+      toast.error(error.message || "Failed to log in.");
+    } else {
+      toast.success("Welcome back!");
+      nav({ to: "/app/dashboard" });
+    }
+  };
+
+  const handleDemo = async () => {
+    setLoading(true);
+    await login();
+    setLoading(false);
+    toast.success("Logged in as Demo User!");
     nav({ to: "/app/dashboard" });
   };
 
@@ -75,9 +95,23 @@ function LoginPage() {
         <span className="h-px flex-1 bg-border" />
       </div>
       <form onSubmit={submit} className="space-y-3">
-        <input type="email" required placeholder="Email" defaultValue="alex@example.com" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
+        <input 
+          type="email" 
+          required 
+          placeholder="Email" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" 
+        />
         <div className="relative">
-          <input type={show ? "text" : "password"} required placeholder="Password" defaultValue="demo1234" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
+          <input 
+            type={show ? "text" : "password"} 
+            required 
+            placeholder="Password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30" 
+          />
           <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
             {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -85,10 +119,19 @@ function LoginPage() {
         <div className="flex justify-end">
           <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
         </div>
-        <button type="submit" className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
-          Log In
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        >
+          {loading ? "Logging in..." : "Log In"}
         </button>
-        <button type="button" onClick={() => { login(); nav({ to: "/app/dashboard" }); }} className="w-full rounded-lg border border-dashed border-primary/40 py-2 text-xs font-medium text-primary hover:bg-primary/5">
+        <button 
+          type="button" 
+          disabled={loading}
+          onClick={handleDemo}
+          className="w-full rounded-lg border border-dashed border-primary/40 py-2 text-xs font-medium text-primary hover:bg-primary/5 disabled:opacity-50"
+        >
           Continue as Demo User →
         </button>
       </form>
