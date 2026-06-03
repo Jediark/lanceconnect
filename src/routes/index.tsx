@@ -579,61 +579,76 @@ function GlobalReach() {
     { name: "São Paulo", x: "38%", y: "74%", delay: 1.2 },
     { name: "Tokyo", x: "83%", y: "40%", delay: 1.5 },
     { name: "Dubai", x: "60%", y: "45%", delay: 1.8 },
-    { name: "Toronto", x: "28%", y: "32%", delay: 2.1 },
-    { name: "Sydney", x: "88%", y: "80%", delay: 2.4 },
-    { name: "Nairobi", x: "54%", y: "62%", delay: 2.7 },
   ];
 
   return (
-    <section className="relative overflow-hidden border-t border-border bg-[#080B14] py-24 select-none">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8 text-center">
-        <div className="mx-auto max-w-2xl mb-12">
-          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
-            // we.are.everywhere
-          </p>
-          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">
-            Freelancers in every country.<br/>Leads in every city.
-          </h2>
-          <p className="mt-4 text-slate-400">
-            A truly global ecosystem matching local clients with global freelance talent.
-          </p>
-        </div>
+    <section className="relative overflow-hidden border-t border-border bg-[#080B14] py-16 select-none">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+          {/* Left: Content */}
+          <div className="lg:col-span-5">
+            <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+              // we.are.everywhere
+            </p>
+            <h2 className="font-display text-3xl font-extrabold text-white tracking-tight leading-tight">
+              Freelancers in every country.<br className="hidden sm:inline" /> Leads in every city.
+            </h2>
+            <p className="mt-4 text-sm text-slate-400 leading-relaxed max-w-md">
+              A truly global ecosystem matching local clients with global freelance talent. We scan 150+ countries in real-time.
+            </p>
+            
+            {/* City badges list */}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {cities.map((city) => (
+                <span 
+                  key={city.name} 
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[#0F172A] border border-border px-3 py-1 text-xs text-slate-300 font-mono"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {city.name}
+                </span>
+              ))}
+            </div>
+          </div>
 
-        {/* stylized vector map background */}
-        <div className="relative mx-auto max-w-5xl h-[300px] md:h-[450px] w-full border border-border bg-[#0F172A]/20 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 bg-dot-pattern opacity-45" />
-          
-          {/* Stylized world grid coordinates */}
-          <svg className="absolute inset-0 w-full h-full text-slate-800/40" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="50%" x2="100%" y2="50%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
-            <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
-          </svg>
+          {/* Right: Map */}
+          <div className="lg:col-span-7">
+            <div className="relative mx-auto w-full h-[280px] md:h-[320px] border border-border bg-[#0F172A]/20 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 bg-dot-pattern opacity-45" />
+              
+              {/* Stylized world grid coordinates */}
+              <svg className="absolute inset-0 w-full h-full text-slate-800/40" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="50%" x2="100%" y2="50%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+                <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+              </svg>
 
-          {/* Pulse cities */}
-          {cities.map((city, i) => (
-            <div 
-              key={city.name} 
-              className="absolute group" 
-              style={{ top: city.y, left: city.x }}
-            >
-              {/* Pulse rings */}
-              <span className="absolute inline-flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 animate-ping" style={{ animationDelay: `${city.delay}s`, animationDuration: '3s' }} />
-              <span className="absolute inline-flex h-4.5 w-4.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/45 animate-pulse" />
-              <span className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary" />
+              {/* Pulse cities */}
+              {cities.map((city, i) => (
+                <div 
+                  key={city.name} 
+                  className="absolute group" 
+                  style={{ top: city.y, left: city.x }}
+                >
+                  {/* Pulse rings */}
+                  <span className="absolute inline-flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 animate-ping" style={{ animationDelay: `${city.delay}s`, animationDuration: '3s' }} />
+                  <span className="absolute inline-flex h-4.5 w-4.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/45 animate-pulse" />
+                  <span className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary" />
 
-              {/* Floating label */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
-                <div className="bg-slate-950 border border-slate-800 rounded-lg py-1 px-2.5 text-[10px] font-mono font-medium text-white shadow-xl whitespace-nowrap">
-                  {city.name} Hub 🌍
+                  {/* Floating label */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
+                    <div className="bg-slate-950 border border-slate-800 rounded-lg py-1 px-2.5 text-[10px] font-mono font-medium text-white shadow-xl whitespace-nowrap">
+                      {city.name} Hub 🌍
+                    </div>
+                  </div>
                 </div>
+              ))}
+
+              {/* Bottom stats pill overlay */}
+              <div className="absolute bottom-4 left-4 bg-slate-950/90 border border-slate-800/80 rounded-full px-4 py-1.5 text-[10px] text-slate-300 font-mono flex items-center gap-2 backdrop-blur shadow-2xl">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Scanning 150+ countries in real-time</span>
               </div>
             </div>
-          ))}
-
-          {/* Bottom stats pill overlay */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-950/90 border border-slate-800/80 rounded-full px-5 py-2 text-xs text-slate-300 font-mono flex items-center gap-3 backdrop-blur shadow-2xl">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Scanning 150+ countries in real-time</span>
           </div>
         </div>
       </div>
@@ -807,7 +822,7 @@ function Stats() {
   return (
     <section className="relative overflow-hidden border-y border-border">
       <div className="absolute inset-0">
-        <img src={IMG.marketStall} alt="" className="h-full w-full object-cover" />
+        <img src={IMG.team} alt="" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-[color:var(--ink-bg)]/85" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8">

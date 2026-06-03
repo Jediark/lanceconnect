@@ -6,7 +6,7 @@ export const IMG = {
   workspace: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&q=80", // desk
   team: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1400&q=80",
   coffeeShop: "https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=1400&q=80",
-  marketStall: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1400&q=80",
+  marketStall: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1400&q=80",
   // Categories
   webDev: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&q=80",
   designer: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=1200&q=80",
