@@ -11,8 +11,8 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
 
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   --color-background: var(--background);
@@ -145,6 +145,7 @@ html.light .bg-dot-pattern {
   }
 
   html, body {
+    font-size: 17px;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);

@@ -4,7 +4,7 @@ import { MobileNav } from "@/components/layout/MobileNav";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: () => {
-    if (typeof window !== "undefined" && localStorage.getItem("fc_auth") !== "1") {
+    if (typeof window !== "undefined" && localStorage.getItem("lance_auth") !== "1") {
       throw redirect({ to: "/login" });
     }
   },
