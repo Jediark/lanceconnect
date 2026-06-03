@@ -7,6 +7,7 @@ export function MarketingNav() {
   const [open, setOpen] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(true);
   const links = [
+    { to: "/", label: "Home" },
     { to: "/features", label: "Features" },
     { to: "/how-it-works", label: "How it works" },
     { to: "/pricing", label: "Pricing" },
