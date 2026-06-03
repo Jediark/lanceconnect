@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PipelineProvider } from "@/contexts/PipelineContext";
+import { PreferencesProvider } from "@/contexts/PreferencesContext";
 
 function NotFoundComponent() {
   return (
@@ -105,12 +106,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PipelineProvider>
-          <Outlet />
-          <Toaster position="bottom-right" richColors closeButton />
-        </PipelineProvider>
-      </AuthProvider>
+      <PreferencesProvider>
+        <AuthProvider>
+          <PipelineProvider>
+            <Outlet />
+            <Toaster position="bottom-right" richColors closeButton />
+          </PipelineProvider>
+        </AuthProvider>
+      </PreferencesProvider>
     </QueryClientProvider>
   );
 }

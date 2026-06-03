@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { IMG } from "@/data/content";
 import { Check, Minus, Shield } from "lucide-react";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -14,12 +15,6 @@ export const Route = createFileRoute("/pricing")({
   }),
   component: PricingPage,
 });
-
-const plans = [
-  { name: "Free", price: 0, leads: "10 leads / month", cta: "Start free", popular: false },
-  { name: "Individual", price: 5, leads: "200 leads / month", cta: "Get Started", popular: true },
-  { name: "Large Company", price: 20, leads: "Unlimited", cta: "Scale up", popular: false },
-];
 
 const matrix: { label: string; values: (boolean | string)[] }[] = [
   { label: "Lead discovery", values: [true, true, true] },
@@ -43,9 +38,17 @@ const faqs = [
 ];
 
 function PricingPage() {
+  const { t, formatPrice, getCurrencySymbol } = usePreferences();
+
+  const plans = [
+    { name: t("plan_free"), price: 0, leads: `10 ${t("plan_leads_mo")}`, cta: t("plan_cta_free"), popular: false },
+    { name: t("plan_individual"), price: 5, leads: `200 ${t("plan_leads_mo")}`, cta: t("plan_cta_ind"), popular: true },
+    { name: t("plan_company"), price: 20, leads: "Unlimited", cta: t("plan_cta_comp"), popular: false },
+  ];
+
   return (
     <MarketingShell>
-      <PageHeader eyebrow="Pricing" title="Honest pricing. Built for freelancers." subtitle="No 'contact sales'. No annual lock-ins. Cancel anytime. 14-day money-back guarantee on every paid plan." image={IMG.coffeeShop}/>
+      <PageHeader eyebrow={t("nav_pricing")} title="Honest pricing. Built for freelancers." subtitle="No 'contact sales'. No annual lock-ins. Cancel anytime. 14-day money-back guarantee on every paid plan." image={IMG.coffeeShop}/>
 
       {/* Monthly/Annual Toggle */}
       <section className="mx-auto max-w-7xl px-4 pt-8 lg:px-8">
@@ -63,7 +66,7 @@ function PricingPage() {
             <div key={p.name} className={`relative rounded-2xl border bg-card p-6 ${p.popular ? "border-primary shadow-card-hover lg:-translate-y-3" : "border-border shadow-card"}`}>
               {p.popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">Most popular</span>}
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{p.name}</p>
-              <div className="mt-3 flex items-baseline gap-1"><span className="font-display text-4xl font-bold">${p.price}</span><span className="text-sm text-muted-foreground">/mo</span></div>
+              <div className="mt-3 flex items-baseline gap-1"><span className="font-display text-4xl font-bold">{getCurrencySymbol()}{formatPrice(p.price)}</span><span className="text-sm text-muted-foreground">{t("plan_mo")}</span></div>
               <p className="mt-1 text-sm font-mono-data text-primary">{p.leads}</p>
               <Link to="/register" className={`mt-5 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-border bg-background hover:bg-accent"}`}>{p.cta}</Link>
             </div>

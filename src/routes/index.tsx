@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
-  Globe2, BarChart3, Zap, Search,
+  Globe2, BarChart3, Zap, Search, Terminal, Copy, Check, Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
 import { IMG, BLOG_POSTS } from "@/data/content";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/")({
       <Stats />
       <HowItWorks />
       <Features />
+      <LeadScannerSandbox />
       <GlobalReach />
       <WhoFor />
       <Testimonials />
@@ -79,6 +81,7 @@ const HERO_MOSAIC = [
 ];
 
 function HeroWithMosaic() {
+  const { t } = usePreferences();
   return (
     <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28">
       {/* Background Image with Dark Overlay */}
@@ -98,20 +101,20 @@ function HeroWithMosaic() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div className="z-10">
             <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
-              // find.clients.globally
+              {t("hero_eyebrow")}
             </p>
             <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
-              The Meeting Point<br/>for Freelancers<br/>and <span className="bg-gradient-to-r from-primary to-[#818CF8] bg-clip-text text-transparent">Clients.</span>
+              {t("hero_title")}
             </h1>
             <p className="mt-6 text-base text-slate-400 max-w-lg leading-relaxed">
-              Stop waiting for work to come to you. LanceConnect finds businesses that need your skills anywhere in the world and hands you their direct contacts.
+              {t("hero_sub")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20">
-                Get 10 Free Leads <ArrowRight className="h-4 w-4" />
+                {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-[#0F172A]/80 px-6 py-3.5 text-sm font-medium hover:bg-accent transition text-white">
-                <Play className="h-4 w-4" /> Watch Demo
+                <Play className="h-4 w-4" /> {t("hero_cta_demo")}
               </Link>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-[#475569]">
@@ -419,6 +422,120 @@ function HowItWorks() {
   );
 }
 
+const AiOutreachFooter = () => {
+  const [tone, setTone] = useState<'casual' | 'professional' | 'bold'>('casual');
+
+  const messages = {
+    casual: "Hey Mario, saw your pizza spot has no site...",
+    professional: "Dear Mario, I noticed Mario's Ristorante does not currently have a web presence...",
+    bold: "Hey Mario, why doesn't Mario's Ristorante have a website yet? Your competitors in Naples are..."
+  };
+
+  return (
+    <div className="flex flex-col gap-2 w-full mt-2">
+      <div className="flex items-center justify-between bg-[#080B14] p-1 rounded-lg border border-border/80">
+        {(['casual', 'professional', 'bold'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={(e) => {
+              e.stopPropagation();
+              setTone(t);
+            }}
+            className={`text-[9px] font-mono px-2 py-0.5 rounded transition-all capitalize flex-1 text-center ${
+              tone === t
+                ? 'bg-primary text-white shadow-sm font-semibold'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/45'
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <div className="w-full bg-[#080B14] border border-border rounded-xl p-2.5 font-mono text-[9px] text-slate-400 h-[60px] overflow-hidden select-none">
+        <div className="flex justify-between items-center text-[#64748B] mb-0.5">
+          <span>// Generated intro</span>
+          <span className="text-[8px] bg-primary/20 text-primary px-1 rounded uppercase tracking-wider font-semibold">Active</span>
+        </div>
+        <motion.p
+          key={tone}
+          initial={{ opacity: 0, y: 3 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -3 }}
+          className="mt-0.5 text-primary leading-tight font-medium"
+        >
+          {messages[tone]}
+        </motion.p>
+      </div>
+    </div>
+  );
+};
+
+const getMockLeads = (craft: string, city: string) => {
+  const leads = [
+    {
+      id: 1,
+      name: `${city} Gourmet Kitchen`,
+      type: "Restaurant & Catering",
+      score: 94,
+      issues: craft === 'web' ? ["No website", "Only Facebook page link"] 
+            : craft === 'design' ? ["Outdated 2012 layout", "Cluttered booking form"] 
+            : craft === 'seo' ? ["Not visible on local search", "Missing Google Business profile reviews"]
+            : ["No video presence", "Outdated food gallery"],
+      phone: "+1 555-832-1920",
+      email: `contact@${city.toLowerCase().replace(" ", "")}gourmet.com`,
+      subject: craft === 'web' ? `Website inquiry for ${city} Gourmet Kitchen`
+             : craft === 'design' ? `Branding update - ${city} Gourmet Kitchen`
+             : craft === 'seo' ? `Google visibility boost for ${city} Gourmet Kitchen`
+             : `Promo video concepts for ${city} Gourmet Kitchen`,
+      draft: craft === 'web' ? `Hi Chef,\n\nI love your menu but noticed customers can't order directly online. I'd love to build a quick, high-converting checkout site for you.\n\nBest,\n[Your Name]`
+           : craft === 'design' ? `Hello,\n\nI love the dining vibe at Gourmet Kitchen! I noticed your online logo and branding could use a premium refresh to match that feel.\n\nBest,\n[Your Name]`
+           : craft === 'seo' ? `Hi Team,\n\nI searched for restaurants in ${city} and couldn't find your kitchen on the first page. Let's optimize your profile to pull in more local customers.\n\nBest,\n[Your Name]`
+           : `Hi Chef,\n\nI saw your gorgeous dishes on Instagram. I can create a professional 30-second promo reel to drive reservations.\n\nBest,\n[Your Name]`,
+    },
+    {
+      id: 2,
+      name: `${city} Dental Care`,
+      type: "Medical Practice",
+      score: 87,
+      issues: craft === 'web' ? ["Non-responsive on mobile", "Broken appointment button"]
+            : craft === 'design' ? ["Stock-photo heavy landing page", "Hard to read fonts"]
+            : craft === 'seo' ? ["High competitor ranking", "No local schema mapping"]
+            : ["Missing patient walkthrough video", "No video introduction"],
+      phone: "+1 555-401-3829",
+      email: `office@${city.toLowerCase().replace(" ", "")}dentalcare.com`,
+      subject: craft === 'web' ? `Mobile booking issue on your site`
+             : craft === 'design' ? `Modern UI facelift for ${city} Dental`
+             : craft === 'seo' ? `Patients can't find you on Google`
+             : `Patient testimonial videos for ${city} Dental`,
+      draft: craft === 'web' ? `Hi Dr.,\n\nI tried booking an appointment on my phone and the layout was cut off. I can fix this responsiveness issue so you don't lose patients.\n\nBest,\n[Your Name]`
+           : craft === 'design' ? `Dear Practice Manager,\n\nI noticed your website uses standard stock photos. A custom illustrated interface would build much higher trust with patients.\n\nBest,\n[Your Name]`
+           : craft === 'seo' ? `Hello Dr.,\n\nYour competitors are ranking above you for 'dentist in ${city}'. I can optimize your site structure to get you to #1.\n\nBest,\n[Your Name]`
+           : `Dear Practice Manager,\n\nWe can film and edit 3 high-impact patient video testimonials to put on your home page to build instant trust.\n\nBest,\n[Your Name]`,
+    },
+    {
+      id: 3,
+      name: `${city} Auto Body`,
+      type: "Car Service",
+      score: 79,
+      issues: craft === 'web' ? ["Slow load speed (8.4s)", "Outdated HTML template"]
+            : craft === 'design' ? ["Unstructured service pricing table", "Low contrast buttons"]
+            : craft === 'seo' ? ["No Google Reviews linkage", "Low speed indexing penalty"]
+            : ["No video gallery showing repairs", "Missing TikTok/Reels presence"],
+      phone: "+1 555-901-7261",
+      email: `info@${city.toLowerCase().replace(" ", "")}autobody.com`,
+      subject: craft === 'web' ? `Website loading speeds at ${city} Auto`
+             : craft === 'design' ? `UI revamp for your repair list`
+             : craft === 'seo' ? `Rankings check for local auto body repairs`
+             : `Reels & Shorts promo for ${city} Auto`,
+      draft: craft === 'web' ? `Hi Manager,\n\nYour page takes over 8 seconds to load, which causes visitors to leave. Let's rebuild a lightweight, lightning-fast static site.\n\nBest,\n[Your Name]`
+           : craft === 'design' ? `Hello,\n\nYour services page is a bit hard to scan on mobile. I designed a cleaner table that makes it easy for clients to request quotes.\n\nBest,\n[Your Name]`
+           : craft === 'seo' ? `Hi Team,\n\nI saw your business lacks backlinks from local directories. I can manage a citation campaign to raise your authority score.\n\nBest,\n[Your Name]`
+           : `Hi Manager,\n\nLet's capture high-quality 'before/after' transformation reels of your paint/dent jobs to build a massive TikTok following.\n\nBest,\n[Your Name]`,
+    }
+  ];
+  return leads;
+};
+
 const FEATURES_LIST = [
   {
     id: 1,
@@ -484,18 +601,7 @@ const FEATURES_LIST = [
         <span className="absolute top-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-left" />
       </div>
     ),
-    footer: () => (
-      <div className="flex flex-col gap-2 w-full mt-2">
-        <div className="flex gap-2">
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#080B14] text-primary border border-border">Email</span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#080B14] text-slate-400">WhatsApp</span>
-        </div>
-        <div className="w-full bg-[#080B14] border border-border rounded-xl p-2.5 font-mono text-[8px] text-slate-400 max-h-[85px] overflow-hidden select-none">
-          <p className="text-[#64748B]">// Generated intro</p>
-          <p className="mt-0.5 text-primary">Hi Mario, I noticed your business has...</p>
-        </div>
-      </div>
-    )
+    footer: AiOutreachFooter
   },
   {
     id: 5,
@@ -658,6 +764,296 @@ function Features() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   INTERACTIVE LEAD SCANNER PLAYGROUND
+   ──────────────────────────────────────────────────────────── */
+function LeadScannerSandbox() {
+  const [craft, setCraft] = useState<'web' | 'design' | 'seo' | 'video'>('web');
+  const [city, setCity] = useState<string>('London');
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [scanProgress, setScanProgress] = useState<number>(0);
+  const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
+  const [scanComplete, setScanComplete] = useState<boolean>(false);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [leads, setLeads] = useState<any[]>([]);
+  const { t } = usePreferences();
+
+  const handleDraftChange = (id: number, text: string) => {
+    setLeads(prev => prev.map(l => l.id === id ? { ...l, draft: text } : l));
+  };
+
+  const handleCopy = (id: number, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const startScan = () => {
+    setIsScanning(true);
+    setScanComplete(false);
+    setScanProgress(0);
+    setTerminalLogs([]);
+
+    const logSequence = [
+      `[INFO] Initializing LanceConnect engine...`,
+      `[INFO] Target: ${craft.toUpperCase()} opportunities in ${city}...`,
+      `[INFO] Fetching regional business directories...`,
+      `[SCAN] Scraping active website meta tags & schema...`,
+      `[MODEL] Analyzing mobile speed & Core Web Vitals...`,
+      `[AI] Ranking target list by opportunity potential...`,
+      `[SUCCESS] Analysis complete. 3 hot leads found!`
+    ];
+
+    let currentLogIndex = 0;
+    const interval = setInterval(() => {
+      setScanProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setLeads(getMockLeads(craft, city));
+            setIsScanning(false);
+            setScanComplete(true);
+          }, 300);
+          return 100;
+        }
+        
+        const step = Math.floor(prev / 15);
+        if (step > currentLogIndex && currentLogIndex < logSequence.length) {
+          setTerminalLogs(logs => [...logs, logSequence[currentLogIndex]]);
+          currentLogIndex++;
+        }
+        
+        return prev + 10;
+      });
+    }, 150);
+  };
+
+  return (
+    <section id="sandbox" className="border-b border-border bg-[#080B14] py-24 select-none">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center mb-16">
+          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+            {t("sandbox_eyebrow")}
+          </p>
+          <h2 className="font-display text-4xl font-extrabold text-white">{t("sandbox_title")}</h2>
+          <p className="mt-4 text-slate-400">
+            {t("sandbox_sub")}
+          </p>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-12">
+          {/* Controls - Left Column */}
+          <div className="lg:col-span-5 bg-[#0F172A]/80 border border-border rounded-2xl p-6 flex flex-col justify-between">
+            <div className="space-y-6">
+              {/* Craft Selector */}
+              <div>
+                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">{t("sandbox_step_1")}</label>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {[
+                    { id: 'web', label: 'Web Developer', emoji: '💻' },
+                    { id: 'design', label: 'Designer', emoji: '🎨' },
+                    { id: 'seo', label: 'SEO Specialist', emoji: '📈' },
+                    { id: 'video', label: 'Video Producer', emoji: '🎥' }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setCraft(item.id as any)}
+                      className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all ${
+                        craft === item.id 
+                          ? 'border-primary bg-primary/10 text-white font-semibold shadow-[0_0_15px_rgba(99,102,241,0.15)]'
+                          : 'border-border/60 bg-[#080B14] text-slate-400 hover:text-white hover:border-border'
+                      }`}
+                    >
+                      <span className="text-lg">{item.emoji}</span>
+                      <span className="text-xs">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* City Selector */}
+              <div>
+                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">{t("sandbox_step_2")}</label>
+                <div className="relative">
+                  <select
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full bg-[#080B14] border border-border/80 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
+                  >
+                    {["London", "Lagos", "São Paulo", "Tokyo", "Buenos Aires"].map((c) => (
+                      <option key={c} value={c} className="bg-[#080B14] text-white">
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Run Button */}
+            <div className="mt-8">
+              <button
+                onClick={startScan}
+                disabled={isScanning}
+                className={`w-full relative overflow-hidden flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-sm font-semibold text-white shadow-lg transition-all duration-300 ${
+                  isScanning 
+                    ? 'opacity-85 cursor-not-allowed' 
+                    : 'hover:bg-primary/90 hover:scale-[1.01] hover:shadow-primary/25'
+                }`}
+              >
+                {isScanning ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                    <span>{t("sandbox_running")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="h-4 w-4 text-white animate-pulse" />
+                    <span>{t("sandbox_run")}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Sandbox Screen Output - Right Column */}
+          <div className="lg:col-span-7 bg-[#0F172A]/40 border border-border rounded-2xl min-h-[420px] overflow-hidden flex flex-col">
+            {/* Screen Header */}
+            <div className="bg-[#0F172A] border-b border-border/80 px-4 py-3 flex items-center justify-between text-xs text-slate-400">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-red-500/60" />
+                <span className="h-2 w-2 rounded-full bg-yellow-500/60" />
+                <span className="h-2 w-2 rounded-full bg-emerald-500/60" />
+                <span className="font-mono ml-2 text-[10px] text-slate-500">console_output.sh</span>
+              </div>
+              {scanComplete && (
+                <div className="flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  <span className="h-1 w-1 bg-emerald-500 rounded-full animate-ping" />
+                  Live Leads Generated
+                </div>
+              )}
+            </div>
+
+            {/* Screen Body */}
+            <div className="flex-1 p-6 flex flex-col justify-center">
+              {/* Not scanned yet */}
+              {!isScanning && !scanComplete && (
+                <div className="text-center max-w-sm mx-auto space-y-4 py-8">
+                  <div className="h-12 w-12 rounded-2xl bg-[#0F172A]/80 border border-border/80 flex items-center justify-center mx-auto shadow-md">
+                    <Search className="h-5 w-5 text-slate-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-sm font-semibold text-white">{t("sandbox_ready_title")}</h3>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {t("sandbox_ready_desc")}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Scanning Simulator */}
+              {isScanning && (
+                <div className="space-y-6 flex-1 flex flex-col justify-between">
+                  {/* High Tech Radar Sweep */}
+                  <div className="relative h-28 flex items-center justify-center overflow-hidden">
+                    <div className="absolute h-24 w-24 rounded-full border border-primary/20 flex items-center justify-center">
+                      <div className="absolute h-16 w-16 rounded-full border border-primary/30" />
+                      <div className="absolute h-8 w-8 rounded-full border border-primary/45" />
+                      <div className="absolute inset-0 border-t-2 border-primary rounded-full animate-spin" style={{ animationDuration: '1.2s' }} />
+                    </div>
+                    <div className="h-2 w-2 rounded-full bg-primary animate-ping" />
+                  </div>
+
+                  {/* Terminal Logs */}
+                  <div className="bg-[#080B14] rounded-xl border border-border/80 p-4 font-mono text-[10px] text-slate-400 space-y-1.5 max-h-[140px] overflow-y-auto flex-1 flex flex-col justify-end">
+                    {terminalLogs.map((log, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <span className="text-primary font-bold">{`>`}</span>
+                        <span className={log.includes('[SUCCESS]') ? 'text-emerald-400 font-semibold' : log.includes('[SCAN]') ? 'text-yellow-400' : 'text-slate-300'}>
+                          {log}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-1.5 text-primary mt-1">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      <span>Scraping {scanProgress}%...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Scan completed successfully */}
+              {scanComplete && (
+                <div className="space-y-4">
+                  {leads.map((l) => (
+                    <div 
+                      key={l.id} 
+                      className="bg-[#080B14]/80 border border-border/80 hover:border-primary/40 rounded-xl p-4 transition-all duration-300 flex flex-col gap-3 group"
+                    >
+                      {/* Lead meta */}
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-display text-sm font-bold text-white leading-tight">{l.name}</h4>
+                            <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-primary">
+                              {l.score} Match
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">{l.type} · {city}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 justify-end">
+                          {l.issues.map((issue: string, idx: number) => (
+                            <span key={idx} className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-[4px] text-[8px] font-mono">
+                              ⚠ {issue}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* AI Draft section */}
+                      <div className="bg-[#0F172A] border border-border/60 rounded-lg p-2.5 flex flex-col gap-2">
+                        <div className="flex justify-between items-center text-[9px] text-slate-400 font-mono">
+                          <span>Subject: {l.subject}</span>
+                          <button
+                            onClick={() => handleCopy(l.id, `Subject: ${l.subject}\n\n${l.draft}`)}
+                            className="flex items-center gap-1 hover:text-white transition duration-200"
+                          >
+                            {copiedId === l.id ? (
+                              <>
+                                <Check className="h-3 w-3 text-emerald-400" />
+                                <span className="text-emerald-400">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-3 w-3" />
+                                <span>Copy Template</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <textarea
+                          value={l.draft}
+                          onChange={(e) => handleDraftChange(l.id, e.target.value)}
+                          className="bg-transparent border-0 font-mono text-[9px] text-slate-300 resize-none h-16 focus:outline-none focus:ring-0 leading-relaxed scrollbar-thin scrollbar-thumb-border"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -832,10 +1228,11 @@ function Testimonials() {
    PRICING — Intercom-clean
    ──────────────────────────────────────────────────────────── */
 function Pricing() {
+  const { t, formatPrice, getCurrencySymbol } = usePreferences();
   const plans = [
-    { name: "Free", price: "0", leads: "10", popular: false, cta: "Start Free", features: ["Basic filters", "1 template", "1 team seat"] },
-    { name: "Individual", price: "5", leads: "200", popular: true, cta: "Get Started", features: ["All filters", "Unlimited templates", "CRM pipeline", "CSV export", "AI outreach writer"] },
-    { name: "Large Company", price: "20", leads: "Unlimited", popular: false, cta: "Scale Up", features: ["Everything in Individual", "3 team seats", "API access", "White-label option", "Priority support"] },
+    { name: t("plan_free"), price: 0, leads: "10", popular: false, cta: t("plan_cta_free"), features: [t("plan_free_feature_1"), t("plan_free_feature_2"), t("plan_free_feature_3")] },
+    { name: t("plan_individual"), price: 5, leads: "200", popular: true, cta: t("plan_cta_ind"), features: [t("plan_ind_feature_1"), t("plan_ind_feature_2"), t("plan_ind_feature_3"), t("plan_ind_feature_4"), t("plan_ind_feature_5")] },
+    { name: t("plan_company"), price: 20, leads: "Unlimited", popular: false, cta: t("plan_cta_comp"), features: [t("plan_comp_feature_1"), t("plan_comp_feature_2"), t("plan_comp_feature_3"), t("plan_comp_feature_4"), t("plan_comp_feature_5")] },
   ];
   return (
     <section id="pricing" className="border-y border-border bg-[#0F172A]/30 py-24">
@@ -844,8 +1241,8 @@ function Pricing() {
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
             // simple.pricing
           </p>
-          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">Simple, transparent pricing</h2>
-          <p className="mt-4 text-slate-400">Start free. Upgrade when you're winning work.</p>
+          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">{t("pricing_title")}</h2>
+          <p className="mt-4 text-slate-400">{t("pricing_sub")}</p>
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {plans.map((p) => (
@@ -857,10 +1254,10 @@ function Pricing() {
               )}
               <p className="text-xs font-semibold uppercase tracking-widest text-[#64748B]">{p.name}</p>
               <div className="mt-3 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-extrabold text-white">${p.price}</span>
-                <span className="text-xs text-[#64748B]">/mo</span>
+                <span className="font-display text-4xl font-extrabold text-white">{getCurrencySymbol()}{formatPrice(p.price)}</span>
+                <span className="text-xs text-[#64748B]">{t("plan_mo")}</span>
               </div>
-              <p className="mt-2 font-mono-data text-xs text-primary">{p.leads} leads / month</p>
+              <p className="mt-2 font-mono-data text-xs text-primary">{p.leads === "Unlimited" ? "Unlimited" : p.leads} {t("plan_leads_mo")}</p>
               <ul className="mt-6 space-y-2.5 text-xs text-slate-300">
                 {p.features.map((f) => (
                   <li key={f} className="flex items-start gap-2">
