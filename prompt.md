@@ -1,160 +1,182 @@
-# LanceConnect — Master Build Prompt
-**Version**: 1.0  
-**Date**: 2026-05-28  
-**Author**: TRENDY DEVELOPER OS v3.0  
-**Target**: Lovable, Bolt.new, Claude (Artifacts)  
-**Budget**: Bootstrap ($0–500)  
-**Stack**: React + TypeScript + Tailwind CSS + Supabase + Vercel  
+# LanceConnect — Final Frontend Build Prompt
+**Version**: 2.0 (Final) | **Date**: 2026-06-03
+**Platform**: Kilo
+**Stack**: React + TypeScript + TanStack Start (Vite) + Tailwind CSS + Framer Motion + shadcn/ui
+**Data**: All mock/static — no real API calls yet
+**Brand Name**: LanceConnect (NOT FreelanceConnect)
+**Slogan**: "The Meeting Point for Freelancers and Clients"
 
 ---
 
-## EXECUTIVE SUMMARY
+## BRAND IDENTITY
 
-Build **LanceConnect** — a universal freelancer client acquisition platform. Any freelancer (web developer, designer, copywriter, SEO specialist, videographer, marketer, photographer, etc.) signs up, selects their skill category, and instantly gets access to a curated pipeline of real businesses that need their specific services. The platform discovers businesses with weak or no online presence, enriches them with contact data, scores them by opportunity quality, and gives freelancers the tools to reach out — all in one dashboard.
+### Logo Design
+`<LanceConnectLogo />` SVG component:
+- Left node: filled circle (#6366F1 indigo) — represents freelancer
+- Center: stylized connector line
+- Right node: filled circle (#10B981 emerald) — represents client  
+- Wordmark: "Lance" in Outfit 700 white + "Connect" in Outfit 700 indigo
+- Slogan below: "The Meeting Point for Freelancers and Clients" in JetBrains Mono 11px
 
-**The core problem it solves**: Millions of freelancers worldwide are skilled but struggle to find clients. Meanwhile, millions of local businesses have no website, bad SEO, poor branding, or no social media — and don't know who to call.
+### Favicon
+`/public/favicon.svg`:
+- Dark background: #080B14
+- Two dots: left indigo (#6366F1), right emerald (#10B981)
+- Connected by thin diagonal line
+- Rounded square container (rx=8)
 
-**This platform is the bridge.**
-
----
-
-## STRATEGIC VISION
-
-### Success Metrics (MVP — 90 days post-launch)
-1. 500 registered freelancers
-2. 10,000 business leads in the database across 5+ countries
-3. 3% free-to-paid conversion rate (freemium model)
-4. <3s page load time on mobile
-5. 99.5% uptime
-
----
-
-## TECHNICAL ARCHITECTURE
-
-### System Context Diagram
+### Color System
+```css
+--lc-indigo:  #6366F1   /* Primary — CTAs, links */
+--lc-emerald: #10B981   /* Success signals */
+--lc-bg-base: #080B14   /* Page background */
+--lc-bg-surface: #0F172A /* Cards, sidebar */
 ```
-[Freelancer User] 
-    → HTTPS 
-    → [LanceConnect Web App — React/Vite/TanStack Start on Vercel]
-        → [Supabase] (Auth + PostgreSQL + Storage)
-        → [Google Places API] (Business discovery)
-        → [Stripe] (Subscription payments)
-        → [Resend] (Transactional email)
-```
-
-### Tech Stack (Actual - TanStack Start)
-
-```markdown
-## Frontend
-Framework:        React 19 + TypeScript 5 + Vite 7 (TanStack Start)
-Styling:          Tailwind CSS 4 + Radix UI components
-State:            React Context + TanStack Query 5
-Routing:          TanStack Router 1
-Icons:            Lucide React
-
-## Backend (Supabase)
-Database:         PostgreSQL 15 (via Supabase)
-Auth:             Supabase Auth (email/password + Google OAuth)
-Storage:          Supabase Storage (avatars, exports)
-Edge Functions:   Supabase Edge Functions (Deno) for API calls
-Realtime:         Supabase Realtime (lead count updates)
-
-## External APIs
-Business Data:    Google Places API (New) — Text Search + Place Details
-Payments:         Stripe (subscriptions — monthly/annual)
-Email:            Resend + React Email
-```
-
----
-
-## KEY FILES TO IMPLEMENT
-
-### NEW FILES CREATED/NEEDED:
-
-1. **`src/types/index.ts`** - All TypeScript interfaces for Lead, User, PipelineStatus, etc.
-2. **`src/lib/validations.ts`** - Zod schemas for forms (search, register, login, template, profile)
-3. **`src/lib/supabase.ts`** - Supabase client initialization
-4. **`src/store/filterStore.ts`** - Zustand store for search filters
-
-### DATABASE SCHEMA
-
-See `supabase/migrations/001_initial_schema.sql` for full schema with:
-- `profiles` table (user data + plan info)
-- `leads` table (business leads with opportunity scoring)
-- `user_leads` table (CRM pipeline - saved leads)
-- `outreach_templates` table (email/phone templates)
-- `search_history` table (re-running searches)
-- Row Level Security on ALL tables
 
 ---
 
 ## DESIGN REFERENCES
 
-DESIGN REFERENCES — Study these real websites before generating any UI. Do not create generic or AI-looking interfaces. Match the quality and aesthetic of these references exactly:
+**DO NOT** use generic templates, Bootstrap shadows, gradient blobs, or stock illustrations.
 
-- **APP DASHBOARD & SIDEBAR** → linear.app
-- **LANDING PAGE TRUST & CLARITY** → stripe.com
-- **FEATURE SECTIONS (show real product)** → notion.so
-- **LEAD CARDS & DATA TABLES** → apollo.io
-- **HERO SECTION DARK AESTHETIC** → vercel.com
-- **AUTH & ONBOARDING FORMS** → mercury.com
-- **HOW IT WORKS PAGE** → loom.com
-- **PRICING PAGE** → intercom.com/pricing
-- **SCROLL ANIMATIONS** → framer.com
-- **ABOUT & CREDIBILITY** → ramp.com
-
-The overall product should feel like what you get if Linear and Apollo.io had a product built specifically for freelancers. Premium, calm, data-forward, globally credible.
-
----
-
-## STATUS MAPPING
-
-```typescript
-// Opportunity Score Colors
-90–100:  🔥 Hot Lead (bg-emerald-500)
-70–89:   ⭐ Strong (bg-blue-500)
-50–69:   👍 Good (bg-amber-500)
-30–49:   💡 Possible (bg-orange-400)
-1–29:    🔍 Weak (bg-slate-400)
-
-// Pipeline Status
-┌────────────┬──────────┬──────────────┬─────────────────┐
-│ Status     │ Emoji    │ Color Class  │ Ring Color      │
-├────────────┼──────────┼──────────────┼─────────────────┤
-│ new        │ ●        │ slate-100    │ border-l-slate-400  │
-│ contacted  │ ↗        │ blue-100     │ border-l-blue-500   │
-│ interested │ ✦        │ indigo-100   │ border-l-indigo-500 │
-│ proposal   │ ✉        │ amber-100    │ border-l-amber-500  │
-│ won        │ ✓        │ emerald-100  │ border-l-emerald-500│
-│ lost       │ ✕        │ red-100      │ border-l-red-400    │
-└────────────┴──────────┴──────────────┴─────────────────┘
+```
+APP DASHBOARD & SIDEBAR  → linear.app
+LANDING PAGE TRUST       → stripe.com  
+FEATURE SECTIONS         → notion.so
+LEAD CARDS & TABLES      → apollo.io
+HERO DARK AESTHETIC      → vercel.com
+AUTH & ONBOARDING        → mercury.com
+HOW IT WORKS             → loom.com
+PRICING PAGE             → intercom.com/pricing
+SCROLL ANIMATIONS        → framer.com
+ABOUT & CREDIBILITY      → ramp.com
+OVERALL DARK AESTHETIC    → commandcode.ai
+BENTO GRID + DATA FEEL  → abacus.ai
 ```
 
 ---
 
-## NEXT STEPS
+## HUMAN IMAGES (Critical Requirement)
 
-1. **Frontend Completion** (current focus):
-   - [x] Core types defined (`src/types/index.ts`)
-   - [x] Validation schemas (`src/lib/validations.ts`)
-   - [x] Supabase client setup (`src/lib/supabase.ts`)
-   - [x] Filter store (`src/store/filterStore.ts`)
-   - [x] Rename to "LanceConnect"
+Global platform = global imagery. Use real Unsplash photos with diverse ethnicities.
 
-2. **Remaining Frontend Tasks**:
-   - Add Supabase integration to AuthContext
-   - Add Zustand filter store to discover page
-   - Create missing search components (SearchBar, LocationPicker, CategoryPicker)
-   - Add Stripe integration to Upgrade page
-   - Add AI generator real integration
+### Hero Mosaic Images
+- africanManLaptop: woman with laptop (Brooke Cagle)  
+- indianWomanWork: professional workspace
+- whiteManCall: video call setup
+- latinaDesigner: creative work
+- asianManCoding: coding focused
+- africanWomanSmile: confident freelancer
 
-3. **Backend** (after frontend complete):
-   - Set up Supabase project
-   - Deploy Edge Functions for lead search
-   - Configure Google Places API
-   - Set up Stripe webhooks
-   - Deploy to Vercel
+### Implementation
+```tsx
+const HUMAN_IMAGES = {
+  africanManLaptop: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&q=80",
+  indianWomanWork: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
+  whiteManCall: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+  latinaDesigner: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
+  asianManCoding: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&q=80",
+  africanWomanSmile: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&q=80",
+};
+```
 
 ---
 
-*End of LanceConnect Master Build Prompt v1.0*
+## ALL 42 PAGES TO BUILD
+
+### PUBLIC ROUTES (MarketingShell)
+1. `/` - Home page
+2. `/about` - About
+3. `/features` - Features
+4. `/how-it-works` - How It Works
+5. `/pricing` - Pricing
+6. `/contact` - Contact
+7. `/privacy` - Privacy Policy
+8. `/terms` - Terms of Service
+9. `/blog` - Blog index (6 posts)
+10. `/blog/$slug` - Single blog post
+11. `/changelog` - Changelog
+12-21. `/freelancers/{web-developers,designers,copywriters,seo-specialists,social-media,videographers,photographers,marketers,virtual-assistants,app-developers}`
+
+### AUTH ROUTES (AuthSplit layout)
+22. `/register` - Sign up
+23. `/login` - Log in
+24. `/forgot-password` - Password reset
+25. `/reset-password` - New password
+26. `/verify-email` - Check inbox
+27. `/onboarding` - 3-step wizard
+
+### APP ROUTES (AppLayout with sidebar)
+28. `/app/dashboard` - Stats + quick search
+29. `/app/discover` - Lead discovery (CORE)
+30. `/app/pipeline` - CRM kanban + table
+31. `/app/templates` - Outreach templates
+32. `/app/ai-generator` - AI writer (Pro gated)
+33. `/app/upgrade` - In-app pricing
+
+### SETTINGS ROUTES
+34. `/app/settings` - Settings hub
+35. `/app/settings/profile` - Profile editor
+36. `/app/settings/subscription` - Plan + billing
+37. `/app/settings/notifications` - Alert preferences
+38. `/app/settings/danger-zone` - Delete account
+
+### SYSTEM
+39. `/404` - Not found
+40. `/500` - Server error
+41. `/maintenance` - Maintenance mode
+42. `/unsubscribe` - Email unsubscribe
+
+---
+
+## KEY IMPLEMENTATION NOTES
+
+### Section Labels
+Every section must have `// label.style` prefix in JetBrains Mono 11px:
+```tsx
+<p className="text-[11px] font-mono-data text-muted-foreground uppercase tracking-widest">
+  // find.clients.globally
+</p>
+```
+
+### Opportunity Score Colors
+- 90–100: emerald-500 "🔥 Hot Lead"
+- 70–89: blue-500 "⭐ Strong"
+- 50–69: amber-500 "👍 Good"
+- 30–49: orange-400 "💡 Possible"
+- 1–29: slate-400 "🔍 Weak"
+
+### Pipeline Status Columns
+```
+NEW → CONTACTED → INTERESTED → PROPOSAL SENT → WON / LOST
+```
+Colors: slate, blue, indigo, amber, emerald, red
+
+### Dependencies
+```bash
+npm install framer-motion zustand lucide-react sonner
+npm install react-hook-form zod @hookform/resolvers
+npx shadcn-ui@latest add button card badge dialog select tabs
+```
+
+---
+
+## COMPLETED FRONTEND ELEMENTS
+
+- [x] Logo SVG component with two-node connector
+- [x] Favicon SVG (32x32)
+- [x] Types system (`src/types/index.ts`)
+- [x] Validation schemas (`src/lib/validations.ts`)
+- [x] Supabase client (`src/lib/supabase.ts`)
+- [x] Filter store (`src/store/filterStore.ts`)
+- [x] Search components (`src/components/search/`)
+- [x] Database schema (`supabase/migrations/001_initial_schema.sql`)
+- [x] Environment variables (`.env.example`)
+- [x] Home page hero with human mosaic
+- [x] Stats bar with count-up animation
+- [x] All pages renamed to LanceConnect
+
+---
+
+*End of LanceConnect Frontend Build Prompt v2.0*
+*Ready for Kilo to complete remaining 42 pages and polish UI*
