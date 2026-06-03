@@ -101,10 +101,10 @@
 html.light {
   --background: #ffffff;
   --foreground: #020617;
-  --card: #0B0F19; /* premium black-blue/dark navy card background */
-  --card-foreground: #F8FAFC; /* white card text */
-  --popover: #0B0F19;
-  --popover-foreground: #F8FAFC;
+  --card: #f8fafc; /* clean light card background */
+  --card-foreground: #0f172a; /* dark card text */
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
   --accent: #f1f5f9;
