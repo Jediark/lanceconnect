@@ -16,30 +16,31 @@ export const Route = createFileRoute("/how-it-works")({
 });
 
 const steps = [
-  { n: "01", title: "Tell us your craft", desc: "Pick what you do — web dev, copy, SEO, design, video, photo, or 4 more. We tune the lead detector to what matters in your craft.", image: IMG.webDev },
-  { n: "02", title: "Tell us where to look", desc: "Pick a country and city. Lagos, Naples, Mumbai, Mexico City — anywhere in the world. You can change it anytime.", image: IMG.marketStall },
-  { n: "03", title: "Get a scored list of businesses", desc: "Within seconds you see a list of real businesses that fit. Each one has a score 0–100 telling you how much they need you.", image: IMG.seo },
-  { n: "04", title: "Reach out with a real human message", desc: "Use our templates (or the AI writer on Pro) to send a first message in under a minute. Email, phone script, or DM.", image: IMG.copywriter },
-  { n: "05", title: "Track replies in your pipeline", desc: "Move leads from 'contacted' to 'interested' to 'won' on a simple kanban board. No CRM headaches.", image: IMG.workspace },
+  { n: "01", title: "Pick your skill", desc: "Select your freelance category — web dev, design, copywriting, and 7 more.", image: IMG.webDev, human: IMG.face1, caption: "This is Amara from Lagos" },
+  { n: "02", title: "Choose your market", desc: "Target any city or country in the world. Filter by industry, size, signals.", image: IMG.marketStall, human: IMG.face2, caption: "This is Diego from São Paulo" },
+  { n: "03", title: "Discover scored leads", desc: "Get a scored list of businesses that fit. Hot leads bubble to the top.", image: IMG.seo, human: IMG.face3, caption: "This is Sarah from London" },
+  { n: "04", title: "Reach out directly", desc: "Use our templates (or the AI writer on Pro) to send a first message.", image: IMG.copywriter, human: IMG.face4, caption: "This is Priya from Mumbai" },
+  { n: "05", title: "Track replies in your pipeline", desc: "Move leads from 'contacted' to 'interested' to 'won'.", image: IMG.workspace, human: IMG.face1, caption: "Your pipeline, simple and clean" },
 ];
 
 function HowPage() {
   return (
     <MarketingShell>
       <PageHeader eyebrow="How it works" title="From blank screen to booked call in one afternoon." subtitle="No funnel diagrams. No marketing degree. Just five honest steps that have helped freelancers in 50+ countries land their first paying clients." image={IMG.heroLaptop} />
-      <div className="mx-auto max-w-6xl px-4 py-16 lg:px-8 space-y-20">
+      <div className="mx-auto max-w-7xl px-4 py-16 lg:px-8 space-y-20">
         {steps.map((s, i) => (
-          <div key={s.n} className={`grid gap-10 items-center lg:grid-cols-2 ${i % 2 ? "lg:[&>:first-child]:order-2" : ""}`}>
-            <div>
-              <p className="font-mono-data text-sm text-primary">{s.n}</p>
-              <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">{s.title}</h2>
+          <section key={s.n} className="grid gap-10 items-center lg:grid-cols-2">
+            <div className={`${i % 2 === 0 ? "lg:order-2" : ""}`}>
+              <p className="font-mono-data text-sm text-primary">// step.{s.n}</p>
+              <h2 className="mt-2 font-display text-3xl font-bold md:text-3xl">{s.title}</h2>
               <p className="mt-4 text-muted-foreground">{s.desc}</p>
+              <p className="mt-3 text-xs text-primary font-medium">{s.caption}</p>
             </div>
             <div className="relative">
-              <div className="absolute -inset-3 rounded-2xl bg-primary/10"/>
-              <img src={s.image} alt={s.title} className="relative aspect-[4/3] w-full rounded-2xl object-cover shadow-xl"/>
+              <div className="absolute -inset-3 rounded-2xl bg-primary/10 blur-sm"/>
+              <img src={s.human} alt={s.caption} className="relative rounded-2xl object-cover shadow-xl" loading="lazy" />
             </div>
-          </div>
+          </section>
         ))}
       </div>
       <section className="px-4 pb-20 lg:px-8">
