@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Grid3X3, List, Search, X, MapPin, Copy, Star, Phone, Mail, Globe, Check, Sparkles, Loader2 } from "lucide-react";
+import { Grid3X3, List, Search, X, MapPin, Copy, Star, Phone, Mail, Globe, Check, Sparkles, Loader2, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { LeadCard } from "@/components/ui/LeadCard";
@@ -43,6 +43,36 @@ function Discover() {
   const [city, setCity] = useState("");
   const [website, setWebsite] = useState("");
   const [minScore, setMinScore] = useState(0);
+
+  const downloadCSV = () => {
+    if (filteredResults.length === 0) return;
+    const headers = ["Business Name", "Type", "City", "Country", "Address", "Phone", "Email", "Website", "Opportunity Score", "Google Rating", "Reviews"];
+    const csvRows = [
+      headers.join(","),
+      ...filteredResults.map(l => [
+        `"${l.businessName.replace(/"/g, '""')}"`,
+        `"${l.businessType.replace(/"/g, '""')}"`,
+        `"${l.city.replace(/"/g, '""')}"`,
+        `"${l.country.replace(/"/g, '""')}"`,
+        `"${l.fullAddress.replace(/"/g, '""')}"`,
+        `"${(l.phone || "").replace(/"/g, '""')}"`,
+        `"${(l.email || "").replace(/"/g, '""')}"`,
+        `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
+        l.opportunityScore,
+        l.googleRating,
+        l.googleReviewCount
+      ].join(","))
+    ];
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `lanceconnect_leads_${city || "global"}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("CSV Spreadsheet downloaded successfully!");
+  };
   const [view, setView] = useState<"grid" | "table">("grid");
   const [sort, setSort] = useState<"score" | "rating">("score");
   const [detail, setDetail] = useState<Lead | null>(null);
@@ -224,8 +254,18 @@ function Discover() {
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-2 px-4 py-4 lg:px-8">
-        <p className="text-sm text-muted-foreground">Showing <span className="font-semibold text-foreground">{filteredResults.length}</span> leads</p>
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-4 lg:px-8">
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">Showing <span className="font-semibold text-foreground">{filteredResults.length}</span> leads</p>
+          {filteredResults.length > 0 && (
+            <button
+              onClick={downloadCSV}
+              className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer shadow-sm text-foreground"
+            >
+              <Download className="h-3.5 w-3.5" /> Export CSV
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-3">
           <select value={sort} onChange={(e) => setSort(e.target.value as "score" | "rating")} className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs">
             <option value="score">Sort by: Score</option>
@@ -426,6 +466,16 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                   <div className="flex gap-2">
                     <button onClick={() => setOutreachDraft("")} className="rounded-lg border border-border bg-card px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer">Edit Settings</button>
                     <button onClick={copyDraft} className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">Copy Pitch</button>
+                    {selectedChannel === "whatsapp" && lead.phone && (
+                      <a
+                        href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition shadow-sm"
+                      >
+                        Send via WhatsApp
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Home, Search, Kanban, Mail, Sparkles, Settings as SettingsIcon, Crown, Menu, X,
+  Home, Search, Kanban, Mail, Sparkles, Settings as SettingsIcon, Crown, Menu, X, Loader2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlanUsageBar } from "@/components/ui/PlanUsageBar";
@@ -35,11 +35,10 @@ const NAV: NavGroup[] = [
 
 export function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { user } = useAuth();
-  if (!user) return null;
+  const { user, loading } = useAuth();
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col bg-sidebar text-sidebar-foreground">
+    <aside className="flex h-full w-60 shrink-0 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border/40">
       <div className="flex items-center justify-between px-5 pb-4 pt-5">
         <Link to="/app/dashboard" className="flex items-center gap-2 text-sidebar-active">
           <Logo size={32} />
@@ -51,6 +50,13 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
           </button>
         )}
       </div>
+
+      {!user ? (
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+        </div>
+      ) : (
+        <>
 
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
         {NAV.map((group) => (
@@ -106,6 +112,8 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
           </div>
         </div>
       </div>
+      </>
+      )}
     </aside>
   );
 }

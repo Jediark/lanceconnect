@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Kanban, Table as TableIcon, Trash2, FolderOpen, Calendar } from "lucide-react";
+import { Kanban, Table as TableIcon, Trash2, FolderOpen, Calendar, Download } from "lucide-react";
+import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
@@ -20,6 +21,36 @@ function PipelinePage() {
   const { pipeline, updateStatus, removeLead } = usePipeline();
   const [view, setView] = useState<"board" | "table">("board");
   const [showLost, setShowLost] = useState(false);
+
+  const downloadCSV = () => {
+    if (pipeline.length === 0) return;
+    const headers = ["Business Name", "Status", "Opportunity Score", "City", "Country", "Address", "Phone", "Email", "Website", "Notes", "Follow-up Date"];
+    const csvRows = [
+      headers.join(","),
+      ...pipeline.map(l => [
+        `"${l.businessName.replace(/"/g, '""')}"`,
+        `"${(l.status || "new").replace(/"/g, '""')}"`,
+        l.opportunityScore,
+        `"${l.city.replace(/"/g, '""')}"`,
+        `"${l.country.replace(/"/g, '""')}"`,
+        `"${l.fullAddress.replace(/"/g, '""')}"`,
+        `"${(l.phone || "").replace(/"/g, '""')}"`,
+        `"${(l.email || "").replace(/"/g, '""')}"`,
+        `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
+        `"${(l.notes || "").replace(/"/g, '""')}"`,
+        `"${(l.followUpDate || "").replace(/"/g, '""')}"`
+      ].join(","))
+    ];
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "crm_pipeline.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Pipeline CSV spreadsheet exported successfully!");
+  };
 
   if (pipeline.length === 0) {
     return (
@@ -42,14 +73,24 @@ function PipelinePage() {
   return (
     <>
       <Header title="My Pipeline" subtitle={`${pipeline.length} leads in your funnel`} />
-      <div className="flex items-center justify-between gap-2 px-4 py-4 lg:px-8">
-        <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-          <button onClick={() => setView("board")} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium", view === "board" && "bg-primary text-primary-foreground")}>
-            <Kanban className="h-3.5 w-3.5" /> Pipeline
-          </button>
-          <button onClick={() => setView("table")} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium", view === "table" && "bg-primary text-primary-foreground")}>
-            <TableIcon className="h-3.5 w-3.5" /> Table
-          </button>
+      <div className="flex items-center justify-between gap-2 px-4 py-4 lg:px-8 flex-wrap">
+        <div className="flex items-center gap-3">
+          <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
+            <button onClick={() => setView("board")} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium", view === "board" && "bg-primary text-primary-foreground")}>
+              <Kanban className="h-3.5 w-3.5" /> Pipeline
+            </button>
+            <button onClick={() => setView("table")} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium", view === "table" && "bg-primary text-primary-foreground")}>
+              <TableIcon className="h-3.5 w-3.5" /> Table
+            </button>
+          </div>
+          {pipeline.length > 0 && (
+            <button
+              onClick={downloadCSV}
+              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer shadow-sm text-foreground"
+            >
+              <Download className="h-3.5 w-3.5" /> Export Pipeline CSV
+            </button>
+          )}
         </div>
         <label className="flex items-center gap-2 text-xs text-muted-foreground">
           <input type="checkbox" checked={showLost} onChange={(e) => setShowLost(e.target.checked)} className="accent-primary" />

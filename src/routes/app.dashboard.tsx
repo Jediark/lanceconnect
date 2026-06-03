@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Search, TrendingUp, Compass, Activity, CheckCircle, Flame, Mail, Sparkles, Loader2, X, MapPin, Copy, Star, Phone, Globe, Check, Map } from "lucide-react";
+import { ArrowRight, Search, TrendingUp, Compass, Activity, CheckCircle, Flame, Mail, Sparkles, Loader2, X, MapPin, Copy, Star, Phone, Globe, Check, Map, Download } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
 import { usePipeline } from "@/contexts/PipelineContext";
@@ -271,6 +271,36 @@ function Dashboard() {
     }
   };
 
+  const downloadCSV = () => {
+    if (results.length === 0) return;
+    const headers = ["Business Name", "Type", "City", "Country", "Address", "Phone", "Email", "Website", "Opportunity Score", "Google Rating", "Reviews"];
+    const csvRows = [
+      headers.join(","),
+      ...results.map(l => [
+        `"${l.businessName.replace(/"/g, '""')}"`,
+        `"${l.businessType.replace(/"/g, '""')}"`,
+        `"${l.city.replace(/"/g, '""')}"`,
+        `"${l.country.replace(/"/g, '""')}"`,
+        `"${l.fullAddress.replace(/"/g, '""')}"`,
+        `"${(l.phone || "").replace(/"/g, '""')}"`,
+        `"${(l.email || "").replace(/"/g, '""')}"`,
+        `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
+        l.opportunityScore,
+        l.googleRating,
+        l.googleReviewCount
+      ].join(","))
+    ];
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `discovered_leads_${quickCity || "global"}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("CSV Spreadsheet downloaded successfully!");
+  };
+
   // AI Pitch Generator
   const handleGenerate = async () => {
     if (!detail) return;
@@ -462,16 +492,25 @@ function Dashboard() {
               </form>
             </div>
 
-            {/* Discovered Leads List panel */}
             <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm">
-              <div className="mb-4 flex items-center justify-between border-b border-border/40 pb-3">
+              <div className="mb-4 flex items-center justify-between border-b border-border/40 pb-3 flex-wrap gap-2">
                 <div>
                   <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                     <Compass className="h-4 w-4 text-emerald-500" /> Discovered Clients List
                   </h3>
                   <p className="text-[10px] text-slate-500 mt-0.5">Click any lead line to open details & draft custom AI outreach messages.</p>
                 </div>
-                <span className="text-[10px] font-mono text-muted-foreground bg-background px-2 py-0.5 rounded border border-border/50">{results.length} targets</span>
+                <div className="flex items-center gap-2">
+                  {results.length > 0 && (
+                    <button
+                      onClick={downloadCSV}
+                      className="text-[10px] font-semibold bg-primary/10 border border-primary/20 text-primary px-2.5 py-0.5 rounded hover:bg-primary/20 flex items-center gap-1 cursor-pointer"
+                    >
+                      <Download className="h-3 w-3" /> Export CSV
+                    </button>
+                  )}
+                  <span className="text-[10px] font-mono text-muted-foreground bg-background px-2 py-0.5 rounded border border-border/50">{results.length} targets</span>
+                </div>
               </div>
 
               {searchLoading ? (
@@ -781,6 +820,16 @@ function Dashboard() {
                         <div className="flex gap-2">
                           <button onClick={() => setOutreachDraft("")} className="rounded border border-border bg-background px-2.5 py-1 text-xs text-slate-500 hover:text-foreground cursor-pointer">Edit settings</button>
                           <button onClick={copyDraft} className="rounded bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">Copy outreach pitch</button>
+                          {selectedChannel === "whatsapp" && detail.phone && (
+                            <a
+                              href={`https://wa.me/${detail.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition shadow-sm"
+                            >
+                              Send via WhatsApp
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>
