@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Search, TrendingUp, Compass, Activity, CheckCircle, Flame, Mail, Sparkles, Loader2, X, MapPin, Copy, Star, Phone, Globe, Check } from "lucide-react";
+import { ArrowRight, Search, TrendingUp, Compass, Activity, CheckCircle, Flame, Mail, Sparkles, Loader2, X, MapPin, Copy, Star, Phone, Globe, Check, Map } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
 import { usePipeline } from "@/contexts/PipelineContext";
@@ -8,6 +8,26 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
+
+// Country to Cities Suggester Map
+const COUNTRY_CITIES: Record<string, string[]> = {
+  "Nigeria": ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano"],
+  "Italy": ["Rome", "Milan", "Naples", "Florence", "Venice", "Turin"],
+  "United Kingdom": ["London", "Manchester", "Birmingham", "Edinburgh", "Glasgow"],
+  "Argentina": ["Buenos Aires", "Córdoba", "Rosario", "Mendoza"],
+  "India": ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai"],
+  "Canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
+  "France": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
+  "Malaysia": ["Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh"],
+  "United States": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco"],
+  "Germany": ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
+  "Brazil": ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"],
+  "Spain": ["Madrid", "Barcelona", "Valencia", "Seville", "Bilbao"],
+  "Mexico": ["Mexico City", "Guadalajara", "Monterrey", "Cancún"],
+  "South Africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria"],
+  "Kenya": ["Nairobi", "Mombasa", "Kisumu", "Nakuru"],
+  "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"]
+};
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LanceConnect" }] }),
@@ -55,6 +75,9 @@ function Dashboard() {
   const contactedCount = pipeline.filter((l) => l.status === "contacted").length;
   const wonCount = pipeline.filter((l) => l.status === "won").length;
   const conversionRate = totalSaved > 0 ? Math.round((wonCount / totalSaved) * 100) : 0;
+
+  // Get suggested cities for chosen country
+  const suggestedCities = COUNTRY_CITIES[quickCountry] || [];
 
   // Initial mount load
   useEffect(() => {
@@ -139,8 +162,8 @@ function Dashboard() {
   }, [user]);
 
   // Handle lead discovery search
-  const handleScraperSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleScraperSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!quickCity.trim()) {
       toast.error("Please enter a city name.");
       return;
@@ -149,7 +172,6 @@ function Dashboard() {
     setSearchLoading(true);
     if (!user || user.id === "user-1") {
       setTimeout(() => {
-        const queryTerm = quickCategory || "web_dev";
         const filtered = MOCK_LEADS.filter((l) => {
           if (quickCategory && l.industry !== quickCategory) return false;
           if (quickCity && !l.city.toLowerCase().includes(quickCity.toLowerCase())) return false;
@@ -264,13 +286,13 @@ function Dashboard() {
       });
       if (error) throw error;
       setOutreachDraft(data?.message || "Hi there...");
-      setProvider(data?.model?.includes("claude") ? "✦ Generated with Claude AI" : "⚡ Generated with Gemini");
+      setProvider(data?.model?.includes("claude") ? "Generated with Claude AI" : "Generated with Gemini");
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Failed to generate outreach pitch");
       // Local fallback
       setOutreachDraft(`Hi ${detail.businessName} team,\n\nI was looking at your online presence in ${detail.city} and saw some opportunities...`);
-      setProvider("⚡ Local fallback template");
+      setProvider("Local fallback template");
     } finally {
       setGenerating(false);
     }
@@ -310,7 +332,7 @@ function Dashboard() {
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="font-display text-2xl font-bold text-foreground">
-              {greeting}, {(user?.fullName || "Freelancer").split(" ")[0]} 👋
+              {greeting}, {(user?.fullName || "Freelancer").split(" ")[0]}
             </h2>
             <p className="text-sm text-slate-500">
               Welcome back to your client-finding command center.
@@ -318,15 +340,15 @@ function Dashboard() {
           </div>
           <Link 
             to="/app/discover"
-            className="inline-flex items-center gap-1.5 self-start rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-white shadow-lg hover:bg-primary/90 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 self-start rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-primary/90 transition cursor-pointer"
           >
             <Compass className="h-4 w-4" /> Discover Leads Map
           </Link>
         </div>
 
-        {/* Premium Stat Cards */}
+        {/* Premium Muted Stat Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-card hover:border-slate-800 transition">
+          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
             <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// total.scans</p>
             <p className="mt-2 font-mono text-3xl font-bold text-foreground">{scansCount}</p>
             <p className="mt-1 flex items-center gap-1 text-[10px] text-emerald-500 font-medium">
@@ -334,7 +356,7 @@ function Dashboard() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-card hover:border-slate-800 transition">
+          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
             <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// saved.leads</p>
             <p className="mt-2 font-mono text-3xl font-bold text-foreground">{totalSaved}</p>
             <p className="mt-1 text-[10px] text-slate-500 font-medium">
@@ -342,7 +364,7 @@ function Dashboard() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-card hover:border-slate-800 transition">
+          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
             <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// contacted</p>
             <p className="mt-2 font-mono text-3xl font-bold text-foreground">{contactedCount}</p>
             <p className="mt-1 text-[10px] text-slate-500 font-medium">
@@ -350,7 +372,7 @@ function Dashboard() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-card hover:border-slate-800 transition">
+          <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-5 shadow-sm hover:border-slate-800 transition">
             <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">// win.rate</p>
             <p className="mt-2 font-mono text-3xl font-bold text-foreground">{conversionRate}%</p>
             <p className="mt-1 text-[10px] text-primary font-medium">
@@ -366,7 +388,7 @@ function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Lead Scraper Console */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm">
               <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <Search className="h-4 w-4 text-primary" /> Active Lead Scraper Console
               </h3>
@@ -374,53 +396,74 @@ function Dashboard() {
                 Configure your search options and scan live maps databases for local business opportunities.
               </p>
               
-              <form onSubmit={handleScraperSearch} className="mt-4 grid gap-3 sm:grid-cols-4 items-end">
-                <div className="sm:col-span-1">
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Freelancer Craft</label>
-                  <select 
-                    value={quickCategory}
-                    onChange={(e) => setQuickCategory(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition"
+              <form onSubmit={handleScraperSearch} className="mt-4 space-y-4">
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Freelancer Craft</label>
+                    <select 
+                      value={quickCategory}
+                      onChange={(e) => setQuickCategory(e.target.value)}
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition"
+                    >
+                      {CATEGORIES.map((c) => <option key={c.id} value={c.id} className="bg-background text-foreground">{c.label}</option>)}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Target Country</label>
+                    <select 
+                      value={quickCountry}
+                      onChange={(e) => setQuickCountry(e.target.value)}
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition"
+                    >
+                      {COUNTRIES.map((c) => <option key={c.code} value={c.name} className="bg-background text-foreground">{c.name}</option>)}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">City Name</label>
+                    <input 
+                      type="text"
+                      required
+                      placeholder="Enter city..."
+                      value={quickCity}
+                      onChange={(e) => setQuickCity(e.target.value)}
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder-slate-600 focus:outline-none focus:border-primary transition font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Country city suggest blocks */}
+                {suggestedCities.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] pt-1">
+                    <span className="text-slate-500 font-medium">Suggested cities:</span>
+                    {suggestedCities.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => { setQuickCity(c); toast.success(`Selected city: ${c}`); }}
+                        className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-medium text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex justify-end pt-1">
+                  <button 
+                    type="submit" 
+                    disabled={searchLoading}
+                    className="flex items-center justify-center gap-1.5 rounded-lg bg-primary px-5 py-2 text-xs font-semibold text-white hover:bg-primary/95 transition disabled:opacity-50 cursor-pointer shadow-sm"
                   >
-                    {CATEGORIES.map((c) => <option key={c.id} value={c.id} className="bg-background text-foreground">{c.emoji} {c.label}</option>)}
-                  </select>
+                    {searchLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />} Find Opportunities
+                  </button>
                 </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Target Country</label>
-                  <select 
-                    value={quickCountry}
-                    onChange={(e) => setQuickCountry(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary transition"
-                  >
-                    {COUNTRIES.map((c) => <option key={c.code} value={c.name} className="bg-background text-foreground">{c.flag} {c.name}</option>)}
-                  </select>
-                </div>
-
-                <div className="sm:col-span-1">
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">City Name</label>
-                  <input 
-                    type="text"
-                    required
-                    placeholder="e.g. Lagos, London, New York"
-                    value={quickCity}
-                    onChange={(e) => setQuickCity(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder-slate-600 focus:outline-none focus:border-primary transition font-mono"
-                  />
-                </div>
-
-                <button 
-                  type="submit" 
-                  disabled={searchLoading}
-                  className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary py-2 text-xs font-semibold text-white hover:bg-primary/95 transition disabled:opacity-50 cursor-pointer"
-                >
-                  {searchLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />} Find Opportunities
-                </button>
               </form>
             </div>
 
             {/* Discovered Leads List panel */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between border-b border-border/40 pb-3">
                 <div>
                   <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -437,9 +480,9 @@ function Dashboard() {
                   <p className="text-xs font-mono text-muted-foreground animate-pulse">Scanning global map index...</p>
                 </div>
               ) : results.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-center text-slate-500">
-                  <span className="text-3xl">🌎</span>
-                  <p className="mt-3 text-sm font-medium text-foreground">No active opportunities loaded.</p>
+                 <div className="flex flex-col items-center justify-center py-16 text-center text-slate-500">
+                  <Map className="h-10 w-10 text-slate-500/50 mb-3" />
+                  <p className="text-sm font-medium text-foreground">No active opportunities loaded.</p>
                   <p className="text-xs text-slate-500 mt-1 max-w-sm">Enter a target city and query parameters in the scraper console above to fetch real-time leads.</p>
                 </div>
               ) : (
@@ -506,7 +549,7 @@ function Dashboard() {
           <div className="space-y-6">
             
             {/* Quota Usage Gauge Widget */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between">
+            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm flex flex-col justify-between">
               <div className="flex items-start justify-between border-b border-border/40 pb-3">
                 <div>
                   <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider">Quota Meter</h3>
@@ -580,7 +623,7 @@ function Dashboard() {
             </div>
 
             {/* Pipeline visualizer */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between">
+            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm flex flex-col justify-between">
               <div className="border-b border-border/40 pb-3">
                 <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider">Campaign Pipeline</h3>
                 <p className="text-[10px] text-slate-500">CRM conversion stage progression</p>
@@ -607,7 +650,7 @@ function Dashboard() {
               <div className="text-center bg-background border border-border/40 p-2.5 rounded-xl text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
                 {wonCount > 0 ? (
                   <span className="text-emerald-500 font-medium">
-                    🎉 Won {wonCount} high-paying freelance contracts!
+                    Won {wonCount} high-paying freelance contracts
                   </span>
                 ) : (
                   <span>Keep saving prospects and sending AI pitches to convert won deals.</span>
@@ -616,7 +659,7 @@ function Dashboard() {
             </div>
 
             {/* Audit Logs activities list */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between">
+            <div className="rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md p-6 shadow-sm flex flex-col justify-between">
               <div className="border-b border-border/40 pb-3 mb-4">
                 <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Activity className="h-4 w-4 text-primary" /> System Activity Logs
@@ -677,7 +720,7 @@ function Dashboard() {
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDetail(null)} />
             
             {/* Modal Box */}
-            <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div className="relative w-full max-w-lg rounded-2xl border border-border/40 bg-card p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
               <div className="flex items-start justify-between border-b border-border/40 pb-3">
                 <div className="min-w-0">
                   <h3 className="font-display text-lg font-bold text-foreground truncate">{detail.businessName}</h3>
@@ -751,10 +794,10 @@ function Dashboard() {
                             onChange={(e) => setSelectedChannel(e.target.value as any)}
                             className="bg-card border border-border rounded px-1.5 py-0.5 text-foreground text-[11px]"
                           >
-                            <option value="email">📧 Email</option>
-                            <option value="linkedin">🔗 LinkedIn DM</option>
-                            <option value="whatsapp">💬 WhatsApp Message</option>
-                            <option value="phone_script">📞 Phone Script</option>
+                            <option value="email">Email</option>
+                            <option value="linkedin">LinkedIn DM</option>
+                            <option value="whatsapp">WhatsApp Message</option>
+                            <option value="phone_script">Phone Script</option>
                           </select>
                         </div>
 
@@ -765,9 +808,9 @@ function Dashboard() {
                             onChange={(e) => setSelectedTone(e.target.value as any)}
                             className="bg-card border border-border rounded px-1.5 py-0.5 text-foreground text-[11px]"
                           >
-                            <option value="professional">👔 Professional</option>
-                            <option value="casual">☕ Casual</option>
-                            <option value="bold">🚀 Bold / Direct</option>
+                            <option value="professional">Professional</option>
+                            <option value="casual">Casual</option>
+                            <option value="bold">Bold / Direct</option>
                           </select>
                         </div>
                       </div>
@@ -799,7 +842,7 @@ function Dashboard() {
                   disabled={savedIds.has(detail.id)}
                   className="w-full rounded-lg bg-primary py-2.5 text-xs font-semibold text-white hover:bg-primary/95 disabled:opacity-50 cursor-pointer"
                 >
-                  {savedIds.has(detail.id) ? "✓ Prospect saved in CRM" : "Save to CRM Pipeline"}
+                  {savedIds.has(detail.id) ? "Prospect saved in CRM" : "Save to CRM Pipeline"}
                 </button>
               </div>
             </div>

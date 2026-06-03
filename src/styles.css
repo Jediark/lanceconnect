@@ -99,10 +99,10 @@
 }
 
 html.light {
-  --background: #ffffff;
+  --background: #f0f2f5;
   --foreground: #020617;
-  --card: #f8fafc; /* clean light card background */
-  --card-foreground: #0f172a; /* dark card text */
+  --card: #ffffff; /* clean white card background */
+  --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
   --muted: #f1f5f9;

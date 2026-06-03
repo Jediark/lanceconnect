@@ -12,10 +12,10 @@ export const Route = createFileRoute("/app/templates")({
 
 const CHANNELS = [
   { id: "all", label: "All" },
-  { id: "email", label: "📧 Email" },
-  { id: "phone_script", label: "📞 Phone Scripts" },
-  { id: "linkedin", label: "💬 LinkedIn" },
-  { id: "sms", label: "📱 SMS" },
+  { id: "email", label: "Email" },
+  { id: "phone_script", label: "Phone Scripts" },
+  { id: "linkedin", label: "LinkedIn" },
+  { id: "sms", label: "SMS" },
 ];
 
 type Template = (typeof MOCK_TEMPLATES)[number];

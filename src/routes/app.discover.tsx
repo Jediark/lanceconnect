@@ -12,6 +12,25 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 
+const COUNTRY_CITIES: Record<string, string[]> = {
+  "Nigeria": ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano"],
+  "Italy": ["Rome", "Milan", "Naples", "Florence", "Venice", "Turin"],
+  "United Kingdom": ["London", "Manchester", "Birmingham", "Edinburgh", "Glasgow"],
+  "Argentina": ["Buenos Aires", "Córdoba", "Rosario", "Mendoza"],
+  "India": ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai"],
+  "Canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
+  "France": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
+  "Malaysia": ["Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh"],
+  "United States": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco"],
+  "Germany": ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
+  "Brazil": ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"],
+  "Spain": ["Madrid", "Barcelona", "Valencia", "Seville", "Bilbao"],
+  "Mexico": ["Mexico City", "Guadalajara", "Monterrey", "Cancún"],
+  "South Africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria"],
+  "Kenya": ["Nairobi", "Mombasa", "Kisumu", "Nakuru"],
+  "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"]
+};
+
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
   component: Discover,
@@ -30,6 +49,8 @@ function Discover() {
 
   const [results, setResults] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const suggestedCities = COUNTRY_CITIES[country] || [];
 
   useEffect(() => {
     if (!user || user.id === "user-1") {
@@ -159,31 +180,48 @@ function Discover() {
 
       <div className="border-b border-border bg-card/60 px-4 py-3 lg:px-8">
         <div className="flex flex-wrap items-center gap-2">
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm">
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
             <option value="">All Categories</option>
-            {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
+            {CATEGORIES.map((c) => <option key={c.id} value={c.id} className="bg-background text-foreground">{c.label}</option>)}
           </select>
-          <select value={country} onChange={(e) => setCountry(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm">
+          <select value={country} onChange={(e) => setCountry(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
             <option value="">All Countries</option>
-            {COUNTRIES.map((c) => <option key={c.code} value={c.name}>{c.flag} {c.name}</option>)}
+            {COUNTRIES.map((c) => <option key={c.code} value={c.name} className="bg-background text-foreground">{c.name}</option>)}
           </select>
-          <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Enter city (e.g. Lagos)..." className="rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary" />
-          <select value={website} onChange={(e) => setWebsite(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm">
+          <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Enter city..." className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary" />
+          <select value={website} onChange={(e) => setWebsite(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
             <option value="">All Websites</option>
             <option value="no">No Website Only</option>
             <option value="yes">Has Website</option>
           </select>
-          <select value={minScore} onChange={(e) => setMinScore(Number(e.target.value))} className="rounded-lg border border-input bg-background px-3 py-2 text-sm">
+          <select value={minScore} onChange={(e) => setMinScore(Number(e.target.value))} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
             <option value={0}>Any Score</option>
             <option value={50}>50+</option>
             <option value={70}>70+</option>
             <option value={85}>85+</option>
           </select>
-          <button onClick={handleSearch} disabled={loading} className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
+          <button onClick={handleSearch} disabled={loading} className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
             {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />} Search Leads
           </button>
           <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground">Clear filters</button>
         </div>
+
+        {/* Suggested Cities */}
+        {suggestedCities.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-2.5 pt-2.5 border-t border-border/20">
+            <span className="text-slate-500 font-medium">Suggested cities:</span>
+            {suggestedCities.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => { setCity(c); toast.success(`Selected city: ${c}`); }}
+                className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-medium text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between gap-2 px-4 py-4 lg:px-8">
@@ -207,7 +245,7 @@ function Discover() {
             <p className="mt-2 text-sm text-muted-foreground">Searching business indexes...</p>
           </div>
         ) : filteredResults.length === 0 ? (
-          <EmptyState icon="🔍" title="No leads found in this area yet" description="Try a different city or expand your filters." action={{ label: "Clear all filters", onClick: clear }} />
+          <EmptyState icon={<Search className="h-10 w-10 text-muted-foreground/60" />} title="No leads found in this area yet" description="Try a different city or expand your filters." action={{ label: "Clear all filters", onClick: clear }} />
         ) : view === "grid" ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredResults.map((l, i) => (
@@ -282,7 +320,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
         setTimeout(() => {
           const draftText = `Subject: Helping ${lead.businessName} with design and web optimization\n\nHi Manager,\n\nI noticed your business online and saw a few areas where a redesigned mobile interface or faster load speeds could increase your customer bookings. I'd love to jump on a quick 5-minute call this week to share some suggestions.\n\nBest,\nAlex`;
           setOutreachDraft(draftText);
-          setProvider("⚡ Generated with Gemini");
+          setProvider("Generated with Gemini");
           setGenerating(false);
           toast.success("AI draft generated successfully!");
         }, 1000);
@@ -299,7 +337,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
       });
       if (error) throw error;
       setOutreachDraft(data.message || "");
-      setProvider(data.provider_label || "✦ Generated with AI");
+      setProvider(data.provider_label || "Generated with AI");
       toast.success("AI Outreach Draft generated!");
     } catch (err: any) {
       console.error(err);
@@ -401,10 +439,10 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                       onChange={(e) => setSelectedChannel(e.target.value as any)} 
                       className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
                     >
-                      <option value="email">📧 Email</option>
-                      <option value="linkedin">🔗 LinkedIn DM</option>
-                      <option value="whatsapp">💬 WhatsApp Message</option>
-                      <option value="phone_script">📞 Phone Script</option>
+                      <option value="email">Email</option>
+                      <option value="linkedin">LinkedIn DM</option>
+                      <option value="whatsapp">WhatsApp Message</option>
+                      <option value="phone_script">Phone Script</option>
                     </select>
                   </div>
                   <div className="flex items-center gap-1">
@@ -414,9 +452,9 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                       onChange={(e) => setSelectedTone(e.target.value as any)} 
                       className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
                     >
-                      <option value="professional">👔 Professional</option>
-                      <option value="casual">☕ Casual</option>
-                      <option value="bold">🚀 Bold/Direct</option>
+                      <option value="professional">Professional</option>
+                      <option value="casual">Casual</option>
+                      <option value="bold">Bold/Direct</option>
                     </select>
                   </div>
                 </div>

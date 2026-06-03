@@ -1,7 +1,20 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { FREELANCER_CATEGORIES } from "@/data/content";
-import { ArrowRight, AlertCircle, Building2 } from "lucide-react";
+import { ArrowRight, AlertCircle, Building2, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users } from "lucide-react";
+
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  "web-developers": <Code className="h-5 w-5 text-primary" />,
+  "designers": <Palette className="h-5 w-5 text-primary" />,
+  "copywriters": <PenTool className="h-5 w-5 text-primary" />,
+  "seo-specialists": <TrendingUp className="h-5 w-5 text-primary" />,
+  "social-media": <MessageSquare className="h-5 w-5 text-primary" />,
+  "videographers": <Video className="h-5 w-5 text-primary" />,
+  "photographers": <Camera className="h-5 w-5 text-primary" />,
+  "marketers": <Megaphone className="h-5 w-5 text-primary" />,
+  "app-developers": <Smartphone className="h-5 w-5 text-primary" />,
+  "virtual-assistants": <Users className="h-5 w-5 text-primary" />
+};
 
 export const Route = createFileRoute("/freelancers/$slug")({
   loader: ({ params }) => {
@@ -37,7 +50,7 @@ function CategoryPage() {
   const others = FREELANCER_CATEGORIES.filter(c => c.slug !== cat.slug).slice(0, 4);
   return (
     <MarketingShell>
-      <PageHeader eyebrow={`${cat.emoji} For ${cat.label}`} title={cat.tagline} subtitle={cat.description} image={cat.image}/>
+      <PageHeader eyebrow={`For ${cat.label}`} title={cat.tagline} subtitle={cat.description} image={cat.image}/>
 
       <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8 grid gap-10 lg:grid-cols-2">
         <div>
@@ -78,7 +91,7 @@ function CategoryPage() {
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {others.map(o => (
             <Link key={o.slug} to="/freelancers/$slug" params={{slug:o.slug}} className="group rounded-xl border border-border bg-card p-4 hover:border-primary">
-              <div className="text-xl">{o.emoji}</div>
+              <div className="mb-2 text-primary">{CATEGORY_ICONS[o.slug] || <Code className="h-5 w-5" />}</div>
               <p className="mt-2 font-display font-semibold group-hover:text-primary">{o.label}</p>
               <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{o.tagline}</p>
             </Link>

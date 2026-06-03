@@ -1,17 +1,19 @@
+import React from "react";
+
 export function EmptyState({
-  icon = "🔍",
+  icon,
   title,
   description,
   action,
 }: {
-  icon?: string;
+  icon?: React.ReactNode;
   title: string;
   description?: string;
   action?: { label: string; onClick: () => void };
 }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center">
-      <div className="mb-4 text-5xl">{icon}</div>
+      {icon && <div className="mb-4">{icon}</div>}
       <h3 className="font-display text-lg font-semibold">{title}</h3>
       {description && <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>}
       {action && (

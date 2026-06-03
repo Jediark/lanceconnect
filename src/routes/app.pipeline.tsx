@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Kanban, Table as TableIcon, Trash2 } from "lucide-react";
+import { Kanban, Table as TableIcon, Trash2, FolderOpen, Calendar } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
@@ -27,7 +27,7 @@ function PipelinePage() {
         <Header title="My Pipeline" />
         <div className="px-4 py-10 lg:px-8">
           <EmptyState
-            icon="📭"
+            icon={<FolderOpen className="h-10 w-10 text-muted-foreground/60" />}
             title="You haven't saved any leads yet"
             description="Head over to Discover Leads to start building your pipeline."
             action={{ label: "Go to Discover Leads", onClick: () => (window.location.href = "/app/discover") }}
@@ -66,7 +66,7 @@ function PipelinePage() {
               return (
                 <div key={status} className="w-72 shrink-0 rounded-2xl bg-muted/50 p-3">
                   <div className={cn("mb-3 flex items-center justify-between border-l-4 pl-2", meta.ring)}>
-                    <p className="text-xs font-semibold uppercase tracking-wide">{meta.emoji} {meta.label}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide">{meta.label}</p>
                     <span className="rounded-full bg-card px-2 py-0.5 text-xs font-mono-data">{cards.length}</span>
                   </div>
                   <div className="space-y-2">
@@ -77,7 +77,11 @@ function PipelinePage() {
                           <OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} />
                         </div>
                         <p className="mt-0.5 text-xs text-muted-foreground">{l.city} · {l.businessType}</p>
-                        {l.followUpDate && <p className="mt-2 text-[11px] text-amber-700">📅 Follow up: {l.followUpDate}</p>}
+                        {l.followUpDate && (
+                          <p className="mt-2 flex items-center gap-1 text-[11px] text-amber-700">
+                            <Calendar className="h-3 w-3" /> Follow up: {l.followUpDate}
+                          </p>
+                        )}
                         {l.notes && <p className="mt-1 text-[11px] italic text-muted-foreground">"{l.notes}"</p>}
                         <div className="mt-3 flex items-center gap-1">
                           <select
@@ -86,7 +90,7 @@ function PipelinePage() {
                             className="flex-1 rounded-md border border-border bg-background px-2 py-1 text-[11px]"
                           >
                             {Object.entries(STATUS_META).map(([k, v]) => (
-                              <option key={k} value={k}>{v.emoji} {v.label}</option>
+                              <option key={k} value={k}>{v.label}</option>
                             ))}
                           </select>
                           <button onClick={() => removeLead(l.id)} className="rounded-md border border-border bg-background p-1.5 text-muted-foreground hover:text-red-600">

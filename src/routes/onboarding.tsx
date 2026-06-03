@@ -1,8 +1,21 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users, Globe } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  web_dev: <Code className="h-5 w-5 text-primary" />,
+  designer: <Palette className="h-5 w-5 text-primary" />,
+  copywriter: <PenTool className="h-5 w-5 text-primary" />,
+  seo: <TrendingUp className="h-5 w-5 text-primary" />,
+  social_media: <MessageSquare className="h-5 w-5 text-primary" />,
+  video: <Video className="h-5 w-5 text-primary" />,
+  photography: <Camera className="h-5 w-5 text-primary" />,
+  marketing: <Megaphone className="h-5 w-5 text-primary" />,
+  app_dev: <Smartphone className="h-5 w-5 text-primary" />,
+  va: <Users className="h-5 w-5 text-primary" />
+};
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({ meta: [{ title: "Welcome — LanceConnect" }] }),
@@ -51,7 +64,7 @@ function Onboarding() {
                         <Check className="h-3 w-3" />
                       </span>
                     )}
-                    <div className="text-2xl">{c.emoji}</div>
+                    <div className="mb-2 text-primary">{CATEGORY_ICONS[c.id] || <Code className="h-5 w-5" />}</div>
                     <p className="mt-2 font-display text-sm font-semibold">{c.label}</p>
                     <p className="mt-1 text-[11px] text-muted-foreground">{c.example}</p>
                   </button>
@@ -76,7 +89,7 @@ function Onboarding() {
                 <select value={country} onChange={(e) => setCountry(e.target.value)} disabled={worldwide} className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm disabled:opacity-50">
                   <option value="">Select a country</option>
                   {COUNTRIES.map((c) => (
-                    <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                    <option key={c.code} value={c.code}>{c.name}</option>
                   ))}
                 </select>
               </div>
@@ -92,7 +105,7 @@ function Onboarding() {
               </div>
               <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border bg-card p-3 text-sm">
                 <input type="checkbox" checked={worldwide} onChange={(e) => setWorldwide(e.target.checked)} className="h-4 w-4 accent-primary" />
-                <span>🌍 Search worldwide</span>
+                <Globe className="h-4 w-4 text-muted-foreground" /> <span>Search worldwide</span>
               </label>
             </div>
             <div className="mt-10 flex justify-between">
