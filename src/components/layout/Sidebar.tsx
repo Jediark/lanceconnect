@@ -99,8 +99,8 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
 
       <div className="space-y-3 border-t border-sidebar-border/60 p-3">
         <PlanUsageBar used={user.leadsUsedThisMonth} limit={user.leadsLimit} plan={user.plan} />
-        <Link to="/app/upgrade" onClick={onClose} className="block rounded-lg bg-primary/90 px-3 py-2 text-center text-xs font-medium text-primary-foreground hover:bg-primary">
-          Upgrade now
+        <Link to="/app/upgrade" onClick={onClose} className="block rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-bold text-white glow-primary hover:brightness-110 transition">
+          Upgrade Plan
         </Link>
         <div className="flex items-center gap-2 px-1 pt-1">
           <div className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
