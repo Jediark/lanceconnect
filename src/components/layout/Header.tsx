@@ -22,7 +22,7 @@ export function Header({ title, subtitle }: { title: string; subtitle?: string }
         </button>
         {user && (
           <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-brand text-xs font-semibold text-white">
-            {user.fullName.split(" ").map((n) => n[0]).join("")}
+            {(user.fullName || "User").split(" ").map((n) => n[0]).join("")}
           </div>
         )}
       </div>

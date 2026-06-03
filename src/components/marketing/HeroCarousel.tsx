@@ -50,7 +50,7 @@ export function HeroCarousel() {
             {SLIDES.map((s) => (
               <div key={s.title} className="min-w-0 shrink-0 grow-0 basis-full pl-5 sm:basis-[80%] md:basis-[60%] lg:basis-[48%]">
                 <article className="group relative overflow-hidden rounded-3xl border border-border bg-card">
-                  <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden">
+                  <div className="relative aspect-[3/2] md:aspect-[16/10] overflow-hidden">
                     <img src={s.img} alt={s.title} loading="lazy"
                       className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />

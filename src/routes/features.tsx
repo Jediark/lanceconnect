@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { IMG } from "@/data/content";
-import { Globe2, BarChart3, Mail, Bookmark, Sparkles, Zap, ArrowRight } from "lucide-react";
+import { Globe2, BarChart3, Mail, Bookmark, Sparkles, Zap, ArrowRight, Search, Phone } from "lucide-react";
 
 export const Route = createFileRoute("/features")({
   head: () => ({

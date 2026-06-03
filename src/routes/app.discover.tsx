@@ -178,7 +178,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
           </div>
 
           <div className="space-y-2 rounded-xl bg-muted/40 p-4 text-sm">
-            <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {lead.address}</p>
+            <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" /> {lead.fullAddress || ""}</p>
             <p className="flex items-center justify-between gap-2">
               <span className="inline-flex items-center gap-2 font-mono-data"><Phone className="h-3.5 w-3.5 text-muted-foreground" /> {lead.phone}</span>
               <button onClick={() => { navigator.clipboard?.writeText(lead.phone); toast.success("Copied"); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-accent">

@@ -33,7 +33,7 @@ function Dashboard() {
       <Header title="Dashboard" />
       <div className="space-y-6 px-4 py-6 lg:px-8">
         <div>
-          <h2 className="font-display text-2xl font-bold">{greet}, {user?.fullName.split(" ")[0]} 👋</h2>
+          <h2 className="font-display text-2xl font-bold">{greet}, {(user?.fullName || "User").split(" ")[0]} 👋</h2>
           <p className="text-sm text-muted-foreground">You have {pipeline.filter((p) => p.followUpDate).length} leads to follow up today.</p>
         </div>
 

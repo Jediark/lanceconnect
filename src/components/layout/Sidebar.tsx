@@ -98,10 +98,10 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
         </Link>
         <div className="flex items-center gap-2 px-1 pt-1">
           <div className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {user.fullName.split(" ").map((n) => n[0]).join("")}
+            {(user.fullName || "User").split(" ").map((n) => n[0]).join("")}
           </div>
           <div className="min-w-0 leading-tight">
-            <p className="truncate text-xs font-medium text-sidebar-active">{user.fullName}</p>
+            <p className="truncate text-xs font-medium text-sidebar-active">{user.fullName || "User"}</p>
             <p className="truncate text-[11px] text-sidebar-foreground/70">{user.email}</p>
           </div>
         </div>

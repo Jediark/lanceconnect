@@ -30,7 +30,7 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
 
   const openMaps = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.address)}`, "_blank");
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.fullAddress || "")}`, "_blank");
   };
 
   return (

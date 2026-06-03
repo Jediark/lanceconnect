@@ -53,49 +53,49 @@
 :root {
   --radius: 0.75rem;
 
-  /* Warm cream paper background, deep ink foreground */
-  --background: oklch(0.985 0.008 80);      /* #FAF7F2 warm cream */
-  --foreground: oklch(0.22 0.02 50);        /* #1F1B16 deep ink */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.02 50);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.02 50);
+  /* CommandCode dark mode theme tokens */
+  --background: #080B14;
+  --foreground: #F8FAFC;
+  --card: #0F172A;
+  --card-foreground: #CBD5E1;
+  --popover: #0F172A;
+  --popover-foreground: #CBD5E1;
 
-  /* Burnt sienna / terracotta primary — distinctive, human, warm */
-  --primary: oklch(0.55 0.16 35);           /* #B5481E terracotta */
-  --primary-foreground: oklch(0.99 0.005 80);
-  --secondary: oklch(0.95 0.012 70);
-  --secondary-foreground: oklch(0.22 0.02 50);
-  --muted: oklch(0.95 0.012 70);
-  --muted-foreground: oklch(0.5 0.02 60);
-  --accent: oklch(0.93 0.025 75);
-  --accent-foreground: oklch(0.22 0.02 50);
-  --destructive: oklch(0.55 0.21 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.015 70);
-  --input: oklch(0.9 0.015 70);
-  --ring: oklch(0.55 0.16 35);
+  /* Indigo primary and emerald secondary */
+  --primary: #6366F1;
+  --primary-foreground: #F8FAFC;
+  --secondary: #10B981;
+  --secondary-foreground: #080B14;
+  --muted: #0F172A;
+  --muted-foreground: #64748B;
+  --accent: #1E293B;
+  --accent-foreground: #F8FAFC;
+  --destructive: #EF4444;
+  --destructive-foreground: #F8FAFC;
+  --border: rgba(99,102,241,0.15);
+  --input: rgba(99,102,241,0.15);
+  --ring: #6366F1;
 
-  --brand: oklch(0.55 0.16 35);             /* terracotta */
-  --brand-foreground: oklch(0.99 0 0);
-  --success: oklch(0.55 0.13 150);          /* deep forest */
-  --warn: oklch(0.75 0.15 75);              /* mustard */
-  --hot: oklch(0.55 0.21 25);               /* clay red */
-  --ink: oklch(0.22 0.02 50);
-  --cream: oklch(0.97 0.012 80);
+  --brand: #6366F1;
+  --brand-foreground: #F8FAFC;
+  --success: #10B981;
+  --warn: #F59E0B;
+  --hot: #EF4444;
+  --ink: #F8FAFC;
+  --cream: #0F172A;
 
-  --sidebar: oklch(0.18 0.015 50);          /* deeper ink, Linear-like */
-  --sidebar-foreground: oklch(0.72 0.02 60);
-  --sidebar-active: oklch(0.99 0 0);
-  --sidebar-hover: oklch(0.26 0.02 55);
-  --sidebar-border: oklch(0.28 0.02 55);
+  --sidebar: #080B14;
+  --sidebar-foreground: #CBD5E1;
+  --sidebar-active: #F8FAFC;
+  --sidebar-hover: rgba(99,102,241,0.06);
+  --sidebar-border: rgba(99,102,241,0.15);
 
-  /* Near-black canvas for Vercel/Linear-style dark sections */
-  --ink-bg: oklch(0.16 0.012 50);
-  --ink-bg-2: oklch(0.21 0.015 55);
-  --ink-fg: oklch(0.97 0.005 80);
-  --ink-muted: oklch(0.68 0.015 60);
-  --ink-border: oklch(0.28 0.02 55);
+  /* Near-black canvas and layout tokens */
+  --ink-bg: #080B14;
+  --ink-bg-2: #0F172A;
+  --ink-fg: #F8FAFC;
+  --ink-muted: #64748B;
+  --ink-border: rgba(99,102,241,0.15);
 }
 
 @layer base {
@@ -128,18 +128,18 @@
 
   .bg-grid-pattern {
     background-image:
-      linear-gradient(to right, rgba(31, 27, 22, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(31, 27, 22, 0.06) 1px, transparent 1px);
+      linear-gradient(to right, rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
   .bg-dot-pattern {
-    background-image: radial-gradient(rgba(31,27,22,0.12) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px);
     background-size: 18px 18px;
   }
 
-  .shadow-card { box-shadow: 0 1px 2px rgba(31,27,22,0.04), 0 1px 3px rgba(31,27,22,0.06); }
-  .shadow-card-hover { box-shadow: 0 4px 6px -1px rgba(31,27,22,0.08), 0 10px 20px -10px rgba(181,72,30,0.25); }
+  .shadow-card { box-shadow: 0 1px 3px rgba(8,11,20,0.5), 0 1px 2px rgba(8,11,20,0.3); }
+  .shadow-card-hover { box-shadow: 0 4px 6px -1px rgba(8,11,20,0.6), 0 10px 20px -10px rgba(99,102,241,0.3); }
 
   @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }

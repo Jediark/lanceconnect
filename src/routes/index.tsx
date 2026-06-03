@@ -3,11 +3,9 @@ import { useEffect, useState } from "react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
+  Globe2, BarChart3, Zap, Search,
 } from "lucide-react";
-import {
-  ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
-  Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
-} from "lucide-react";
+import { motion } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
@@ -33,6 +31,7 @@ export const Route = createFileRoute("/")({
       <Stats />
       <HowItWorks />
       <Features />
+      <GlobalReach />
       <WhoFor />
       <Testimonials />
       <Pricing />
@@ -70,71 +69,115 @@ const HERO_SLIDES = [
   },
 ];
 
-const HUMAN_IMAGES = [
-  { src: IMG.face1, name: "Taiwo", skills: ["Web Dev 🇳🇬"], top: "10%", left: "5%", delay: 0 },
-  { src: IMG.face2, name: "Maria", skills: ["Copywriter 🇧🇷"], top: "25%", left: "85%", delay: 0.5 },
-  { src: IMG.face3, name: "James", skills: ["SEO 🇰🇪"], top: "55%", left: "5%", delay: 1 },
-  { src: IMG.face4, name: "Priya", skills: ["Designer 🇮🇳"], top: "70%", left: "80%", delay: 1.5 },
-  { src: IMG.face5, name: "Alex", skills: ["Marketer 🇬🇧"], top: "40%", left: "70%", delay: 2 },
-  { src: IMG.face6, name: "Sofia", skills: ["Video 🇦🇷"], top: "15%", left: "75%", delay: 2.5 },
+const HERO_MOSAIC = [
+  { src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&q=80&fit=crop&crop=face", name: "Taiwo", skill: "Web Dev 🇳🇬", size: 100, top: "8%", left: "8%", delay: 0 },
+  { src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80&fit=crop&crop=face", name: "Priya", skill: "SEO 🇮🇳", size: 110, top: "10%", left: "62%", delay: 0.4 },
+  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fit=crop&crop=face", name: "Alex", skill: "Marketer 🇬🇧", size: 85, top: "42%", left: "80%", delay: 0.8 },
+  { src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80&fit=crop&crop=face", name: "Maria", skill: "Designer 🇧🇷", size: 90, top: "46%", left: "4%", delay: 1.2 },
+  { src: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&q=80&fit=crop&crop=face", name: "Kenji", skill: "Developer 🇯🇵", size: 95, top: "72%", left: "66%", delay: 1.6 },
+  { src: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80&fit=crop&crop=face", name: "Sofia", skill: "Video 🇦🇷", size: 100, top: "74%", left: "14%", delay: 2.0 },
 ];
 
 function HeroWithMosaic() {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-sidebar/95">
-      <div className="absolute inset-0 opacity-10">
-        <div className="h-full w-full" style={{ backgroundImage: "radial-gradient(circle at 20% 30%, var(--primary) 0.5px, transparent 1px)", backgroundSize: "40px 40px" }} />
+    <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28">
+      <div className="absolute inset-0 opacity-20">
+        <div className="h-full w-full bg-grid-pattern" />
       </div>
-      <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
+      <div className="relative mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-[11px] font-mono-data text-muted-foreground uppercase tracking-widest">
+          <div className="z-10">
+            <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
               // find.clients.globally
             </p>
-            <h1 className="font-display text-4xl font-bold text-foreground mt-3 sm:text-5xl lg:text-6xl">
-              The Meeting Point<br/>for Freelancers<br/>and Clients.
+            <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
+              The Meeting Point<br/>for Freelancers<br/>and <span className="bg-gradient-to-r from-primary to-[#818CF8] bg-clip-text text-transparent">Clients.</span>
             </h1>
-            <p className="mt-4 text-base text-muted-foreground max-w-lg">
+            <p className="mt-6 text-base text-slate-400 max-w-lg leading-relaxed">
               Stop waiting for work to come to you. LanceConnect finds businesses that need your skills anywhere in the world and hands you their direct contacts.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+              <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20">
                 Get 10 Free Leads <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">
+              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-[#0F172A]/80 px-6 py-3.5 text-sm font-medium hover:bg-accent transition text-white">
                 <Play className="h-4 w-4" /> Watch Demo
               </Link>
             </div>
-            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> No credit card</span>
-              <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Instant access</span>
-              <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Cancel anytime</span>
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-[#475569]">
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime</span>
             </div>
           </div>
 
-          <div className="relative h-[400px] lg:h-[500px]">
-            <div className="relative h-full w-full">
-              {HUMAN_IMAGES.map((img, i) => (
-                <div
-                  key={i}
-                  className="absolute h-20 w-20 rounded-full overflow-hidden ring-2 ring-primary/30 shadow-card animate-float"
-                  style={{ top: img.top, left: img.left, animationDelay: `${i * 0.5}s` }}
-                >
-                  <img src={img.src} alt={img.name} className="h-full w-full object-cover" loading="lazy" />
-                </div>
-              ))}
-              <style>{`
-                @keyframes float {
-                  0%, 100% { transform: translateY(0); }
-                  50% { transform: translateY(-12px); }
-                }
-                .animate-float { animation: float 4s ease-in-out infinite; }
-              `}</style>
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-10 left-10 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-400 backdrop-blur">🔥 94 Hot Lead</div>
-                <div className="absolute bottom-16 right-12 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-400 backdrop-blur">📞 +234 802...</div>
-                <div className="absolute top-24 right-8 rounded-full bg-red-500/20 px-3 py-1 text-xs font-medium text-red-400 backdrop-blur">❌ No website</div>
+          <div className="relative h-[480px] flex items-center justify-center select-none overflow-hidden lg:overflow-visible">
+            {/* Core rotating cluster */}
+            <div className="relative w-[380px] h-[380px] flex items-center justify-center">
+              {/* Central glowing hub */}
+              <div className="absolute h-20 w-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center animate-pulse shadow-[0_0_30px_rgba(99,102,241,0.2)]">
+                <div className="h-3 w-3 rounded-full bg-emerald-500" />
               </div>
+
+              {/* Orbital rotation container */}
+              <motion.div
+                className="absolute w-full h-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              >
+                {HERO_MOSAIC.map((img, i) => {
+                  const angle = (i * 2 * Math.PI) / 6;
+                  const radius = 120; // 120px radius from center for compact packing
+                  const left = `calc(50% + ${radius * Math.cos(angle)}px - ${img.size / 2}px)`;
+                  const top = `calc(50% + ${radius * Math.sin(angle)}px - ${img.size / 2}px)`;
+                  return (
+                    <motion.div
+                      key={i}
+                      className="absolute rounded-full overflow-hidden border-2 border-primary/40 shadow-[0_0_20px_rgba(99,102,241,0.25)] bg-[#0F172A] group cursor-pointer hover:border-emerald-400 hover:scale-105 transition-all duration-300"
+                      style={{ 
+                        top, 
+                        left, 
+                        width: img.size, 
+                        height: img.size 
+                      }}
+                      animate={{ rotate: -360 }}
+                      transition={{
+                        duration: 40,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                    >
+                      <img src={img.src} alt={img.name} className="h-full w-full object-cover" loading="lazy" />
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/85 border border-slate-800/80 px-2 py-0.5 text-[8px] font-mono font-medium text-slate-300 backdrop-blur whitespace-nowrap">
+                        {img.skill}
+                      </span>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+
+              {/* Floating Data Pills (positioned statically relative to right column, float in place) */}
+              <motion.div 
+                className="absolute top-[8%] left-[6%] rounded-full bg-emerald-500/20 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 backdrop-blur-sm shadow-[0_0_15px_rgba(16,185,129,0.2)] z-20"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+              >
+                🔥 94 Hot Lead
+              </motion.div>
+              <motion.div 
+                className="absolute bottom-[8%] right-[8%] rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 text-xs font-semibold text-indigo-400 backdrop-blur-sm shadow-[0_0_15px_rgba(99,102,241,0.2)] z-20"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+              >
+                📞 +234 802...
+              </motion.div>
+              <motion.div 
+                className="absolute top-[50%] right-[0%] rounded-full bg-red-500/20 border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.2)] z-20"
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.0 }}
+              >
+                ❌ No website
+              </motion.div>
             </div>
           </div>
         </div>
@@ -370,31 +413,218 @@ function HowItWorks() {
    FEATURES
    ──────────────────────────────────────────────────────────── */
 function Features() {
-  const features = [
-    { icon: Globe, title: "Global Lead Discovery", desc: "Find businesses without websites in any country, any city." },
-    { icon: Star, title: "Opportunity Scoring", desc: "A clear score showing how much a business actually needs you." },
-    { icon: Phone, title: "Verified Contact Details", desc: "Phone numbers, emails, and social profiles in one click." },
-    { icon: Bookmark, title: "Built-in CRM", desc: "Track your outreach with a simple, freelancer-friendly pipeline." },
-    { icon: Users, title: "Outreach Templates", desc: "Battle-tested emails, phone scripts, and DM templates." },
-    { icon: Sparkles, title: "AI Message Writer", desc: "Personalised outreach generated in seconds. (Pro)" },
-  ];
   return (
-    <section id="features" className="border-y border-border bg-paper py-24">
+    <section id="features" className="border-y border-border bg-[#0F172A]/30 py-24">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">Everything you need to get clients</h2>
-          <p className="mt-3 text-muted-foreground">No bloat. Just the tools freelancers actually use to win work.</p>
+        <div className="mx-auto max-w-2xl text-center mb-16">
+          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+            // what.we.give.you
+          </p>
+          <h2 className="font-display text-4xl font-extrabold text-white">Everything you need to get clients</h2>
+          <p className="mt-4 text-slate-400">No bloat. Just the tools freelancers actually use to win work.</p>
         </div>
-        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((f) => (
-            <div key={f.title} className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-0.5">
-              <div className="mb-5 inline-grid h-11 w-11 place-items-center rounded-lg bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
-                <f.icon className="h-5 w-5" />
+
+        {/* Bento Grid */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 auto-rows-[auto] lg:auto-rows-[250px]">
+          {/* Card 1: Global Discovery (Tall, span 2 rows) */}
+          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card lg:row-span-2 flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
+            <div>
+              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
+                <Globe2 className="h-6 w-6" />
               </div>
-              <h3 className="font-display text-lg font-semibold">{f.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
+              <h3 className="font-display text-xl font-bold text-white mb-3">🌍 Global Lead Discovery</h3>
+              <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                Find any business in any street in 150+ countries. Get access to verified pipelines of clients in seconds.
+              </p>
+            </div>
+            <div className="space-y-2 border-t border-border/60 pt-6 font-mono text-xs text-[#64748B]">
+              <div className="flex justify-between"><span>Leads indexed</span><span className="text-white font-semibold">2.4M+</span></div>
+              <div className="flex justify-between"><span>Countries covered</span><span className="text-white font-semibold">150+</span></div>
+            </div>
+          </div>
+
+          {/* Card 2: Opportunity Score (Normal) */}
+          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
+            <div>
+              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-emerald-500/10 text-emerald-500 mb-4 group-hover:bg-emerald-500 group-hover:text-black transition duration-300">
+                <BarChart3 className="h-5 w-5" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-white mb-2">📊 Opportunity Scoring</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                0–100 scores based on how badly they need what you sell. Hot leads float to the top.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 mt-4">
+              <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">94 🔥 Hot Lead</span>
+            </div>
+          </div>
+
+          {/* Card 3: Verified Contacts (Normal) */}
+          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
+            <div>
+              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-indigo-500/10 text-indigo-400 mb-4 group-hover:bg-indigo-500 group-hover:text-white transition duration-300">
+                <Phone className="h-5 w-5" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-white mb-2">📞 Verified Contacts</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Phone numbers, emails, and direct WhatsApp links copy-ready right next to every lead.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 mt-4 font-mono text-[10px] text-slate-400 bg-[#080B14] border border-border px-3 py-1.5 rounded-lg w-full justify-between">
+              <span>📞 +234 802...</span>
+              <span className="text-emerald-500 font-semibold">✓ Verified</span>
+            </div>
+          </div>
+
+          {/* Card 4: AI Outreach Generator (Wide, span 2 columns) */}
+          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card lg:col-span-2 flex flex-col md:flex-row gap-6 justify-between group hover:border-[#6366F1]/30 transition duration-300">
+            <div className="max-w-md flex flex-col justify-between">
+              <div>
+                <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <h3 className="font-display text-lg font-bold text-white mb-2">🤖 AI Outreach Generator (Pro)</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Claude-powered personalized messages for every lead. Generates email, phone script, LinkedIn DM, or WhatsApp message in seconds.
+                </p>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <span className="text-[10px] font-mono px-2 py-1 rounded bg-[#080B14] text-primary border border-border">Email</span>
+                <span className="text-[10px] font-mono px-2 py-1 rounded bg-[#080B14] text-slate-400">Phone Script</span>
+                <span className="text-[10px] font-mono px-2 py-1 rounded bg-[#080B14] text-slate-400">LinkedIn</span>
+              </div>
+            </div>
+            <div className="flex-1 w-full bg-[#080B14] border border-border rounded-xl p-4 font-mono text-[10px] text-slate-400 max-h-[140px] overflow-hidden select-none">
+              <p className="text-[#64748B]">// Generated intro</p>
+              <p className="mt-1">Hi Mario,</p>
+              <p className="mt-1.5 text-primary">I noticed Mario's Ristorante does not have a website. I've designed websites for restaurants in Naples that...</p>
+            </div>
+          </div>
+
+          {/* Card 5: CRM Pipeline (Normal) */}
+          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
+            <div>
+              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-amber-500/10 text-amber-500 mb-4 group-hover:bg-amber-500 group-hover:text-black transition duration-300">
+                <Bookmark className="h-5 w-5" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-white mb-2">📋 CRM Pipeline</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Track leads from saved to won without complex CRM bloat. Simple, clean, and fast.
+              </p>
+            </div>
+            <div className="flex gap-1.5 mt-4">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">New</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-500/20">Contacted</span>
+            </div>
+          </div>
+
+          {/* Card 6: Online Opportunities (Normal) */}
+          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
+            <div>
+              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-purple-500/10 text-purple-400 mb-4 group-hover:bg-purple-500 group-hover:text-black transition duration-300">
+                <Globe className="h-5 w-5" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-white mb-2">🏪 Online Opportunities</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                LinkedIn, Indeed, Reddit remote opportunities consolidated for remote freelancers.
+              </p>
+            </div>
+            <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20 mt-4 text-center">
+              Remote channels auto-scraped
+            </span>
+          </div>
+
+          {/* Card 7: All Freelancer Skills (Wide, span 2 columns) */}
+          <div className="rounded-2xl border border-border bg-[#0F172A]/80 p-8 shadow-card lg:col-span-2 flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300">
+            <div>
+              <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-[#10B981]/10 text-[#10B981] mb-4 group-hover:bg-[#10B981] group-hover:text-black transition duration-300">
+                <Users className="h-5 w-5" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-white mb-2">👥 All Freelancer Skills Covered</h3>
+              <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                Whether you build websites, write copy, design brands, manage socials, edit video, or handle virtual tasks, we have custom opportunity models for you.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-[10px] font-mono text-[#CBD5E1]">
+              {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev"].map(tag => (
+                <span key={tag} className="px-2 py-1 rounded bg-[#080B14] border border-border">{tag}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   GLOBAL REACH
+   ──────────────────────────────────────────────────────────── */
+function GlobalReach() {
+  const cities = [
+    { name: "Lagos", x: "50%", y: "58%", delay: 0 },
+    { name: "London", x: "47%", y: "30%", delay: 0.3 },
+    { name: "Mumbai", x: "68%", y: "50%", delay: 0.6 },
+    { name: "New York", x: "30%", y: "36%", delay: 0.9 },
+    { name: "São Paulo", x: "38%", y: "74%", delay: 1.2 },
+    { name: "Tokyo", x: "83%", y: "40%", delay: 1.5 },
+    { name: "Dubai", x: "60%", y: "45%", delay: 1.8 },
+    { name: "Toronto", x: "28%", y: "32%", delay: 2.1 },
+    { name: "Sydney", x: "88%", y: "80%", delay: 2.4 },
+    { name: "Nairobi", x: "54%", y: "62%", delay: 2.7 },
+  ];
+
+  return (
+    <section className="relative overflow-hidden border-t border-border bg-[#080B14] py-24 select-none">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 text-center">
+        <div className="mx-auto max-w-2xl mb-12">
+          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+            // we.are.everywhere
+          </p>
+          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">
+            Freelancers in every country.<br/>Leads in every city.
+          </h2>
+          <p className="mt-4 text-slate-400">
+            A truly global ecosystem matching local clients with global freelance talent.
+          </p>
+        </div>
+
+        {/* stylized vector map background */}
+        <div className="relative mx-auto max-w-5xl h-[300px] md:h-[450px] w-full border border-border bg-[#0F172A]/20 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="absolute inset-0 bg-dot-pattern opacity-45" />
+          
+          {/* Stylized world grid coordinates */}
+          <svg className="absolute inset-0 w-full h-full text-slate-800/40" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="50%" x2="100%" y2="50%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+            <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+          </svg>
+
+          {/* Pulse cities */}
+          {cities.map((city, i) => (
+            <div 
+              key={city.name} 
+              className="absolute group" 
+              style={{ top: city.y, left: city.x }}
+            >
+              {/* Pulse rings */}
+              <span className="absolute inline-flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 animate-ping" style={{ animationDelay: `${city.delay}s`, animationDuration: '3s' }} />
+              <span className="absolute inline-flex h-4.5 w-4.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/45 animate-pulse" />
+              <span className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary" />
+
+              {/* Floating label */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
+                <div className="bg-slate-950 border border-slate-800 rounded-lg py-1 px-2.5 text-[10px] font-mono font-medium text-white shadow-xl whitespace-nowrap">
+                  {city.name} Hub 🌍
+                </div>
+              </div>
             </div>
           ))}
+
+          {/* Bottom stats pill overlay */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-950/90 border border-slate-800/80 rounded-full px-5 py-2 text-xs text-slate-300 font-mono flex items-center gap-3 backdrop-blur shadow-2xl">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Scanning 150+ countries in real-time</span>
+          </div>
         </div>
       </div>
     </section>
@@ -486,39 +716,82 @@ function Pricing() {
     { name: "Agency", price: "99", leads: "Unlimited", popular: false, cta: "Scale Up", features: ["Everything in Pro", "3 team seats", "API access", "White-label option"] },
   ];
   return (
-    <section id="pricing" className="border-y border-border bg-paper py-24">
+    <section id="pricing" className="border-y border-border bg-[#0F172A]/30 py-24">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">Simple, transparent pricing</h2>
-          <p className="mt-3 text-muted-foreground">Start free. Upgrade when you're winning work.</p>
+          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+            // simple.pricing
+          </p>
+          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">Simple, transparent pricing</h2>
+          <p className="mt-4 text-slate-400">Start free. Upgrade when you're winning work.</p>
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((p) => (
-            <div key={p.name} className={`relative rounded-2xl border bg-card p-7 ${p.popular ? "border-foreground shadow-card-hover lg:-translate-y-3" : "border-border"}`}>
+            <div key={p.name} className={`relative rounded-2xl border bg-[#0F172A]/80 p-7 ${p.popular ? "border-primary shadow-[0_0_25px_rgba(99,102,241,0.2)] lg:-translate-y-3" : "border-border"}`}>
               {p.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-foreground px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-background">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                   Most Popular
                 </span>
               )}
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{p.name}</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#64748B]">{p.name}</p>
               <div className="mt-3 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-semibold tracking-tight">${p.price}</span>
-                <span className="text-sm text-muted-foreground">/mo</span>
+                <span className="font-display text-4xl font-extrabold text-white">${p.price}</span>
+                <span className="text-xs text-[#64748B]">/mo</span>
               </div>
-              <p className="mt-1 font-mono-data text-sm text-primary">{p.leads} leads / month</p>
-              <ul className="mt-6 space-y-2.5 text-sm">
+              <p className="mt-2 font-mono-data text-xs text-primary">{p.leads} leads / month</p>
+              <ul className="mt-6 space-y-2.5 text-xs text-slate-300">
                 {p.features.map((f) => (
                   <li key={f} className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                    <span className="text-foreground/80">{f}</span>
+                    <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <Link to="/register" className={`mt-7 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-foreground text-background hover:bg-foreground/90" : "border border-border bg-background hover:bg-accent"}`}>
+              <Link to="/register" className={`mt-7 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-white hover:bg-primary/95" : "border border-border bg-[#080B14] text-slate-300 hover:bg-accent"}`}>
                 {p.cta}
               </Link>
             </div>
           ))}
+        </div>
+
+        {/* Credit Packs Section */}
+        <div className="mt-20 border-t border-border/80 pt-16">
+          <div className="mx-auto max-w-2xl text-center mb-10">
+            <h3 className="font-display text-2xl font-bold text-white">Prefer pay-as-you-go?</h3>
+            <p className="mt-2 text-sm text-slate-400">Buy one-time credit packs to discover leads at your own pace. Perfect for regional markets.</p>
+          </div>
+          <div className="mx-auto max-w-4xl grid gap-5 sm:grid-cols-3">
+            {[
+              { leads: "50 Leads", priceLocal: "₦5,000", priceUsd: "$5", popular: false },
+              { leads: "200 Leads", priceLocal: "₦15,000", priceUsd: "$15", popular: true },
+              { leads: "500 Leads", priceLocal: "₦30,000", priceUsd: "$30", popular: false },
+            ].map((pack) => (
+              <div 
+                key={pack.leads} 
+                className={`relative rounded-xl border p-6 bg-[#0F172A]/80 shadow-md ${
+                  pack.popular ? "border-primary ring-1 ring-primary/20" : "border-border"
+                }`}
+              >
+                {pack.popular && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                    Best Value
+                  </span>
+                )}
+                <p className="font-display text-sm font-semibold text-slate-400 uppercase tracking-wider">{pack.leads}</p>
+                <div className="mt-4 flex items-baseline gap-2">
+                  <span className="font-display text-3xl font-extrabold text-white">{pack.priceLocal}</span>
+                  <span className="text-xs font-mono text-slate-500">/ {pack.priceUsd} one-off</span>
+                </div>
+                <Link to="/register" className={`mt-6 block rounded-lg py-2 text-center text-xs font-semibold transition ${
+                  pack.popular 
+                    ? "bg-primary text-white hover:bg-primary/95" 
+                    : "border border-border bg-[#080B14] hover:bg-accent text-slate-300"
+                }`}>
+                  Buy Credits
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

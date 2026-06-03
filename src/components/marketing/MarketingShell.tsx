@@ -5,6 +5,7 @@ import { useState } from "react";
 
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
+  const [bannerOpen, setBannerOpen] = useState(true);
   const links = [
     { to: "/features", label: "Features" },
     { to: "/how-it-works", label: "How it works" },
@@ -14,40 +15,54 @@ export function MarketingNav() {
     { to: "/contact", label: "Contact" },
   ];
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
-          <LanceConnectLogo size={32} />
-        </Link>
-        <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
-          {links.map((l) => (
-            <Link key={l.to} to={l.to} className="hover:text-foreground" activeProps={{ className: "text-foreground font-semibold" }}>
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="hidden items-center gap-2 md:flex">
-          <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-accent">Login</Link>
-          <Link to="/register" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Start Free →</Link>
+    <div className="w-full shrink-0 sticky top-0 z-50">
+      {bannerOpen && (
+        <div className="relative bg-[#1E293B] py-2 px-4 text-center text-xs font-mono text-[#CBD5E1] border-b border-border/40 select-none">
+          <span>🎉 Now live in 150+ countries · Read our launch story →</span>
+          <button 
+            type="button"
+            onClick={() => setBannerOpen(false)} 
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#F8FAFC] cursor-pointer text-sm"
+          >
+            ×
+          </button>
         </div>
-        <button onClick={() => setOpen(!open)} className="md:hidden rounded-lg p-2 hover:bg-accent" aria-label="Menu">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-      {open && (
-        <div className="border-t border-border bg-background md:hidden">
-          <div className="flex flex-col px-4 py-3">
+      )}
+      <header className="border-b border-border bg-[#080B14] w-full py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-8">
+          <Link to="/" className="flex items-center gap-2">
+            <LanceConnectLogo size={32} />
+          </Link>
+          <nav className="hidden items-center gap-7 text-sm text-slate-400 md:flex">
             {links.map((l) => (
-              <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-accent">
+              <Link key={l.to} to={l.to} className="hover:text-white transition-colors" activeProps={{ className: "text-white font-semibold" }}>
                 {l.label}
               </Link>
             ))}
-            <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-accent">Login</Link>
-            <Link to="/register" onClick={() => setOpen(false)} className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground">Start Free →</Link>
+          </nav>
+          <div className="hidden items-center gap-2 md:flex">
+            <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-accent hover:text-white transition-colors">Login</Link>
+            <Link to="/register" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">Start Free →</Link>
           </div>
+          <button onClick={() => setOpen(!open)} className="md:hidden rounded-lg p-2 text-slate-300 hover:bg-accent" aria-label="Menu">
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
-      )}
-    </header>
+        {open && (
+          <div className="border-t border-border bg-[#080B14] md:hidden">
+            <div className="flex flex-col px-4 py-3">
+              {links.map((l) => (
+                <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-accent hover:text-white">
+                  {l.label}
+                </Link>
+              ))}
+              <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-accent hover:text-white">Login</Link>
+              <Link to="/register" onClick={() => setOpen(false)} className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground">Start Free →</Link>
+            </div>
+          </div>
+        )}
+      </header>
+    </div>
   );
 }
 
@@ -78,11 +93,23 @@ export function MarketingFooter() {
             <div key={c.title}>
               <p className="text-xs font-semibold uppercase tracking-widest text-foreground">{c.title}</p>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-                {c.links.map(([label, href]) => (
-                  <li key={label}>
-                    <Link to={href} className="hover:text-foreground">{label}</Link>
-                  </li>
-                ))}
+                {c.links.map(([label, href]) => {
+                  const isFreelancer = href.startsWith("/freelancers/");
+                  const slug = href.replace("/freelancers/", "");
+                  return (
+                    <li key={label}>
+                      {isFreelancer ? (
+                        <Link to="/freelancers/$slug" params={{ slug }} className="hover:text-foreground">
+                          {label}
+                        </Link>
+                      ) : (
+                        <Link to={href as any} className="hover:text-foreground">
+                          {label}
+                        </Link>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
