@@ -516,20 +516,20 @@ export function PageHeader({
   image?: string;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-border">
+    <section className="relative overflow-hidden border-b border-border bg-[#080B14]">
       <div className="absolute inset-0">
-        {image && <img src={image} alt="" className="h-full w-full object-cover" />}
-        <div className="absolute inset-0 bg-[color:var(--ink-bg)]/85" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[color:var(--ink-bg)]/40 to-[color:var(--ink-bg)]/70" />
+        {image && <img src={image} alt="" className="h-full w-full object-cover opacity-15 mix-blend-luminosity" />}
+        <div className="absolute inset-0 bg-[#080B14]/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#080B14]/40 to-[#080B14]/70" />
       </div>
       <div className="relative mx-auto max-w-5xl px-4 py-20 text-center text-white lg:px-8 lg:py-28">
         {eyebrow && (
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/70 mb-2">
-            {eyebrow}
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/70 mb-2 font-mono">
+            // {eyebrow.toLowerCase()}
           </p>
         )}
-        <h1 className="font-display text-4xl font-semibold tracking-[-0.02em] md:text-5xl lg:text-6xl">{title}</h1>
-        {subtitle && <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">{subtitle}</p>}
+        <h1 className="font-display text-4xl font-extrabold tracking-[-0.02em] md:text-5xl lg:text-6xl">{title}</h1>
+        {subtitle && <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-slate-300 md:text-base">{subtitle}</p>}
       </div>
     </section>
   );

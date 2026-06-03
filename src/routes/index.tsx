@@ -84,15 +84,15 @@ const HERO_MOSAIC = [
 function HeroWithMosaic() {
   const { t } = usePreferences();
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background py-20 lg:py-28">
+    <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28 text-white">
       {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img 
           src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2000&q=80" 
           alt="" 
-          className="h-full w-full object-cover opacity-[0.03] dark:opacity-[0.08] mix-blend-luminosity"
+          className="h-full w-full object-cover opacity-10 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/50 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#080B14]/10 via-[#080B14]/50 to-[#080B14]" />
       </div>
 
       <div className="absolute inset-0 opacity-20 z-0">
@@ -104,10 +104,10 @@ function HeroWithMosaic() {
             <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
               {t("hero_eyebrow")}
             </p>
-            <h1 className="font-display text-4xl font-extrabold text-foreground mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
+            <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
               {t("hero_title")}
             </h1>
-            <p className="mt-6 text-base text-muted-foreground max-w-lg leading-relaxed">
+            <p className="mt-6 text-base text-slate-300 max-w-lg leading-relaxed">
               {t("hero_sub")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

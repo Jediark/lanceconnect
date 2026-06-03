@@ -33,7 +33,7 @@ export function LanceConnectLogo({ className }: { className?: string }) {
     <img 
       src={logoSrc} 
       alt="LanceConnect Logo" 
-      className={cn("h-7 md:h-8.5 w-auto object-contain", className)} 
+      className={cn("h-11 md:h-14 w-auto object-contain", className)} 
     />
   );
 }

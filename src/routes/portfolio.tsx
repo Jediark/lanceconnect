@@ -122,13 +122,13 @@ function PortfolioPage() {
   return (
     <MarketingShell>
       {/* Portfolio Header */}
-      <section className="relative overflow-hidden border-b border-border bg-background py-16 text-center select-none">
+      <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-16 text-center select-none text-white">
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
-          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">// portfolio.showcase</p>
-          <h1 className="font-display text-4xl font-extrabold sm:text-5xl tracking-tight leading-tight">
+          <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase">// portfolio.showcase</p>
+          <h1 className="font-display text-4xl font-extrabold sm:text-5xl tracking-tight leading-tight text-white">
             Explore Work from Top <span className="text-primary">Freelancers.</span>
           </h1>
-          <p className="mt-4 text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
+          <p className="mt-4 text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
             See the actual projects delivered by our global community. Verify their expertise, view their styles, and hire directly with confidence.
           </p>
         </div>

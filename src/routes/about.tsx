@@ -15,15 +15,15 @@ export const Route = createFileRoute("/about")({
   component: () => (
     <MarketingShell>
       {/* Premium Dark Hero */}
-      <section className="relative overflow-hidden border-b border-border bg-background py-20 lg:py-28 text-center select-none">
+      <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28 text-center select-none text-white">
         <div className="relative mx-auto max-w-3xl px-4 lg:px-8 z-10">
-          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+          <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase">
             // about.us.connector
           </p>
-          <h1 className="font-display text-4xl font-extrabold mt-3 sm:text-5xl tracking-tight leading-tight">
+          <h1 className="font-display text-4xl font-extrabold mt-3 sm:text-5xl tracking-tight leading-tight text-white">
             Connecting Freelancers<br/>and Clients with <span className="text-primary">Purpose.</span>
           </h1>
-          <p className="mt-6 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+          <p className="mt-6 text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
             We exist to bridge the gap between skilled professionals and the businesses that need them. Not just another marketplace—a true connector.
           </p>
         </div>
