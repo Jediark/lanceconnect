@@ -31,7 +31,7 @@ export function MarketingNav() {
     { to: "/contact", label: t("nav_contact") },
   ];
 
-  const desktopLinks = links.filter((l) => l.to !== "/");
+  const desktopLinks = links;
 
   return (
     <div className="w-full shrink-0 sticky top-0 z-50">
