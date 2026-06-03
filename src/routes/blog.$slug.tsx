@@ -74,7 +74,9 @@ function BlogPost() {
                 {related.map(p => (
                   <li key={p.slug}>
                     <Link to="/blog/$slug" params={{slug:p.slug}} className="group block">
-                      <img src={p.cover} alt="" className="aspect-[16/10] w-full rounded-lg object-cover"/>
+                      <div className="overflow-hidden rounded-lg">
+                        <img src={p.cover} alt="" className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105"/>
+                      </div>
                       <p className="mt-2 text-sm font-semibold leading-snug group-hover:text-primary">{p.title}</p>
                     </Link>
                   </li>

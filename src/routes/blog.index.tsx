@@ -37,7 +37,9 @@ function BlogIndex() {
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {rest.map(p => (
             <Link key={p.slug} to="/blog/$slug" params={{slug: p.slug}} className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-card-hover">
-              <img src={p.cover} alt={p.title} className="aspect-[16/10] w-full object-cover transition group-hover:scale-105"/>
+              <div className="overflow-hidden">
+                <img src={p.cover} alt={p.title} className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"/>
+              </div>
               <div className="flex flex-1 flex-col p-5">
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">{p.category}</span>
                 <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>

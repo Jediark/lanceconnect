@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
-  Globe2, BarChart3, Zap, Search, Terminal, Copy, Check, Loader2,
+  Globe2, BarChart3, Zap, Search, Terminal, Copy, Check, Loader2, Code2, Palette,
+  PenTool, Smartphone, Film, Camera, Megaphone, AppWindow, Handshake,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
@@ -72,12 +73,12 @@ const HERO_SLIDES = [
 ];
 
 const HERO_MOSAIC = [
-  { src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&q=80&fit=crop&crop=face", name: "Taiwo", skill: "Web Dev 🇳🇬", size: 100, top: "8%", left: "8%", delay: 0 },
-  { src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80&fit=crop&crop=face", name: "Priya", skill: "SEO 🇮🇳", size: 110, top: "10%", left: "62%", delay: 0.4 },
-  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fit=crop&crop=face", name: "Alex", skill: "Marketer 🇬🇧", size: 85, top: "42%", left: "80%", delay: 0.8 },
-  { src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80&fit=crop&crop=face", name: "Maria", skill: "Designer 🇧🇷", size: 90, top: "46%", left: "4%", delay: 1.2 },
-  { src: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&q=80&fit=crop&crop=face", name: "Kenji", skill: "Developer 🇯🇵", size: 95, top: "72%", left: "66%", delay: 1.6 },
-  { src: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80&fit=crop&crop=face", name: "Sofia", skill: "Video 🇦🇷", size: 100, top: "74%", left: "14%", delay: 2.0 },
+  { src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&q=80&fit=crop&crop=face", name: "Taiwo", skill: "Web Dev", size: 100, top: "8%", left: "8%", delay: 0 },
+  { src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80&fit=crop&crop=face", name: "Priya", skill: "SEO", size: 110, top: "10%", left: "62%", delay: 0.4 },
+  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fit=crop&crop=face", name: "Alex", skill: "Marketer", size: 85, top: "42%", left: "80%", delay: 0.8 },
+  { src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80&fit=crop&crop=face", name: "Maria", skill: "Designer", size: 90, top: "46%", left: "4%", delay: 1.2 },
+  { src: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&q=80&fit=crop&crop=face", name: "Kenji", skill: "Developer", size: 95, top: "72%", left: "66%", delay: 1.6 },
+  { src: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80&fit=crop&crop=face", name: "Sofia", skill: "Video", size: 100, top: "74%", left: "14%", delay: 2.0 },
 ];
 
 function HeroWithMosaic() {
@@ -175,21 +176,21 @@ function HeroWithMosaic() {
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
               >
-                🔥 94 Hot Lead
+                94 Hot Lead
               </motion.div>
               <motion.div 
                 className="absolute bottom-[8%] right-[8%] rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 text-xs font-semibold text-indigo-400 backdrop-blur-sm shadow-[0_0_15px_rgba(99,102,241,0.2)] z-20"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
               >
-                📞 +234 802...
+                +234 802...
               </motion.div>
               <motion.div 
                 className="absolute top-[50%] right-[0%] rounded-full bg-red-500/20 border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.2)] z-20"
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.0 }}
               >
-                ❌ No website
+                No website
               </motion.div>
             </div>
           </div>
@@ -540,7 +541,7 @@ const FEATURES_LIST = [
   {
     id: 1,
     icon: Globe2,
-    title: "🌍 Global Lead Discovery",
+    title: "Global Lead Discovery",
     desc: "Find any business in any street in 150+ countries. Get access to verified pipelines of clients in seconds.",
     gridClass: "lg:col-start-1 lg:row-start-1 lg:col-span-1",
     connector: () => (
@@ -558,7 +559,7 @@ const FEATURES_LIST = [
   {
     id: 2,
     icon: BarChart3,
-    title: "📊 Opportunity Scoring",
+    title: "Opportunity Scoring",
     desc: "0–100 scores based on how badly they need what you sell. Hot leads float to the top.",
     gridClass: "lg:col-start-2 lg:row-start-1 lg:col-span-1",
     connector: () => (
@@ -568,14 +569,14 @@ const FEATURES_LIST = [
     ),
     footer: () => (
       <div className="flex items-center gap-2 mt-4 w-full">
-        <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">94 🔥 Hot Lead</span>
+        <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">94 Hot Lead</span>
       </div>
     )
   },
   {
     id: 3,
     icon: Phone,
-    title: "📞 Verified Contacts",
+    title: "Verified Contacts",
     desc: "Phone numbers, emails, and direct WhatsApp links copy-ready right next to every lead.",
     gridClass: "lg:col-start-3 lg:row-start-1 lg:col-span-1",
     connector: () => (
@@ -585,7 +586,7 @@ const FEATURES_LIST = [
     ),
     footer: () => (
       <div className="flex items-center gap-2 mt-4 font-mono text-[10px] text-slate-400 bg-[#080B14] border border-border px-3 py-1.5 rounded-lg w-full justify-between">
-        <span>📞 +234 802...</span>
+        <span>+234 802...</span>
         <span className="text-emerald-500 font-semibold">✓ Verified</span>
       </div>
     )
@@ -593,7 +594,7 @@ const FEATURES_LIST = [
   {
     id: 4,
     icon: Sparkles,
-    title: "🤖 AI Outreach (Pro)",
+    title: "AI Outreach (Pro)",
     desc: "Claude-powered personalized messages for every lead. Generates email, phone script, LinkedIn DM in seconds.",
     gridClass: "lg:col-start-3 lg:row-start-2 lg:col-span-1",
     connector: () => (
@@ -606,7 +607,7 @@ const FEATURES_LIST = [
   {
     id: 5,
     icon: Bookmark,
-    title: "📋 CRM Pipeline",
+    title: "CRM Pipeline",
     desc: "Track leads from saved to won without complex CRM bloat. Simple, clean, and fast.",
     gridClass: "lg:col-start-2 lg:row-start-2 lg:col-span-1",
     connector: () => (
@@ -624,7 +625,7 @@ const FEATURES_LIST = [
   {
     id: 6,
     icon: Globe,
-    title: "🏪 Online Opportunities",
+    title: "Online Opportunities",
     desc: "LinkedIn, Indeed, Reddit remote opportunities consolidated for remote freelancers.",
     gridClass: "lg:col-start-1 lg:row-start-2 lg:col-span-1",
     connector: () => (
@@ -641,7 +642,7 @@ const FEATURES_LIST = [
   {
     id: 7,
     icon: Users,
-    title: "👥 All Freelancer Skills Covered",
+    title: "All Freelancer Skills Covered",
     desc: "Whether you build websites, write copy, design brands, manage socials, edit video, or handle virtual tasks, we have custom opportunity models for you.",
     gridClass: "lg:col-start-1 lg:row-start-3 lg:col-span-3 lg:w-full lg:max-w-none",
     connector: () => null,
@@ -857,10 +858,10 @@ function LeadScannerSandbox() {
                 <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">{t("sandbox_step_1")}</label>
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
-                    { id: 'web', label: 'Web Developer', emoji: '💻' },
-                    { id: 'design', label: 'Designer', emoji: '🎨' },
-                    { id: 'seo', label: 'SEO Specialist', emoji: '📈' },
-                    { id: 'video', label: 'Video Producer', emoji: '🎥' }
+                    { id: 'web', label: 'Web Developer', icon: Code2 },
+                    { id: 'design', label: 'Designer', icon: Palette },
+                    { id: 'seo', label: 'SEO Specialist', icon: LineChart },
+                    { id: 'video', label: 'Video Producer', icon: Play }
                   ].map((item) => (
                     <button
                       key={item.id}
@@ -871,7 +872,7 @@ function LeadScannerSandbox() {
                           : 'border-border/60 bg-[#080B14] text-slate-400 hover:text-white hover:border-border'
                       }`}
                     >
-                      <span className="text-lg">{item.emoji}</span>
+                      <item.icon className="h-4.5 w-4.5 text-primary shrink-0" />
                       <span className="text-xs">{item.label}</span>
                     </button>
                   ))}
@@ -1131,7 +1132,7 @@ function GlobalReach() {
                   {/* Floating label */}
                   <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
                     <div className="bg-slate-950 border border-slate-800 rounded-lg py-1 px-2.5 text-[10px] font-mono font-medium text-white shadow-xl whitespace-nowrap">
-                      {city.name} Hub 🌍
+                      {city.name} Hub
                     </div>
                   </div>
                 </div>
@@ -1150,6 +1151,19 @@ function GlobalReach() {
   );
 }
 
+const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
+  web_dev: Code2,
+  designer: Palette,
+  copywriter: PenTool,
+  seo: LineChart,
+  social_media: Smartphone,
+  video: Film,
+  photography: Camera,
+  marketing: Megaphone,
+  app_dev: AppWindow,
+  va: Handshake,
+};
+
 /* ────────────────────────────────────────────────────────────
    WHO IT IS FOR
    ──────────────────────────────────────────────────────────── */
@@ -1161,17 +1175,22 @@ function WhoFor() {
         <p className="mt-3 text-muted-foreground">Whatever skill you sell, we'll help you find businesses that need it.</p>
       </div>
       <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {CATEGORIES.map((c) => (
-          <Link to="/freelancers/$slug" params={{ slug: categorySlug(c.id) }} key={c.id}
-            className="group rounded-xl border border-border bg-card p-5 transition hover:border-foreground/30">
-            <div className="text-2xl">{c.emoji}</div>
-            <p className="mt-3 font-display text-sm font-semibold">{c.label}</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{c.example}</p>
-            <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition group-hover:opacity-100">
-              See leads <ArrowRight className="h-3 w-3" />
-            </span>
-          </Link>
-        ))}
+        {CATEGORIES.map((c) => {
+          const Icon = CATEGORY_ICONS[c.id] || Sparkles;
+          return (
+            <Link to="/freelancers/$slug" params={{ slug: categorySlug(c.id) }} key={c.id}
+              className="group rounded-xl border border-border bg-card p-5 transition hover:border-foreground/30">
+              <div className="text-primary h-8 w-8 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20 transition group-hover:bg-primary/20">
+                <Icon className="h-4.5 w-4.5 text-primary" />
+              </div>
+              <p className="mt-4 font-display text-sm font-semibold text-white">{c.label}</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{c.example}</p>
+              <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition group-hover:opacity-100">
+                See leads <ArrowRight className="h-3 w-3" />
+              </span>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

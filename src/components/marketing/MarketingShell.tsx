@@ -35,14 +35,14 @@ export function MarketingNav() {
 
   return (
     <div className="w-full shrink-0 sticky top-0 z-50">
-      <div className="relative bg-[#0F172A] py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-[#CBD5E1]">
+      <div className="relative bg-[#0F172A] py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-white">
         {/* Active Lead Scanning Stats */}
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
           </span>
-          <span>🎉 Active Lead Scanning: 1,482 cities checked today · 41,209 leads indexed today</span>
+          <span>Active Lead Scanning: 1,482 cities checked today · 41,209 leads indexed today</span>
         </div>
 
         {/* Search, Language & Currency preferences (Desktop only) */}
@@ -50,7 +50,7 @@ export function MarketingNav() {
           {/* CMD+K Search Icon Button */}
           <button 
             onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
-            className="p-1 text-slate-400 hover:text-white transition cursor-pointer flex items-center gap-1.5 hover:bg-slate-800/40 rounded-lg px-2"
+            className="p-1 text-white hover:text-white/80 transition cursor-pointer flex items-center gap-1.5 hover:bg-slate-800/40 rounded-lg px-2"
             aria-label="Search"
             title="Search (⌘K)"
           >
@@ -64,7 +64,7 @@ export function MarketingNav() {
           <div className="relative" ref={settingsRef}>
             <button
               onClick={() => setSettingsOpen(!settingsOpen)}
-              className="flex items-center gap-1.5 p-1 text-slate-400 hover:text-white transition cursor-pointer text-[10px] font-medium hover:bg-slate-800/40 rounded-lg px-2"
+              className="flex items-center gap-1.5 p-1 text-white hover:text-white/80 transition cursor-pointer text-[10px] font-medium hover:bg-slate-800/40 rounded-lg px-2"
               aria-label="Settings"
             >
               <Globe className="h-3.5 w-3.5" />
@@ -115,14 +115,14 @@ export function MarketingNav() {
             <img 
               src="/logo-navy.png" 
               alt="LanceConnect" 
-              className="h-10 md:h-12 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] group-hover:drop-shadow-[0_8px_16px_rgba(99,102,241,0.25)]" 
+              className="h-12 md:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] group-hover:drop-shadow-[0_8px_16px_rgba(99,102,241,0.25)]" 
             />
           </Link>
           
           <div className="hidden lg:flex items-center gap-6">
-            <nav className="flex items-center gap-5 text-sm text-slate-400">
+            <nav className="flex items-center gap-5 text-sm text-white">
               {desktopLinks.map((l) => (
-                <Link key={l.to} to={l.to} className="hover:text-white transition-colors animate-fade-in" activeProps={{ className: "text-white font-semibold" }}>
+                <Link key={l.to} to={l.to} className="hover:text-white/80 transition-colors animate-fade-in" activeProps={{ className: "text-white font-semibold border-b border-primary/60 pb-0.5" }}>
                   {l.label}
                 </Link>
               ))}
@@ -131,7 +131,7 @@ export function MarketingNav() {
             <div className="h-4 w-px bg-border/40" />
 
             <div className="flex items-center gap-3">
-              <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-accent hover:text-white transition-colors">{t("nav_login")}</Link>
+              <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-white hover:text-white/80 transition-colors">{t("nav_login")}</Link>
               <Link to="/register" className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-black hover:bg-white/90 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">{t("nav_start_free")}</Link>
             </div>
           </div>
@@ -209,7 +209,7 @@ export function MarketingFooter() {
               <img 
                 src="/logo-white.png" 
                 alt="LanceConnect" 
-                className="h-10 md:h-12 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)]" 
+                className="h-12 md:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)]" 
               />
             </Link>
             <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
@@ -242,7 +242,7 @@ export function MarketingFooter() {
           ))}
         </div>
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
-          <p>© {new Date().getFullYear()} LanceConnect. The Meeting Point for Freelancers and Clients 🌍</p>
+          <p>© {new Date().getFullYear()} LanceConnect. The Meeting Point for Freelancers and Clients</p>
         </div>
       </div>
     </footer>
@@ -454,7 +454,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                       onClick={() => setCmdOpen(false)}
                       className="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-[#1E293B] text-xs font-mono transition"
                     >
-                      <span className="flex items-center gap-2">🔍 {item.label}</span>
+                      <span className="flex items-center gap-2">{item.label}</span>
                       <span className="text-[10px] text-slate-500">Go to directory →</span>
                     </Link>
                   ))}
@@ -477,7 +477,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                       onClick={() => setCmdOpen(false)}
                       className="flex items-center justify-between px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-[#1E293B] text-xs font-mono transition"
                     >
-                      <span className="flex items-center gap-2">⚡ {item.label}</span>
+                      <span className="flex items-center gap-2">{item.label}</span>
                       <span className="text-[10px] text-[#64748B] uppercase tracking-wider">JUMP TO</span>
                     </Link>
                   ))}
