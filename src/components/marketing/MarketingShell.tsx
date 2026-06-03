@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Logo, LanceConnectLogo } from "@/components/Logo";
-import { Menu, X, ArrowUp, MessageSquare, Send, Search, ExternalLink, ArrowRight, Globe } from "lucide-react";
+import { Menu, X, ArrowUp, MessageSquare, Send, Search, ExternalLink, ArrowRight, Globe, Sun, Moon } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { usePreferences, Language, Currency } from "@/contexts/PreferencesContext";
 
@@ -9,7 +9,7 @@ export function MarketingNav() {
   const [bannerOpen, setBannerOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
-  const { language, setLanguage, currency, setCurrency, t } = usePreferences();
+  const { language, setLanguage, currency, setCurrency, theme, setTheme, t } = usePreferences();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -35,7 +35,7 @@ export function MarketingNav() {
 
   return (
     <div className="w-full shrink-0 sticky top-0 z-50">
-      <div className="relative bg-[#0F172A] py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-white">
+      <div className="relative bg-card py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-white">
         {/* Active Lead Scanning Stats */}
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
@@ -72,7 +72,7 @@ export function MarketingNav() {
             </button>
 
             {settingsOpen && (
-              <div className="absolute right-0 mt-2 w-52 rounded-xl border border-border bg-[#0F172A] p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 font-sans">
+              <div className="absolute right-0 mt-2 w-52 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 font-sans">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Preferences</p>
                 <div className="space-y-3">
                   <div>
@@ -80,7 +80,7 @@ export function MarketingNav() {
                     <select
                       value={language}
                       onChange={(e) => setLanguage(e.target.value as Language)}
-                      className="w-full bg-[#080B14] border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
+                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
                     >
                       <option value="en">English (EN)</option>
                       <option value="fr">Français (FR)</option>
@@ -94,7 +94,7 @@ export function MarketingNav() {
                     <select
                       value={currency}
                       onChange={(e) => setCurrency(e.target.value as Currency)}
-                      className="w-full bg-[#080B14] border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
+                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
                     >
                       <option value="USD">USD ($)</option>
                       <option value="EUR">EUR (€)</option>
@@ -109,20 +109,16 @@ export function MarketingNav() {
           </div>
         </div>
       </div>
-        <header className="border-b border-border bg-[#080B14] w-full py-4">
+        <header className="border-b border-border bg-background w-full py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center group">
-            <img 
-              src="/logo-navy.png" 
-              alt="LanceConnect" 
-              className="h-12 md:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] group-hover:drop-shadow-[0_8px_16px_rgba(99,102,241,0.25)]" 
-            />
+            <LanceConnectLogo className="transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98]" />
           </Link>
           
           <div className="hidden lg:flex items-center gap-6">
-            <nav className="flex items-center gap-5 text-sm text-white">
+            <nav className="flex items-center gap-5 text-sm text-foreground/80">
               {desktopLinks.map((l) => (
-                <Link key={l.to} to={l.to} className="hover:text-white/80 transition-colors animate-fade-in" activeProps={{ className: "text-white font-semibold border-b border-primary/60 pb-0.5" }}>
+                <Link key={l.to} to={l.to} className="hover:text-foreground transition-colors animate-fade-in" activeProps={{ className: "text-foreground font-semibold border-b border-primary pb-0.5" }}>
                   {l.label}
                 </Link>
               ))}
@@ -131,8 +127,16 @@ export function MarketingNav() {
             <div className="h-4 w-px bg-border/40" />
 
             <div className="flex items-center gap-3">
-              <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-white hover:text-white/80 transition-colors">{t("nav_login")}</Link>
-              <Link to="/register" className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-black hover:bg-white/90 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">{t("nav_start_free")}</Link>
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="p-2 rounded-lg text-slate-400 hover:text-foreground hover:bg-accent transition cursor-pointer"
+                aria-label="Toggle Theme"
+                title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              >
+                {theme === "light" ? <Moon className="h-4.5 w-4.5 text-slate-700" /> : <Sun className="h-4.5 w-4.5 text-amber-400" />}
+              </button>
+              <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">{t("nav_login")}</Link>
+              <Link to="/register" className="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm hover:shadow-md">{t("nav_start_free")}</Link>
             </div>
           </div>
 
@@ -142,26 +146,26 @@ export function MarketingNav() {
         </div>
         
         {open && (
-          <div className="border-t border-border bg-[#080B14] lg:hidden">
+          <div className="border-t border-border bg-background lg:hidden">
             <div className="flex flex-col px-4 py-3 gap-1">
               {links.map((l) => (
-                <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-accent hover:text-white">
+                <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-accent hover:text-foreground">
                   {l.label}
                 </Link>
               ))}
               <button 
                 onClick={() => { setOpen(false); window.dispatchEvent(new CustomEvent("toggle-cmd-palette")); }}
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-accent text-left"
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-accent hover:text-foreground text-left cursor-pointer"
               >
                 <Search className="h-4 w-4" /> Search (⌘K)
               </button>
               
-              {/* Mobile Lang & Currency Switchers */}
-              <div className="flex items-center gap-2 px-3 py-2">
+              {/* Mobile Preferences & Theme */}
+              <div className="flex items-center gap-2 px-3 py-2 flex-wrap sm:flex-nowrap">
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value as Language)}
-                  className="flex-1 bg-[#0F172A] border border-border rounded-lg px-2.5 py-2 text-sm text-slate-300 focus:outline-none"
+                  className="flex-1 bg-card border border-border rounded-lg px-2.5 py-2 text-sm text-foreground/85 focus:outline-none cursor-pointer"
                 >
                   <option value="en">🇺🇸 English</option>
                   <option value="fr">🇫🇷 Français</option>
@@ -172,7 +176,7 @@ export function MarketingNav() {
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as Currency)}
-                  className="flex-1 bg-[#0F172A] border border-border rounded-lg px-2.5 py-2 text-sm text-slate-300 focus:outline-none"
+                  className="flex-1 bg-card border border-border rounded-lg px-2.5 py-2 text-sm text-foreground/85 focus:outline-none cursor-pointer"
                 >
                   <option value="USD">USD ($)</option>
                   <option value="EUR">EUR (€)</option>
@@ -180,9 +184,17 @@ export function MarketingNav() {
                   <option value="NGN">NGN (₦)</option>
                   <option value="BRL">BRL (R$)</option>
                 </select>
+                
+                <button
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="p-2 border border-border bg-card rounded-lg text-foreground hover:bg-accent flex items-center justify-center cursor-pointer"
+                  aria-label="Toggle Theme"
+                >
+                  {theme === "light" ? <Moon className="h-5 w-5 text-slate-700" /> : <Sun className="h-5 w-5 text-amber-400" />}
+                </button>
               </div>
 
-              <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-accent hover:text-white">{t("nav_login")}</Link>
+              <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-accent hover:text-foreground">{t("nav_login")}</Link>
               <Link to="/register" onClick={() => setOpen(false)} className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground">{t("nav_start_free")}</Link>
             </div>
           </div>
@@ -344,7 +356,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
         {showScroll && (
           <button 
             onClick={scrollToTop}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-[#0F172A]/90 text-slate-300 hover:text-white hover:bg-accent shadow-2xl transition cursor-pointer"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card/90 text-slate-300 hover:text-white hover:bg-accent shadow-2xl transition cursor-pointer"
             aria-label="Scroll to top"
           >
             <ArrowUp className="h-5 w-5" />
@@ -358,14 +370,14 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
           aria-label="Chat support"
         >
           <MessageSquare className="h-5 w-5" />
-          <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#080B14] animate-pulse" />
+          <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-background animate-pulse" />
         </button>
       </div>
 
       {/* Mini Chat Drawer */}
       {chatOpen && (
-        <div className="fixed bottom-20 right-6 w-80 max-w-[calc(100vw-32px)] h-96 border border-border bg-[#0F172A] rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 animate-in slide-in-from-bottom-5 duration-200">
-          <div className="bg-[#080B14] p-3.5 border-b border-border flex items-center justify-between">
+        <div className="fixed bottom-20 right-6 w-80 max-w-[calc(100vw-32px)] h-96 border border-border bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 animate-in slide-in-from-bottom-5 duration-200">
+          <div className="bg-background p-3.5 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -382,7 +394,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                 key={idx} 
                 className={`flex flex-col max-w-[80%] rounded-2xl p-3 text-xs leading-normal ${
                   m.sender === "support" 
-                    ? "bg-[#080B14] border border-border text-slate-300 self-start" 
+                    ? "bg-background border border-border text-slate-300 self-start" 
                     : "bg-primary text-white self-end ml-auto"
                 }`}
               >
@@ -390,7 +402,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
               </div>
             ))}
             {typing && (
-              <div className="bg-[#080B14] border border-border text-slate-500 self-start max-w-[80%] rounded-2xl p-3 text-xs flex gap-1 items-center">
+              <div className="bg-background border border-border text-slate-500 self-start max-w-[80%] rounded-2xl p-3 text-xs flex gap-1 items-center">
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '0ms' }} />
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '150ms' }} />
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -398,13 +410,13 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
             )}
           </div>
 
-          <form onSubmit={handleSendChat} className="p-3 border-t border-border bg-[#080B14] flex gap-2">
+          <form onSubmit={handleSendChat} className="p-3 border-t border-border bg-background flex gap-2">
             <input 
               type="text" 
               placeholder="Write a message..."
               value={userMsg}
               onChange={(e) => setUserMsg(e.target.value)}
-              className="flex-1 bg-[#0F172A] border border-border rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-primary transition"
+              className="flex-1 bg-card border border-border rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-primary transition"
             />
             <button type="submit" className="bg-primary hover:bg-primary/90 text-white rounded-lg p-1.5 shrink-0 transition flex items-center justify-center">
               <Send className="h-3.5 w-3.5" />
@@ -420,7 +432,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
           onClick={() => setCmdOpen(false)}
         >
           <div 
-            className="w-full max-w-lg border border-border bg-[#0F172A] rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+            className="w-full max-w-lg border border-border bg-card rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-4 border-b border-border flex items-center gap-3">

@@ -6,7 +6,7 @@ import { MobileSidebarTrigger } from "./Sidebar";
 export function Header({ title, subtitle }: { title: string; subtitle?: string }) {
   const { user } = useAuth();
   return (
-    <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/80 px-4 py-3 backdrop-blur lg:px-8">
+    <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background px-4 py-3 lg:px-8">
       <MobileSidebarTrigger />
       <div className="min-w-0 flex-1">
         <h1 className="truncate font-display text-xl font-semibold leading-tight">{title}</h1>

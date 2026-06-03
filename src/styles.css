@@ -98,6 +98,47 @@
   --ink-border: rgba(37,99,235,0.15);
 }
 
+html.light {
+  --background: #ffffff;
+  --foreground: #020617;
+  --card: #ffffff;
+  --card-foreground: #334155;
+  --popover: #ffffff;
+  --popover-foreground: #334155;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #020617;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;
+
+  --brand: #2563eb;
+  --brand-foreground: #ffffff;
+  --success: #10b981;
+  --warn: #f59e0b;
+  --hot: #ef4444;
+  --ink: #020617;
+  --cream: #f8fafc;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #475569;
+  --sidebar-active: #020617;
+  --sidebar-hover: rgba(37, 99, 235, 0.04);
+  --sidebar-border: #e2e8f0;
+
+  --ink-bg: #ffffff;
+  --ink-bg-2: #f8fafc;
+  --ink-fg: #020617;
+  --ink-muted: #64748b;
+  --ink-border: #e2e8f0;
+}
+
+html.light .bg-grid-pattern,
+html.light .bg-dot-pattern {
+  background-image: none !important;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);

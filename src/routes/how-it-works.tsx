@@ -36,25 +36,24 @@ function HowPage() {
               <p className="mt-4 text-muted-foreground">{s.desc}</p>
               <p className="mt-3 text-xs text-primary font-medium">{s.caption}</p>
             </div>
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-3xl border border-border bg-[#0F172A] shadow-2xl group">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-2xl group">
               <img 
                 src={s.image} 
                 alt={s.title} 
                 className="h-full w-full object-cover transition duration-500 group-hover:scale-105" 
                 loading="lazy" 
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
               
               {/* Floating Freelancer Badge */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/80 p-3 backdrop-blur shadow-xl">
+              <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-xl">
                 <img 
                   src={s.human} 
                   alt={s.caption} 
                   className="h-9 w-9 rounded-full object-cover border-2 border-primary/45 shrink-0" 
                 />
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold text-white truncate leading-tight">{s.caption}</p>
-                  <p className="text-[9px] text-slate-400 font-mono mt-0.5 leading-none">Verified Freelancer</p>
+                  <p className="text-[11px] font-semibold text-foreground truncate leading-tight">{s.caption}</p>
+                  <p className="text-[9px] text-muted-foreground font-mono mt-0.5 leading-none">Verified Freelancer</p>
                 </div>
               </div>
             </div>

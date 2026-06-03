@@ -8,6 +8,8 @@ interface PreferencesContextType {
   setLanguage: (lang: Language) => void;
   currency: Currency;
   setCurrency: (curr: Currency) => void;
+  theme: "dark" | "light";
+  setTheme: (theme: "dark" | "light") => void;
   t: (key: string) => string;
   formatPrice: (usdAmount: number) => string;
   getCurrencySymbol: () => string;
@@ -276,16 +278,27 @@ const PreferencesContext = createContext<PreferencesContextType | undefined>(und
 export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>("en");
   const [currency, setCurrencyState] = useState<Currency>("USD");
+  const [theme, setThemeState] = useState<"dark" | "light">("dark");
 
   // Load from localStorage on mount
   useEffect(() => {
     const savedLang = localStorage.getItem("lanceconnect_lang") as Language;
     const savedCurr = localStorage.getItem("lanceconnect_curr") as Currency;
+    const savedTheme = localStorage.getItem("lanceconnect_theme") as "dark" | "light";
     if (savedLang && ["en", "fr", "it", "es", "pt"].includes(savedLang)) {
       setLanguageState(savedLang);
     }
     if (savedCurr && ["USD", "EUR", "GBP", "NGN", "BRL"].includes(savedCurr)) {
       setCurrencyState(savedCurr);
+    }
+    if (savedTheme && ["dark", "light"].includes(savedTheme)) {
+      setThemeState(savedTheme);
+      const root = document.documentElement;
+      if (savedTheme === "light") {
+        root.classList.add("light");
+      } else {
+        root.classList.remove("light");
+      }
     }
   }, []);
 
@@ -297,6 +310,17 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setCurrency = (curr: Currency) => {
     setCurrencyState(curr);
     localStorage.setItem("lanceconnect_curr", curr);
+  };
+
+  const setTheme = (t: "dark" | "light") => {
+    setThemeState(t);
+    localStorage.setItem("lanceconnect_theme", t);
+    const root = document.documentElement;
+    if (t === "light") {
+      root.classList.add("light");
+    } else {
+      root.classList.remove("light");
+    }
   };
 
   const t = (key: string): string => {
@@ -348,6 +372,8 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setLanguage,
         currency,
         setCurrency,
+        theme,
+        setTheme,
         t,
         formatPrice,
         getCurrencySymbol,

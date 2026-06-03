@@ -122,21 +122,20 @@ function PortfolioPage() {
   return (
     <MarketingShell>
       {/* Portfolio Header */}
-      <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-16 text-center select-none">
-        <div className="absolute inset-0 bg-grid-pattern opacity-15 z-0" />
+      <section className="relative overflow-hidden border-b border-border bg-background py-16 text-center select-none">
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">// portfolio.showcase</p>
-          <h1 className="font-display text-4xl font-extrabold text-white sm:text-5xl tracking-tight leading-tight">
-            Explore Work from Top <span className="bg-gradient-to-r from-primary to-[#818CF8] bg-clip-text text-transparent">Freelancers.</span>
+          <h1 className="font-display text-4xl font-extrabold sm:text-5xl tracking-tight leading-tight">
+            Explore Work from Top <span className="text-primary">Freelancers.</span>
           </h1>
-          <p className="mt-4 text-sm text-slate-400 max-w-xl mx-auto leading-relaxed">
+          <p className="mt-4 text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
             See the actual projects delivered by our global community. Verify their expertise, view their styles, and hire directly with confidence.
           </p>
         </div>
       </section>
 
       {/* Filters & Search Section */}
-      <section className="bg-[#0F172A]/40 border-b border-border py-6 select-none">
+      <section className="bg-card/40 border-b border-border py-6 select-none">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Category Tabs */}
           <div className="flex flex-wrap gap-1.5 overflow-x-auto pb-2 md:pb-0">
@@ -147,7 +146,7 @@ function PortfolioPage() {
                 className={`rounded-full px-3.5 py-1.5 text-xs font-mono font-medium transition cursor-pointer border ${
                   activeCategory === c.id 
                     ? "bg-primary border-primary text-white" 
-                    : "border-border bg-card text-slate-400 hover:text-white hover:border-slate-700"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground hover:border-slate-700"
                 }`}
               >
                 {c.label}
@@ -163,17 +162,17 @@ function PortfolioPage() {
               placeholder="Search skills, name, role..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-border bg-[#080B14] pl-9 pr-4 py-2 text-xs font-mono text-white placeholder-slate-500 focus:border-primary focus:outline-none transition"
+              className="w-full rounded-xl border border-border bg-background pl-9 pr-4 py-2 text-xs font-mono text-foreground placeholder-slate-500 focus:border-primary focus:outline-none transition"
             />
           </div>
         </div>
       </section>
 
       {/* Portfolio Grid */}
-      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8 bg-[#080B14]">
+      <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8 bg-background">
         {filteredFreelancers.length === 0 ? (
           <div className="text-center py-16 border border-dashed border-border rounded-3xl bg-card/40">
-            <p className="text-sm text-slate-400 font-mono">No portfolios match your filters.</p>
+            <p className="text-sm text-muted-foreground font-mono">No portfolios match your filters.</p>
             <button 
               onClick={() => { setActiveCategory("all"); setSearchQuery(""); }} 
               className="mt-3 text-xs font-semibold text-primary hover:underline cursor-pointer"
@@ -186,7 +185,7 @@ function PortfolioPage() {
             {filteredFreelancers.map((free) => (
               <div 
                 key={free.name} 
-                className="rounded-3xl border border-border bg-[#0F172A]/85 p-6 shadow-card hover:shadow-card-hover transition duration-300 flex flex-col justify-between group hover:border-primary/20"
+                className="rounded-3xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300 flex flex-col justify-between group hover:border-primary/20"
               >
                 <div>
                   {/* Bio Info Header */}
@@ -198,7 +197,7 @@ function PortfolioPage() {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-display font-bold text-white text-base leading-snug truncate">
+                        <h3 className="font-display font-bold text-foreground text-base leading-snug truncate">
                           {free.name}
                         </h3>
                         <div className="flex items-center gap-1 text-amber-500 text-xs shrink-0 font-bold">
@@ -207,7 +206,7 @@ function PortfolioPage() {
                         </div>
                       </div>
                       <p className="text-xs text-primary font-medium">{free.role}</p>
-                      <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 mt-0.5">
+                      <p className="text-[10px] text-muted-foreground font-mono flex items-center gap-1 mt-0.5">
                         <MapPin className="h-3 w-3 shrink-0" />
                         {free.city}
                       </p>
@@ -219,7 +218,7 @@ function PortfolioPage() {
                     {free.skills.map((skill) => (
                       <span 
                         key={skill} 
-                        className="rounded bg-[#080B14] border border-border px-2 py-0.5 text-[9px] font-mono text-slate-300"
+                        className="rounded bg-background border border-border px-2 py-0.5 text-[9px] font-mono text-muted-foreground"
                       >
                         {skill}
                       </span>
@@ -229,22 +228,22 @@ function PortfolioPage() {
                   {/* Projects Showcase Mini Grid */}
                   <div className="mt-6 grid gap-4 grid-cols-2">
                     {free.projects.map((proj) => (
-                      <div key={proj.title} className="relative rounded-2xl overflow-hidden border border-border bg-[#080B14] group/proj cursor-pointer">
+                      <div key={proj.title} className="relative rounded-2xl overflow-hidden border border-border bg-background group/proj cursor-pointer">
                         <div className="aspect-[4/3] w-full overflow-hidden relative">
                           <img 
                             src={proj.image} 
                             alt={proj.title} 
                             className="h-full w-full object-cover transition duration-300 group-hover/proj:scale-105" 
                           />
-                          <div className="absolute inset-0 bg-[#080B14]/80 opacity-0 group-hover/proj:opacity-100 transition duration-300 flex flex-col justify-end p-3">
+                          <div className="absolute inset-0 bg-background/95 opacity-0 group-hover/proj:opacity-100 transition duration-300 flex flex-col justify-end p-3">
                             <span className="text-[9px] font-mono text-primary font-bold uppercase tracking-widest flex items-center gap-0.5">
                               Case Study <ExternalLink className="h-2.5 w-2.5" />
                             </span>
-                            <p className="text-[9px] text-slate-400 leading-normal line-clamp-2 mt-1">{proj.desc}</p>
+                            <p className="text-[9px] text-muted-foreground leading-normal line-clamp-2 mt-1">{proj.desc}</p>
                           </div>
                         </div>
                         <div className="p-2.5 border-t border-border">
-                          <h4 className="text-[10px] font-display font-semibold text-white truncate leading-none">
+                          <h4 className="text-[10px] font-display font-semibold text-foreground truncate leading-none">
                             {proj.title}
                           </h4>
                         </div>
@@ -255,7 +254,7 @@ function PortfolioPage() {
 
                 {/* Card Action Link */}
                 <div className="mt-6 pt-4 border-t border-border/40 flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-[#64748B]">Ready for new contracts</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">Ready for new contracts</span>
                   <Link 
                     to="/contact" 
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
@@ -270,16 +269,15 @@ function PortfolioPage() {
       </section>
 
       {/* Joint Showcase CTA */}
-      <section className="px-4 pb-20 lg:px-8 bg-[#080B14]">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-gradient-to-r from-[#0F172A] to-[#080B14] p-12 text-center relative overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-          <h3 className="font-display text-2xl font-bold text-white relative z-10">Showcase your own portfolio work</h3>
-          <p className="mt-3 text-sm text-slate-400 max-w-lg mx-auto relative z-10">
+      <section className="px-4 pb-20 lg:px-8 bg-background">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-card p-12 text-center relative overflow-hidden shadow-2xl">
+          <h3 className="font-display text-2xl font-bold relative z-10">Showcase your own portfolio work</h3>
+          <p className="mt-3 text-sm text-muted-foreground max-w-lg mx-auto relative z-10">
             Are you a freelancer? Create your profile, upload your portfolio items, and show your work directly to high-paying clients looking to hire.
           </p>
           <Link 
             to="/register" 
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-white/95 transition shadow-lg relative z-10"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg relative z-10"
           >
             Create your profile <ArrowRight className="h-4 w-4" />
           </Link>
