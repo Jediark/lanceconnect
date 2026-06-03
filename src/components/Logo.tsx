@@ -27,7 +27,7 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 
 export function LanceConnectLogo({ className }: { className?: string }) {
   const { theme } = usePreferences();
-  const logoSrc = theme === "light" ? "/logo-navy.png" : "/logo-white.png";
+  const logoSrc = theme === "light" ? "/logo-white.png" : "/logo-navy.png";
 
   return (
     <img 

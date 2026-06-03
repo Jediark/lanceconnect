@@ -213,36 +213,36 @@ export function MarketingFooter() {
   ];
 
   return (
-    <footer className="border-t border-border bg-paper">
+    <footer className="border-t border-[#1e293b]/40 bg-[#080B14] text-white">
       <div className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
         <div className="grid gap-10 md:grid-cols-5">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center mb-4 group">
               <img 
-                src="/logo-white.png" 
+                src="/logo-navy.png" 
                 alt="LanceConnect" 
                 className="h-12 md:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)]" 
               />
             </Link>
-            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-xs leading-relaxed text-slate-400">
               Lead generation built by freelancers, for freelancers. Find businesses that need your skills in 150+ countries.
             </p>
           </div>
           {cols.map((c) => (
             <div key={c.title}>
-              <p className="text-xs font-semibold uppercase tracking-widest text-foreground">{c.title}</p>
-              <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-200">{c.title}</p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-400">
                 {c.links.map(([label, href]) => {
                   const isFreelancer = href.startsWith("/freelancers/");
                   const slug = href.replace("/freelancers/", "");
                   return (
                     <li key={label}>
                       {isFreelancer ? (
-                        <Link to="/freelancers/$slug" params={{ slug }} className="hover:text-foreground">
+                        <Link to="/freelancers/$slug" params={{ slug }} className="hover:text-white transition-colors">
                           {label}
                         </Link>
                       ) : (
-                        <Link to={href as any} className="hover:text-foreground">
+                        <Link to={href as any} className="hover:text-white transition-colors">
                           {label}
                         </Link>
                       )}
@@ -253,7 +253,7 @@ export function MarketingFooter() {
             </div>
           ))}
         </div>
-        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
+        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-[#1e293b]/40 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} LanceConnect. The Meeting Point for Freelancers and Clients</p>
         </div>
       </div>
