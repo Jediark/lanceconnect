@@ -1250,7 +1250,7 @@ function Pricing() {
   const { t, formatPrice, getCurrencySymbol } = usePreferences();
   const plans = [
     { name: t("plan_free"), price: 0, leads: "10", popular: false, cta: t("plan_cta_free"), features: [t("plan_free_feature_1"), t("plan_free_feature_2"), t("plan_free_feature_3")] },
-    { name: t("plan_individual"), price: 5, leads: "200", popular: true, cta: t("plan_cta_ind"), features: [t("plan_ind_feature_1"), t("plan_ind_feature_2"), t("plan_ind_feature_3"), t("plan_ind_feature_4"), t("plan_ind_feature_5")] },
+    { name: t("plan_individual"), price: 7, leads: "200", popular: true, cta: t("plan_cta_ind"), features: [t("plan_ind_feature_1"), t("plan_ind_feature_2"), t("plan_ind_feature_3"), t("plan_ind_feature_4"), t("plan_ind_feature_5")] },
     { name: t("plan_company"), price: 20, leads: "Unlimited", popular: false, cta: t("plan_cta_comp"), features: [t("plan_comp_feature_1"), t("plan_comp_feature_2"), t("plan_comp_feature_3"), t("plan_comp_feature_4"), t("plan_comp_feature_5")] },
   ];
   return (

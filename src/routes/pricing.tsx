@@ -42,7 +42,7 @@ function PricingPage() {
 
   const plans = [
     { name: t("plan_free"), price: 0, leads: `10 ${t("plan_leads_mo")}`, cta: t("plan_cta_free"), popular: false },
-    { name: t("plan_individual"), price: 5, leads: `200 ${t("plan_leads_mo")}`, cta: t("plan_cta_ind"), popular: true },
+    { name: t("plan_individual"), price: 7, leads: `200 ${t("plan_leads_mo")}`, cta: t("plan_cta_ind"), popular: true },
     { name: t("plan_company"), price: 20, leads: "Unlimited", cta: t("plan_cta_comp"), popular: false },
   ];
 
