@@ -11,6 +11,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { LeadsOverTimeChart, PipelineFunnelChart } from "@/components/dashboard/AnalyticsCharts";
+import { LiveEventsTicker } from "@/components/dashboard/LiveEventsTicker";
+import { GoalTracker } from "@/components/dashboard/GoalTracker";
+import { GlobalHeatmap } from "@/components/dashboard/GlobalHeatmap";
+import { QuickConnectModal } from "@/components/dashboard/QuickConnectModal";
 
 const COUNTRY_CITIES: Record<string, string[]> = {
   Nigeria: ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano"],
@@ -66,6 +71,9 @@ function Dashboard() {
   const [selectedTone, setSelectedTone] = useState<"professional" | "casual" | "bold">("professional");
   const [provider, setProvider] = useState("");
   const [savingId, setSavingId] = useState<string | null>(null);
+  
+  const [quickConnectOpen, setQuickConnectOpen] = useState(false);
+  const [quickConnectLead, setQuickConnectLead] = useState<Lead | undefined>();
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
@@ -244,6 +252,21 @@ function Dashboard() {
           ))}
         </div>
 
+        {/* ═══ ANALYTICS ROW ═══ */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-5">
+            <h3 className="text-sm font-bold text-foreground mb-4">Leads Discovered</h3>
+            <LeadsOverTimeChart />
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-5 flex flex-col">
+            <h3 className="text-sm font-bold text-foreground mb-4">Conversion Pipeline</h3>
+            <PipelineFunnelChart className="flex-1" />
+          </div>
+        </div>
+
+        {/* ═══ HEATMAP ROW ═══ */}
+        <GlobalHeatmap className="h-[300px]" />
+
         {/* ═══ MAIN CONTENT: RESULTS + SIDEBAR ═══ */}
         <div className="grid gap-6 lg:grid-cols-3">
 
@@ -318,10 +341,10 @@ function Dashboard() {
                       {/* Actions */}
                       <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                         <button
-                          onClick={() => { setDetail(lead); setOutreachDraft(""); }}
+                          onClick={() => { setQuickConnectLead(lead); setQuickConnectOpen(true); }}
                           className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-muted border border-border py-1.5 text-[11px] font-bold text-foreground hover:bg-accent transition cursor-pointer"
                         >
-                          <Sparkles className="h-3 w-3" /> AI Pitch
+                          <Mail className="h-3 w-3" /> Quick Connect
                         </button>
                         <button
                           onClick={() => handleSaveLead(lead)}
@@ -365,6 +388,9 @@ function Dashboard() {
               )}
             </div>
 
+            {/* Goal Tracker */}
+            <GoalTracker current={contactedCount} target={user?.plan === "free" ? 10 : 50} />
+
             {/* Pipeline */}
             <div className="rounded-2xl border border-border bg-card p-5">
               <h4 className="text-sm font-bold text-foreground mb-4">Pipeline</h4>
@@ -391,32 +417,14 @@ function Dashboard() {
 
             {/* Activity */}
             <div className="rounded-2xl border border-border bg-card p-5">
-              <h4 className="text-sm font-bold text-foreground mb-4">Recent Activity</h4>
-              {loading ? (
-                <div className="flex items-center justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-primary" /></div>
-              ) : activities.length === 0 ? (
-                <p className="text-center text-xs text-muted-foreground py-6">No activity yet</p>
-              ) : (
-                <div className="space-y-3">
-                  {activities.map((act) => {
-                    let desc = ""; let iconEl = <Activity className="h-3.5 w-3.5 text-muted-foreground" />;
-                    if (act.action === "lead.searched") { desc = `Searched ${act.metadata.city}`; iconEl = <Search className="h-3.5 w-3.5 text-primary" />; }
-                    else if (act.action === "pipeline.lead_saved") { desc = `Saved ${act.metadata.business_name || "lead"}`; iconEl = <Flame className="h-3.5 w-3.5 text-amber-400" />; }
-                    else if (act.action === "ai.message_generated") { desc = `Pitched ${act.metadata.business_name || "lead"}`; iconEl = <Sparkles className="h-3.5 w-3.5 text-violet-400" />; }
-                    else { desc = act.action; }
-                    const ts = act.createdAt ? new Date(act.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
-                    return (
-                      <div key={act.id} className="flex items-center gap-2.5">
-                        <div className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-accent">{iconEl}</div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-foreground truncate">{desc}</p>
-                          <p className="text-[10px] text-muted-foreground">{ts}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-bold text-foreground">Live Feed</h4>
+                <div className="flex items-center gap-1.5">
+                  <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Live</span>
                 </div>
-              )}
+              </div>
+              <LiveEventsTicker />
             </div>
           </div>
         </div>
@@ -516,6 +524,13 @@ function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* ═══ QUICK CONNECT MODAL ═══ */}
+      <QuickConnectModal 
+        open={quickConnectOpen} 
+        onOpenChange={setQuickConnectOpen} 
+        lead={quickConnectLead} 
+      />
     </>
   );
 }

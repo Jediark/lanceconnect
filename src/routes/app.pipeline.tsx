@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Kanban, Table as TableIcon, Trash2, FolderOpen, Calendar, Download } from "lucide-react";
+import { Table as TableIcon, Trash2, FolderOpen, Calendar, Download, Mail, Phone, ThumbsUp, Send, Trophy, Grid } from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -17,9 +17,19 @@ export const Route = createFileRoute("/app/pipeline")({
 
 const COLUMNS: PipelineStatus[] = ["new", "contacted", "interested", "proposal_sent", "won"];
 
+const STATUS_ICONS: Record<PipelineStatus | "lost", any> = {
+  new: Mail,
+  contacted: Phone,
+  interested: ThumbsUp,
+  proposal_sent: Send,
+  won: Trophy,
+  lost: Trash2
+};
+
 function PipelinePage() {
   const { pipeline, updateStatus, removeLead } = usePipeline();
-  const [view, setView] = useState<"board" | "table">("board");
+  const [selectedStatus, setSelectedStatus] = useState<PipelineStatus | "all">("all");
+  const [view, setView] = useState<"grid" | "table">("grid");
   const [showLost, setShowLost] = useState(false);
 
   const downloadCSV = () => {
@@ -75,9 +85,16 @@ function PipelinePage() {
       <Header title="My Pipeline" subtitle={`${pipeline.length} leads in your funnel`} />
       <div className="flex items-center justify-between gap-2 px-4 py-4 lg:px-8 flex-wrap">
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setSelectedStatus("all")} 
+            className={cn("text-sm font-bold transition", selectedStatus === "all" ? "text-primary" : "text-muted-foreground hover:text-foreground")}
+          >
+            All Categories
+          </button>
+          <div className="h-4 w-px bg-border mx-2" />
           <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-            <button onClick={() => setView("board")} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium", view === "board" && "bg-primary text-primary-foreground")}>
-              <Kanban className="h-3.5 w-3.5" /> Pipeline
+            <button onClick={() => setView("grid")} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium", view === "grid" && "bg-primary text-primary-foreground")}>
+              <Grid className="h-3.5 w-3.5" /> Grid
             </button>
             <button onClick={() => setView("table")} className={cn("inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium", view === "table" && "bg-primary text-primary-foreground")}>
               <TableIcon className="h-3.5 w-3.5" /> Table
@@ -88,7 +105,7 @@ function PipelinePage() {
               onClick={downloadCSV}
               className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer shadow-sm text-foreground"
             >
-              <Download className="h-3.5 w-3.5" /> Export Pipeline CSV
+              <Download className="h-3.5 w-3.5" /> Export
             </button>
           )}
         </div>
@@ -98,56 +115,92 @@ function PipelinePage() {
         </label>
       </div>
 
-      {view === "board" ? (
-        <div className="px-4 pb-10 lg:px-8">
-          <div className="flex flex-col xl:flex-row gap-4 w-full items-start">
-            {columns.map((status) => {
-              const cards = pipeline.filter((l) => l.status === status);
-              const meta = STATUS_META[status];
-              return (
-                <div key={status} className="w-full xl:flex-1 rounded-2xl bg-muted p-3 flex flex-col max-h-[75vh]">
-                  <div className={cn("mb-3 flex items-center justify-between border-l-4 pl-2 shrink-0", meta.ring)}>
-                    <p className="text-xs font-semibold uppercase tracking-wide">{meta.label}</p>
-                    <span className="rounded-full bg-card px-2 py-0.5 text-xs font-mono-data">{cards.length}</span>
+      {/* APILayer-style Category Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 px-4 lg:px-8 mb-8">
+        {columns.map((status) => {
+          const meta = STATUS_META[status];
+          const count = pipeline.filter((l) => l.status === status).length;
+          const Icon = STATUS_ICONS[status];
+          const isSelected = selectedStatus === status;
+
+          return (
+            <div 
+              key={status}
+              onClick={() => setSelectedStatus(status)}
+              className={cn(
+                "relative cursor-pointer overflow-hidden rounded-xl bg-card border shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover group",
+                isSelected ? "border-primary ring-1 ring-primary/50" : "border-border"
+              )}
+            >
+              {/* Bold Top Border mapping to category color */}
+              <div className="absolute top-0 inset-x-0 h-1.5" style={{ backgroundColor: meta.color }} />
+              
+              <div className="p-6">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="rounded-lg p-2.5" style={{ backgroundColor: meta.color + '15', color: meta.color }}>
+                    <Icon className="h-6 w-6" />
                   </div>
-                  <div className="space-y-2 overflow-y-auto pr-1 flex-1">
-                    {cards.map((l) => (
-                      <div key={l.id} className="rounded-xl border border-border bg-card p-3 shadow-sm hover:border-primary transition group">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm font-semibold leading-tight">{l.businessName}</p>
-                          <OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} />
-                        </div>
-                        <p className="mt-0.5 text-xs text-muted-foreground">{l.city} · {l.businessType}</p>
-                        {l.followUpDate && (
-                          <p className="mt-2 flex items-center gap-1 text-[11px] text-amber-700">
-                            <Calendar className="h-3 w-3" /> Follow up: {l.followUpDate}
-                          </p>
-                        )}
-                        {l.notes && <p className="mt-1 text-[11px] italic text-muted-foreground">"{l.notes}"</p>}
-                        <div className="mt-3 flex items-center gap-1">
-                          <select
-                            value={l.status ?? "new"}
-                            onChange={(e) => updateStatus(l.id, e.target.value as PipelineStatus)}
-                            className="flex-1 rounded-md border border-border bg-background px-2 py-1 text-[11px]"
-                          >
-                            {Object.entries(STATUS_META).map(([k, v]) => (
-                              <option key={k} value={k}>{v.label}</option>
-                            ))}
-                          </select>
-                          <button onClick={() => removeLead(l.id)} className="rounded-md border border-border bg-background p-1.5 text-muted-foreground hover:text-red-600">
-                            <Trash2 className="h-3 w-3" />
-                          </button>
-                        </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-bold text-foreground leading-tight mb-1">{meta.label}</h3>
+                    <p className="text-[11px] text-muted-foreground leading-snug">Track leads currently in the {meta.label.toLowerCase()} phase.</p>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-extrabold text-foreground">{count}</p>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Leads</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Leads Listing Area */}
+      {view === "grid" ? (
+        <div className="px-4 pb-10 lg:px-8">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {pipeline.filter(l => selectedStatus === "all" || l.status === selectedStatus).map((l) => {
+              const leadMeta = STATUS_META[l.status ?? "new"];
+              return (
+                <div key={l.id} className="relative rounded-xl border border-border bg-card p-4 shadow-sm hover:border-primary/50 transition">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ backgroundColor: leadMeta.color }} />
+                  <div className="pl-3 flex flex-col h-full">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h4 className="text-sm font-bold text-foreground leading-tight">{l.businessName}</h4>
+                      <OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} />
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mb-4">{l.city} · {l.businessType}</p>
+                    
+                    <div className="mt-auto space-y-3">
+                      {l.followUpDate && (
+                        <p className="flex items-center gap-1.5 text-[11px] font-medium text-amber-600 dark:text-amber-500">
+                          <Calendar className="h-3.5 w-3.5" /> Follow up: {l.followUpDate}
+                        </p>
+                      )}
+                      
+                      <div className="flex items-center gap-2 pt-3 border-t border-border/50">
+                        <select
+                          value={l.status ?? "new"}
+                          onChange={(e) => updateStatus(l.id, e.target.value as PipelineStatus)}
+                          className="flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-[11px] font-medium focus:ring-1 focus:ring-primary outline-none"
+                        >
+                          {Object.entries(STATUS_META).map(([k, v]) => (
+                            <option key={k} value={k}>{v.label}</option>
+                          ))}
+                        </select>
+                        <button onClick={() => removeLead(l.id)} className="rounded-md border border-border bg-background p-1.5 text-muted-foreground hover:text-red-500 transition">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       </div>
-                    ))}
-                    {cards.length === 0 && (
-                      <p className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">Drop leads here</p>
-                    )}
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
+          {pipeline.filter(l => selectedStatus === "all" || l.status === selectedStatus).length === 0 && (
+            <p className="text-center text-sm text-muted-foreground py-10">No leads found in this category.</p>
+          )}
         </div>
       ) : (
         <div className="px-4 pb-10 lg:px-8">
@@ -165,7 +218,7 @@ function PipelinePage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {pipeline.map((l) => (
+                {pipeline.filter(l => selectedStatus === "all" || l.status === selectedStatus).map((l) => (
                   <tr key={l.id} className="hover:bg-primary/5">
                     <td className="px-4 py-3 font-medium">{l.businessName}</td>
                     <td className="px-4 py-3">
