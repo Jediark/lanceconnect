@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Check, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users, Globe } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   web_dev: <Code className="h-5 w-5 text-primary" />,
@@ -23,15 +24,39 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 function Onboarding() {
+  const { user, updateUser } = useAuth();
   const nav = useNavigate();
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState<string | null>(null);
   const [country, setCountry] = useState<string>("");
   const [city, setCity] = useState("");
   const [worldwide, setWorldwide] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(user?.fullName || "");
+  const [website, setWebsite] = useState("");
+  const [bio, setBio] = useState("");
+
+  useEffect(() => {
+    if (user?.fullName && !name) {
+      setName(user.fullName);
+    }
+  }, [user]);
 
   const next = () => setStep((s) => s + 1);
+
+  const handleComplete = () => {
+    if (user && user.id !== "user-1") {
+      updateUser({
+        fullName: name || user.fullName,
+        freelancerCategory: category || "web_dev",
+        country: country || null,
+        city: city || null,
+        bio: bio || null,
+        websiteUrl: website || null,
+        onboardingCompleted: true
+      });
+    }
+    nav({ to: "/app/discover" });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,14 +153,14 @@ function Onboarding() {
               </div>
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Website or portfolio (optional)</label>
-                <input placeholder="https://your-site.com" className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm" />
+                <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://your-site.com" className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm" />
               </div>
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Short bio — what you offer</label>
-                <textarea rows={3} placeholder="I build fast, affordable websites for restaurants and local businesses." className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm" />
+                <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} placeholder="I build fast, affordable websites for restaurants and local businesses." className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm" />
               </div>
             </div>
-            <button onClick={() => nav({ to: "/app/discover" })} className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+            <button onClick={handleComplete} className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
               Start Finding Clients <ArrowRight className="h-4 w-4" />
             </button>
           </>

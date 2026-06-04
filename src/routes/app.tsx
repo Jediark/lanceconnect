@@ -1,4 +1,6 @@
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { TopNav } from "@/components/layout/TopNav";
 
 export const Route = createFileRoute("/app")({
@@ -15,6 +17,15 @@ export const Route = createFileRoute("/app")({
 });
 
 function AppLayout() {
+  const { user, loading } = useAuth();
+  const nav = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user && user.id !== "user-1" && !user.onboardingCompleted) {
+      nav({ to: "/onboarding" });
+    }
+  }, [user, loading, nav]);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />

@@ -6,7 +6,7 @@ type AuthCtx = {
   user: User | null;
   isAuthenticated: boolean;
   login: (email?: string, password?: string) => Promise<{ error: any | null }>;
-  signup: (email: string, password: string, fullName: string) => Promise<{ error: any | null }>;
+  signup: (email: string, password: string, fullName: string) => Promise<{ error: any | null; session?: any | null }>;
   logout: () => Promise<void>;
   updateUser: (patch: Partial<User>) => void;
   loading: boolean;
@@ -50,6 +50,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           leadsUsedThisMonth: 0,
           leadsLimit: 10,
           country: null,
+          city: null,
+          bio: null,
+          websiteUrl: null,
+          onboardingCompleted: false,
         };
         setUser(fallbackUser);
         return;
@@ -62,6 +66,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         avatarUrl: data.avatar_url,
         freelancerCategory: data.freelancer_category || "web_dev",
         country: data.country,
+        city: data.city,
+        bio: data.bio,
+        websiteUrl: data.website_url,
+        onboardingCompleted: data.onboarding_completed || false,
         plan: (data.plan as any) || "free",
         leadsUsedThisMonth: data.leads_used_this_month || 0,
         leadsLimit: data.leads_limit || 10,
@@ -157,9 +165,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (typeof window !== "undefined") {
           localStorage.removeItem("lance_auth");
         }
-        await fetchProfile(data.user.id, data.user.email!);
+        if (data.session) {
+          await fetchProfile(data.user.id, data.user.email!);
+        } else {
+          setUser(null);
+        }
       }
-      return { error: null };
+      return { error: null, session: data.session };
     } catch (err: any) {
       return { error: err };
     } finally {
@@ -183,6 +195,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (patch.avatarUrl !== undefined) dbPatch.avatar_url = patch.avatarUrl;
       if (patch.freelancerCategory !== undefined) dbPatch.freelancer_category = patch.freelancerCategory;
       if (patch.country !== undefined) dbPatch.country = patch.country;
+      if (patch.city !== undefined) dbPatch.city = patch.city;
+      if (patch.bio !== undefined) dbPatch.bio = patch.bio;
+      if (patch.websiteUrl !== undefined) dbPatch.website_url = patch.websiteUrl;
+      if (patch.onboardingCompleted !== undefined) dbPatch.onboarding_completed = patch.onboardingCompleted;
 
       supabase
         .from("profiles")

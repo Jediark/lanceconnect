@@ -41,6 +41,10 @@ export type User = {
   avatarUrl: string | null;
   freelancerCategory: string;
   country: string | null;
+  city?: string | null;
+  bio?: string | null;
+  websiteUrl?: string | null;
+  onboardingCompleted?: boolean;
   plan: "free" | "starter" | "pro" | "agency";
   leadsUsedThisMonth: number;
   leadsLimit: number;

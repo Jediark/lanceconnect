@@ -47,13 +47,18 @@ function RegisterPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await signup(email, pwd, fullName);
+    const { error, session } = await signup(email, pwd, fullName);
     setLoading(false);
     if (error) {
       toast.error(error.message || "Failed to create account.");
     } else {
-      toast.success("Account created successfully!");
-      nav({ to: "/onboarding" });
+      if (session) {
+        toast.success("Account created successfully!");
+        nav({ to: "/onboarding" });
+      } else {
+        toast.success("Account created! Please verify your email.");
+        nav({ to: "/verify-email" });
+      }
     }
   };
 
