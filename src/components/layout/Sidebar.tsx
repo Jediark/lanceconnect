@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Home, Search, Kanban, Mail, Sparkles, Settings as SettingsIcon, Crown, Menu, X, Loader2,
+  Home, Search, Kanban, Mail, Sparkles, Settings as SettingsIcon, Crown, Menu, X, Loader2, Sun, Moon
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { PlanUsageBar } from "@/components/ui/PlanUsageBar";
-import { Logo } from "@/components/Logo";
+import { LanceConnectLogo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -36,13 +37,13 @@ const NAV: NavGroup[] = [
 export function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { user, loading } = useAuth();
+  const { theme, setTheme } = usePreferences();
 
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border/40">
       <div className="flex items-center justify-between px-5 pb-4 pt-5">
         <Link to="/app/dashboard" className="flex items-center gap-2 text-sidebar-active">
-          <Logo size={32} />
-          <span className="font-display text-base font-bold">LanceConnect</span>
+          <LanceConnectLogo className="h-8 w-auto" />
         </Link>
         {onClose && (
           <button onClick={onClose} className="text-sidebar-foreground lg:hidden">
@@ -102,14 +103,23 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
         <Link to="/app/upgrade" onClick={onClose} className="block rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-bold text-white glow-primary hover:brightness-110 transition">
           Upgrade Plan
         </Link>
-        <div className="flex items-center gap-2 px-1 pt-1">
-          <div className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {(user.fullName || "User").split(" ").map((n) => n[0]).join("")}
+        <div className="flex items-center justify-between px-1 pt-1">
+          <div className="flex items-center gap-2">
+            <div className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+              {(user.fullName || "User").split(" ").map((n) => n[0]).join("")}
+            </div>
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-xs font-medium text-sidebar-active">{user.fullName || "User"}</p>
+              <p className="truncate text-[11px] text-sidebar-foreground/70">{user.email}</p>
+            </div>
           </div>
-          <div className="min-w-0 leading-tight">
-            <p className="truncate text-xs font-medium text-sidebar-active">{user.fullName || "User"}</p>
-            <p className="truncate text-[11px] text-sidebar-foreground/70">{user.email}</p>
-          </div>
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-1.5 rounded-lg text-sidebar-foreground hover:text-sidebar-active hover:bg-sidebar-hover transition cursor-pointer"
+            aria-label="Toggle Theme"
+          >
+            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </button>
         </div>
       </div>
       </>

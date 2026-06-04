@@ -99,20 +99,20 @@ function PipelinePage() {
       </div>
 
       {view === "board" ? (
-        <div className="overflow-x-auto px-4 pb-10 lg:px-8">
-          <div className="flex min-w-max gap-4">
+        <div className="px-4 pb-10 lg:px-8">
+          <div className="flex flex-col xl:flex-row gap-4 w-full items-start">
             {columns.map((status) => {
               const cards = pipeline.filter((l) => l.status === status);
               const meta = STATUS_META[status];
               return (
-                <div key={status} className="w-72 shrink-0 rounded-2xl bg-muted/50 p-3">
-                  <div className={cn("mb-3 flex items-center justify-between border-l-4 pl-2", meta.ring)}>
+                <div key={status} className="w-full xl:flex-1 rounded-2xl bg-muted p-3 flex flex-col max-h-[75vh]">
+                  <div className={cn("mb-3 flex items-center justify-between border-l-4 pl-2 shrink-0", meta.ring)}>
                     <p className="text-xs font-semibold uppercase tracking-wide">{meta.label}</p>
                     <span className="rounded-full bg-card px-2 py-0.5 text-xs font-mono-data">{cards.length}</span>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 overflow-y-auto pr-1 flex-1">
                     {cards.map((l) => (
-                      <div key={l.id} className="rounded-xl border border-border bg-card p-3 shadow-card">
+                      <div key={l.id} className="rounded-xl border border-border bg-card p-3 shadow-sm hover:border-primary transition group">
                         <div className="flex items-start justify-between gap-2">
                           <p className="text-sm font-semibold leading-tight">{l.businessName}</p>
                           <OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} />
@@ -151,9 +151,9 @@ function PipelinePage() {
         </div>
       ) : (
         <div className="px-4 pb-10 lg:px-8">
-          <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+          <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm">
             <table className="w-full min-w-[800px] text-sm">
-              <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
+              <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">Business</th>
                   <th className="px-4 py-3">Status</th>

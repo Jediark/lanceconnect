@@ -170,11 +170,10 @@ function Dashboard() {
 
         {/* ═══ HERO SEARCH ═══ */}
         <section
-          className="relative overflow-hidden rounded-2xl border border-[rgba(124,58,237,0.15)] p-8 md:p-10"
-          style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.08) 0%, rgba(16,185,129,0.04) 100%)" }}
+          className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-10 shadow-sm"
         >
           {/* decorative dots */}
-          <div className="absolute inset-0 bg-dot-pattern opacity-40 pointer-events-none" />
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none" />
 
           <div className="relative z-10 max-w-2xl">
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
@@ -190,19 +189,19 @@ function Dashboard() {
             <div className="grid gap-3 sm:grid-cols-4">
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Business Type</label>
-                <select value={quickCategory} onChange={(e) => setQuickCategory(e.target.value)} className="w-full rounded-xl border border-border bg-background/80 backdrop-blur-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition">
+                <select value={quickCategory} onChange={(e) => setQuickCategory(e.target.value)} className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition">
                   {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
                 </select>
               </div>
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Country</label>
-                <select value={quickCountry} onChange={(e) => setQuickCountry(e.target.value)} className="w-full rounded-xl border border-border bg-background/80 backdrop-blur-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition">
+                <select value={quickCountry} onChange={(e) => setQuickCountry(e.target.value)} className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition">
                   {COUNTRIES.map((c) => <option key={c.code} value={c.name}>{c.name}</option>)}
                 </select>
               </div>
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">City</label>
-                <input type="text" required placeholder="e.g. Lagos, London..." value={quickCity} onChange={(e) => setQuickCity(e.target.value)} className="w-full rounded-xl border border-border bg-background/80 backdrop-blur-sm px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition" />
+                <input type="text" required placeholder="e.g. Lagos, London..." value={quickCity} onChange={(e) => setQuickCity(e.target.value)} className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition" />
               </div>
               <div className="flex items-end">
                 <button type="submit" disabled={searchLoading} className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-bold text-white glow-primary hover:brightness-110 transition disabled:opacity-60 cursor-pointer">
@@ -216,7 +215,7 @@ function Dashboard() {
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
                 <span className="text-[11px] text-muted-foreground">Popular:</span>
                 {suggestedCities.map((c) => (
-                  <button key={c} type="button" onClick={() => { setQuickCity(c); }} className="rounded-full border border-primary/20 bg-primary/8 px-2.5 py-0.5 text-[11px] font-medium text-primary/80 hover:bg-primary/15 hover:text-primary transition cursor-pointer">
+                  <button key={c} type="button" onClick={() => { setQuickCity(c); }} className="rounded-full border border-primary bg-muted px-2.5 py-0.5 text-[11px] font-medium text-foreground hover:bg-primary hover:text-white transition cursor-pointer">
                     {c}
                   </button>
                 ))}
@@ -228,15 +227,15 @@ function Dashboard() {
         {/* ═══ STATS ROW ═══ */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Searches", value: scansCount, icon: Search, accent: "#7C3AED" },
-            { label: "Leads Saved", value: totalSaved, icon: Users, accent: "#10B981" },
-            { label: "Contacted", value: contactedCount, icon: MessageSquare, accent: "#F59E0B" },
-            { label: "Win Rate", value: `${conversionRate}%`, icon: Target, accent: "#EC4899" },
+            { label: "Searches", value: scansCount, icon: Search, bg: "bg-primary", fg: "text-white" },
+            { label: "Leads Saved", value: totalSaved, icon: Users, bg: "bg-success", fg: "text-white" },
+            { label: "Contacted", value: contactedCount, icon: MessageSquare, bg: "bg-warn", fg: "text-white" },
+            { label: "Win Rate", value: `${conversionRate}%`, icon: Target, bg: "bg-hot", fg: "text-white" },
           ].map((s) => (
-            <div key={s.label} className="rounded-2xl border border-border bg-card p-5 hover:border-[rgba(124,58,237,0.2)] transition group">
+            <div key={s.label} className="rounded-2xl border border-border bg-card p-5 hover:border-primary transition group">
               <div className="flex items-center gap-3 mb-3">
-                <div className="grid h-9 w-9 place-items-center rounded-xl" style={{ background: `${s.accent}12` }}>
-                  <s.icon className="h-4 w-4" style={{ color: s.accent }} />
+                <div className={`grid h-9 w-9 place-items-center rounded-xl ${s.bg}`}>
+                  <s.icon className={`h-4 w-4 ${s.fg}`} />
                 </div>
                 <span className="text-xs font-medium text-muted-foreground">{s.label}</span>
               </div>
@@ -286,7 +285,7 @@ function Dashboard() {
                   return (
                     <div
                       key={lead.id}
-                      className="group rounded-2xl border border-border bg-card p-5 hover:border-[rgba(124,58,237,0.25)] hover:shadow-card-hover transition-all duration-200 cursor-pointer"
+                      className="group rounded-2xl border border-border bg-card p-5 hover:border-primary hover:shadow-card-hover transition-all duration-200 cursor-pointer"
                       onClick={() => { setDetail(lead); setOutreachDraft(""); }}
                     >
                       {/* Top row */}
@@ -320,14 +319,14 @@ function Dashboard() {
                       <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => { setDetail(lead); setOutreachDraft(""); }}
-                          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition cursor-pointer"
+                          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-muted border border-border py-1.5 text-[11px] font-bold text-foreground hover:bg-accent transition cursor-pointer"
                         >
                           <Sparkles className="h-3 w-3" /> AI Pitch
                         </button>
                         <button
                           onClick={() => handleSaveLead(lead)}
                           disabled={isSaved || savingId === lead.id}
-                          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 py-1.5 text-[11px] font-bold text-emerald-400 hover:bg-emerald-500/20 transition disabled:opacity-40 cursor-pointer"
+                          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-success border border-success py-1.5 text-[11px] font-bold text-white hover:brightness-110 transition disabled:opacity-40 cursor-pointer"
                         >
                           {savingId === lead.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                           {isSaved ? "Saved" : "Save Lead"}
