@@ -11,7 +11,7 @@ async def scrape_leads(
     country: str = Query(..., description="Country name"),
     limit: int = Query(10, description="Max items to return")
 ):
-    apify_token = os.environ.get("APIFY_API_TOKEN")
+    apify_token = os.environ.get("APIFY_API_KEY_LANCECONNECT") or os.environ.get("APIFY_API_TOKEN")
     if not apify_token:
         # For development ease, if token is not configured, we return mock data so local dev does not break
         print("Warning: APIFY_API_TOKEN is not configured. Returning mock leads for testing.")
