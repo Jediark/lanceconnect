@@ -1,37 +1,21 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Header } from "@/components/layout/Header";
-import { cn } from "@/lib/utils";
+import { SettingsSidebar } from "@/components/layout/SettingsSidebar";
 
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "Settings — LanceConnect" }] }),
   component: SettingsLayout,
 });
 
-const TABS: { to: string; label: string; exact?: boolean }[] = [
-  { to: "/app/settings", label: "Overview", exact: true },
-  { to: "/app/settings/profile", label: "Profile" },
-  { to: "/app/settings/subscription", label: "Subscription" },
-  { to: "/app/settings/notifications", label: "Notifications" },
-  { to: "/app/settings/danger-zone", label: "Danger Zone" },
-];
-
 function SettingsLayout() {
-  const pathname = useRouterState({ select: s => s.location.pathname });
   return (
     <>
-      <Header title="Settings" />
-      <div className="px-4 py-6 lg:px-8">
-        <div className="mb-6 flex flex-wrap gap-1 border-b border-border overflow-x-auto">
-          {TABS.map(t => {
-            const active = t.exact ? pathname === t.to || pathname === "/app/settings/" : pathname === t.to;
-            return (
-              <Link key={t.to} to={t.to as any} className={cn("whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition", active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-                {t.label}
-              </Link>
-            );
-          })}
+      <Header title="Account & Settings" subtitle="Manage your profile, billing, and preferences." />
+      <div className="flex flex-col md:flex-row px-4 py-8 lg:px-8 max-w-7xl mx-auto w-full">
+        <SettingsSidebar />
+        <div className="flex-1 min-w-0 md:pl-8">
+          <Outlet />
         </div>
-        <Outlet />
       </div>
       <style>{`.input{width:100%;border-radius:.5rem;border:1px solid var(--input);background:var(--background);padding:.55rem .75rem;font-size:.875rem;outline:none}.input:focus{box-shadow:0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent);border-color:var(--primary)}`}</style>
     </>
