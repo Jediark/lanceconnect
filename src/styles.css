@@ -55,11 +55,11 @@
 
   /* Deep immersive dark — LeadThur-inspired */
   --background: #050508;
-  --foreground: #F2F1FF;
+  --foreground: #FFFFFF;
   --card: #0F0F18;
-  --card-foreground: #E2E1F0;
+  --card-foreground: #FFFFFF;
   --popover: #0F0F18;
-  --popover-foreground: #E2E1F0;
+  --popover-foreground: #FFFFFF;
 
   /* Blue primary — brand anchor */
   --primary: #2563EB;
@@ -67,9 +67,9 @@
   --secondary: #10B981;
   --secondary-foreground: #050508;
   --muted: #14141E;
-  --muted-foreground: #8888A8;
+  --muted-foreground: #A1A1AA;
   --accent: #1A1A2E;
-  --accent-foreground: #F2F1FF;
+  --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   --border: #1E1E2E;
@@ -85,8 +85,8 @@
   --cream: #0F0F18;
 
   --sidebar: #0A0A12;
-  --sidebar-foreground: #8888A8;
-  --sidebar-active: #F2F1FF;
+  --sidebar-foreground: #A1A1AA;
+  --sidebar-active: #FFFFFF;
   --sidebar-hover: #1E3A8A;
   --sidebar-border: #1E1E2E;
 }
