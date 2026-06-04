@@ -89,41 +89,63 @@
   --sidebar-active: #FFFFFF;
   --sidebar-hover: #1E3A8A;
   --sidebar-border: #1E1E2E;
+
+  /* Dynamic Design tokens for Grid/Dot/Shadow colors */
+  --grid-color: #1E1E2E;
+  --dot-color: #1E1E2E;
+  --shadow-border-color: #1E1E2E;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+
+  /* Resolved dashboard ink variables */
+  --ink-bg: #080B14;
+  --ink-fg: #FFFFFF;
+  --ink-muted: #94A3B8;
+  --ink-border: #1E293B;
+  --ink-bg-2: #0F172A;
 }
 
 html.light {
-  --background: #F5F5F7;
-  --foreground: #1A1A2E;
+  /* Pure glittering white theme inspired by abiglobalfoods.co.uk */
+  --background: #FFFFFF;
+  --foreground: #0F172A;
   --card: #FFFFFF;
-  --card-foreground: #1A1A2E;
+  --card-foreground: #0F172A;
   --popover: #FFFFFF;
-  --popover-foreground: #1A1A2E;
-  --muted: #F0F0F5;
-  --muted-foreground: #6B6B80;
-  --accent: #F0F0F5;
-  --accent-foreground: #1A1A2E;
-  --border: #E5E5EC;
-  --input: #E5E5EC;
+  --popover-foreground: #0F172A;
+  --muted: #F8FAFC;
+  --muted-foreground: #475569;
+  --accent: #F1F5F9;
+  --accent-foreground: #0F172A;
+  --border: #E2E8F0;
+  --input: #F1F5F9;
   --ring: #2563EB;
 
-  --brand: #1E3A8A;
+  --brand: #2563EB;
   --brand-foreground: #ffffff;
   --success: #10b981;
   --warn: #f59e0b;
   --hot: #ef4444;
-  --ink: #1A1A2E;
-  --cream: #F5F5F7;
+  --ink: #0F172A;
+  --cream: #FAFAFA;
 
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #6B6B80;
-  --sidebar-active: #1A1A2E;
-  --sidebar-hover: #DBEAFE;
-  --sidebar-border: #E5E5EC;
-}
+  --sidebar-foreground: #475569;
+  --sidebar-active: #2563EB;
+  --sidebar-hover: #F1F5F9;
+  --sidebar-border: #E2E8F0;
 
-html.light .bg-grid-pattern,
-html.light .bg-dot-pattern {
-  background-image: none !important;
+  /* Dynamic Design tokens for Grid/Dot/Shadow colors in Light mode */
+  --grid-color: rgba(15, 23, 42, 0.04);
+  --dot-color: rgba(15, 23, 42, 0.04);
+  --shadow-border-color: rgba(15, 23, 42, 0.08);
+  --shadow-color: rgba(15, 23, 42, 0.04);
+
+  /* Resolved dashboard ink variables in Light mode */
+  --ink-bg: #FFFFFF;
+  --ink-fg: #0F172A;
+  --ink-muted: #475569;
+  --ink-border: #E2E8F0;
+  --ink-bg-2: #FAFAFA;
 }
 
 @layer base {
@@ -162,21 +184,21 @@ html.light .bg-dot-pattern {
 
   .bg-grid-pattern {
     background-image:
-      linear-gradient(to right, #1E1E2E 1px, transparent 1px),
-      linear-gradient(to bottom, #1E1E2E 1px, transparent 1px);
+      linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
   .bg-dot-pattern {
-    background-image: radial-gradient(#1E1E2E 1px, transparent 1px);
+    background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
     background-size: 18px 18px;
   }
 
   .shadow-card {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 0 1px #1E1E2E;
+    box-shadow: 0 4px 20px -2px var(--shadow-color), 0 0 0 1px var(--shadow-border-color);
   }
   .shadow-card-hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 0 0 1px #2563EB;
+    box-shadow: 0 12px 30px -4px rgba(37, 99, 235, 0.12), 0 0 0 1.5px #2563EB;
   }
 
   .glow-primary {

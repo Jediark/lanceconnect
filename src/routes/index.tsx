@@ -28,6 +28,7 @@ export const Route = createFileRoute("/")({
       <HeroWithMosaic />
       <StatsBar />
       <LogoStrip />
+      <TutorialVideoSection />
       <HeroCarousel />
       <ProductShowcase />
       <Stats />
@@ -84,15 +85,15 @@ const HERO_MOSAIC = [
 function HeroWithMosaic() {
   const { t } = usePreferences();
   return (
-    <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28 text-white">
-      {/* Background Image with Dark Overlay */}
+    <section className="relative overflow-hidden border-b border-border bg-background py-20 lg:py-28 text-foreground transition-colors duration-300">
+      {/* Background Image with theme overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img 
           src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2000&q=80" 
           alt="" 
-          className="h-full w-full object-cover opacity-10 mix-blend-luminosity"
+          className="h-full w-full object-cover opacity-5 dark:opacity-10 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080B14]/10 via-[#080B14]/50 to-[#080B14]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/50 to-background" />
       </div>
 
       <div className="absolute inset-0 opacity-20 z-0">
@@ -101,24 +102,24 @@ function HeroWithMosaic() {
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div className="z-10">
-            <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+            <p className="text-xs font-mono text-muted-foreground mb-2 tracking-widest uppercase">
               {t("hero_eyebrow")}
             </p>
-            <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
+            <h1 className="font-display text-4xl font-extrabold text-foreground mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
               {t("hero_title")}
             </h1>
-            <p className="mt-6 text-base text-slate-300 max-w-lg leading-relaxed">
+            <p className="mt-6 text-base text-muted-foreground max-w-lg leading-relaxed">
               {t("hero_sub")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20">
                 {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 px-6 py-3.5 text-sm font-medium hover:bg-accent transition text-white">
-                <Play className="h-4 w-4" /> {t("hero_cta_demo")}
+              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3.5 text-sm font-medium hover:bg-accent hover:text-foreground transition text-foreground">
+                <Play className="h-4 w-4 text-primary" /> {t("hero_cta_demo")}
               </Link>
             </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-[#475569]">
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-muted-foreground">
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime</span>
@@ -296,6 +297,61 @@ function LogoStrip() {
             {m}
           </span>
         ))}
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   TUTORIAL VIDEO SECTION — abiglobalfoods-inspired premium video player
+   ──────────────────────────────────────────────────────────── */
+function TutorialVideoSection() {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  return (
+    <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-background to-card/20 py-24 select-none transition-colors duration-300">
+      <div className="mx-auto max-w-5xl px-4 lg:px-8 text-center">
+        <div className="max-w-3xl mx-auto mb-12">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-semibold text-primary font-mono uppercase tracking-wider">
+            Walkthrough Video
+          </span>
+          <h2 className="mt-4 font-display text-3xl font-extrabold text-foreground tracking-tight sm:text-4xl md:text-5xl leading-tight">
+            Bringing Clients to Your Clipboard.
+          </h2>
+          <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            Watch our quick 2-minute walkthrough to see how LanceConnect scans, scores, and helps you win contracts in any city.
+          </p>
+        </div>
+
+        {/* Premium Player Card container */}
+        <div className="relative mx-auto max-w-4xl aspect-[16/9] rounded-2xl border border-border bg-slate-950 overflow-hidden shadow-2xl group transition hover:border-primary/45">
+          {!isPlaying ? (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center cursor-pointer select-none" onClick={() => setIsPlaying(true)}>
+              {/* Styled Mock Dashboard Graphic for Thumbnail */}
+              <div className="absolute inset-0 bg-[#080B14] opacity-80 mix-blend-multiply" />
+              <img 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" 
+                alt="LanceConnect Tutorial Video" 
+                className="absolute inset-0 h-full w-full object-cover opacity-35"
+              />
+              {/* Glowing Play Icon button */}
+              <div className="relative z-20 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 group-hover:scale-110 group-hover:bg-primary/95 transition duration-300">
+                <Play className="h-6 w-6 text-white fill-current ml-0.5" />
+              </div>
+              <span className="relative z-20 mt-4 text-xs font-mono font-bold text-slate-300 uppercase tracking-widest bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-slate-800">
+                Play walkthrough demo (2:14)
+              </span>
+            </div>
+          ) : (
+            <iframe 
+              className="w-full h-full border-0 absolute inset-0 bg-black"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
+              title="LanceConnect Platform Demo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowFullScreen
+            />
+          )}
+        </div>
       </div>
     </section>
   );
@@ -1179,11 +1235,11 @@ function WhoFor() {
           const Icon = CATEGORY_ICONS[c.id] || Sparkles;
           return (
             <Link to="/freelancers/$slug" params={{ slug: categorySlug(c.id) }} key={c.id}
-              className="group rounded-xl border border-border bg-card p-5 transition hover:border-foreground/30">
+              className="group rounded-xl border border-border bg-card p-5 transition hover:border-foreground/30 hover:shadow-card-hover">
               <div className="text-primary h-8 w-8 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20 transition group-hover:bg-primary/20">
                 <Icon className="h-4.5 w-4.5 text-primary" />
               </div>
-              <p className="mt-4 font-display text-sm font-semibold text-white">{c.label}</p>
+              <p className="mt-4 font-display text-sm font-semibold text-foreground">{c.label}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{c.example}</p>
               <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition group-hover:opacity-100">
                 See leads <ArrowRight className="h-3 w-3" />
@@ -1254,45 +1310,43 @@ function Pricing() {
     { name: t("plan_company"), price: 20, leads: "Unlimited", popular: false, cta: t("plan_cta_comp"), features: [t("plan_comp_feature_1"), t("plan_comp_feature_2"), t("plan_comp_feature_3"), t("plan_comp_feature_4"), t("plan_comp_feature_5")] },
   ];
   return (
-    <section id="pricing" className="border-y border-border bg-card/30 py-24">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
-            // simple.pricing
-          </p>
-          <h2 className="font-display text-4xl font-extrabold text-foreground tracking-tight">{t("pricing_title")}</h2>
-          <p className="mt-4 text-muted-foreground">{t("pricing_sub")}</p>
-        </div>
-        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-          {plans.map((p) => (
-            <div key={p.name} className={`relative rounded-2xl border bg-card/80 p-7 ${p.popular ? "border-primary shadow-[0_0_25px_rgba(99,102,241,0.2)] lg:-translate-y-3" : "border-border"}`}>
-              {p.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                  Most Popular
-                </span>
-              )}
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#64748B]">{p.name}</p>
-              <div className="mt-3 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-extrabold text-white">{getCurrencySymbol()}{formatPrice(p.price)}</span>
-                <span className="text-xs text-[#64748B]">{t("plan_mo")}</span>
-              </div>
-              <p className="mt-2 font-mono-data text-xs text-primary">{p.leads === "Unlimited" ? "Unlimited" : p.leads} {t("plan_leads_mo")}</p>
-              <ul className="mt-6 space-y-2.5 text-xs text-slate-300">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link to="/register" className={`mt-7 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-white hover:bg-primary/95" : "border border-border bg-background text-slate-300 hover:bg-accent"}`}>
-                {p.cta}
-              </Link>
-            </div>
-          ))}
-        </div>
+    <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
+          // simple.pricing
+        </p>
+        <h2 className="font-display text-4xl font-extrabold text-foreground tracking-tight">{t("pricing_title")}</h2>
+        <p className="mt-4 text-muted-foreground">{t("pricing_sub")}</p>
       </div>
-    </section>
+      <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+        {plans.map((p) => (
+          <div key={p.name} className={`relative rounded-2xl border bg-card/85 p-7 transition hover:shadow-card-hover ${p.popular ? "border-primary shadow-[0_0_25px_rgba(99,102,241,0.15)] lg:-translate-y-3" : "border-border"}`}>
+            {p.popular && (
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                Most Popular
+              </span>
+            )}
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{p.name}</p>
+            <div className="mt-3 flex items-baseline gap-1">
+              <span className="font-display text-4xl font-extrabold text-foreground">{getCurrencySymbol()}{formatPrice(p.price)}</span>
+              <span className="text-xs text-muted-foreground">{t("plan_mo")}</span>
+            </div>
+            <p className="mt-2 font-mono-data text-xs text-primary font-semibold">{p.leads === "Unlimited" ? "Unlimited" : p.leads} {t("plan_leads_mo")}</p>
+            <ul className="mt-6 space-y-2.5 text-xs text-muted-foreground">
+              {p.features.map((f) => (
+                <li key={f} className="flex items-start gap-2">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <Link to="/register" className={`mt-7 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-white hover:bg-primary/95" : "border border-border bg-background text-foreground hover:bg-accent"}`}>
+              {p.cta}
+            </Link>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -1334,23 +1388,23 @@ function Stats() {
     { k: "4.8/5", v: "Customer satisfaction" },
   ];
   return (
-    <section className="relative overflow-hidden border-y border-border bg-[#080B14]">
+    <section className="relative overflow-hidden border-y border-border bg-background transition-colors duration-300">
       <div className="absolute inset-0">
-        <img src={IMG.team} alt="" className="h-full w-full object-cover opacity-15 mix-blend-luminosity" />
-        <div className="absolute inset-0 bg-[#080B14]/85" />
+        <img src={IMG.team} alt="" className="h-full w-full object-cover opacity-10 dark:opacity-15 light:opacity-5 mix-blend-luminosity" />
+        <div className="absolute inset-0 bg-background/90 dark:bg-[#080B14]/85" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center text-white">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">By the numbers</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">By the numbers</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
             A real product, with real traction.
           </h2>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s) => (
-            <div key={s.k} className="rounded-2xl border border-white/10 bg-[#0B0F19]/80 p-6 backdrop-blur">
-              <p className="font-display text-4xl font-semibold text-white md:text-5xl">{s.k}</p>
-              <p className="mt-2 text-sm text-white/75">{s.v}</p>
+            <div key={s.k} className="rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300">
+              <p className="font-display text-4xl font-semibold text-primary md:text-5xl">{s.k}</p>
+              <p className="mt-2 text-sm text-muted-foreground font-medium">{s.v}</p>
             </div>
           ))}
         </div>

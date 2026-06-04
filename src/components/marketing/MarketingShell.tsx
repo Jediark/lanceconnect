@@ -35,6 +35,21 @@ export function MarketingNav() {
 
   return (
     <div className="w-full shrink-0 sticky top-0 z-50">
+      {bannerOpen && (
+        <div className="relative bg-gradient-to-r from-amber-600 via-orange-500 to-amber-500 py-2 px-4 lg:px-8 select-none flex items-center justify-between gap-3 text-xs font-semibold text-white shadow-[0_2px_10px_rgba(245,158,11,0.2)]">
+          <div className="flex-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
+            <span className="bg-white/20 px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold animate-pulse">Important</span>
+            <span>⚡ Please note: Your API key must be configured in the dashboard to unlock real-time Google Maps lead scraping. Free accounts are capped at 10 scans.</span>
+          </div>
+          <button 
+            onClick={() => setBannerOpen(false)}
+            className="p-1 hover:bg-white/10 rounded-full transition cursor-pointer self-center shrink-0"
+            aria-label="Dismiss banner"
+          >
+            <X className="h-3.5 w-3.5 text-white" />
+          </button>
+        </div>
+      )}
       <div className="relative bg-card py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-white">
         {/* Active Lead Scanning Stats */}
         <div className="flex items-center gap-2">
