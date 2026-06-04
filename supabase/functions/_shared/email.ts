@@ -29,7 +29,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'LanceConnect <hello@lanceconnect.com>',
+        from: `LanceConnect <hello@${(Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app').replace(/^https?:\/\//, '')}>`,
         to: [params.to],
         subject: params.subject,
         html: params.html,
@@ -94,7 +94,7 @@ export function getQuotaWarningEmailHtml(fullName: string, used: number, limit: 
       <p style="color: #475569; line-height: 1.5;">Hello ${fullName},</p>
       <p style="color: #475569; line-height: 1.5;">You have used <strong>${used}</strong> out of your monthly quota of <strong>${limit}</strong> leads.</p>
       <p style="color: #475569; line-height: 1.5;">To avoid interruptions in finding new clients, consider upgrading to a larger plan inside your dashboard settings.</p>
-      <a href="https://lanceconnect.com/app/upgrade" style="display: inline-block; background-color: #0f172a; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Upgrade Plan</a>
+      <a href="${Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app'}/app/upgrade" style="display: inline-block; background-color: #0f172a; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Upgrade Plan</a>
       <p style="color: #475569; margin-top: 24px;">Best regards,<br/>The LanceConnect Team</p>
     </div>
   `;
@@ -110,7 +110,7 @@ export function getPaymentFailedEmailHtml(fullName: string): string {
       <p style="color: #475569; line-height: 1.5;">Hello ${fullName},</p>
       <p style="color: #475569; line-height: 1.5;">We were unable to process your recurring subscription payment for your LanceConnect plan.</p>
       <p style="color: #475569; line-height: 1.5;">We will attempt to retry the charge in a few days. Please review and update your payment details on the dashboard to keep your premium access active.</p>
-      <a href="https://lanceconnect.com/app/upgrade" style="display: inline-block; background-color: #be123c; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Update Payment Method</a>
+      <a href="${Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app'}/app/upgrade" style="display: inline-block; background-color: #be123c; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Update Payment Method</a>
       <p style="color: #475569; margin-top: 24px;">Best regards,<br/>The LanceConnect Team</p>
     </div>
   `;

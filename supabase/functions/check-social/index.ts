@@ -1,3 +1,10 @@
+import * as Sentry from 'npm:@sentry/deno'
+Sentry.init({
+  dsn: Deno.env.get('SENTRY_DSN_BACKEND'),
+  environment: Deno.env.get('ENVIRONMENT') || 'production',
+  tracesSampleRate: 0.1,
+})
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
@@ -73,8 +80,10 @@ Deno.serve(async (req) => {
     // Query Maigret microservice
     let maigretData: any = {}
     try {
+      const internalApiKey = Deno.env.get('INTERNAL_API_KEY')
       const maigretRes = await fetch(`${maigretServiceUrl}/scan?username=${username}`, {
         method: 'GET',
+        headers: internalApiKey ? { 'Authorization': `Bearer ${internalApiKey}` } : undefined,
         signal: AbortSignal.timeout(10000) // 10s timeout
       })
       
@@ -158,6 +167,7 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
   } catch (error) {
+    Sentry.captureException(error)
     return handleError(error)
   }
 })

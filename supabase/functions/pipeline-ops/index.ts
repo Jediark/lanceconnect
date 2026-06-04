@@ -1,3 +1,10 @@
+import * as Sentry from 'npm:@sentry/deno'
+Sentry.init({
+  dsn: Deno.env.get('SENTRY_DSN_BACKEND'),
+  environment: Deno.env.get('ENVIRONMENT') || 'production',
+  tracesSampleRate: 0.1,
+})
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
@@ -152,6 +159,7 @@ Deno.serve(async (req) => {
 
     throw new AppError('Invalid action. Supported actions: save, update, delete', 400, 'INVALID_ACTION')
   } catch (error) {
+    Sentry.captureException(error)
     return handleError(error)
   }
 })

@@ -335,7 +335,7 @@ function ProductShowcase() {
               <span className="h-2.5 w-2.5 rounded-full bg-red-400/60" />
               <span className="h-2.5 w-2.5 rounded-full bg-amber-400/60" />
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/60" />
-              <span className="ml-3">app.LanceConnect.com / discover</span>
+              <span className="ml-3">LanceConnect App / discover</span>
             </div>
             <span className="font-mono-data">3 of 247 leads</span>
           </div>

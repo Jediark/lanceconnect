@@ -1,3 +1,10 @@
+import * as Sentry from 'npm:@sentry/deno'
+Sentry.init({
+  dsn: Deno.env.get('SENTRY_DSN_BACKEND'),
+  environment: Deno.env.get('ENVIRONMENT') || 'production',
+  tracesSampleRate: 0.1,
+})
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
@@ -134,7 +141,7 @@ Deno.serve(async (req) => {
       customizations: {
         title: 'LanceConnect',
         description,
-        logo: 'https://lanceconnect.com/logo.png',
+        logo: `${Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app'}/logo.png`,
       },
     }
 
@@ -166,6 +173,7 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    Sentry.captureException(error)
     return handleError(error)
   }
 })

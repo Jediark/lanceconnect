@@ -1,3 +1,10 @@
+import * as Sentry from 'npm:@sentry/deno'
+Sentry.init({
+  dsn: Deno.env.get('SENTRY_DSN_BACKEND'),
+  environment: Deno.env.get('ENVIRONMENT') || 'production',
+  tracesSampleRate: 0.1,
+})
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
@@ -36,9 +43,8 @@ Deno.serve(async (req) => {
 
     const numverifyApiKey = Deno.env.get('NUMVERIFY_API_KEY')
     const mailboxlayerApiKey = Deno.env.get('MAILBOXLAYER_API_KEY')
-    const hunterApiKey = Deno.env.get('HUNTER_API_KEY')
-    const googlePagespeedApiKey = Deno.env.get('GOOGLE_PLACES_API_KEY')
-    const screenshotKey = Deno.env.get('SCREENSHOT_KEY')
+    const prospeoApiKey = Deno.env.get('PROSPEO_LANCECONNECT_API_KEY')
+    const screenshotKey = Deno.env.get('SCREENSHOTLAYER_API_KEY')
 
     if (!supabaseUrl || !supabaseServiceKey) {
       throw new AppError('Server is not configured correctly', 500, 'MISCONFIGURED')
@@ -89,25 +95,49 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 2. Email discovery (Hunter.io)
+    // 2. Email discovery (Prospeo + Website Crawler)
     let emailFound = lead.email
-    if (!lead.email && lead.website_url && hunterApiKey) {
+    if (!lead.email && lead.website_url) {
       try {
         const domain = new URL(lead.website_url).hostname.replace('www.', '')
-        const hunterRes = await fetch(
-          `https://api.hunter.io/v2/domain-search?domain=${domain}&api_key=${hunterApiKey}`,
-          { signal: AbortSignal.timeout(5000) }
-        )
-        if (hunterRes.ok) {
-          const hunterData = await hunterRes.json()
-          if (hunterData.data?.emails && hunterData.data.emails.length > 0) {
-            emailFound = hunterData.data.emails[0].value
-            updateData.email = emailFound
-            updateData.email_confidence = 'likely'
+        
+        if (prospeoApiKey) {
+          const prospeoRes = await fetch('https://api.prospeo.io/domain-search', {
+            method: 'POST',
+            headers: { 'X-KEY': prospeoApiKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domain }),
+            signal: AbortSignal.timeout(8000)
+          })
+          if (prospeoRes.ok) {
+            const prospeoData = await prospeoRes.json()
+            if (prospeoData.response?.email_list && prospeoData.response.email_list.length > 0) {
+              emailFound = prospeoData.response.email_list[0].email
+              updateData.email = emailFound
+              updateData.email_confidence = 'verified'
+            }
+          }
+        }
+
+        // Layer 2 - Website crawler fallback
+        if (!emailFound) {
+          try {
+            const testUrl = lead.website_url.startsWith('http') ? lead.website_url : `https://${lead.website_url}`
+            const siteRes = await fetch(testUrl, { signal: AbortSignal.timeout(8000) })
+            if (siteRes.ok) {
+              const html = await siteRes.text()
+              const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/)
+              if (mailtoMatches && mailtoMatches[1]) {
+                emailFound = mailtoMatches[1]
+                updateData.email = emailFound
+                updateData.email_confidence = 'unverified'
+              }
+            }
+          } catch (err) {
+            console.error('Website crawler fallback failed:', err)
           }
         }
       } catch (err) {
-        console.error('Hunter.io API check failed:', err)
+        console.error('Email discovery failed:', err)
       }
     }
 
@@ -115,12 +145,12 @@ Deno.serve(async (req) => {
     if (emailFound && !lead.email_verified && mailboxlayerApiKey) {
       try {
         const mailRes = await fetch(
-          `http://apilayer.net/api/check?access_key=${mailboxlayerApiKey}&email=${encodeURIComponent(emailFound)}`,
+          `http://apilayer.net/api/check?access_key=${mailboxlayerApiKey}&email=${encodeURIComponent(emailFound)}&smtp=1`,
           { signal: AbortSignal.timeout(5000) }
         )
         if (mailRes.ok) {
           const mailData = await mailRes.json()
-          updateData.email_verified = mailData.format_valid && mailData.mx_found
+          updateData.email_verified = mailData.smtp_check
           if (updateData.email_verified) {
             updateData.email_verified_at = new Date().toISOString()
             updateData.email_confidence = 'verified'
@@ -131,6 +161,8 @@ Deno.serve(async (req) => {
       } catch (err) {
         console.error('Mailboxlayer API check failed:', err)
       }
+    } else if (!emailFound) {
+      updateData.email = null
     }
 
     // 4. Google PageSpeed Audit
@@ -140,7 +172,7 @@ Deno.serve(async (req) => {
         if (!testUrl.startsWith('http://') && !testUrl.startsWith('https://')) {
           testUrl = `https://${testUrl}`
         }
-        const pageSpeedUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(testUrl)}&strategy=mobile${googlePagespeedApiKey ? `&key=${googlePagespeedApiKey}` : ''}`
+        const pageSpeedUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(testUrl)}&strategy=mobile`
         
         const speedRes = await fetch(pageSpeedUrl, { signal: AbortSignal.timeout(8000) })
         if (speedRes.ok) {
@@ -232,7 +264,7 @@ Deno.serve(async (req) => {
       action: 'lead.enriched',
       entity_type: 'lead',
       entity_id: leadId,
-      metadata: { phone_checked: !!numverifyApiKey, email_searched: !!hunterApiKey, email_verified: !!mailboxlayerApiKey },
+      metadata: { phone_checked: !!numverifyApiKey, email_searched: true, email_verified: !!mailboxlayerApiKey },
       ip_address: ipAddress,
       user_agent: req.headers.get('user-agent') || null
     }).catch(() => {})
@@ -241,6 +273,7 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
   } catch (error) {
+    Sentry.captureException(error)
     return handleError(error)
   }
 })
