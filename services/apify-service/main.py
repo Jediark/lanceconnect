@@ -1,6 +1,6 @@
 import os
 import httpx
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Header
 
 app = FastAPI(title="Apify Discovery Orchestrator Service")
 
@@ -9,9 +9,14 @@ async def scrape_leads(
     keyword: str = Query(..., description="Industry/Keyword (e.g. web developer)"),
     city: str = Query(..., description="City name"),
     country: str = Query(..., description="Country name"),
-    limit: int = Query(10, description="Max items to return")
+    limit: int = Query(10, description="Max items to return"),
+    authorization: str = Header(None, description="Bearer token for Apify")
 ):
-    apify_token = os.environ.get("APIFY_API_KEY_LANCECONNECT") or os.environ.get("APIFY_API_TOKEN")
+    token_from_header = None
+    if authorization and authorization.startswith("Bearer "):
+        token_from_header = authorization.replace("Bearer ", "").strip()
+
+    apify_token = token_from_header or os.environ.get("APIFY_API_KEY_LANCECONNECT") or os.environ.get("APIFY_API_TOKEN")
     if not apify_token:
         # For development ease, if token is not configured, we return mock data so local dev does not break
         print("Warning: APIFY_API_TOKEN is not configured. Returning mock leads for testing.")

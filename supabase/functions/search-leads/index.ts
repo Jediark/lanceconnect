@@ -142,8 +142,15 @@ Deno.serve(async (req) => {
           scrapeUrl += `&lat=${lat}&lng=${lng}`
         }
 
+        const apifyToken = Deno.env.get('APIFY_API_KEY_LANCECONNECT')
+        const headers: Record<string, string> = {}
+        if (apifyToken) {
+          headers['Authorization'] = `Bearer ${apifyToken}`
+        }
+
         const scrapeRes = await fetch(scrapeUrl, {
           method: 'GET',
+          headers,
           signal: AbortSignal.timeout(14000) // 14s timeout
         })
 
