@@ -52,6 +52,32 @@ function BlogIndex() {
             </Link>
           ))}
         </div>
+
+        {/* Global Community Map */}
+        <div className="mt-20 border-t border-border pt-16">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary font-mono">// global.contributors</span>
+            <h2 className="mt-2 font-display text-2xl font-bold tracking-tight md:text-3xl text-foreground">Global Freelancer Registry</h2>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+              Our community editors, authors, and active contributors share real playbooks from every major city.
+            </p>
+          </div>
+          <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-xl">
+            <div className="relative aspect-[21/9] w-full min-h-[350px] bg-slate-950">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5015383.05602758!2d-10.4568!3d54.2379!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x254b85c40fb2f4b9%3A0x6fa1f2ef1c756!2sUnited%20Kingdom!5e0!3m2!1sen!2s!4v1680000000000!5m2!1sen!2s"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Google Map Contributors Location"
+                className="absolute inset-0 w-full h-full grayscale-[15%] invert-[85%] dark:invert-[90%] hue-rotate-[180deg]"
+              />
+            </div>
+          </div>
+        </div>
       </section>
     </MarketingShell>
   );

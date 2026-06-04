@@ -75,7 +75,37 @@ function ContactPage() {
           </button>
         </form>
       </section>
+
+      {/* Map Section */}
+      <section className="mx-auto max-w-6xl px-4 pb-16 lg:px-8">
+        <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-xl">
+          <div className="px-6 py-5 border-b border-border bg-card/50 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="font-display text-lg font-bold text-foreground">Global Operations & Support Hub</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Contact center and local representative coordinates</p>
+            </div>
+            <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              Live Connection
+            </span>
+          </div>
+          <div className="relative aspect-[21/9] w-full min-h-[350px] bg-slate-950">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d102534.6186835269!2d-0.2416805!3d51.5287718!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C%20UK!5e0!3m2!1sen!2s!4v1680000000000!5m2!1sen!2s"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Google Map London Location"
+              className="absolute inset-0 w-full h-full grayscale-[15%] invert-[85%] dark:invert-[90%] hue-rotate-[180deg]"
+            />
+          </div>
+        </div>
+      </section>
+
       <style>{`.input{width:100%;border:1px solid var(--border);background:var(--background);border-radius:.5rem;padding:.6rem .75rem;font-size:.875rem}.input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent)}`}</style>
+      <style>{`iframe{filter:grayscale(15%) invert(85%) hue-rotate(180deg)} html.dark iframe{filter:grayscale(15%) invert(90%) hue-rotate(180deg)}`}</style>
     </MarketingShell>
   );
 }

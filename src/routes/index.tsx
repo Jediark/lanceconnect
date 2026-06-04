@@ -1327,7 +1327,7 @@ function Testimonials() {
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {items.map((t) => (
             <figure key={t.name} className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card">
-              <img src={t.avatar} alt={t.name} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+              <img src={t.avatar} alt={t.name} className="aspect-[4/3] w-full object-cover object-top" loading="lazy" />
               <div className="flex flex-1 flex-col p-6">
                 <div className="mb-3 flex gap-0.5 text-amber-500">
                   {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}

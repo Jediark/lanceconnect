@@ -53,7 +53,50 @@ function BlogPost() {
         </div>
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1fr_240px] lg:px-8">
           <div className="space-y-5 text-base leading-relaxed text-foreground/85">
-            {post.body.split("\n\n").map((para: string, i: number) => <p key={i}>{para}</p>)}
+            {post.body.split("\n\n").map((para: string, i: number) => {
+              const trimmed = para.trim();
+              if (trimmed.startsWith("## ")) {
+                return (
+                  <h2 key={i} className="font-display text-2xl font-bold text-foreground mt-8 mb-4">
+                    {trimmed.replace("## ", "")}
+                  </h2>
+                );
+              }
+              if (trimmed.startsWith("### ")) {
+                return (
+                  <h3 key={i} className="font-display text-xl font-bold text-foreground mt-6 mb-3">
+                    {trimmed.replace("### ", "")}
+                  </h3>
+                );
+              }
+              if (trimmed.startsWith("- ")) {
+                const items = trimmed.split("\n").map(li => li.replace(/^- /, "").trim());
+                return (
+                  <ul key={i} className="list-disc pl-5 my-4 space-y-2">
+                    {items.map((item, idx) => {
+                      if (item.includes("**")) {
+                        const parts = item.split("**");
+                        return (
+                          <li key={idx} className="text-foreground/85">
+                            {parts.map((part, pidx) => pidx % 2 === 1 ? <strong key={pidx} className="font-bold text-foreground">{part}</strong> : part)}
+                          </li>
+                        );
+                      }
+                      return <li key={idx} className="text-foreground/85">{item}</li>;
+                    })}
+                  </ul>
+                );
+              }
+              if (trimmed.includes("**")) {
+                const parts = trimmed.split("**");
+                return (
+                  <p key={i} className="mb-4">
+                    {parts.map((part, pidx) => pidx % 2 === 1 ? <strong key={pidx} className="font-bold text-foreground">{part}</strong> : part)}
+                  </p>
+                );
+              }
+              return <p key={i} className="mb-4">{para}</p>;
+            })}
             <hr className="my-8 border-border"/>
             <div className="rounded-2xl border border-border bg-paper p-6">
               <p className="font-display text-lg font-semibold">Stop refreshing job boards.</p>

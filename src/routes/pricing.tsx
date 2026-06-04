@@ -97,10 +97,42 @@ function PricingPage() {
         </div>
 
         <div className="mt-16 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-border bg-paper p-6">
-            <Shield className="h-6 w-6 text-primary"/>
-            <h3 className="mt-3 font-display text-lg font-semibold">14-day money-back guarantee</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Don't love it? Email us within 14 days for a full refund. No forms, no questions.</p>
+          <div className="rounded-3xl border border-[#1e293b] dark:border-border bg-card p-8 shadow-lg relative overflow-hidden flex flex-col justify-between hover:border-primary/45 transition duration-300">
+            {/* Top decorative gradient bar */}
+            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-brand" />
+            <div>
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 shadow-sm">
+                <Shield className="h-6 w-6" />
+              </div>
+              <h3 className="font-display text-xl font-bold text-foreground">100% Risk-Free Guarantee</h3>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                Try LanceConnect Pro. If you don't find high-value client leads in your first 14 days, we will refund you in full.
+              </p>
+              
+              <ul className="mt-6 space-y-3.5 text-xs text-foreground/85 border-t border-border/80 pt-6">
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>No complicated forms to fill</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>No awkward questions asked</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>Refunds processed in 24 hours</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="mt-8 pt-4">
+              <a 
+                href="mailto:hello@lanceconnect.app" 
+                className="inline-flex items-center justify-center w-full rounded-xl bg-background border border-border px-4 py-2.5 text-xs font-semibold text-foreground hover:bg-accent transition"
+              >
+                hello@lanceconnect.app
+              </a>
+            </div>
           </div>
           <div className="lg:col-span-2">
             <h3 className="font-display text-2xl font-bold">FAQ</h3>
