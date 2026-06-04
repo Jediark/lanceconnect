@@ -142,17 +142,21 @@ Deno.serve(async (req) => {
         }
 
         // Log to audit
-        await supabase.from('audit_log').insert({
-          user_id: userId,
-          action: 'paystack_charge_success',
-          entity_type: 'payment',
-          meta: {
-            reference,
-            checkout_type: checkoutType,
-            amount: data.amount,
-            currency: data.currency,
-          },
-        }).catch(() => {})
+        try {
+          await supabase.from('audit_log').insert({
+            user_id: userId,
+            action: 'paystack_charge_success',
+            entity_type: 'payment',
+            metadata: {
+              reference,
+              checkout_type: checkoutType,
+              amount: data.amount,
+              currency: data.currency,
+            },
+          })
+        } catch (auditErr) {
+          console.warn('Failed to insert audit log:', auditErr)
+        }
 
         break
       }

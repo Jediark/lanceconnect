@@ -78,15 +78,19 @@ Deno.serve(async (req) => {
       if (error) throw error
 
       // Log Action to Audit Log
-      await supabase.from('audit_log').insert({
-        user_id: user.id,
-        action: 'pipeline.lead_saved',
-        entity_type: 'lead',
-        entity_id: leadId,
-        metadata: { status: status || 'new' },
-        ip_address: ipAddress,
-        user_agent: req.headers.get('user-agent') || null
-      }).catch(() => {})
+      try {
+        await supabase.from('audit_log').insert({
+          user_id: user.id,
+          action: 'pipeline.lead_saved',
+          entity_type: 'lead',
+          entity_id: leadId,
+          metadata: { status: status || 'new' },
+          ip_address: ipAddress,
+          user_agent: req.headers.get('user-agent') || null
+        })
+      } catch (auditErr) {
+        console.warn('Failed to insert audit log:', auditErr)
+      }
 
       return new Response(JSON.stringify({ success: true, data }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -117,15 +121,19 @@ Deno.serve(async (req) => {
       if (error) throw error
 
       // Log Action to Audit Log
-      await supabase.from('audit_log').insert({
-        user_id: user.id,
-        action: 'pipeline.status_updated',
-        entity_type: 'lead',
-        entity_id: leadId,
-        metadata: { status, dealValue, followUpDate },
-        ip_address: ipAddress,
-        user_agent: req.headers.get('user-agent') || null
-      }).catch(() => {})
+      try {
+        await supabase.from('audit_log').insert({
+          user_id: user.id,
+          action: 'pipeline.status_updated',
+          entity_type: 'lead',
+          entity_id: leadId,
+          metadata: { status, dealValue, followUpDate },
+          ip_address: ipAddress,
+          user_agent: req.headers.get('user-agent') || null
+        })
+      } catch (auditErr) {
+        console.warn('Failed to insert audit log:', auditErr)
+      }
 
       return new Response(JSON.stringify({ success: true, data }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -142,15 +150,19 @@ Deno.serve(async (req) => {
       if (error) throw error
 
       // Log Action to Audit Log
-      await supabase.from('audit_log').insert({
-        user_id: user.id,
-        action: 'pipeline.lead_removed',
-        entity_type: 'lead',
-        entity_id: leadId,
-        metadata: {},
-        ip_address: ipAddress,
-        user_agent: req.headers.get('user-agent') || null
-      }).catch(() => {})
+      try {
+        await supabase.from('audit_log').insert({
+          user_id: user.id,
+          action: 'pipeline.lead_removed',
+          entity_type: 'lead',
+          entity_id: leadId,
+          metadata: {},
+          ip_address: ipAddress,
+          user_agent: req.headers.get('user-agent') || null
+        })
+      } catch (auditErr) {
+        console.warn('Failed to insert audit log:', auditErr)
+      }
 
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }

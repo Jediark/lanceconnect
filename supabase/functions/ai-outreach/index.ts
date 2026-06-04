@@ -126,18 +126,21 @@ Rules:
       } catch (err) {
         console.warn('Claude API timed out or failed. Falling back to Gemini...', err)
         // Log Claude Fallback to Audit Log
-        await supabase
-          .from('audit_log')
-          .insert({
-            user_id: user.id,
-            action: 'ai.claude_fallback',
-            entity_type: 'ai',
-            entity_id: leadId,
-            metadata: { error: err instanceof Error ? err.message : String(err), tone, channel },
-            ip_address: ipAddress,
-            user_agent: req.headers.get('user-agent') || null,
-          })
-          .catch(() => {})
+        try {
+          await supabase
+            .from('audit_log')
+            .insert({
+              user_id: user.id,
+              action: 'ai.claude_fallback',
+              entity_type: 'ai',
+              entity_id: leadId,
+              metadata: { error: err instanceof Error ? err.message : String(err), tone, channel },
+              ip_address: ipAddress,
+              user_agent: req.headers.get('user-agent') || null,
+            })
+        } catch (auditErr) {
+          console.warn('Failed to insert audit log:', auditErr)
+        }
       }
     }
 
@@ -185,18 +188,21 @@ Rules:
     )
 
     // Log Action to Audit Log
-    await supabase
-      .from('audit_log')
-      .insert({
-        user_id: user.id,
-        action: 'ai.message_generated',
-        entity_type: 'ai',
-        entity_id: leadId,
-        metadata: { provider: providerUsed, tone, channel },
-        ip_address: ipAddress,
-        user_agent: req.headers.get('user-agent') || null,
-      })
-      .catch(() => {})
+    try {
+      await supabase
+        .from('audit_log')
+        .insert({
+          user_id: user.id,
+          action: 'ai.message_generated',
+          entity_type: 'ai',
+          entity_id: leadId,
+          metadata: { provider: providerUsed, tone, channel },
+          ip_address: ipAddress,
+          user_agent: req.headers.get('user-agent') || null,
+        })
+    } catch (auditErr) {
+      console.warn('Failed to insert audit log:', auditErr)
+    }
 
     return new Response(
       JSON.stringify({

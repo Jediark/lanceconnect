@@ -146,17 +146,21 @@ Deno.serve(async (req) => {
     }
 
     // Audit log (best-effort)
-    await supabase.from('audit_log').insert({
-      user_id: userId,
-      action: 'flutterwave_charge_success',
-      meta: {
-        tx_ref: txRef,
-        transaction_id: transactionId,
-        checkout_type: checkoutType,
-        amount: txData.amount,
-        currency: txData.currency,
-      },
-    }).catch(() => { /* audit is best-effort */ })
+    try {
+      await supabase.from('audit_log').insert({
+        user_id: userId,
+        action: 'flutterwave_charge_success',
+        metadata: {
+          tx_ref: txRef,
+          transaction_id: transactionId,
+          checkout_type: checkoutType,
+          amount: txData.amount,
+          currency: txData.currency,
+        },
+      })
+    } catch (auditErr) {
+      console.warn('Failed to insert audit log:', auditErr)
+    }
 
     return new Response(JSON.stringify({ received: true }), {
       status: 200,

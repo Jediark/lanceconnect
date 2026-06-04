@@ -237,14 +237,18 @@ Deno.serve(async (req) => {
     }
 
     // 8. Insert Action to Audit Log
-    await supabase.from('audit_log').insert({
-      user_id: user.id,
-      action: 'lead.searched',
-      entity_type: 'lead',
-      metadata: { query, city, country, results_count: finalLeads.length },
-      ip_address: ipAddress,
-      user_agent: req.headers.get('user-agent') || null
-    }).catch(() => {})
+    try {
+      await supabase.from('audit_log').insert({
+        user_id: user.id,
+        action: 'lead.searched',
+        entity_type: 'lead',
+        metadata: { query, city, country, results_count: finalLeads.length },
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null
+      })
+    } catch (auditErr) {
+      console.warn('Failed to insert audit log:', auditErr)
+    }
 
     return new Response(JSON.stringify({ success: true, leads: finalLeads }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

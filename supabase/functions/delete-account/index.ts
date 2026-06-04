@@ -103,14 +103,18 @@ Deno.serve(async (req) => {
     }
 
     // 4. Log Action to Audit Log before executing table deletes
-    await supabase.from('audit_log').insert({
-      user_id: user.id,
-      action: 'account.deleted',
-      entity_type: 'account',
-      metadata: { email: profile.email, plan: profile.plan },
-      ip_address: ipAddress,
-      user_agent: req.headers.get('user-agent') || null
-    }).catch((err) => console.error('Failed to insert audit log prior to user delete:', err))
+    try {
+      await supabase.from('audit_log').insert({
+        user_id: user.id,
+        action: 'account.deleted',
+        entity_type: 'account',
+        metadata: { email: profile.email, plan: profile.plan },
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null
+      })
+    } catch (auditErr) {
+      console.error('Failed to insert audit log prior to user delete:', auditErr)
+    }
 
     // 5. Delete user data in strict sequence:
     // ai_messages → credit_transactions → search_history → outreach_templates → user_leads → audit_log → rate_limit_log → profiles
