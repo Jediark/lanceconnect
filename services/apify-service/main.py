@@ -40,7 +40,7 @@ async def scrape_leads(
         }
 
     search_string = f"{keyword} in {city}, {country}"
-    url = f"https://api.apify.com/v2/acts/apify~google-maps-scraper/run-sync-get-dataset-items?token={apify_token}"
+    url = f"https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token={apify_token}"
     
     actor_input = {
         "searchStrings": [search_string],
