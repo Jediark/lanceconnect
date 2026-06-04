@@ -1,4 +1,4 @@
-const ALLOWED_ORIGIN = Deno.env.get('APP_URL') || 'https://lanceconnect.com'
+const ALLOWED_ORIGIN = '*'
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
