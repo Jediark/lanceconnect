@@ -38,8 +38,8 @@ export function MarketingNav() {
       {bannerOpen && (
         <div className="relative bg-gradient-to-r from-amber-600 via-orange-500 to-amber-500 py-2 px-4 lg:px-8 select-none flex items-center justify-between gap-3 text-xs font-semibold text-white shadow-[0_2px_10px_rgba(245,158,11,0.2)]">
           <div className="flex-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
-            <span className="bg-white/20 px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold animate-pulse">Important</span>
-            <span>⚡ Please note: Your API key must be configured in the dashboard to unlock real-time Google Maps lead scraping. Free accounts are capped at 10 scans.</span>
+            <span className="bg-white/20 px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold animate-pulse">Special Offer</span>
+            <span>🎉 Launch Offer: Get 10 verified, high-scoring client leads completely free. No credit card required!</span>
           </div>
           <button 
             onClick={() => setBannerOpen(false)}
@@ -50,14 +50,14 @@ export function MarketingNav() {
           </button>
         </div>
       )}
-      <div className="relative bg-card py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-white">
+      <div className="relative bg-card py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-foreground transition-colors duration-300">
         {/* Active Lead Scanning Stats */}
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
           </span>
-          <span>Active Lead Scanning: 1,482 cities checked today · 41,209 leads indexed today</span>
+          <span className="text-muted-foreground">Active Lead Scanning: 1,482 cities checked today · 41,209 leads indexed today</span>
         </div>
 
         {/* Search, Language & Currency preferences (Desktop only) */}
@@ -65,21 +65,21 @@ export function MarketingNav() {
           {/* CMD+K Search Icon Button */}
           <button 
             onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
-            className="p-1 text-white hover:text-white/80 transition cursor-pointer flex items-center gap-1.5 hover:bg-slate-800/40 rounded-lg px-2"
+            className="p-1 text-muted-foreground hover:text-primary transition cursor-pointer flex items-center gap-1.5 hover:bg-accent rounded-lg px-2"
             aria-label="Search"
             title="Search (⌘K)"
           >
             <Search className="h-3.5 w-3.5" />
-            <span className="text-[10px]">Search (⌘K)</span>
+            <span className="text-[10px] font-bold">Search (⌘K)</span>
           </button>
 
-          <div className="h-3 w-px bg-slate-800" />
+          <div className="h-3 w-px bg-border" />
 
           {/* Globe Settings Dropdown */}
           <div className="relative" ref={settingsRef}>
             <button
               onClick={() => setSettingsOpen(!settingsOpen)}
-              className="flex items-center gap-1.5 p-1 text-white hover:text-white/80 transition cursor-pointer text-[10px] font-medium hover:bg-slate-800/40 rounded-lg px-2"
+              className="flex items-center gap-1.5 p-1 text-muted-foreground hover:text-primary transition cursor-pointer text-[10px] font-bold hover:bg-accent rounded-lg px-2"
               aria-label="Settings"
             >
               <Globe className="h-3.5 w-3.5" />

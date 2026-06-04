@@ -102,21 +102,25 @@
   --ink-muted: #94A3B8;
   --ink-border: #1E293B;
   --ink-bg-2: #0F172A;
+
+  /* Glittering radial gradient overlay sources */
+  --primary-glow: rgba(99, 102, 241, 0.18);
+  --secondary-glow: rgba(16, 185, 129, 0.12);
 }
 
 html.light {
   /* Pure glittering white theme inspired by abiglobalfoods.co.uk */
   --background: #FFFFFF;
-  --foreground: #0F172A;
+  --foreground: #000000; /* Bold Black instead of Slate-900 */
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #000000; /* Bold Black */
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
+  --popover-foreground: #000000;
   --muted: #F8FAFC;
-  --muted-foreground: #475569;
+  --muted-foreground: #1E293B; /* Deep Slate-800 instead of slate-600 */
   --accent: #F1F5F9;
-  --accent-foreground: #0F172A;
-  --border: #E2E8F0;
+  --accent-foreground: #000000;
+  --border: #CBD5E1; /* Darker slate border for ultra-sharp grid styling */
   --input: #F1F5F9;
   --ring: #2563EB;
 
@@ -125,27 +129,31 @@ html.light {
   --success: #10b981;
   --warn: #f59e0b;
   --hot: #ef4444;
-  --ink: #0F172A;
+  --ink: #000000;
   --cream: #FAFAFA;
 
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #475569;
-  --sidebar-active: #2563EB;
+  --sidebar-foreground: #1E293B; /* Deep Slate-800 */
+  --sidebar-active: #000000;
   --sidebar-hover: #F1F5F9;
-  --sidebar-border: #E2E8F0;
+  --sidebar-border: #CBD5E1;
 
   /* Dynamic Design tokens for Grid/Dot/Shadow colors in Light mode */
-  --grid-color: rgba(15, 23, 42, 0.04);
-  --dot-color: rgba(15, 23, 42, 0.04);
-  --shadow-border-color: rgba(15, 23, 42, 0.08);
-  --shadow-color: rgba(15, 23, 42, 0.04);
+  --grid-color: rgba(15, 23, 42, 0.06);
+  --dot-color: rgba(15, 23, 42, 0.06);
+  --shadow-border-color: rgba(15, 23, 42, 0.12);
+  --shadow-color: rgba(15, 23, 42, 0.06);
 
   /* Resolved dashboard ink variables in Light mode */
   --ink-bg: #FFFFFF;
-  --ink-fg: #0F172A;
-  --ink-muted: #475569;
-  --ink-border: #E2E8F0;
+  --ink-fg: #000000;
+  --ink-muted: #1E293B;
+  --ink-border: #CBD5E1;
   --ink-bg-2: #FAFAFA;
+
+  /* Glittering radial gradient overlay sources in Light mode */
+  --primary-glow: rgba(37, 99, 235, 0.12);
+  --secondary-glow: rgba(16, 185, 129, 0.10);
 }
 
 @layer base {
@@ -154,7 +162,7 @@ html.light {
   }
 
   html, body {
-    font-size: 15px;
+    font-size: 16px; /* Increased base font size slightly */
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
@@ -165,6 +173,18 @@ html.light {
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     letter-spacing: -0.025em;
+  }
+
+  /* Make paragraphs, lists, inputs, and labels bold black and not faded in light mode */
+  html.light p,
+  html.light span,
+  html.light li,
+  html.light label,
+  html.light select,
+  html.light input,
+  html.light textarea,
+  html.light button:not(.bg-primary) {
+    font-weight: 500; /* Medium-bold for crisp readability */
   }
 }
 

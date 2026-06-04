@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
     <MarketingShell>
       <HeroWithMosaic />
       <StatsBar />
+      <ValuePropositionCards />
       <LogoStrip />
       <TutorialVideoSection />
       <HeroCarousel />
@@ -93,11 +94,14 @@ function HeroWithMosaic() {
           alt="" 
           className="h-full w-full object-cover opacity-5 dark:opacity-10 mix-blend-luminosity"
         />
+        {/* Glittering color radial gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_10%,var(--primary-glow),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_90%,var(--secondary-glow),transparent_40%)]" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/50 to-background" />
       </div>
 
-      <div className="absolute inset-0 opacity-20 z-0">
-        <div className="h-full w-full bg-grid-pattern" />
+      <div className="absolute inset-0 opacity-40 z-0">
+        <div className="h-full w-full bg-dot-pattern" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -274,6 +278,56 @@ function BlogTeaser() {
                 </div>
               </div>
             </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   VALUE PROPOSITION CARDS — inspired by abiglobalfoods.co.uk trust row
+   ──────────────────────────────────────────────────────────── */
+function ValuePropositionCards() {
+  const items = [
+    {
+      icon: Zap,
+      title: "10 FREE SCANS",
+      subtitle: "Get 10 verified, high-scoring client leads monthly.",
+    },
+    {
+      icon: Globe,
+      title: "GLOBAL COVERAGE",
+      subtitle: "Target and find leads in over 150+ countries instantly.",
+    },
+    {
+      icon: CheckCircle2,
+      title: "DIRECT REACH",
+      subtitle: "Verified phone lines and email addresses ready to copy.",
+    },
+  ];
+
+  return (
+    <section className="bg-background py-8 select-none border-b border-border transition-colors duration-300">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="grid gap-6 md:grid-cols-3">
+          {items.map((item, idx) => (
+            <div 
+              key={idx}
+              className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-card hover:shadow-card-hover transition duration-300 group"
+            >
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-muted group-hover:scale-105 transition duration-300">
+                <item.icon className="h-5 w-5 text-primary" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-display text-xs font-black uppercase tracking-wider text-foreground">
+                  {item.title}
+                </h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-snug">
+                  {item.subtitle}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
