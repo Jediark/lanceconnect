@@ -43,10 +43,11 @@ async def scrape_leads(
     url = f"https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token={apify_token}"
     
     actor_input = {
-        "searchStrings": [search_string],
-        "maxItems": limit,
-        "languageCode": "en",
-        "exportPlaceId": True
+        "searchString": search_string,
+        "maxCrawledPlaces": limit,
+        "proxyConfig": {
+            "useApifyProxy": True
+        }
     }
 
     try:
