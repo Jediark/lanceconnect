@@ -7,29 +7,11 @@ import { LeadCard } from "@/components/ui/LeadCard";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
+import { COUNTRY_CITIES } from "@/data/countriesData";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
-
-const COUNTRY_CITIES: Record<string, string[]> = {
-  "Nigeria": ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano"],
-  "Italy": ["Rome", "Milan", "Naples", "Florence", "Venice", "Turin"],
-  "United Kingdom": ["London", "Manchester", "Birmingham", "Edinburgh", "Glasgow"],
-  "Argentina": ["Buenos Aires", "Córdoba", "Rosario", "Mendoza"],
-  "India": ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai"],
-  "Canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
-  "France": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
-  "Malaysia": ["Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh"],
-  "United States": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco"],
-  "Germany": ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
-  "Brazil": ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"],
-  "Spain": ["Madrid", "Barcelona", "Valencia", "Seville", "Bilbao"],
-  "Mexico": ["Mexico City", "Guadalajara", "Monterrey", "Cancún"],
-  "South Africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria"],
-  "Kenya": ["Nairobi", "Mombasa", "Kisumu", "Nakuru"],
-  "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"]
-};
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
@@ -43,40 +25,9 @@ function Discover() {
   const [city, setCity] = useState("");
   const [website, setWebsite] = useState("");
   const [minScore, setMinScore] = useState(0);
-
-  const downloadCSV = () => {
-    if (filteredResults.length === 0) return;
-    const headers = ["Business Name", "Type", "City", "Country", "Address", "Phone", "Email", "Website", "Opportunity Score", "Google Rating", "Reviews"];
-    const csvRows = [
-      headers.join(","),
-      ...filteredResults.map(l => [
-        `"${l.businessName.replace(/"/g, '""')}"`,
-        `"${l.businessType.replace(/"/g, '""')}"`,
-        `"${l.city.replace(/"/g, '""')}"`,
-        `"${l.country.replace(/"/g, '""')}"`,
-        `"${l.fullAddress.replace(/"/g, '""')}"`,
-        `"${(l.phone || "").replace(/"/g, '""')}"`,
-        `"${(l.email || "").replace(/"/g, '""')}"`,
-        `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
-        l.opportunityScore,
-        l.googleRating,
-        l.googleReviewCount
-      ].join(","))
-    ];
-    const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `lanceconnect_leads_${city || "global"}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("CSV Spreadsheet downloaded successfully!");
-  };
   const [view, setView] = useState<"grid" | "table">("grid");
   const [sort, setSort] = useState<"score" | "rating">("score");
   const [detail, setDetail] = useState<Lead | null>(null);
-
   const [results, setResults] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -116,7 +67,7 @@ function Discover() {
               savedAt: null,
               status: null,
             }));
-            setResults(mapped);
+            setResults(mapped); // No automatic fallback emails for database leads for integrity
           }
         });
     }
@@ -131,7 +82,6 @@ function Discover() {
     if (!user || user.id === "user-1") {
       setLoading(true);
       setTimeout(() => {
-        const queryTerm = category || "web_dev";
         const filtered = MOCK_LEADS.filter((l) => {
           if (category && l.industry !== category) return false;
           if (country && !l.country.toLowerCase().includes(country.toLowerCase())) return false;
@@ -182,7 +132,7 @@ function Discover() {
         savedAt: null,
         status: null,
       }));
-      setResults(mapped);
+      setResults(mapped); // Respect data integrity by showing real found data
       toast.success(`Found ${mapped.length} leads in ${city}!`);
     } catch (err: any) {
       console.error(err);
@@ -203,6 +153,36 @@ function Discover() {
   }, [results, website, minScore, sort]);
 
   const clear = () => { setCategory(""); setCountry(""); setCity(""); setWebsite(""); setMinScore(0); };
+
+  const downloadCSV = () => {
+    if (filteredResults.length === 0) return;
+    const headers = ["Business Name", "Type", "City", "Country", "Address", "Phone", "Email", "Website", "Opportunity Score", "Google Rating", "Reviews"];
+    const csvRows = [
+      headers.join(","),
+      ...filteredResults.map(l => [
+        `"${l.businessName.replace(/"/g, '""')}"`,
+        `"${l.businessType.replace(/"/g, '""')}"`,
+        `"${l.city.replace(/"/g, '""')}"`,
+        `"${l.country.replace(/"/g, '""')}"`,
+        `"${(l.fullAddress || "").replace(/"/g, '""')}"`,
+        `"${(l.phone || "").replace(/"/g, '""')}"`,
+        `"${(l.email || "").replace(/"/g, '""')}"`,
+        `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
+        l.opportunityScore,
+        l.googleRating,
+        l.googleReviewCount
+      ].join(","))
+    ];
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `lanceconnect_leads_${city || "global"}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("CSV Spreadsheet downloaded successfully!");
+  };
 
   return (
     <>
@@ -260,7 +240,7 @@ function Discover() {
           {filteredResults.length > 0 && (
             <button
               onClick={downloadCSV}
-              className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer shadow-sm text-foreground"
+              className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer text-foreground"
             >
               <Download className="h-3.5 w-3.5" /> Export CSV
             </button>
@@ -326,11 +306,11 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
               <td className="px-4 py-3 font-medium">{l.businessName}<div className="text-xs text-muted-foreground">{l.businessType}</div></td>
               <td className="px-4 py-3 text-muted-foreground">{l.city}, {l.country}</td>
               <td className="px-4 py-3"><OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} /></td>
-              <td className="px-4 py-3">{l.hasWebsite ? <span className="text-emerald-600">✓ Yes</span> : <span className="text-red-600">✗ No</span>}</td>
+              <td className="px-4 py-3">{l.hasWebsite ? <span className="text-emerald-600 font-semibold">✓ Yes</span> : <span className="text-red-600">✗ No</span>}</td>
               <td className="px-4 py-3 font-mono-data text-xs">{l.phone}</td>
               <td className="px-4 py-3 text-amber-600"><span className="inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> {l.googleRating}</span></td>
               <td className="px-4 py-3 text-right">
-                <button onClick={(e) => { e.stopPropagation(); saveLead(l); toast.success("Saved to pipeline"); }} disabled={savedIds.has(l.id)} className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer">
+                <button onClick={(e) => { e.stopPropagation(); saveLead(l); toast.success("Saved to pipeline"); }} disabled={savedIds.has(l.id)} className="rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer">
                   {savedIds.has(l.id) ? "Saved" : "Save"}
                 </button>
               </td>
@@ -346,11 +326,44 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   const { user } = useAuth();
   const { saveLead, savedIds } = usePipeline();
   
+  const [currentLead, setCurrentLead] = useState<Lead>(lead);
+  const [enriching, setEnriching] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [outreachDraft, setOutreachDraft] = useState("");
   const [selectedChannel, setSelectedChannel] = useState<'email' | 'linkedin' | 'whatsapp' | 'phone_script'>('email');
   const [selectedTone, setSelectedTone] = useState<'casual' | 'professional' | 'bold'>('professional');
   const [provider, setProvider] = useState("");
+
+  const handleEnrich = async () => {
+    if (!currentLead.websiteUrl) return;
+    setEnriching(true);
+    toast.info("Scraping website for verified contact email...");
+    try {
+      if (!user || user.id === "user-1") {
+        setTimeout(() => {
+          toast.warning("No public email address found on the website of this business (Demo Mode).");
+          setEnriching(false);
+        }, 1200);
+        return;
+      }
+      
+      const { data, error } = await supabase.functions.invoke("enrich-contact", {
+        body: { leadId: currentLead.id }
+      });
+      if (error) throw error;
+      if (data?.lead?.email) {
+        setCurrentLead(prev => ({ ...prev, email: data.lead.email }));
+        toast.success(`Scrape complete! Found: ${data.lead.email}`);
+      } else {
+        toast.warning("No public email address found on the website.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to search website");
+    } finally {
+      setEnriching(false);
+    }
+  };
 
   const handleGenerate = async () => {
     setGenerating(true);
@@ -358,7 +371,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
     try {
       if (!user || user.id === "user-1") {
         setTimeout(() => {
-          const draftText = `Subject: Helping ${lead.businessName} with design and web optimization\n\nHi Manager,\n\nI noticed your business online and saw a few areas where a redesigned mobile interface or faster load speeds could increase your customer bookings. I'd love to jump on a quick 5-minute call this week to share some suggestions.\n\nBest,\nAlex`;
+          const draftText = `Subject: Helping ${currentLead.businessName} with design and web optimization\n\nHi Manager,\n\nI noticed your business online and saw a few areas where a redesigned mobile interface or faster load speeds could increase your customer bookings. I'd love to jump on a quick 5-minute call this week to share some suggestions.\n\nBest,\nAlex`;
           setOutreachDraft(draftText);
           setProvider("Generated with Gemini");
           setGenerating(false);
@@ -370,7 +383,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
       const apiChannel = selectedChannel === 'whatsapp' ? 'sms' : selectedChannel;
       const { data, error } = await supabase.functions.invoke("ai-outreach", {
         body: {
-          leadId: lead.id,
+          leadId: currentLead.id,
           channel: apiChannel,
           tone: selectedTone
         }
@@ -393,19 +406,19 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   };
 
   const reasons = [
-    !lead.hasWebsite && { label: "No website detected", pts: 40 },
-    lead.googleRating < 4 && { label: "Below average rating", pts: 20 },
-    lead.googleReviewCount < 20 && { label: "Very few reviews", pts: 15 },
+    !currentLead.hasWebsite && { label: "No website detected", pts: 40 },
+    currentLead.googleRating < 4 && { label: "Below average rating", pts: 20 },
+    currentLead.googleReviewCount < 20 && { label: "Very few reviews", pts: 15 },
     { label: "Active Google Maps listing", pts: 10 },
   ].filter(Boolean) as { label: string; pts: number }[];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-card border border-border shadow-2xl animate-in zoom-in-95">
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-card border border-border animate-in zoom-in-95">
         <div className="flex items-start justify-between border-b border-border p-6">
           <div>
-            <h3 className="font-display text-xl font-bold text-white">{lead.businessName}</h3>
-            <p className="text-sm text-slate-400">{lead.businessType} · {lead.city}, {lead.country}</p>
+            <h3 className="font-display text-xl font-bold text-white">{currentLead.businessName}</h3>
+            <p className="text-sm text-slate-400">{currentLead.businessType} · {currentLead.city}, {currentLead.country}</p>
           </div>
           <button onClick={onClose} className="rounded-lg p-1.5 hover:bg-accent text-slate-400 hover:text-white cursor-pointer"><X className="h-4 w-4" /></button>
         </div>
@@ -414,26 +427,37 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
           <div>
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold uppercase tracking-wide text-slate-400">Opportunity Score</span>
-              <OpportunityScore score={lead.opportunityScore} />
+              <OpportunityScore score={currentLead.opportunityScore} />
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
-              <div className="h-full bg-primary" style={{ width: `${lead.opportunityScore}%` }} />
+              <div className="h-full bg-primary" style={{ width: `${currentLead.opportunityScore}%` }} />
             </div>
           </div>
 
           <div className="space-y-2 rounded-xl bg-background border border-border p-4 text-sm text-slate-300">
-            <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-500 shrink-0" /> {lead.fullAddress || ""}</p>
+            <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.fullAddress || ""}</p>
             <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-2 font-mono text-xs"><Phone className="h-3.5 w-3.5 text-slate-500" /> {lead.phone}</span>
-              {lead.phone && (
-                <button onClick={() => { navigator.clipboard?.writeText(lead.phone); toast.success("Copied!"); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer">
+              <span className="inline-flex items-center gap-2 font-mono text-xs"><Phone className="h-3.5 w-3.5 text-slate-500" /> {currentLead.phone}</span>
+              {currentLead.phone && (
+                <button onClick={() => { navigator.clipboard?.writeText(currentLead.phone); toast.success("Copied!"); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer">
                   <Copy className="h-2.5 w-2.5" /> Copy
                 </button>
               )}
             </div>
-            <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500 shrink-0" /> {lead.email ?? <span className="italic text-slate-500">Not found</span>}</p>
-            <p className="flex items-center gap-2"><Globe className="h-4 w-4 text-slate-500 shrink-0" /> {lead.websiteUrl ?? <span className="italic text-slate-500">No website</span>}</p>
-            <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" /> {lead.googleRating} · {lead.googleReviewCount} reviews</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.email ?? <span className="italic text-slate-500">Not found</span>}</p>
+              {!currentLead.email && currentLead.websiteUrl && (
+                <button
+                  onClick={handleEnrich}
+                  disabled={enriching}
+                  className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-50 transition cursor-pointer"
+                >
+                  {enriching ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : "⚡ Find Email"}
+                </button>
+              )}
+            </div>
+            <p className="flex items-center gap-2"><Globe className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.websiteUrl ?? <span className="italic text-slate-500">No website</span>}</p>
+            <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" /> {currentLead.googleRating} · {currentLead.googleReviewCount} reviews</p>
           </div>
 
           <div>
@@ -466,12 +490,12 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                   <div className="flex gap-2">
                     <button onClick={() => setOutreachDraft("")} className="rounded-lg border border-border bg-card px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer">Edit Settings</button>
                     <button onClick={copyDraft} className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">Copy Pitch</button>
-                    {selectedChannel === "whatsapp" && lead.phone && (
+                    {selectedChannel === "whatsapp" && currentLead.phone && (
                       <a
-                        href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
+                        href={`https://wa.me/${currentLead.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition shadow-sm"
+                        className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition"
                       >
                         Send via WhatsApp
                       </a>
@@ -530,8 +554,8 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
           </div>
 
           <div className="flex gap-2 pt-2 border-t border-border">
-            <button onClick={() => { saveLead(lead); toast.success("Saved to pipeline"); }} disabled={savedIds.has(lead.id)} className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
-              {savedIds.has(lead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
+            <button onClick={() => { saveLead(currentLead); toast.success("Saved to pipeline"); }} disabled={savedIds.has(currentLead.id)} className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
+              {savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
             </button>
           </div>
         </div>

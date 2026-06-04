@@ -17,10 +17,7 @@ dist-ssr
 .nitro
 *.local
 
-# Environment
-.env
-.env.local
-.env.*.local
+
 
 # Wrangler / Cloudflare
 .wrangler/
@@ -38,3 +35,19 @@ dist-ssr
 *.sw?
 .vercel/
 
+# Environment files
+.env
+.env.*
+*.env
+local.env
+supabase/functions/local.env
+supabase/functions/*.env
+
+# Supabase temp
+supabase/.temp/
+.temp/
+
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/

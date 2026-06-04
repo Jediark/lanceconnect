@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  Search, TrendingUp, Compass, Activity, CheckCircle, Flame, Mail, Sparkles, Loader2,
-  X, MapPin, Copy, Star, Phone, Globe, Check, Map, Download, Users, Target,
-  MessageSquare, ArrowRight, ExternalLink,
+  Search, Mail, Sparkles, Loader2,
+  X, MapPin, Copy, Star, Phone, Globe, Check, Download, Users, Target,
+  MessageSquare, ArrowRight,
 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
+import { COUNTRY_CITIES } from "@/data/countriesData";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -17,25 +18,6 @@ import { GoalTracker } from "@/components/dashboard/GoalTracker";
 import { GlobalHeatmap } from "@/components/dashboard/GlobalHeatmap";
 import { QuickConnectModal } from "@/components/dashboard/QuickConnectModal";
 
-const COUNTRY_CITIES: Record<string, string[]> = {
-  Nigeria: ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano"],
-  Italy: ["Rome", "Milan", "Naples", "Florence", "Venice", "Turin"],
-  "United Kingdom": ["London", "Manchester", "Birmingham", "Edinburgh", "Glasgow"],
-  Argentina: ["Buenos Aires", "Córdoba", "Rosario", "Mendoza"],
-  India: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai"],
-  Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
-  France: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
-  Malaysia: ["Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh"],
-  "United States": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco"],
-  Germany: ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
-  Brazil: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"],
-  Spain: ["Madrid", "Barcelona", "Valencia", "Seville", "Bilbao"],
-  Mexico: ["Mexico City", "Guadalajara", "Monterrey", "Cancún"],
-  "South Africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria"],
-  Kenya: ["Nairobi", "Mombasa", "Kisumu", "Nakuru"],
-  Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
-};
-
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LanceConnect" }] }),
   component: Dashboard,
@@ -43,13 +25,11 @@ export const Route = createFileRoute("/app/dashboard")({
 
 type ActivityItem = { id: string; action: string; entityType: string; metadata: any; createdAt: string };
 
-/* ─── Score badge ─── */
 function ScoreBadge({ score }: { score: number }) {
   const color = score >= 70 ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" : score >= 40 ? "text-amber-400 bg-amber-400/10 border-amber-400/20" : "text-rose-400 bg-rose-400/10 border-rose-400/20";
   return <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-bold ${color}`}>{score}</span>;
 }
 
-/* ──────────────────────── DASHBOARD ──────────────────────── */
 function Dashboard() {
   const { user } = useAuth();
   const { pipeline, savedIds, saveLead } = usePipeline();
@@ -65,6 +45,7 @@ function Dashboard() {
   const [searchLoading, setSearchLoading] = useState(false);
 
   const [detail, setDetail] = useState<Lead | null>(null);
+  const [enriching, setEnriching] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [outreachDraft, setOutreachDraft] = useState("");
   const [selectedChannel, setSelectedChannel] = useState<"email" | "linkedin" | "whatsapp" | "phone_script">("email");
@@ -84,7 +65,6 @@ function Dashboard() {
   const conversionRate = totalSaved > 0 ? Math.round((wonCount / totalSaved) * 100) : 0;
   const suggestedCities = COUNTRY_CITIES[quickCountry] || [];
 
-  /* ─── data loading ─── */
   useEffect(() => {
     if (!user) return;
     if (user.id === "user-1") {
@@ -101,7 +81,10 @@ function Dashboard() {
     supabase.from("search_history").select("id", { count: "exact" }).eq("user_id", user.id).then(({ count, error }) => { if (!error && count !== null) setScansCount(count); });
     supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(6).then(({ data, error }) => {
       if (error) console.error(error);
-      if (data) setResults(data.map((d: any) => ({ id: d.id, businessName: d.business_name, businessType: d.business_type, industry: d.industry, city: d.city, country: d.country, fullAddress: d.full_address, phone: d.phone || "", email: d.email || null, websiteUrl: d.website_url || null, hasWebsite: d.has_website || false, googleRating: Number(d.google_rating || 0), googleReviewCount: Number(d.google_review_count || 0), opportunityScore: Number(d.opportunity_score || 0), createdAt: d.created_at, source: d.source || "google_maps", savedAt: null, status: null })));
+      if (data) {
+        const mapped = data.map((d: any) => ({ id: d.id, businessName: d.business_name, businessType: d.business_type, industry: d.industry, city: d.city, country: d.country, fullAddress: d.full_address, phone: d.phone || "", email: d.email || null, websiteUrl: d.website_url || null, hasWebsite: d.has_website || false, googleRating: Number(d.google_rating || 0), googleReviewCount: Number(d.google_review_count || 0), opportunityScore: Number(d.opportunity_score || 0), createdAt: d.created_at, source: d.source || "google_maps", savedAt: null, status: null }));
+        setResults(mapped); // No automatic fallback emails for database leads for integrity
+      }
     });
     supabase.from("audit_log").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5).then(({ data, error }) => {
       setLoading(false);
@@ -109,7 +92,38 @@ function Dashboard() {
     });
   }, [user]);
 
-  /* ─── search ─── */
+  const handleEnrich = async () => {
+    if (!detail || !detail.websiteUrl) return;
+    setEnriching(true);
+    toast.info("Scraping website for verified contact email...");
+    try {
+      if (!user || user.id === "user-1") {
+        setTimeout(() => {
+          toast.warning("No public email address found on the website of this business (Demo Mode).");
+          setEnriching(false);
+        }, 1200);
+        return;
+      }
+      
+      const { data, error } = await supabase.functions.invoke("enrich-contact", {
+        body: { leadId: detail.id }
+      });
+      if (error) throw error;
+      if (data?.lead?.email) {
+        setDetail(prev => prev ? ({ ...prev, email: data.lead.email }) : null);
+        setResults(prev => prev.map(l => l.id === detail.id ? { ...l, email: data.lead.email } : l));
+        toast.success(`Scrape complete! Found: ${data.lead.email}`);
+      } else {
+        toast.warning("No public email address found on the website.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to search website");
+    } finally {
+      setEnriching(false);
+    }
+  };
+
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!quickCity.trim()) { toast.error("Please enter a city name."); return; }
@@ -128,7 +142,7 @@ function Dashboard() {
       const { data, error } = await supabase.functions.invoke("search-leads", { body: { query: q, city: quickCity, country: quickCountry, limit: 12 } });
       if (error) throw error;
       const mapped = (data?.leads || []).map((d: any) => ({ id: d.id, businessName: d.business_name, businessType: d.business_type, industry: d.industry, city: d.city, country: d.country, fullAddress: d.full_address, phone: d.phone || "", email: d.email || null, websiteUrl: d.website_url || null, hasWebsite: d.has_website || false, googleRating: Number(d.google_rating || 0), googleReviewCount: Number(d.google_review_count || 0), opportunityScore: Number(d.opportunity_score || 0), createdAt: d.created_at, source: d.source || "google_maps", savedAt: null, status: null }));
-      setResults(mapped); setScansCount((p) => p + 1);
+      setResults(mapped); setScansCount((p) => p + 1); // Respect data integrity by showing real found data
       const { data: logData } = await supabase.from("audit_log").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5);
       if (logData) setActivities(logData.map((d: any) => ({ id: d.id, action: d.action, entityType: d.entity_type, metadata: d.metadata || {}, createdAt: d.created_at })));
       toast.success(`Found ${mapped.length} prospects in ${quickCity}!`);
@@ -169,7 +183,6 @@ function Dashboard() {
     return r;
   };
 
-  /* ──────────────────────── RENDER ──────────────────────── */
   return (
     <>
       <Header title="Dashboard" />
@@ -178,10 +191,10 @@ function Dashboard() {
 
         {/* ═══ HERO SEARCH ═══ */}
         <section
-          className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-10 shadow-sm"
+          className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-10"
         >
           {/* decorative dots */}
-          <div className="absolute inset-0 bg-dot-pattern pointer-events-none" />
+          <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-40" />
 
           <div className="relative z-10 max-w-2xl">
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
@@ -212,7 +225,7 @@ function Dashboard() {
                 <input type="text" required placeholder="e.g. Lagos, London..." value={quickCity} onChange={(e) => setQuickCity(e.target.value)} className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition" />
               </div>
               <div className="flex items-end">
-                <button type="submit" disabled={searchLoading} className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-bold text-white glow-primary hover:brightness-110 transition disabled:opacity-60 cursor-pointer">
+                <button type="submit" disabled={searchLoading} className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-bold text-white hover:brightness-110 transition disabled:opacity-60 cursor-pointer">
                   {searchLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                   {searchLoading ? "Scanning..." : "Find Clients"}
                 </button>
@@ -272,7 +285,6 @@ function Dashboard() {
 
           {/* ── Results area (2 cols) ── */}
           <div className="lg:col-span-2 space-y-5">
-            {/* Header bar */}
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-bold text-foreground">Discovered Businesses</h3>
@@ -285,7 +297,6 @@ function Dashboard() {
               )}
             </div>
 
-            {/* Results */}
             {searchLoading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
                 <div className="relative">
@@ -296,7 +307,7 @@ function Dashboard() {
             ) : results.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-card/50">
                 <div className="grid h-16 w-16 place-items-center rounded-2xl bg-primary/8 mb-4">
-                  <Compass className="h-7 w-7 text-primary/60" />
+                  <Search className="h-7 w-7 text-primary/60" />
                 </div>
                 <p className="text-base font-semibold text-foreground">No results yet</p>
                 <p className="text-sm text-muted-foreground mt-1 max-w-xs">Search for any business type in any city above to discover clients.</p>
@@ -308,7 +319,7 @@ function Dashboard() {
                   return (
                     <div
                       key={lead.id}
-                      className="group rounded-2xl border border-border bg-card p-5 hover:border-primary hover:shadow-card-hover transition-all duration-200 cursor-pointer"
+                      className="group rounded-2xl border border-border bg-card p-5 hover:border-primary transition-all duration-200 cursor-pointer"
                       onClick={() => { setDetail(lead); setOutreachDraft(""); }}
                     >
                       {/* Top row */}
@@ -382,7 +393,7 @@ function Dashboard() {
               </div>
               <p className="text-[11px] text-muted-foreground">{Math.max(0, leadsLimit - leadsUsed)} searches remaining</p>
               {user?.plan === "free" && (
-                <Link to="/app/upgrade" className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-xs font-bold text-white glow-primary hover:brightness-110 transition cursor-pointer">
+                <Link to="/app/upgrade" className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer">
                   Upgrade Plan
                 </Link>
               )}
@@ -415,10 +426,42 @@ function Dashboard() {
               </Link>
             </div>
 
+            {/* Newsletter Subscription */}
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-1.5">
+                <Mail className="h-4 w-4 text-primary" /> Subscribe to Leads
+              </h4>
+              <p className="text-[11px] text-muted-foreground mb-3">
+                Get weekly premium lead drops, cold email scripts, and marketing updates.
+              </p>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const input = (e.currentTarget.elements.namedItem("newsletter-email") as HTMLInputElement);
+                if (input && input.value) {
+                  toast.success(`Subscribed ${input.value} to weekly lead drops!`);
+                  input.value = "";
+                }
+              }} className="space-y-2">
+                <input
+                  type="email"
+                  name="newsletter-email"
+                  required
+                  placeholder="name@example.com"
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+
             {/* Activity */}
             <div className="rounded-2xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-sm font-bold text-foreground">Live Feed</h4>
+                <h4 className="text-sm font-bold text-foreground mb-4">Live Feed</h4>
                 <div className="flex items-center gap-1.5">
                   <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
                   <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Live</span>
@@ -434,7 +477,7 @@ function Dashboard() {
       {detail && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setDetail(null)}>
           <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
-          <div className="relative w-full max-w-md rounded-2xl border border-[rgba(124,58,237,0.2)] bg-card shadow-2xl animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+          <div className="relative w-full max-w-md rounded-2xl border border-[rgba(124,58,237,0.2)] bg-card animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
 
             {/* Header */}
             <div className="flex items-start justify-between p-6 pb-0">
@@ -455,7 +498,18 @@ function Dashboard() {
                   <p className="flex items-center gap-2 text-sm text-muted-foreground"><Phone className="h-4 w-4 shrink-0 text-muted-foreground/60" />{detail.phone || "No phone"}</p>
                   {detail.phone && <button onClick={() => { navigator.clipboard?.writeText(detail.phone); toast.success("Copied!"); }} className="rounded-lg border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:text-foreground transition cursor-pointer"><Copy className="inline h-2.5 w-2.5 mr-0.5" />Copy</button>}
                 </div>
-                <p className="flex items-center gap-2 text-sm text-muted-foreground"><Mail className="h-4 w-4 shrink-0 text-muted-foreground/60" />{detail.email || "No email"}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="flex items-center gap-2 text-sm text-muted-foreground flex-1 truncate"><Mail className="h-4 w-4 shrink-0 text-muted-foreground/60" />{detail.email || "No email"}</p>
+                  {!detail.email && detail.websiteUrl && (
+                    <button
+                      onClick={handleEnrich}
+                      disabled={enriching}
+                      className="rounded-lg border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-50 transition cursor-pointer shrink-0"
+                    >
+                      {enriching ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : "⚡ Find Email"}
+                    </button>
+                  )}
+                </div>
                 <p className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Globe className="h-4 w-4 shrink-0 text-muted-foreground/60" />
                   {detail.websiteUrl ? <a href={detail.websiteUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline truncate">{detail.websiteUrl}</a> : "No website"}
@@ -507,7 +561,7 @@ function Dashboard() {
                         <option value="professional">Professional</option><option value="casual">Casual</option><option value="bold">Bold</option>
                       </select>
                     </div>
-                    <button onClick={handleGenerate} disabled={generating} className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-bold text-white glow-primary hover:brightness-110 transition disabled:opacity-50 cursor-pointer">
+                    <button onClick={handleGenerate} disabled={generating} className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-bold text-white hover:brightness-110 transition disabled:opacity-50 cursor-pointer">
                       {generating ? <><Loader2 className="h-4 w-4 animate-spin" />Generating...</> : <><Sparkles className="h-4 w-4" />Generate Pitch</>}
                     </button>
                   </div>

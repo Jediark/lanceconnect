@@ -1,3 +1,5 @@
+import { COUNTRIES as ALL_COUNTRIES } from "./countriesData";
+
 export type Lead = {
   id: string;
   businessName: string;
@@ -44,7 +46,7 @@ export const MOCK_LEADS: Lead[] = [
 export const MOCK_PIPELINE_LEADS: Lead[] = [
   { ...MOCK_LEADS[0], savedAt: "2026-05-20", status: "contacted", notes: "Called on Tuesday, left voicemail", followUpDate: "2026-05-30" },
   { ...MOCK_LEADS[1], savedAt: "2026-05-22", status: "interested", notes: "Replied to email, wants a quote", followUpDate: "2026-05-28" },
-  { ...MOCK_LEADS[3], savedAt: "2026-05-24", status: "new", notes: "", followUpDate: null },
+  { ...MOCK_LEADS[2], savedAt: "2026-05-24", status: "new", notes: "", followUpDate: null },
   { ...MOCK_LEADS[4], savedAt: "2026-05-25", status: "proposal_sent", notes: "Sent proposal for $1,200 website", followUpDate: "2026-06-01" },
   { ...MOCK_LEADS[6], savedAt: "2026-05-26", status: "new", notes: "", followUpDate: null },
 ];
@@ -76,24 +78,7 @@ export const CATEGORIES = [
   { id: "va", emoji: "", label: "Virtual Assistant", example: "Find busy entrepreneurs needing support" },
 ];
 
-export const COUNTRIES = [
-  { code: "NG", flag: "", name: "Nigeria" },
-  { code: "IT", flag: "", name: "Italy" },
-  { code: "GB", flag: "", name: "United Kingdom" },
-  { code: "AR", flag: "", name: "Argentina" },
-  { code: "IN", flag: "", name: "India" },
-  { code: "CA", flag: "", name: "Canada" },
-  { code: "FR", flag: "", name: "France" },
-  { code: "MY", flag: "", name: "Malaysia" },
-  { code: "US", flag: "", name: "United States" },
-  { code: "DE", flag: "", name: "Germany" },
-  { code: "BR", flag: "", name: "Brazil" },
-  { code: "ES", flag: "", name: "Spain" },
-  { code: "MX", flag: "", name: "Mexico" },
-  { code: "ZA", flag: "", name: "South Africa" },
-  { code: "KE", flag: "", name: "Kenya" },
-  { code: "AU", flag: "", name: "Australia" },
-];
+export const COUNTRIES = ALL_COUNTRIES;
 
 export const STATUS_META: Record<PipelineStatus, { label: string; emoji: string; color: string; ring: string }> = {
   new:           { label: "New",            emoji: "●", color: "bg-slate-100 text-slate-700",       ring: "border-l-slate-400" },

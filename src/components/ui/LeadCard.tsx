@@ -38,13 +38,13 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
       type="button"
       onClick={() => onOpenDetail?.(lead)}
       className={cn(
-        "group relative flex w-full flex-col rounded-2xl border bg-card p-5 text-left shadow-card transition-all",
-        "hover:-translate-y-0.5 hover:shadow-card-hover",
-        isSaved ? "border-emerald-400/60 ring-1 ring-emerald-200" : "border-border",
+        "group relative flex w-full flex-col rounded-2xl border bg-card p-5 text-left transition-all duration-300",
+        "hover:border-primary/50 hover:bg-card/80",
+        isSaved ? "border-emerald-500/70 ring-1 ring-emerald-500/10 bg-emerald-500/[0.01]" : "border-border/90",
       )}
     >
       {isSaved && (
-        <span className="absolute -top-2 right-4 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-0.5 text-[11px] font-medium text-white shadow">
+        <span className="absolute -top-2 right-4 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-0.5 text-[11px] font-bold text-white border border-emerald-400/30">
           <Check className="h-3 w-3" /> Saved
         </span>
       )}
