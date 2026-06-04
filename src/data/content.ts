@@ -1,40 +1,41 @@
-/** Real Unsplash images used across the marketing site. All free-to-use, attributed via author handles below. */
+/** Real freelancer images used across the marketing site and dashboard. */
 export const IMG = {
   // Hero / general
-  heroFreelancer: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1400&q=80", // woman with laptop on bed (Brooke Cagle)
-  heroLaptop: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1400&q=80", // laptop on desk
-  workspace: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&q=80", // desk
-  team: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1400&q=80",
-  coffeeShop: "https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=1400&q=80",
+  heroFreelancer: "/assets/freelancers/freelancer_4.jpg", // woman with laptop on balcony overlooking sea
+  heroLaptop: "/assets/freelancers/freelancer_7.jpg", // close-up typing & stock chart phone
+  workspace: "/assets/freelancers/freelancer_12.jpg", // over-the-shoulder stock graphs
+  team: "/assets/freelancers/freelancer_9.jpg", // team of three working on laptops
+  coffeeShop: "/assets/freelancers/freelancer_13.jpg", // two colleagues working in bright room
   marketStall: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1400&q=80",
   // Categories
-  webDev: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&q=80",
-  designer: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=1200&q=80",
-  copywriter: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&q=80",
-  seo: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
-  social: "https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=1200&q=80",
-  video: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1200&q=80",
-  photo: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&q=80",
-  marketing: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=1200&q=80",
-  appDev: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&q=80",
-  va: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=80",
-  // Faces — for testimonials & team. Real people photos from Unsplash.
-  face1: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&h=375&fit=crop&crop=faces&q=80",
-  face2: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=375&fit=crop&crop=faces&q=80",
-  face3: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&h=375&fit=crop&crop=faces&q=80",
-  face4: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=375&fit=crop&crop=faces&q=80",
-  face5: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=375&fit=crop&crop=faces&q=80",
-  face6: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=375&fit=crop&crop=faces&q=80",
-  face7: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=500&h=375&fit=crop&crop=faces&q=80",
-  face8: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&h=375&fit=crop&crop=faces&q=80",
+  webDev: "/assets/freelancers/freelancer_1.jpg",
+  designer: "/assets/freelancers/freelancer_2.jpg",
+  copywriter: "/assets/freelancers/freelancer_5.jpg",
+  seo: "/assets/freelancers/freelancer_8.jpg",
+  social: "/assets/freelancers/freelancer_6.jpg",
+  video: "/assets/freelancers/freelancer_3.jpg",
+  photo: "/assets/freelancers/freelancer_10.jpg",
+  marketing: "/assets/freelancers/freelancer_11.jpg",
+  appDev: "/assets/freelancers/freelancer_12.jpg",
+  va: "/assets/freelancers/freelancer_13.jpg",
+  // Faces — for testimonials & team. Real people photos.
+  face1: "/assets/freelancers/freelancer_11.jpg", // Taiwo Adeyemi (black man in suit outdoors)
+  face2: "/assets/freelancers/freelancer_4.jpg",  // Maria Silva (woman on sea-view balcony)
+  face3: "/assets/freelancers/freelancer_8.jpg",  // James Kariuki (man sitting on park bench)
+  face4: "/assets/freelancers/freelancer_1.jpg",  // Priya Patel (South Asian man sitting outside in pink shirt)
+  face5: "/assets/freelancers/freelancer_5.jpg",  // Alex Johnson / Lucas Fernández (man with turban)
+  face6: "/assets/freelancers/freelancer_6.jpg",  // Sofia Romano (young woman with pink hair on balcony)
+  face7: "/assets/freelancers/freelancer_2.jpg",  // Kenji (man typing on laptop)
+  face8: "/assets/freelancers/freelancer_10.jpg", // Sofia / other (man with glasses and lamp)
   // Blog images
-  blog1: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&q=80",
-  blog2: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1000&q=80",
-  blog3: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1000&q=80",
-  blog4: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=1000&q=80",
-  blog5: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1000&q=80",
-  blog6: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&q=80",
+  blog1: "/assets/freelancers/freelancer_1.jpg",
+  blog2: "/assets/freelancers/freelancer_2.jpg",
+  blog3: "/assets/freelancers/freelancer_3.jpg",
+  blog4: "/assets/freelancers/freelancer_4.jpg",
+  blog5: "/assets/freelancers/freelancer_5.jpg",
+  blog6: "/assets/freelancers/freelancer_6.jpg",
 };
+
 
 export type BlogPost = {
   slug: string;

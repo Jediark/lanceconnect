@@ -75,12 +75,12 @@ const HERO_SLIDES = [
 ];
 
 const HERO_MOSAIC = [
-  { src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&q=80&fit=crop&crop=face", name: "Taiwo", skill: "Web Dev", size: 100, top: "8%", left: "8%", delay: 0 },
-  { src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80&fit=crop&crop=face", name: "Priya", skill: "SEO", size: 110, top: "10%", left: "62%", delay: 0.4 },
-  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fit=crop&crop=face", name: "Alex", skill: "Marketer", size: 85, top: "42%", left: "80%", delay: 0.8 },
-  { src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80&fit=crop&crop=face", name: "Maria", skill: "Designer", size: 90, top: "46%", left: "4%", delay: 1.2 },
-  { src: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&q=80&fit=crop&crop=face", name: "Kenji", skill: "Developer", size: 95, top: "72%", left: "66%", delay: 1.6 },
-  { src: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80&fit=crop&crop=face", name: "Sofia", skill: "Video", size: 100, top: "74%", left: "14%", delay: 2.0 },
+  { src: "/assets/freelancers/freelancer_11.jpg", name: "Taiwo", skill: "Web Dev", size: 100, top: "8%", left: "8%", delay: 0 },
+  { src: "/assets/freelancers/freelancer_1.jpg", name: "Priya", skill: "SEO", size: 110, top: "10%", left: "62%", delay: 0.4 },
+  { src: "/assets/freelancers/freelancer_8.jpg", name: "Alex", skill: "Marketer", size: 85, top: "42%", left: "80%", delay: 0.8 },
+  { src: "/assets/freelancers/freelancer_4.jpg", name: "Maria", skill: "Designer", size: 90, top: "46%", left: "4%", delay: 1.2 },
+  { src: "/assets/freelancers/freelancer_2.jpg", name: "Kenji", skill: "Developer", size: 95, top: "72%", left: "66%", delay: 1.6 },
+  { src: "/assets/freelancers/freelancer_6.jpg", name: "Sofia", skill: "Video", size: 100, top: "74%", left: "14%", delay: 2.0 },
 ];
 
 function HeroWithMosaic() {
@@ -90,7 +90,7 @@ function HeroWithMosaic() {
       {/* Background Image with solid dark overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img 
-          src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2000&q=80" 
+          src={IMG.heroFreelancer} 
           alt="" 
           className="h-full w-full object-cover opacity-10 mix-blend-luminosity"
         />
@@ -377,7 +377,7 @@ function TutorialVideoSection() {
               {/* Styled Mock Dashboard Graphic for Thumbnail */}
               <div className="absolute inset-0 bg-[#080B14] opacity-80 mix-blend-multiply" />
               <img 
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" 
+                src={IMG.workspace} 
                 alt="LanceConnect Tutorial Video" 
                 className="absolute inset-0 h-full w-full object-cover opacity-35"
               />
