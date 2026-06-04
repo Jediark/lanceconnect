@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
         const scrapeRes = await fetch(scrapeUrl, {
           method: 'GET',
           headers,
-          signal: AbortSignal.timeout(14000) // 14s timeout
+          signal: AbortSignal.timeout(55000) // 55s timeout — Apify actor runs take 20-45s
         })
 
         if (scrapeRes.ok) {
