@@ -57,7 +57,7 @@ export function MarketingNav() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
           </span>
-          <span className="text-muted-foreground">Active Lead Scanning: 1,482 cities checked today · 41,209 leads indexed today</span>
+          <span className="text-slate-700 dark:text-muted-foreground">Active Lead Scanning: 1,482 cities checked today · 41,209 leads indexed today</span>
         </div>
 
         {/* Search, Language & Currency preferences (Desktop only) */}
@@ -65,7 +65,7 @@ export function MarketingNav() {
           {/* CMD+K Search Icon Button */}
           <button 
             onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
-            className="p-1 text-muted-foreground hover:text-primary transition cursor-pointer flex items-center gap-1.5 hover:bg-accent rounded-lg px-2"
+            className="p-1 text-slate-800 dark:text-slate-300 hover:text-primary transition cursor-pointer flex items-center gap-1.5 hover:bg-accent rounded-lg px-2"
             aria-label="Search"
             title="Search (⌘K)"
           >
@@ -79,7 +79,7 @@ export function MarketingNav() {
           <div className="relative" ref={settingsRef}>
             <button
               onClick={() => setSettingsOpen(!settingsOpen)}
-              className="flex items-center gap-1.5 p-1 text-muted-foreground hover:text-primary transition cursor-pointer text-[10px] font-bold hover:bg-accent rounded-lg px-2"
+              className="flex items-center gap-1.5 p-1 text-slate-800 dark:text-slate-300 hover:text-primary transition cursor-pointer text-[10px] font-bold hover:bg-accent rounded-lg px-2"
               aria-label="Settings"
             >
               <Globe className="h-3.5 w-3.5" />
@@ -91,31 +91,31 @@ export function MarketingNav() {
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Preferences</p>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-[10px] text-slate-400 mb-1 font-medium">Language</label>
+                    <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-1 font-semibold">Language</label>
                     <select
                       value={language}
                       onChange={(e) => setLanguage(e.target.value as Language)}
-                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
+                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-slate-950 dark:text-white focus:outline-none transition cursor-pointer"
                     >
-                      <option value="en">English (EN)</option>
-                      <option value="fr">Français (FR)</option>
-                      <option value="it">Italiano (IT)</option>
-                      <option value="es">Español (ES)</option>
-                      <option value="pt">Português (PT)</option>
+                      <option value="en" className="bg-background text-slate-950 dark:text-white">English (EN)</option>
+                      <option value="fr" className="bg-background text-slate-950 dark:text-white">Français (FR)</option>
+                      <option value="it" className="bg-background text-slate-950 dark:text-white">Italiano (IT)</option>
+                      <option value="es" className="bg-background text-slate-950 dark:text-white">Español (ES)</option>
+                      <option value="pt" className="bg-background text-slate-950 dark:text-white">Português (PT)</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] text-slate-400 mb-1 font-medium">Currency</label>
+                    <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-1 font-semibold">Currency</label>
                     <select
                       value={currency}
                       onChange={(e) => setCurrency(e.target.value as Currency)}
-                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none transition cursor-pointer"
+                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-slate-950 dark:text-white focus:outline-none transition cursor-pointer"
                     >
-                      <option value="USD">USD ($)</option>
-                      <option value="EUR">EUR (€)</option>
-                      <option value="GBP">GBP (£)</option>
-                      <option value="NGN">NGN (₦)</option>
-                      <option value="BRL">BRL (R$)</option>
+                      <option value="USD" className="bg-background text-slate-950 dark:text-white">USD ($)</option>
+                      <option value="EUR" className="bg-background text-slate-950 dark:text-white">EUR (€)</option>
+                      <option value="GBP" className="bg-background text-slate-950 dark:text-white">GBP (£)</option>
+                      <option value="NGN" className="bg-background text-slate-950 dark:text-white">NGN (₦)</option>
+                      <option value="BRL" className="bg-background text-slate-950 dark:text-white">BRL (R$)</option>
                     </select>
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export function MarketingNav() {
             </div>
           </div>
 
-          <button onClick={() => setOpen(!open)} className="lg:hidden rounded-lg p-2 text-slate-300 hover:bg-accent" aria-label="Menu">
+          <button onClick={() => setOpen(!open)} className="lg:hidden rounded-lg p-2 text-slate-800 dark:text-slate-300 hover:bg-accent" aria-label="Menu">
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>

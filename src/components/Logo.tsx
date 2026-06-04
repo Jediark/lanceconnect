@@ -27,13 +27,20 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 
 export function LanceConnectLogo({ className }: { className?: string }) {
   const { theme } = usePreferences();
-  const logoSrc = theme === "light" ? "/logo-white.png" : "/logo-navy.png";
+  const logoSrc = theme === "light" ? "/logo-navy.png" : "/logo-white.png";
 
   return (
     <img 
       src={logoSrc} 
       alt="LanceConnect Logo" 
-      className={cn("h-11 md:h-14 w-auto object-contain", className)} 
+      style={{ imageRendering: "crisp-edges" }}
+      className={cn(
+        "h-11 md:h-14 w-auto object-contain transition-all duration-300",
+        theme === "light" 
+          ? "filter drop-shadow-[0_0_12px_rgba(37,99,235,0.15)] hover:drop-shadow-[0_0_18px_rgba(16,185,129,0.3)] hover:scale-[1.02]" 
+          : "filter drop-shadow-[0_0_12px_rgba(255,255,255,0.1)] hover:drop-shadow-[0_0_18px_rgba(99,102,241,0.3)] hover:scale-[1.02]",
+        className
+      )} 
     />
   );
 }

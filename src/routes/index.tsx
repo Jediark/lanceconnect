@@ -86,44 +86,37 @@ const HERO_MOSAIC = [
 function HeroWithMosaic() {
   const { t } = usePreferences();
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background py-20 lg:py-28 text-foreground transition-colors duration-300">
-      {/* Background Image with theme overlay */}
+    <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28 text-white">
+      {/* Background Image with solid dark overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img 
           src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2000&q=80" 
           alt="" 
-          className="h-full w-full object-cover opacity-5 dark:opacity-10 mix-blend-luminosity"
+          className="h-full w-full object-cover opacity-10 mix-blend-luminosity"
         />
-        {/* Glittering color radial gradients */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_10%,var(--primary-glow),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_90%,var(--secondary-glow),transparent_40%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/50 to-background" />
-      </div>
-
-      <div className="absolute inset-0 opacity-40 z-0">
-        <div className="h-full w-full bg-dot-pattern" />
+        <div className="absolute inset-0 bg-[#080B14]/95" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div className="z-10">
-            <p className="text-xs font-mono text-muted-foreground mb-2 tracking-widest uppercase">
+            <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
               {t("hero_eyebrow")}
             </p>
-            <h1 className="font-display text-4xl font-extrabold text-foreground mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
+            <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
               {t("hero_title")}
             </h1>
-            <p className="mt-6 text-base text-muted-foreground max-w-lg leading-relaxed">
+            <p className="mt-6 text-base text-slate-300 max-w-lg leading-relaxed">
               {t("hero_sub")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20">
                 {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3.5 text-sm font-medium hover:bg-accent hover:text-foreground transition text-foreground">
-                <Play className="h-4 w-4 text-primary" /> {t("hero_cta_demo")}
+              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 px-6 py-3.5 text-sm font-medium hover:bg-accent transition text-white">
+                <Play className="h-4 w-4" /> {t("hero_cta_demo")}
               </Link>
             </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-muted-foreground">
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-[#475569]">
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime</span>
@@ -660,9 +653,9 @@ const FEATURES_LIST = [
       </div>
     ),
     footer: () => (
-      <div className="space-y-2 border-t border-border/60 pt-4 font-mono text-xs text-[#64748B] w-full">
-        <div className="flex justify-between"><span>Leads indexed</span><span className="text-white font-semibold">2.4M+</span></div>
-        <div className="flex justify-between"><span>Countries covered</span><span className="text-white font-semibold">150+</span></div>
+      <div className="space-y-2 border-t border-border/60 pt-4 font-mono text-xs text-slate-600 dark:text-[#64748B] w-full">
+        <div className="flex justify-between"><span>Leads indexed</span><span className="text-slate-950 dark:text-white font-semibold">2.4M+</span></div>
+        <div className="flex justify-between"><span>Countries covered</span><span className="text-slate-950 dark:text-white font-semibold">150+</span></div>
       </div>
     )
   },
@@ -757,9 +750,9 @@ const FEATURES_LIST = [
     gridClass: "lg:col-start-1 lg:row-start-3 lg:col-span-3 lg:w-full lg:max-w-none",
     connector: () => null,
     footer: () => (
-      <div className="flex flex-wrap gap-1.5 mt-4 text-[9px] font-mono text-[#CBD5E1] w-full">
+      <div className="flex flex-wrap gap-1.5 mt-4 text-[9px] font-mono text-slate-700 dark:text-[#CBD5E1] w-full">
         {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev"].map(tag => (
-          <span key={tag} className="px-2 py-0.5 rounded bg-background border border-border">{tag}</span>
+          <span key={tag} className="px-2 py-0.5 rounded bg-background border border-border text-slate-800 dark:text-slate-200">{tag}</span>
         ))}
       </div>
     )
@@ -795,8 +788,8 @@ function Features() {
                       <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
-                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
+                      <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
+                      <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed">
                         {card.desc}
                       </p>
                     </div>
@@ -810,8 +803,8 @@ function Features() {
                       <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
-                      <p className="text-xs md:text-sm text-slate-400 leading-relaxed line-clamp-3">
+                      <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
+                      <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed line-clamp-3">
                         {card.desc}
                       </p>
                     </div>
@@ -840,8 +833,8 @@ function Features() {
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
-                    <p className="text-xs md:text-sm text-slate-400 leading-relaxed line-clamp-3">
+                    <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
+                    <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
                   </div>
@@ -864,8 +857,8 @@ function Features() {
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-display text-lg font-bold text-white mb-2">{card.title}</h3>
-                    <p className="text-xs md:text-sm text-slate-400 leading-relaxed line-clamp-3">
+                    <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
+                    <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
                   </div>
@@ -978,8 +971,8 @@ function LeadScannerSandbox() {
                       onClick={() => setCraft(item.id as any)}
                       className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all ${
                         craft === item.id 
-                          ? 'border-primary bg-primary/10 text-white font-semibold shadow-[0_0_15px_rgba(99,102,241,0.15)]'
-                          : 'border-border/60 bg-background text-slate-400 hover:text-white hover:border-border'
+                          ? 'border-primary bg-primary/10 text-primary font-semibold shadow-[0_0_15px_rgba(99,102,241,0.08)]'
+                          : 'border-border bg-background text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       <item.icon className="h-4.5 w-4.5 text-primary shrink-0" />
@@ -996,10 +989,10 @@ function LeadScannerSandbox() {
                   <select
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full bg-background border border-border/80 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
+                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-xs text-slate-950 dark:text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
                   >
                     {["London", "Lagos", "São Paulo", "Tokyo", "Buenos Aires"].map((c) => (
-                      <option key={c} value={c} className="bg-background text-white">
+                      <option key={c} value={c} className="bg-background text-slate-950 dark:text-white">
                         {c}
                       </option>
                     ))}
@@ -1063,11 +1056,11 @@ function LeadScannerSandbox() {
               {!isScanning && !scanComplete && (
                 <div className="text-center max-w-sm mx-auto space-y-4 py-8">
                   <div className="h-12 w-12 rounded-2xl bg-card/80 border border-border/80 flex items-center justify-center mx-auto shadow-md">
-                    <Search className="h-5 w-5 text-slate-400" />
+                    <Search className="h-5 w-5 text-slate-500" />
                   </div>
                   <div>
-                    <h3 className="font-display text-sm font-semibold text-white">{t("sandbox_ready_title")}</h3>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">{t("sandbox_ready_title")}</h3>
+                    <p className="text-xs text-slate-700 dark:text-slate-400 mt-1">
                       {t("sandbox_ready_desc")}
                     </p>
                   </div>
@@ -1088,11 +1081,11 @@ function LeadScannerSandbox() {
                   </div>
 
                   {/* Terminal Logs */}
-                  <div className="bg-background rounded-xl border border-border/80 p-4 font-mono text-[10px] text-slate-400 space-y-1.5 max-h-[140px] overflow-y-auto flex-1 flex flex-col justify-end">
+                  <div className="bg-background rounded-xl border border-border/80 p-4 font-mono text-[10px] text-slate-750 dark:text-slate-400 space-y-1.5 max-h-[140px] overflow-y-auto flex-1 flex flex-col justify-end">
                     {terminalLogs.map((log, idx) => (
                       <div key={idx} className="flex gap-2">
                         <span className="text-primary font-bold">{`>`}</span>
-                        <span className={log.includes('[SUCCESS]') ? 'text-emerald-400 font-semibold' : log.includes('[SCAN]') ? 'text-yellow-400' : 'text-slate-300'}>
+                        <span className={log.includes('[SUCCESS]') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : log.includes('[SCAN]') ? 'text-amber-600 dark:text-yellow-400' : 'text-slate-800 dark:text-slate-300'}>
                           {log}
                         </span>
                       </div>
@@ -1117,7 +1110,7 @@ function LeadScannerSandbox() {
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-display text-sm font-bold text-white leading-tight">{l.name}</h4>
+                            <h4 className="font-display text-sm font-bold text-slate-950 dark:text-white leading-tight">{l.name}</h4>
                             <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-primary">
                               {l.score} Match
                             </span>
@@ -1126,7 +1119,7 @@ function LeadScannerSandbox() {
                         </div>
                         <div className="flex flex-wrap gap-1.5 justify-end">
                           {l.issues.map((issue: string, idx: number) => (
-                            <span key={idx} className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-[4px] text-[8px] font-mono">
+                            <span key={idx} className="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2 py-0.5 rounded-[4px] text-[8px] font-mono">
                               ⚠ {issue}
                             </span>
                           ))}
@@ -1135,16 +1128,16 @@ function LeadScannerSandbox() {
 
                       {/* AI Draft section */}
                       <div className="bg-card border border-border/60 rounded-lg p-2.5 flex flex-col gap-2">
-                        <div className="flex justify-between items-center text-[9px] text-slate-400 font-mono">
+                        <div className="flex justify-between items-center text-[9px] text-slate-600 dark:text-slate-400 font-mono">
                           <span>Subject: {l.subject}</span>
                           <button
                             onClick={() => handleCopy(l.id, `Subject: ${l.subject}\n\n${l.draft}`)}
-                            className="flex items-center gap-1 hover:text-white transition duration-200"
+                            className="flex items-center gap-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition duration-200"
                           >
                             {copiedId === l.id ? (
                               <>
-                                <Check className="h-3 w-3 text-emerald-400" />
-                                <span className="text-emerald-400">Copied!</span>
+                                <Check className="h-3 w-3 text-emerald-500" />
+                                <span className="text-emerald-500">Copied!</span>
                               </>
                             ) : (
                               <>
@@ -1157,7 +1150,7 @@ function LeadScannerSandbox() {
                         <textarea
                           value={l.draft}
                           onChange={(e) => handleDraftChange(l.id, e.target.value)}
-                          className="bg-transparent border-0 font-mono text-[9px] text-slate-300 resize-none h-16 focus:outline-none focus:ring-0 leading-relaxed scrollbar-thin scrollbar-thumb-border"
+                          className="bg-transparent border-0 font-mono text-[9px] text-slate-800 dark:text-slate-300 resize-none h-16 focus:outline-none focus:ring-0 leading-relaxed scrollbar-thin scrollbar-thumb-border"
                         />
                       </div>
                     </div>
@@ -1207,7 +1200,7 @@ function GlobalReach() {
               {cities.map((city) => (
                 <span 
                   key={city.name} 
-                  className="inline-flex items-center gap-1.5 rounded-full bg-card border border-border px-3 py-1 text-xs text-slate-300 font-mono"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-card border border-border px-3 py-1 text-xs text-slate-800 dark:text-slate-300 font-mono font-medium"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   {city.name}
@@ -1218,7 +1211,7 @@ function GlobalReach() {
 
           {/* Right: Map */}
           <div className="lg:col-span-7">
-            <div className="relative mx-auto w-full h-[280px] md:h-[320px] border border-border bg-card/20 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative mx-auto w-full h-[280px] md:h-[320px] border border-[#1e293b] bg-[#0b0f19] rounded-2xl overflow-hidden shadow-2xl">
               <div className="absolute inset-0 bg-dot-pattern opacity-45" />
               
               {/* Stylized world grid coordinates */}
