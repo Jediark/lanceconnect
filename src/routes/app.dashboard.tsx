@@ -106,6 +106,11 @@ function Dashboard() {
     if (!user) return;
     setLoading(true);
 
+    // Prefill search parameters from user profile
+    if (user.freelancerCategory) setQuickCategory(user.freelancerCategory);
+    if (user.country) setQuickCountry(user.country);
+    if (user.city) setQuickCity(user.city);
+
     // Total leads discovered in system
     supabase
       .from("leads")
@@ -144,9 +149,11 @@ function Dashboard() {
       .then(({ count, error }) => {
         if (!error && count !== null) setScansCount(count);
       });
-    supabase
-      .from("leads")
-      .select("*")
+    let leadsQuery = supabase.from("leads").select("*");
+    if (user.freelancerCategory) {
+      leadsQuery = leadsQuery.eq("industry", user.freelancerCategory);
+    }
+    leadsQuery
       .order("created_at", { ascending: false })
       .limit(6)
       .then(({ data, error }) => {
@@ -239,9 +246,8 @@ function Dashboard() {
       return;
     }
     try {
-      const q = CATEGORIES.find((c) => c.id === quickCategory)?.label || "local business";
       const { data, error } = await supabase.functions.invoke("search-leads", {
-        body: { query: q, city: quickCity, country: quickCountry, limit: 12 },
+        body: { query: quickCategory, city: quickCity, country: quickCountry, limit: 12 },
       });
       if (error) throw error;
       const mapped = (data?.leads || []).map((d: any) => ({
@@ -437,7 +443,7 @@ function Dashboard() {
             <div className="grid gap-3 sm:grid-cols-4">
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                  Business Type
+                  My Category / Service
                 </label>
                 <select
                   value={quickCategory}

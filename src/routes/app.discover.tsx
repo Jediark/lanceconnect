@@ -93,9 +93,11 @@ function Discover() {
   useEffect(() => {
     if (user) {
       setLoading(true);
-      supabase
-        .from("leads")
-        .select("*")
+      let queryBuilder = supabase.from("leads").select("*");
+      if (user.freelancerCategory) {
+        queryBuilder = queryBuilder.eq("industry", user.freelancerCategory);
+      }
+      queryBuilder
         .order("created_at", { ascending: false })
         .limit(12)
         .then(({ data, error }) => {

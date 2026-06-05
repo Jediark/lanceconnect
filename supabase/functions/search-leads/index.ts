@@ -334,7 +334,7 @@ Deno.serve(async (req) => {
             if (upsertError) {
               console.error("Failed to upsert scraped leads into database:", upsertError);
             } else if (insertedLeads) {
-              // Trigger socials lookup (which in turn triggers scoring) for the newly scraped leads asynchronously
+              // Trigger socials lookup (which in turn triggers scoring) and contact enrichment for the newly scraped leads asynchronously
               for (const newLead of insertedLeads) {
                 fetch(`${supabaseUrl}/functions/v1/check-social`, {
                   method: "POST",
@@ -346,6 +346,19 @@ Deno.serve(async (req) => {
                 }).catch((err) =>
                   console.error("Async social check trigger failed for lead:", newLead.id, err),
                 );
+
+                if (newLead.website_url) {
+                  fetch(`${supabaseUrl}/functions/v1/enrich-contact`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: req.headers.get("Authorization") || "",
+                    },
+                    body: JSON.stringify({ leadId: newLead.id }),
+                  }).catch((err) =>
+                    console.error("Async contact enrichment trigger failed for lead:", newLead.id, err),
+                  );
+                }
               }
 
               // Append to final results
