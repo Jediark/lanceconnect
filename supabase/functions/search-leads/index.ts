@@ -42,6 +42,28 @@ Deno.serve(async (req) => {
 
     const { query, city, country, limit } = parsed.data
 
+    // Map skill category IDs to target local business niches (potential clients)
+    const categoryNiches: Record<string, string[]> = {
+      web_dev: ['restaurant', 'bakery', 'beauty salon', 'plumber', 'auto repair', 'dry cleaner'],
+      seo: ['dentist', 'chiropractor', 'gym', 'law firm', 'medical clinic', 'pest control'],
+      designer: ['cafe', 'boutique', 'bakery', 'spa', 'restaurant', 'florist'],
+      copywriter: ['lawyer', 'clinic', 'consultant', 'accountant', 'architect'],
+      social_media: ['gym', 'beauty salon', 'boutique', 'cafe', 'restaurant', 'fitness studio'],
+      video: ['real estate agency', 'hotel', 'private school', 'gym', 'resort'],
+      photography: ['restaurant', 'hotel', 'boutique', 'wedding planner', 'portrait studio'],
+      marketing: ['contractor', 'garage', 'dentist', 'private school', 'roofing contractor'],
+      app_dev: ['restaurant', 'pharmacy', 'taxi service', 'gym', 'food delivery'],
+      va: ['consultant', 'coaching', 'shortcut', 'law firm', 'real estate agent']
+    }
+
+    let searchKeyword = query
+    if (query in categoryNiches) {
+      const niches = categoryNiches[query]
+      // Pick a random niche to keep results fresh and diverse
+      searchKeyword = niches[Math.floor(Math.random() * niches.length)]
+      console.log(`Mapped category "${query}" to client niche keyword "${searchKeyword}"`)
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
     const apifyServiceUrl = Deno.env.get('APIFY_SERVICE_URL') || 'http://apify-service.internal:8002'
@@ -134,10 +156,10 @@ Deno.serve(async (req) => {
 
     // 5. Fallback to scrape if cache is empty or insufficient
     if (finalLeads.length < 3) {
-      console.log(`Cache miss for ${query} in ${city}, ${country}. Invoking Apify scraper...`)
+      console.log(`Cache miss for category "${query}" (keyword "${searchKeyword}") in ${city}, ${country}. Invoking Apify scraper...`)
       
       try {
-        let scrapeUrl = `${apifyServiceUrl}/scrape?keyword=${encodeURIComponent(query)}&city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&limit=10`
+        let scrapeUrl = `${apifyServiceUrl}/scrape?keyword=${encodeURIComponent(searchKeyword)}&city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&limit=10`
         if (lat !== null && lng !== null) {
           scrapeUrl += `&lat=${lat}&lng=${lng}`
         }
@@ -161,7 +183,7 @@ Deno.serve(async (req) => {
           if (newLeads.length > 0) {
             const leadsToInsert = newLeads.map((item: any) => ({
               business_name: item.business_name,
-              business_type: item.business_type || query,
+              business_type: item.business_type || searchKeyword,
               industry: query,
               description: item.description || null,
               country,
