@@ -261,7 +261,7 @@ function HeroWithMosaic() {
   }, [embla]);
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-slate-100 dark:bg-[#0B0F19] transition-colors duration-300">
+    <section className="relative overflow-hidden border-b border-border bg-slate-200 dark:bg-[#0B0F19] transition-colors duration-300">
       <div ref={emblaRef} className="overflow-hidden w-full">
         <div className="flex">
           {SLIDES_DATA.map((slide, idx) => {
@@ -275,7 +275,7 @@ function HeroWithMosaic() {
                     alt="" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19]/95 via-[#0B0F19]/80 to-[#0B0F19]/45 dark:block hidden transition-all duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-slate-200/92 via-slate-200/75 to-slate-100/35 dark:hidden block transition-all duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-300/95 via-slate-300/85 to-slate-200/50 dark:hidden block transition-all duration-500" />
                 </div>
 
                 <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 pt-8 pb-12 lg:pt-10 lg:pb-16 z-10">
@@ -827,7 +827,7 @@ function HowItWorks() {
       className="relative overflow-hidden border-y border-border py-24 text-white"
     >
       <motion.div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-40"
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-50"
         style={{ 
           backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
           y,
@@ -835,7 +835,7 @@ function HowItWorks() {
           top: "-15%"
         }}
       />
-      <div className="absolute inset-0 bg-[#0B0F19]/65 dark:bg-[#0B0F19]/65 z-10" />
+      <div className="absolute inset-0 bg-[#0B0F19]/65 dark:bg-[#0B0F19]/55 z-10" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// quick.workflow</p>
@@ -1781,7 +1781,7 @@ function Stats() {
       className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
     >
       <motion.div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-40"
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
         style={{ 
           backgroundImage: `url(${IMG.team})`,
           y,
@@ -1789,7 +1789,7 @@ function Stats() {
           top: "-15%"
         }}
       />
-      <div className="absolute inset-0 bg-slate-100/65 dark:bg-[#0B0F19]/70 z-10" />
+      <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#0B0F19]/55 z-10" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// by.the.numbers</p>
@@ -1837,7 +1837,7 @@ function FAQ() {
       className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
     >
       <motion.div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-40"
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
         style={{ 
           backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
           y,
@@ -1845,7 +1845,7 @@ function FAQ() {
           top: "-15%"
         }}
       />
-      <div className="absolute inset-0 bg-slate-100/65 dark:bg-[#0B0F19]/70 z-10" />
+      <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#0B0F19]/55 z-10" />
       
       <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
