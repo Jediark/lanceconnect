@@ -3,7 +3,7 @@ import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShel
 import { FREELANCER_CATEGORIES } from "@/data/content";
 import { CATEGORIES } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
-import { ArrowRight, AlertCircle, Building2, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users, MapPin, DollarSign, Mail, Phone, Globe, Github, Linkedin, Twitter, ArrowLeft, Star, ExternalLink, ShieldCheck } from "lucide-react";
+import { ArrowRight, AlertCircle, Building2, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users, MapPin, DollarSign, Mail, Phone, Globe, Github, Linkedin, Twitter, ArrowLeft, Star, ExternalLink, ShieldCheck, GraduationCap, Leaf, Utensils, Package, Factory, BookOpen } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "web-developers": <Code className="h-5 w-5 text-primary" />,
@@ -15,7 +15,13 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "photographers": <Camera className="h-5 w-5 text-primary" />,
   "marketers": <Megaphone className="h-5 w-5 text-primary" />,
   "app-developers": <Smartphone className="h-5 w-5 text-primary" />,
-  "virtual-assistants": <Users className="h-5 w-5 text-primary" />
+  "virtual-assistants": <Users className="h-5 w-5 text-primary" />,
+  "online-tutors": <GraduationCap className="h-5 w-5 text-primary" />,
+  "african-food-export": <Leaf className="h-5 w-5 text-primary" />,
+  "restaurant-suppliers": <Utensils className="h-5 w-5 text-primary" />,
+  "product-export": <Package className="h-5 w-5 text-primary" />,
+  "b2b-trade": <Factory className="h-5 w-5 text-primary" />,
+  "corporate-training": <BookOpen className="h-5 w-5 text-primary" />
 };
 
 export const Route = createFileRoute("/freelancers/$slug")({
@@ -41,24 +47,28 @@ export const Route = createFileRoute("/freelancers/$slug")({
     return { type: "freelancer" as const, cat: null, freelancer };
   },
   head: ({ loaderData }) => {
-    if (!loaderData) return [];
+    if (!loaderData) return { meta: [] };
     if (loaderData.type === "category") {
       const { cat } = loaderData;
-      return [
-        { title: `Find clients as a ${cat.label.toLowerCase()} — LanceConnect` },
-        { name: "description", content: cat.tagline },
-        { property: "og:title", content: `For ${cat.label}` },
-        { property: "og:description", content: cat.tagline },
-        { property: "og:image", content: cat.image },
-      ];
+      return {
+        meta: [
+          { title: `Find clients as a ${cat.label.toLowerCase()} — LanceConnect` },
+          { name: "description", content: cat.tagline },
+          { property: "og:title", content: `For ${cat.label}` },
+          { property: "og:description", content: cat.tagline },
+          { property: "og:image", content: cat.image },
+        ]
+      };
     } else {
       const { freelancer } = loaderData;
-      return [
-        { title: `${freelancer.full_name} — Professional Freelancer` },
-        { name: "description", content: freelancer.bio || `View portfolio, case studies, and contact details for ${freelancer.full_name} directly on LanceConnect.` },
-        { property: "og:title", content: `${freelancer.full_name} Profile` },
-        { property: "og:description", content: freelancer.bio || "Hire directly off-platform." },
-      ];
+      return {
+        meta: [
+          { title: `${freelancer.full_name} — Professional Freelancer` },
+          { name: "description", content: freelancer.bio || `View portfolio, case studies, and contact details for ${freelancer.full_name} directly on LanceConnect.` },
+          { property: "og:title", content: `${freelancer.full_name} Profile` },
+          { property: "og:description", content: freelancer.bio || "Hire directly off-platform." },
+        ]
+      };
     }
   },
   notFoundComponent: () => (
@@ -83,6 +93,7 @@ export const Route = createFileRoute("/freelancers/$slug")({
 
 function FreelancerSlugPage() {
   const data = Route.useLoaderData();
+  if (!data) return null;
 
   if (data.type === "category") {
     const { cat } = data;

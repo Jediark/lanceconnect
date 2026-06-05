@@ -4,7 +4,8 @@ import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
   Globe2, BarChart3, Zap, Search, Terminal, Copy, Check, Loader2, Code2, Palette,
-  PenTool, Smartphone, Film, Camera, Megaphone, AppWindow, Handshake, ChevronLeft, ChevronRight
+  PenTool, Smartphone, Film, Camera, Megaphone, AppWindow, Handshake, ChevronLeft, ChevronRight,
+  GraduationCap, Leaf, Utensils, Package, Factory, BookOpen
 } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
@@ -1100,7 +1101,7 @@ const FEATURES_LIST = [
     connector: () => null,
     footer: () => (
       <div className="flex flex-wrap gap-1.5 mt-4 text-[9px] font-mono text-slate-800 dark:text-slate-200 w-full">
-        {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev"].map(tag => (
+        {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev", "Tutoring", "Food Export", "B2B Trade"].map(tag => (
           <span key={tag} className="px-2 py-0.5 rounded bg-background border border-border text-slate-900 dark:text-slate-100">{tag}</span>
         ))}
       </div>
@@ -1614,6 +1615,12 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
   marketing: Megaphone,
   app_dev: AppWindow,
   va: Handshake,
+  tutor: GraduationCap,
+  african_food_export: Leaf,
+  restaurant_supplier: Utensils,
+  product_export: Package,
+  b2b_trade: Factory,
+  corporate_training: BookOpen,
 };
 
 /* ────────────────────────────────────────────────────────────
@@ -1653,6 +1660,8 @@ function categorySlug(id: string) {
     web_dev: "web-developers", designer: "designers", copywriter: "copywriters", seo: "seo-specialists",
     social_media: "social-media", video: "videographers", photography: "photographers", marketing: "marketers",
     app_dev: "app-developers", va: "virtual-assistants",
+    tutor: "online-tutors", african_food_export: "african-food-export", restaurant_supplier: "restaurant-suppliers",
+    product_export: "product-export", b2b_trade: "b2b-trade", corporate_training: "corporate-training",
   };
   return map[id] ?? id;
 }

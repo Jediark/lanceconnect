@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, Check, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users, Globe } from "lucide-react";
+import { ArrowRight, Check, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users, Globe, GraduationCap, Leaf, Utensils, Package, Factory, BookOpen } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,7 +15,13 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   photography: <Camera className="h-5 w-5 text-primary" />,
   marketing: <Megaphone className="h-5 w-5 text-primary" />,
   app_dev: <Smartphone className="h-5 w-5 text-primary" />,
-  va: <Users className="h-5 w-5 text-primary" />
+  va: <Users className="h-5 w-5 text-primary" />,
+  tutor: <GraduationCap className="h-5 w-5 text-primary" />,
+  african_food_export: <Leaf className="h-5 w-5 text-primary" />,
+  restaurant_supplier: <Utensils className="h-5 w-5 text-primary" />,
+  product_export: <Package className="h-5 w-5 text-primary" />,
+  b2b_trade: <Factory className="h-5 w-5 text-primary" />,
+  corporate_training: <BookOpen className="h-5 w-5 text-primary" />
 };
 
 export const Route = createFileRoute("/onboarding")({

@@ -31,6 +31,7 @@ function Discover() {
   const [detail, setDetail] = useState<Lead | null>(null);
   const [results, setResults] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
+  const [product, setProduct] = useState("");
 
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
@@ -90,6 +91,13 @@ function Discover() {
           if (website === "no" && l.hasWebsite) return false;
           if (website === "yes" && !l.hasWebsite) return false;
           if (l.opportunityScore < minScore) return false;
+          if (product && ['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category)) {
+            const notesText = l.notes || "";
+            const hasProduct = notesText.toLowerCase().includes(product.toLowerCase()) ||
+                              l.businessName.toLowerCase().includes(product.toLowerCase()) ||
+                              l.businessType.toLowerCase().includes(product.toLowerCase());
+            if (!hasProduct) return false;
+          }
           return true;
         });
         setResults(filtered);
@@ -118,7 +126,8 @@ function Discover() {
             query: queryTerm,
             city: city,
             country: countryName,
-            limit: 20
+            limit: 20,
+            product: ['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category) ? product : undefined
           })
         }
       );
@@ -179,7 +188,7 @@ function Discover() {
     return [...out].sort((a, b) => sort === "score" ? b.opportunityScore - a.opportunityScore : b.googleRating - a.googleRating);
   }, [results, website, minScore, sort]);
 
-  const clear = () => { setCategory(""); setCountry(""); setCity(""); setWebsite(""); setMinScore(0); };
+  const clear = () => { setCategory(""); setCountry(""); setCity(""); setWebsite(""); setMinScore(0); setProduct(""); };
 
   const downloadCSV = () => {
     if (filteredResults.length === 0) return;
@@ -221,6 +230,14 @@ function Discover() {
             <option value="">All Categories</option>
             {CATEGORIES.map((c) => <option key={c.id} value={c.id} className="bg-background text-foreground">{c.label}</option>)}
           </select>
+          {['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category) && (
+            <input
+              value={product}
+              onChange={(e) => setProduct(e.target.value)}
+              placeholder="What product do you supply? (e.g. palm oil)"
+              className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary w-56 animate-in slide-in-from-left-2 duration-200"
+            />
+          )}
           <select value={country} onChange={(e) => setCountry(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
             <option value="">All Countries</option>
             {COUNTRIES.map((c) => <option key={c.code} value={c.name} className="bg-background text-foreground">{c.name}</option>)}

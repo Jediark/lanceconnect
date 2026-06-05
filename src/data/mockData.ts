@@ -41,6 +41,11 @@ export const MOCK_LEADS: Lead[] = [
   { id: "6", businessName: "AutoFix Garage", businessType: "Auto Repair", industry: "web_dev", city: "Toronto", country: "Canada", fullAddress: "567 Yonge St, Toronto, ON", phone: "+1 416 555 0177", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.0, googleReviewCount: 89, opportunityScore: 55, source: "google_places", savedAt: null, status: null },
   { id: "7", businessName: "Boulangerie Dupont", businessType: "Bakery", industry: "photography", city: "Lyon", country: "France", fullAddress: "23 Rue de la République, Lyon", phone: "+33 4 72 55 01 89", email: null, websiteUrl: null, hasWebsite: false, googleRating: 4.9, googleReviewCount: 3, opportunityScore: 96, source: "google_places", savedAt: null, status: null },
   { id: "8", businessName: "Kuala Lumpur Yoga Studio", businessType: "Fitness Studio", industry: "video", city: "Kuala Lumpur", country: "Malaysia", fullAddress: "Bukit Bintang, Kuala Lumpur", phone: "+60 3-2142 5588", email: "hello@klyoga.my", websiteUrl: null, hasWebsite: false, googleRating: 4.6, googleReviewCount: 11, opportunityScore: 81, source: "google_places", savedAt: null, status: null },
+  { id: "mock-tutor-1", businessName: "Peckham Language Academy", businessType: "Language School", industry: "tutor", city: "London", country: "United Kingdom", fullAddress: "12 Queen's Rd, London SE15 2PT", phone: "+44 20 7555 9823", email: "contact@peckhamlanguages.co.uk", websiteUrl: "http://peckhamlanguages.co.uk", hasWebsite: true, googleRating: 4.2, googleReviewCount: 15, opportunityScore: 68, source: "google_places", savedAt: null, status: null },
+  { id: "mock-food-1", businessName: "Wanis International Foods", businessType: "Food Importer", industry: "african_food_export", city: "London", country: "United Kingdom", fullAddress: "Golden House, Commercial Way, London NW10 7SR", phone: "+44 20 8961 4411", email: "sales@wanis.com", websiteUrl: "https://wanis.com", hasWebsite: true, googleRating: 4.4, googleReviewCount: 152, opportunityScore: 94, source: "google_places", savedAt: null, status: null, notes: "Product Interest: palm oil" },
+  { id: "mock-food-2", businessName: "ABI Global Foods", businessType: "African Food Wholesaler", industry: "african_food_export", city: "London", country: "United Kingdom", fullAddress: "Unit 3, Abbey Trading Estate, London", phone: "+44 20 8555 0192", email: "info@abiglobalfoods.co.uk", websiteUrl: "http://abiglobalfoods.co.uk", hasWebsite: true, googleRating: 4.0, googleReviewCount: 47, opportunityScore: 88, source: "google_places", savedAt: null, status: null },
+  { id: "mock-food-3", businessName: "Peckham Quality Foods", businessType: "Ethnic Supermarket", industry: "african_food_export", city: "London", country: "United Kingdom", fullAddress: "Rye Ln, London SE15", phone: "+44 20 7555 4040", email: null, websiteUrl: null, hasWebsite: false, googleRating: 3.8, googleReviewCount: 18, opportunityScore: 91, source: "google_places", savedAt: null, status: null },
+  { id: "mock-training-1", businessName: "Acme Corporate HQ", businessType: "Corporate Office", industry: "corporate_training", city: "London", country: "United Kingdom", fullAddress: "30 St Mary Axe, London EC3A 8BF", phone: "+44 20 7222 5555", email: "hr@acmecorp.co.uk", websiteUrl: "https://acmecorp.co.uk", hasWebsite: true, googleRating: 4.5, googleReviewCount: 120, opportunityScore: 85, source: "google_places", savedAt: null, status: null },
 ];
 
 export const MOCK_PIPELINE_LEADS: Lead[] = [
@@ -66,16 +71,22 @@ export const MOCK_TEMPLATES = [
 ];
 
 export const CATEGORIES = [
-  { id: "web_dev", emoji: "", label: "Web Development", example: "Find businesses without websites" },
-  { id: "designer", emoji: "", label: "Graphic Design", example: "Find brands that need a refresh" },
-  { id: "copywriter", emoji: "", label: "Copywriting", example: "Find businesses with no blog or bad content" },
-  { id: "seo", emoji: "", label: "SEO", example: "Find businesses invisible on Google" },
-  { id: "social_media", emoji: "", label: "Social Media", example: "Find businesses with no Instagram/Facebook" },
-  { id: "video", emoji: "", label: "Video Production", example: "Find businesses with no video content" },
-  { id: "photography", emoji: "", label: "Photography", example: "Find restaurants, hotels needing photos" },
-  { id: "marketing", emoji: "", label: "Digital Marketing", example: "Find businesses with zero ad presence" },
-  { id: "app_dev", emoji: "", label: "App Development", example: "Find businesses needing mobile apps" },
-  { id: "va", emoji: "", label: "Virtual Assistant", example: "Find busy entrepreneurs needing support" },
+  { id: "web_dev", emoji: "💻", label: "Web Development", example: "Find businesses without websites" },
+  { id: "designer", emoji: "🎨", label: "Graphic Design", example: "Find brands that need a refresh" },
+  { id: "copywriter", emoji: "✍️", label: "Copywriting", example: "Find businesses with no blog or bad content" },
+  { id: "seo", emoji: "📈", label: "SEO", example: "Find businesses invisible on Google" },
+  { id: "social_media", emoji: "📱", label: "Social Media", example: "Find businesses with no Instagram/Facebook" },
+  { id: "video", emoji: "🎥", label: "Video Production", example: "Find businesses with no video content" },
+  { id: "photography", emoji: "📸", label: "Photography", example: "Find restaurants, hotels needing photos" },
+  { id: "marketing", emoji: "📣", label: "Digital Marketing", example: "Find businesses with zero ad presence" },
+  { id: "app_dev", emoji: "📲", label: "App Development", example: "Find businesses needing mobile apps" },
+  { id: "va", emoji: "🤝", label: "Virtual Assistant", example: "Find busy entrepreneurs needing support" },
+  { id: "tutor", emoji: "🎓", label: "Online Tutoring", example: "Find schools and learning centers needing tutors" },
+  { id: "african_food_export", emoji: "🌍", label: "African Food Export", example: "Find importers and ethnic wholesalers of African foods" },
+  { id: "restaurant_supplier", emoji: "🍽️", label: "Restaurant Supplier", example: "Find restaurants needing local/ethnic supply" },
+  { id: "product_export", emoji: "🛒", label: "Product Import/Export", example: "Find global wholesalers and trade buyers" },
+  { id: "b2b_trade", emoji: "🏭", label: "B2B Trade", example: "Find manufacturers needing bulk materials" },
+  { id: "corporate_training", emoji: "📚", label: "Workforce Development", example: "Find organizations needing leadership or L&D solutions" }
 ];
 
 export const COUNTRIES = ALL_COUNTRIES;

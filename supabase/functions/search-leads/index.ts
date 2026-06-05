@@ -17,7 +17,8 @@ const requestSchema = z.object({
   query: z.string().min(1),
   city: z.string().min(1),
   country: z.string().min(1),
-  limit: z.number().optional().default(10)
+  limit: z.number().optional().default(10),
+  product: z.string().optional()
 })
 
 Deno.serve(async (req) => {
@@ -40,7 +41,7 @@ Deno.serve(async (req) => {
       )
     }
 
-    const { query, city, country, limit } = parsed.data
+    const { query, city, country, limit, product } = parsed.data
 
     // Map skill category IDs to target local business niches (potential clients)
     const categoryNiches: Record<string, string[]> = {
@@ -53,7 +54,13 @@ Deno.serve(async (req) => {
       photography: ['restaurant', 'hotel', 'boutique', 'wedding planner', 'portrait studio'],
       marketing: ['contractor', 'garage', 'dentist', 'private school', 'roofing contractor'],
       app_dev: ['restaurant', 'pharmacy', 'taxi service', 'gym', 'food delivery'],
-      va: ['consultant', 'coaching', 'shortcut', 'law firm', 'real estate agent']
+      va: ['consultant', 'coaching', 'shortcut', 'law firm', 'real estate agent'],
+      tutor: ['primary school', 'secondary school', 'learning center', 'tutoring center', 'language school', 'university', 'college'],
+      african_food_export: ['african food store', 'caribbean food importer', 'ethnic food wholesaler', 'african restaurant', 'international food distributor', 'african caribbean supermarket', 'ethnic grocery'],
+      restaurant_supplier: ['restaurant', 'hotel kitchen', 'catering company', 'food service company', 'pub kitchen', 'cafe'],
+      product_export: ['food importer', 'commodity trader', 'wholesale distributor', 'import export company', 'international trader'],
+      b2b_trade: ['manufacturer', 'wholesale supplier', 'distributor', 'procurement company', 'buying agent', 'trading company'],
+      corporate_training: ['corporate office', 'hr department', 'private school administrative office', 'training center', 'business headquarters', 'non profit organization']
     }
 
     let searchKeyword = query
@@ -62,6 +69,11 @@ Deno.serve(async (req) => {
       // Pick a random niche to keep results fresh and diverse
       searchKeyword = niches[Math.floor(Math.random() * niches.length)]
       console.log(`Mapped category "${query}" to client niche keyword "${searchKeyword}"`)
+    }
+
+    if (product && ['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(query)) {
+      searchKeyword = `${searchKeyword} ${product}`
+      console.log(`Appended product to query: "${searchKeyword}"`)
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
@@ -185,7 +197,9 @@ Deno.serve(async (req) => {
               business_name: item.business_name,
               business_type: item.business_type || searchKeyword,
               industry: query,
-              description: item.description || null,
+              description: product 
+                ? (item.description ? `${item.description} (Product Interest: ${product})` : `Product Interest: ${product}`)
+                : (item.description || null),
               country,
               city,
               full_address: item.full_address || null,

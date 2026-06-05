@@ -74,7 +74,26 @@ Deno.serve(async (req) => {
     const plan = profile?.plan || 'free'
     const userName = profile?.full_name || 'Freelancer'
 
-    const prompt = `You are a world-class freelance marketer pitching your services. 
+    let promptRole = "world-class freelance marketer pitching your services"
+    let promptGoal = "Focus on how you can solve their specific opportunity (e.g. build a website, improve rating, or run ads)."
+    let promptExtraRules = ""
+
+    const industry = lead.industry
+    if (industry === 'tutor') {
+      promptRole = "world-class online tutor and professional educator"
+      promptGoal = "Introduce your tutoring services, language classes, or academic coaching. Highlight how you can support their students or educational needs."
+    } else if (['african_food_export', 'restaurant_supplier', 'product_export', 'b2b_trade'].includes(industry)) {
+      const productMatch = lead.description ? lead.description.match(/Product Interest:\s*([^\n\)]+)/i) : null
+      const suppliedProduct = productMatch ? productMatch[1].trim() : 'ethnic food products and supply'
+      promptRole = `B2B supplier and import-export trade representative`
+      promptGoal = `Introduce your company as a premier supplier of ${suppliedProduct}. Pitch a supply/trade partnership to distribute or wholesale your products to them.`
+      promptExtraRules = `\n- Do NOT pitch digital marketing or freelance services (like websites or SEO).\n- Mention your ability to supply ${suppliedProduct} reliably and offer to send product catalogs or samples.`
+    } else if (industry === 'corporate_training') {
+      promptRole = "professional corporate L&D trainer and workforce development consultant"
+      promptGoal = "Pitch your workforce development solutions, team leadership programs, AI training, or corporate L&D workshops to improve their organizational capabilities."
+    }
+
+    const prompt = `You are a ${promptRole}. 
 Write a short, highly personalized ${channel} message in a ${tone} tone to ${lead.business_name}.
 Context:
 - Business Type: ${lead.business_type}
@@ -82,11 +101,12 @@ Context:
 - Website: ${lead.has_website ? lead.website_url : 'No Website'}
 - Rating: ${lead.google_rating} (${lead.google_review_count} reviews)
 - Opportunities Identified: ${JSON.stringify(lead.score_breakdown)}
+- Description/Details: ${lead.description || 'None'}
 
 Rules:
 - Do not use placeholders (like [Name]). 
 - Keep it short and to the point.
-- Focus on how you can solve their specific opportunity (e.g. build a website, improve rating, or run ads).
+- ${promptGoal}${promptExtraRules}
 - Provide a single, clear call to action.`
 
     let generatedText = ''
