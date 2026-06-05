@@ -503,34 +503,17 @@ function HowItWorks() {
     { icon: LineChart, title: "Discover leads", desc: "Get a scored list of businesses that need exactly what you sell." },
     { icon: Mail, title: "Reach out", desc: "Use ready-made templates — or our AI writer — to contact them in seconds." },
   ];
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
     <section 
-      ref={containerRef}
       id="how" 
-      className="relative overflow-hidden border-y border-border py-24 text-white"
+      className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
     >
-      <motion.div 
-        className="absolute inset-0 z-0 bg-cover bg-center"
-        style={{ 
-          backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
-          y,
-          height: "130%",
-          top: "-15%"
-        }}
-      />
-      <div className="absolute inset-0 bg-[#090C15]/85 z-10" />
-      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
+      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// quick.workflow</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">From zero to outreach in minutes</h2>
-          <p className="mt-3 text-slate-300">A simple workflow built around how freelancers actually find clients.</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">From zero to outreach in minutes</h2>
+          <p className="mt-3 text-muted-foreground">A simple workflow built around how freelancers actually find clients.</p>
         </div>
         <div className="relative mt-14 grid gap-6 md:grid-cols-4">
           <div className="absolute left-0 right-0 top-7 hidden h-px bg-border/40 md:block" />
@@ -539,9 +522,9 @@ function HowItWorks() {
               <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-foreground text-background">
                 <s.icon className="h-6 w-6" />
               </div>
-              <p className="font-mono-data text-xs text-slate-400">STEP {i + 1}</p>
-              <h3 className="mt-1 font-display text-lg font-semibold text-white">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">{s.desc}</p>
+              <p className="font-mono-data text-xs text-muted-foreground">STEP {i + 1}</p>
+              <h3 className="mt-1 font-display text-lg font-semibold text-foreground">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -1194,13 +1177,13 @@ function LeadScannerSandbox() {
    ──────────────────────────────────────────────────────────── */
 function GlobalReach() {
   const cities = [
-    { name: "Lagos", x: "50%", y: "58%", delay: 0 },
-    { name: "London", x: "47%", y: "30%", delay: 0.3 },
-    { name: "Mumbai", x: "68%", y: "50%", delay: 0.6 },
-    { name: "New York", x: "30%", y: "36%", delay: 0.9 },
-    { name: "São Paulo", x: "38%", y: "74%", delay: 1.2 },
-    { name: "Tokyo", x: "83%", y: "40%", delay: 1.5 },
-    { name: "Dubai", x: "60%", y: "45%", delay: 1.8 },
+    { name: "Lagos", country: "Nigeria", x: "50%", y: "58%", delay: 0 },
+    { name: "London", country: "United Kingdom", x: "47%", y: "30%", delay: 0.3 },
+    { name: "Mumbai", country: "India", x: "68%", y: "50%", delay: 0.6 },
+    { name: "New York", country: "United States", x: "30%", y: "36%", delay: 0.9 },
+    { name: "São Paulo", country: "Brazil", x: "38%", y: "74%", delay: 1.2 },
+    { name: "Tokyo", country: "Japan", x: "83%", y: "40%", delay: 1.5 },
+    { name: "Dubai", country: "UAE", x: "60%", y: "45%", delay: 1.8 },
   ];
 
   return (
@@ -1214,7 +1197,7 @@ function GlobalReach() {
             </p>
              <h2 className="font-display text-3xl font-extrabold text-foreground tracking-tight leading-tight">
               Freelancers in every country.<br className="hidden sm:inline" /> Leads in every city.
-            </h2>
+             </h2>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-md">
               A truly global ecosystem matching local clients with global freelance talent. We scan 150+ countries in real-time.
             </p>
@@ -1256,10 +1239,10 @@ function GlobalReach() {
                   <span className="absolute inline-flex h-4.5 w-4.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/45 animate-pulse" />
                   <span className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary" />
 
-                  {/* Floating label */}
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
-                    <div className="bg-slate-950 border border-slate-800 rounded-lg py-1 px-2.5 text-[10px] font-mono font-medium text-white shadow-xl whitespace-nowrap">
-                      {city.name} Hub
+                  {/* Always visible label showing City and Country */}
+                  <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 pointer-events-none z-10">
+                    <div className="bg-[#0B0F19]/90 border border-primary/30 rounded-md py-0.5 px-2 text-[8px] md:text-[9px] font-mono font-medium text-slate-100 shadow-md whitespace-nowrap">
+                      {city.name}, {city.country}
                     </div>
                   </div>
                 </div>
@@ -1468,10 +1451,10 @@ function Stats() {
   return (
     <section 
       ref={containerRef}
-      className="relative overflow-hidden border-y border-border py-24 text-white"
+      className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
     >
       <motion.div 
-        className="absolute inset-0 z-0 bg-cover bg-center"
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-10 dark:opacity-15 mix-blend-luminosity"
         style={{ 
           backgroundImage: `url(${IMG.team})`,
           y,
@@ -1479,11 +1462,11 @@ function Stats() {
           top: "-15%"
         }}
       />
-      <div className="absolute inset-0 bg-[#090C15]/85 z-10" />
+      <div className="absolute inset-0 bg-background/95 dark:bg-[#0B0F19]/85 z-10" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// by.the.numbers</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
             A real product, with real traction.
           </h2>
         </div>
@@ -1491,7 +1474,7 @@ function Stats() {
           {stats.map((s) => (
             <div key={s.k} className="rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300">
               <p className="font-display text-4xl font-semibold text-primary md:text-5xl">{s.k}</p>
-              <p className="mt-2 text-sm text-slate-300 font-medium">{s.v}</p>
+              <p className="mt-2 text-sm text-muted-foreground font-medium">{s.v}</p>
             </div>
           ))}
         </div>
@@ -1513,33 +1496,57 @@ function FAQ() {
     { q: "Is my data private?", a: "Absolutely. We never share your account info, your saved leads, or your outreach history with anyone. Read our Privacy Policy for full details." },
   ];
   const [open, setOpen] = useState<number | null>(0);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+
   return (
-    <section className="mx-auto max-w-4xl px-4 py-24 lg:px-8">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">FAQ</p>
-        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">Questions, answered honestly</h2>
-        <p className="mt-3 text-muted-foreground">Still curious? <Link to="/contact" className="text-primary underline-offset-4 hover:underline">Talk to a human</Link>.</p>
-      </div>
-      <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-card">
-        {faqs.map((f, i) => {
-          const isOpen = open === i;
-          return (
-            <div key={f.q}>
-              <button
-                onClick={() => setOpen(isOpen ? null : i)}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
-              >
-                <span className="font-display text-base font-semibold md:text-lg">{f.q}</span>
-                {isOpen ? <Minus className="h-4 w-4 shrink-0 text-muted-foreground" /> : <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />}
-              </button>
-              {isOpen && (
-                <div className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground animate-fade-in">
-                  {f.a}
-                </div>
-              )}
-            </div>
-          );
-        })}
+    <section 
+      ref={containerRef}
+      className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
+    >
+      <motion.div 
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-10 dark:opacity-15 mix-blend-luminosity"
+        style={{ 
+          backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
+          y,
+          height: "130%",
+          top: "-15%"
+        }}
+      />
+      <div className="absolute inset-0 bg-background/95 dark:bg-[#0B0F19]/85 z-10" />
+      
+      <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// questions.answered</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">Questions, answered honestly</h2>
+          <p className="mt-3 text-muted-foreground">Still curious? <Link to="/contact" className="text-primary underline-offset-4 hover:underline">Talk to a human</Link>.</p>
+        </div>
+        <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-card">
+          {faqs.map((f, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={f.q}>
+                <button
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                >
+                  <span className="font-display text-base font-semibold md:text-lg text-foreground">{f.q}</span>
+                  {isOpen ? <Minus className="h-4 w-4 shrink-0 text-muted-foreground" /> : <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                </button>
+                {isOpen && (
+                  <div className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground animate-fade-in">
+                    {f.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

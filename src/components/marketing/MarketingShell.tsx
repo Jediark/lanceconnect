@@ -236,7 +236,7 @@ export function MarketingFooter() {
               <img 
                 src="/logo-navy.png" 
                 alt="LanceConnect" 
-                className="h-12 md:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)]" 
+                className="h-16 md:h-22 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)]" 
               />
             </Link>
             <p className="mt-4 text-xs leading-relaxed text-slate-400">
