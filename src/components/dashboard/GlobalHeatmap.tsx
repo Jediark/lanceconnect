@@ -15,14 +15,14 @@ export function GlobalHeatmap({ className }: { className?: string }) {
       {/* Abstract Map Nodes */}
       <div className="absolute inset-0">
         <MapNode top="30%" left="20%" label="New York (US)" size="lg" />
-        <MapNode top="40%" left="15%" label="Los Angeles (US)" size="md" />
+        <MapNode top="40%" left="15%" label="Los Angeles (US)" size="md" className="hidden sm:flex" />
         <MapNode top="25%" left="48%" label="London (UK)" size="lg" delay="1s" />
-        <MapNode top="32%" left="52%" label="Berlin (DE)" size="sm" delay="0.5s" />
+        <MapNode top="32%" left="52%" label="Berlin (DE)" size="sm" delay="0.5s" className="hidden sm:flex" />
         <MapNode top="50%" left="50%" label="Lagos (NG)" size="md" delay="1.5s" />
-        <MapNode top="65%" left="30%" label="São Paulo (BR)" size="sm" delay="2s" />
-        <MapNode top="45%" left="75%" label="Mumbai (IN)" size="lg" delay="0.8s" />
-        <MapNode top="70%" left="85%" label="Sydney (AU)" size="md" delay="2.5s" />
-        <MapNode top="35%" left="80%" label="Tokyo (JP)" size="lg" delay="1.2s" />
+        <MapNode top="65%" left="30%" label="São Paulo (BR)" size="sm" delay="2s" className="hidden sm:flex" />
+        <MapNode top="45%" left="75%" label="Mumbai (IN)" size="lg" delay="0.8s" className="hidden sm:flex" />
+        <MapNode top="70%" left="85%" label="Sydney (AU)" size="md" delay="2.5s" className="hidden sm:flex" />
+        <MapNode top="35%" left="80%" label="Tokyo (JP)" size="lg" delay="1.2s" className="hidden sm:flex" />
       </div>
 
       <div className="relative z-10 p-5 flex flex-col h-full pointer-events-none">
@@ -49,18 +49,20 @@ function MapNode({
   label,
   size = "md",
   delay = "0s",
+  className,
 }: {
   top: string;
   left: string;
   label: string;
   size?: "sm" | "md" | "lg";
   delay?: string;
+  className?: string;
 }) {
   const sizeMap = { sm: "h-1.5 w-1.5", md: "h-2 w-2", lg: "h-3 w-3" };
   const pingSizeMap = { sm: "h-4 w-4", md: "h-5 w-5", lg: "h-6 w-6" };
 
   return (
-    <div className="absolute flex flex-col items-center" style={{ top, left }}>
+    <div className={cn("absolute flex flex-col items-center", className)} style={{ top, left }}>
       <div className="relative flex items-center justify-center">
         <span
           className={cn("animate-ping absolute rounded-full bg-primary/40", pingSizeMap[size])}

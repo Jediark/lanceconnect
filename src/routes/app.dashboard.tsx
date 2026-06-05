@@ -465,14 +465,14 @@ function Dashboard() {
           </div>
           <Link
             to="/freelancers"
-            className="shrink-0 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition"
+            className="w-full sm:w-auto text-center shrink-0 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition"
           >
             Browse Public Directory
           </Link>
         </div>
 
         {/* ═══ HERO SEARCH ═══ */}
-        <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-10">
+        <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-8 md:p-10">
           {/* decorative dots */}
           <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-40" />
 
@@ -573,7 +573,7 @@ function Dashboard() {
         </section>
 
         {/* ═══ STATS ROW ═══ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
               label: "Total Discovered",
@@ -638,7 +638,7 @@ function Dashboard() {
         <div className="grid gap-6 lg:grid-cols-3">
           {/* ── Results area (2 cols) ── */}
           <div className="lg:col-span-2 space-y-5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold text-foreground">Discovered Businesses</h3>
                 <p className="text-xs text-muted-foreground">
@@ -648,7 +648,7 @@ function Dashboard() {
               {results.length > 0 && (
                 <button
                   onClick={downloadCSV}
-                  className="flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition cursor-pointer"
+                  className="self-start sm:self-auto flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition cursor-pointer"
                 >
                   <Download className="h-3.5 w-3.5" /> Export CSV
                 </button>
@@ -723,20 +723,20 @@ function Dashboard() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex flex-col sm:flex-row gap-2" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => {
                             setQuickConnectLead(lead);
                             setQuickConnectOpen(true);
                           }}
-                          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-muted border border-border py-1.5 text-[11px] font-bold text-foreground hover:bg-accent transition cursor-pointer"
+                          className="w-full sm:flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-muted border border-border py-1.5 text-[11px] font-bold text-foreground hover:bg-accent transition cursor-pointer"
                         >
                           <Mail className="h-3 w-3" /> Quick Connect
                         </button>
                         <button
                           onClick={() => handleSaveLead(lead)}
                           disabled={isSaved || savingId === lead.id}
-                          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-success border border-success py-1.5 text-[11px] font-bold text-white hover:brightness-110 transition disabled:opacity-40 cursor-pointer"
+                          className="w-full sm:flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-success border border-success py-1.5 text-[11px] font-bold text-white hover:brightness-110 transition disabled:opacity-40 cursor-pointer"
                         >
                           {savingId === lead.id ? (
                             <Loader2 className="h-3 w-3 animate-spin" />
@@ -910,7 +910,7 @@ function Dashboard() {
               </button>
             </div>
 
-            <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+            <div className="p-6 space-y-5 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto">
               {/* Contact info */}
               <div className="space-y-2">
                 <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -1010,9 +1010,9 @@ function Dashboard() {
                       onChange={(e) => setOutreachDraft(e.target.value)}
                       className="w-full h-32 rounded-xl border border-border bg-background p-3 text-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <span className="text-[10px] text-muted-foreground">{provider}</span>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => setOutreachDraft("")}
                           className="rounded-lg border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer transition"

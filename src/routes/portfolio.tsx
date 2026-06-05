@@ -73,7 +73,7 @@ const PORTFOLIO_FREELANCERS = [
       },
       {
         title: "Organic Cosmetics Pack",
-        image: "https://images.unsplash.com/photo-1608248597481-496100c8c836?w=400&q=80",
+        image: "/assets/freelancers/organic_cosmetics_pack.png",
         desc: "Eco-friendly retail box and bottle design.",
       },
     ],

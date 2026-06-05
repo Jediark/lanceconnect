@@ -336,7 +336,7 @@ function HeroWithMosaic() {
                 <div className="absolute inset-0 z-0 select-none pointer-events-none">
                   <img
                     src={slide.bgImg}
-                    className={`w-full h-full object-cover transition-transform duration-1000 ${isActive ? "scale-100" : "scale-105"}`}
+                    className={`w-full h-full object-cover opacity-35 transition-transform duration-1000 ${isActive ? "scale-100" : "scale-105"}`}
                     alt=""
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/45 dark:block hidden transition-all duration-500" />
@@ -2234,13 +2234,13 @@ function CTA() {
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+            className="inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-3 text-sm font-semibold text-background transition hover:opacity-90"
           >
             Create free account <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/pricing"
-            className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold text-foreground hover:bg-foreground/10 transition"
             style={{ borderColor: "var(--ink-border)" }}
           >
             See pricing
