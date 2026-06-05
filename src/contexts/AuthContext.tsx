@@ -76,6 +76,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         leadsLimit: data.leads_limit || 10,
         stripeCustomerId: data.stripe_customer_id,
         stripeSubscriptionId: data.stripe_subscription_id,
+        isPublic: data.is_public || false,
+        username: data.username,
+        hourlyRate: data.hourly_rate ? Number(data.hourly_rate) : null,
+        portfolioProjects: data.portfolio_projects || [],
+        contactEmail: data.contact_email,
+        contactPhone: data.contact_phone,
+        githubUrl: data.github_url,
+        linkedinUrl: data.linkedin_url,
+        dribbbleUrl: data.dribbble_url,
+        twitterUrl: data.twitter_url,
       });
     } catch (err) {
       console.error("Error mapping profile:", err);
@@ -217,6 +227,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (patch.bio !== undefined) dbPatch.bio = patch.bio;
       if (patch.websiteUrl !== undefined) dbPatch.website_url = patch.websiteUrl;
       if (patch.onboardingCompleted !== undefined) dbPatch.onboarding_completed = patch.onboardingCompleted;
+      if (patch.isPublic !== undefined) dbPatch.is_public = patch.isPublic;
+      if (patch.username !== undefined) dbPatch.username = patch.username;
+      if (patch.hourlyRate !== undefined) dbPatch.hourly_rate = patch.hourlyRate;
+      if (patch.portfolioProjects !== undefined) dbPatch.portfolio_projects = patch.portfolioProjects;
+      if (patch.contactEmail !== undefined) dbPatch.contact_email = patch.contactEmail;
+      if (patch.contactPhone !== undefined) dbPatch.contact_phone = patch.contactPhone;
+      if (patch.githubUrl !== undefined) dbPatch.github_url = patch.githubUrl;
+      if (patch.linkedinUrl !== undefined) dbPatch.linkedin_url = patch.linkedinUrl;
+      if (patch.dribbbleUrl !== undefined) dbPatch.dribbble_url = patch.dribbbleUrl;
+      if (patch.twitterUrl !== undefined) dbPatch.twitter_url = patch.twitterUrl;
 
       supabase
         .from("profiles")

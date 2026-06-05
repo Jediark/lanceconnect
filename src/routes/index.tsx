@@ -1257,7 +1257,7 @@ function LeadScannerSandbox() {
   };
 
   return (
-    <section id="sandbox" className="border-b border-border bg-background py-24 select-none">
+    <section id="sandbox" className="hidden md:block border-b border-border bg-background py-24 select-none">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-3xl text-center mb-16">
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
@@ -1497,7 +1497,7 @@ function GlobalReach() {
   ];
 
   return (
-    <section className="relative overflow-hidden border-t border-border bg-background py-16 select-none">
+    <section className="hidden md:block relative overflow-hidden border-t border-border bg-background py-16 select-none">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
           {/* Left: Content */}

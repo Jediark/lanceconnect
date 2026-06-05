@@ -50,6 +50,16 @@ export type User = {
   leadsLimit: number;
   stripeCustomerId?: string | null;
   stripeSubscriptionId?: string | null;
+  isPublic?: boolean;
+  username?: string | null;
+  hourlyRate?: number | null;
+  portfolioProjects?: any[] | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  githubUrl?: string | null;
+  linkedinUrl?: string | null;
+  dribbbleUrl?: string | null;
+  twitterUrl?: string | null;
 };
 
 export type OutreachTemplate = {

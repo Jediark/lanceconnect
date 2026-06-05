@@ -30,6 +30,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as R500RouteImport } from './routes/500'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FreelancersIndexRouteImport } from './routes/freelancers.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as FreelancersSlugRouteImport } from './routes/freelancers.$slug'
@@ -152,6 +153,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FreelancersIndexRoute = FreelancersIndexRouteImport.update({
+  id: '/freelancers/',
+  path: '/freelancers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/freelancers/': typeof FreelancersIndexRoute
   '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
@@ -304,6 +311,7 @@ export interface FileRoutesByTo {
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app': typeof AppIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/freelancers': typeof FreelancersIndexRoute
   '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
@@ -344,6 +352,7 @@ export interface FileRoutesById {
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/freelancers/': typeof FreelancersIndexRoute
   '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
@@ -385,6 +394,7 @@ export interface FileRouteTypes {
     | '/freelancers/$slug'
     | '/app/'
     | '/blog/'
+    | '/freelancers/'
     | '/app/settings/danger-zone'
     | '/app/settings/notifications'
     | '/app/settings/profile'
@@ -422,6 +432,7 @@ export interface FileRouteTypes {
     | '/freelancers/$slug'
     | '/app'
     | '/blog'
+    | '/freelancers'
     | '/app/settings/danger-zone'
     | '/app/settings/notifications'
     | '/app/settings/profile'
@@ -461,6 +472,7 @@ export interface FileRouteTypes {
     | '/freelancers/$slug'
     | '/app/'
     | '/blog/'
+    | '/freelancers/'
     | '/app/settings/danger-zone'
     | '/app/settings/notifications'
     | '/app/settings/profile'
@@ -493,6 +505,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   FreelancersSlugRoute: typeof FreelancersSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  FreelancersIndexRoute: typeof FreelancersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -642,6 +655,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/freelancers/': {
+      id: '/freelancers/'
+      path: '/freelancers'
+      fullPath: '/freelancers/'
+      preLoaderRoute: typeof FreelancersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/': {
@@ -828,6 +848,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   FreelancersSlugRoute: FreelancersSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
+  FreelancersIndexRoute: FreelancersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
