@@ -36,10 +36,10 @@ export function TopNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b border-border bg-card px-4 lg:px-8 shadow-sm">
+      <header className="sticky top-0 z-50 flex h-20 items-center gap-4 border-b border-border bg-card px-4 lg:px-8 shadow-sm">
         {/* Logo */}
         <Link to="/app/dashboard" className="flex items-center gap-2 shrink-0 mr-4">
-          <LanceConnectLogo className="h-7 w-auto" />
+          <LanceConnectLogo className="h-10 w-auto" />
         </Link>
 
         {/* Desktop Navigation */}
@@ -68,13 +68,13 @@ export function TopNav() {
             <button
               onMouseEnter={() => setOutreachDropdownOpen(true)}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition",
+                "flex items-center gap-2 rounded-md px-4 py-2 text-base font-medium transition",
                 pathname.includes("/templates") || pathname.includes("/ai-generator")
                   ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:bg-accent hover:text-foreground",
               )}
             >
-              <Mail className="h-4 w-4" /> Outreach <ChevronDown className="h-3 w-3" />
+              <Mail className="h-5 w-5" /> Outreach <ChevronDown className="h-4 w-4" />
             </button>
 
             {outreachDropdownOpen && (
@@ -105,25 +105,25 @@ export function TopNav() {
         <div className="flex items-center gap-3 ml-auto">
           <Link
             to="/app/upgrade"
-            className="hidden lg:flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:brightness-110 transition shadow-sm glow-primary"
+            className="hidden lg:flex items-center gap-2 rounded-lg bg-primary px-4.5 py-2.5 text-sm font-bold text-primary-foreground hover:brightness-110 transition shadow-sm glow-primary"
           >
-            <Crown className="h-3.5 w-3.5" /> Upgrade
+            <Crown className="h-4.5 w-4.5" /> Upgrade
           </Link>
 
-          <button className="relative grid h-9 w-9 place-items-center rounded-lg border border-border bg-background hover:bg-accent transition">
-            <Bell className="h-4 w-4 text-foreground" />
+          <button className="relative grid h-11 w-11 place-items-center rounded-lg border border-border bg-background hover:bg-accent transition">
+            <Bell className="h-5 w-5 text-foreground" />
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
           </button>
 
           {loading ? (
-            <div className="h-9 w-9 rounded-full bg-accent animate-pulse" />
+            <div className="h-11 w-11 rounded-full bg-accent animate-pulse" />
           ) : user ? (
             <div className="relative">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2 rounded-full border border-border bg-background p-0.5 pr-2 hover:bg-accent transition"
+                className="flex items-center gap-2 rounded-full border border-border bg-background p-1 pr-3 hover:bg-accent transition"
               >
-                <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-brand text-xs font-bold text-white shadow-sm">
+                <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-brand text-sm font-bold text-white shadow-sm">
                   {(user.fullName || "User")
                     .split(" ")
                     .map((n) => n[0])
@@ -197,9 +197,9 @@ export function TopNav() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="lg:hidden grid h-9 w-9 place-items-center rounded-lg border border-border bg-background"
+            className="lg:hidden grid h-11 w-11 place-items-center rounded-lg border border-border bg-background"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-6 w-6" />
           </button>
         </div>
       </header>
@@ -302,13 +302,13 @@ function NavLink({
     <Link
       to={to}
       className={cn(
-        "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition",
+        "flex items-center gap-2 rounded-md px-4 py-2 text-base font-medium transition",
         active
           ? "bg-primary/10 text-primary"
           : "text-muted-foreground hover:bg-accent hover:text-foreground",
       )}
     >
-      <Icon className="h-4 w-4" /> {label}
+      <Icon className="h-5 w-5" /> {label}
     </Link>
   );
 }

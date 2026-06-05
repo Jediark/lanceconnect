@@ -169,6 +169,7 @@ html.light {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden; /* Prevent horizontal scroll on all viewports */
   }
 
   h1,
