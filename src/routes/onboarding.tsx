@@ -64,6 +64,7 @@ function Onboarding() {
   const [name, setName] = useState(user?.fullName || "");
   const [website, setWebsite] = useState("");
   const [bio, setBio] = useState("");
+  const [whatsapp, setWhatsapp] = useState(user?.contactPhone || "");
 
   // Supplier-specific states
   const [companyName, setCompanyName] = useState("");
@@ -85,8 +86,9 @@ function Onboarding() {
   const [teamSize, setTeamSize] = useState("");
 
   useEffect(() => {
-    if (user?.fullName && !name) {
-      setName(user.fullName);
+    if (user) {
+      if (user.fullName && !name) setName(user.fullName);
+      if (user.contactPhone && !whatsapp) setWhatsapp(user.contactPhone);
     }
   }, [user]);
 
@@ -125,6 +127,7 @@ function Onboarding() {
         city: city || null,
         bio: bio || null,
         websiteUrl: website || null,
+        contactPhone: whatsapp || null,
         onboardingCompleted: true,
         supplierProfile: Object.keys(supplierProfile).length > 0 ? supplierProfile : null,
       });
@@ -274,6 +277,22 @@ function Onboarding() {
                   placeholder="Alex Johnson"
                   className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
                 />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  WhatsApp Number (with country code, e.g. +2348012345678)
+                </label>
+                <input
+                  type="text"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  placeholder="e.g. +2348012345678"
+                  className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
+                />
+                <span className="text-[10px] text-muted-foreground block mt-1">
+                  Clients will be routed to message you directly on WhatsApp.
+                </span>
               </div>
 
               {/* Conditional Sub-forms */}
