@@ -8,6 +8,7 @@ import { OpportunityScore } from "@/components/ui/OpportunityScore";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
+import { CATEGORY_TO_PLACES_QUERY } from "@/types";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -32,6 +33,7 @@ function Discover() {
   const [results, setResults] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState("");
+  const [selectedNiche, setSelectedNiche] = useState("");
 
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
@@ -127,7 +129,8 @@ function Discover() {
             city: city,
             country: countryName,
             limit: 20,
-            product: ['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category) ? product : undefined
+            product: ['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category) ? product : undefined,
+            niche: selectedNiche || undefined
           })
         }
       );
@@ -188,7 +191,7 @@ function Discover() {
     return [...out].sort((a, b) => sort === "score" ? b.opportunityScore - a.opportunityScore : b.googleRating - a.googleRating);
   }, [results, website, minScore, sort]);
 
-  const clear = () => { setCategory(""); setCountry(""); setCity(""); setWebsite(""); setMinScore(0); setProduct(""); };
+  const clear = () => { setCategory(""); setCountry(""); setCity(""); setWebsite(""); setMinScore(0); setProduct(""); setSelectedNiche(""); };
 
   const downloadCSV = () => {
     if (filteredResults.length === 0) return;
@@ -259,6 +262,31 @@ function Discover() {
           </button>
           <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground">Clear filters</button>
         </div>
+
+        {/* Niche Keyword Suggestions */}
+        {category && (CATEGORY_TO_PLACES_QUERY[category] || []).length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-2.5 pt-2.5 border-t border-border/10 select-none">
+            <span className="text-slate-500 font-medium">Niche suggestions:</span>
+            {(CATEGORY_TO_PLACES_QUERY[category] || []).map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => {
+                  setSelectedNiche(selectedNiche === n ? "" : n);
+                  toast.info(selectedNiche === n ? "Cleared niche filter" : `Filtered search niche to: "${n}"`);
+                }}
+                className={cn(
+                  "rounded px-2.5 py-0.5 font-medium border transition cursor-pointer text-[10px]",
+                  selectedNiche === n
+                    ? "bg-primary text-white border-primary"
+                    : "bg-primary/5 border-primary/20 text-primary hover:bg-primary/10"
+                )}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Suggested Cities */}
         {suggestedCities.length > 0 && (
@@ -399,6 +427,51 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   const [selectedChannel, setSelectedChannel] = useState<'email' | 'linkedin' | 'whatsapp' | 'phone_script'>('email');
   const [selectedTone, setSelectedTone] = useState<'casual' | 'professional' | 'bold'>('professional');
   const [provider, setProvider] = useState("");
+  const [activeTab, setActiveTab] = useState<'overview' | 'seo'>('overview');
+  const [seoLoading, setSeoLoading] = useState(false);
+  const [seoData, setSeoData] = useState<{ keywords: any[]; hook: string } | null>(null);
+
+  const handleLoadSeo = async () => {
+    if (seoData) return;
+    setSeoLoading(true);
+    try {
+      if (!user || user.id === "user-1") {
+        setTimeout(() => {
+          const bizType = currentLead.businessType || "business";
+          const cityVal = currentLead.city || "local";
+          const ratingVal = currentLead.googleRating || 4.0;
+          const reviewsVal = currentLead.googleReviewCount || 10;
+          const hasWeb = currentLead.hasWebsite;
+          const kws = [
+            { keyword: `best ${bizType} in ${cityVal}`, volume: 850, difficulty: 42, rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 12 + 10)) : 100 },
+            { keyword: `${bizType} near me`, volume: 1400, difficulty: 58, rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 8 + 4)) : 100 },
+            { keyword: `affordable ${bizType} ${cityVal}`, volume: 320, difficulty: 25, rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 15 + 15)) : 100 },
+            { keyword: `${currentLead.businessName} ${cityVal}`, volume: 150, difficulty: 12, rank: hasWeb ? 1 : 100 }
+          ];
+          kws.sort((a, b) => b.volume - a.volume);
+          let hk = `Hi, did you know that your business doesn't currently list an active website on Google Maps? Over 75% of local searches end up visiting a business with a direct website. I can build a clean, mobile-friendly landing page for you in 3 days to help capture these leads.`;
+          if (hasWeb) {
+            const worstKw = kws.find(k => k.rank > 10) || kws[0];
+            hk = `Hi, I was analyzing local search listings in ${cityVal} and noticed that for '${worstKw.keyword}' (which gets ${worstKw.volume} monthly searches), your website is currently ranking at #${worstKw.rank}. Over 90% of search traffic stays on page 1. I can help optimize your on-page SEO to push your site into the top spots.`;
+          }
+          setSeoData({ keywords: kws, hook: hk });
+          setSeoLoading(false);
+        }, 800);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("lead-seo-audit", {
+        body: { leadId: currentLead.id }
+      });
+      if (error) throw error;
+      setSeoData(data);
+    } catch (err: any) {
+      console.error("Failed to load SEO audit:", err);
+      toast.error(err.message || "Failed to load SEO audit data");
+    } finally {
+      setSeoLoading(false);
+    }
+  };
 
   const handleEnrich = async () => {
     if (!currentLead.websiteUrl) return;
@@ -489,142 +562,256 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
           <button onClick={onClose} className="rounded-lg p-1.5 hover:bg-accent text-slate-400 hover:text-white cursor-pointer"><X className="h-4 w-4" /></button>
         </div>
 
-        <div className="space-y-5 p-6">
-          <div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold uppercase tracking-wide text-slate-400">Opportunity Score</span>
-              <OpportunityScore score={currentLead.opportunityScore} />
-            </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
-              <div className="h-full bg-primary" style={{ width: `${currentLead.opportunityScore}%` }} />
-            </div>
-          </div>
+        <div className="flex border-b border-border px-6 select-none bg-[#0e1322]">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={cn(
+              "px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 -mb-px transition cursor-pointer",
+              activeTab === 'overview' ? "border-primary text-primary" : "border-transparent text-slate-400 hover:text-slate-200"
+            )}
+          >
+            Overview & Outreach
+          </button>
+          <button
+            onClick={() => { setActiveTab('seo'); handleLoadSeo(); }}
+            className={cn(
+              "px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 -mb-px transition cursor-pointer flex items-center gap-1.5",
+              activeTab === 'seo' ? "border-primary text-primary" : "border-transparent text-slate-400 hover:text-slate-200"
+            )}
+          >
+            <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> SEO & Keywords
+          </button>
+        </div>
 
-          <div className="space-y-2 rounded-xl bg-background border border-border p-4 text-sm text-slate-300">
-            <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.fullAddress || ""}</p>
-            <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-2 font-mono text-xs"><Phone className="h-3.5 w-3.5 text-slate-500" /> {currentLead.phone}</span>
-              {currentLead.phone && (
-                <button onClick={() => { navigator.clipboard?.writeText(currentLead.phone); toast.success("Copied!"); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer">
-                  <Copy className="h-2.5 w-2.5" /> Copy
-                </button>
-              )}
+        {activeTab === 'overview' ? (
+          <div className="space-y-5 p-6">
+            <div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold uppercase tracking-wide text-slate-400">Opportunity Score</span>
+                <OpportunityScore score={currentLead.opportunityScore} />
+              </div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
+                <div className="h-full bg-primary" style={{ width: `${currentLead.opportunityScore}%` }} />
+              </div>
             </div>
-            <div className="flex items-center justify-between gap-2">
-              <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.email ?? <span className="italic text-slate-500">Not publicly listed</span>}</p>
-              {!currentLead.email && currentLead.websiteUrl && (
-                <button
-                  onClick={handleEnrich}
-                  disabled={enriching}
-                  className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-50 transition cursor-pointer"
-                >
-                  {enriching ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : "⚡ Find Email"}
-                </button>
-              )}
+
+            <div className="space-y-2 rounded-xl bg-background border border-border p-4 text-sm text-slate-300">
+              <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.fullAddress || ""}</p>
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-2 font-mono text-xs"><Phone className="h-3.5 w-3.5 text-slate-500" /> {currentLead.phone}</span>
+                {currentLead.phone && (
+                  <button onClick={() => { navigator.clipboard?.writeText(currentLead.phone); toast.success("Copied!"); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer">
+                    <Copy className="h-2.5 w-2.5" /> Copy
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.email ?? <span className="italic text-slate-500">Not publicly listed</span>}</p>
+                {!currentLead.email && currentLead.websiteUrl && (
+                  <button
+                    onClick={handleEnrich}
+                    disabled={enriching}
+                    className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-50 transition cursor-pointer"
+                  >
+                    {enriching ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : "⚡ Find Email"}
+                  </button>
+                )}
+              </div>
+              <p className="flex items-center gap-2"><Globe className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.websiteUrl ?? <span className="italic text-slate-500">No website</span>}</p>
+              <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" /> {currentLead.googleRating} · {currentLead.googleReviewCount} reviews</p>
             </div>
-            <p className="flex items-center gap-2"><Globe className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.websiteUrl ?? <span className="italic text-slate-500">No website</span>}</p>
-            <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" /> {currentLead.googleRating} · {currentLead.googleReviewCount} reviews</p>
-          </div>
 
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Opportunity Breakdown</p>
-            <ul className="mt-2 space-y-1.5 text-sm">
-              {reasons.map((r) => (
-                <li key={r.label} className="flex items-center justify-between rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-emerald-400">
-                  <span className="inline-flex items-center gap-2"><Check className="h-4 w-4" /> {r.label}</span>
-                  <span className="font-mono text-xs font-semibold">+{r.pts} pts</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Opportunity Breakdown</p>
+              <ul className="mt-2 space-y-1.5 text-sm">
+                {reasons.map((r) => (
+                  <li key={r.label} className="flex items-center justify-between rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-emerald-400">
+                    <span className="inline-flex items-center gap-2"><Check className="h-4 w-4" /> {r.label}</span>
+                    <span className="font-mono text-xs font-semibold">+{r.pts} pts</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* AI Outreach Sandbox inside Detail Modal */}
-          <div className="border-t border-border pt-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-primary" /> AI Personalized Pitch
-            </h4>
-            
-            {outreachDraft ? (
-              <div className="mt-3 space-y-2">
-                <textarea 
-                  value={outreachDraft}
-                  onChange={(e) => setOutreachDraft(e.target.value)}
-                  className="w-full h-36 rounded-lg border border-border bg-background p-3 text-xs font-sans text-slate-300 focus:outline-none focus:border-primary"
-                />
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-slate-500">{provider}</span>
-                  <div className="flex gap-2">
-                    <button onClick={() => setOutreachDraft("")} className="rounded-lg border border-border bg-card px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer">Edit Settings</button>
-                    <button onClick={copyDraft} className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">Copy Pitch</button>
-                    {selectedChannel === "whatsapp" && currentLead.phone && (
-                      <a
-                        href={`https://wa.me/${currentLead.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition"
-                      >
-                        Send via WhatsApp
-                      </a>
-                    )}
+            {/* AI Outreach Sandbox inside Detail Modal */}
+            <div className="border-t border-border pt-4">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-primary" /> AI Personalized Pitch
+              </h4>
+              
+              {outreachDraft ? (
+                <div className="mt-3 space-y-2">
+                  <textarea 
+                    value={outreachDraft}
+                    onChange={(e) => setOutreachDraft(e.target.value)}
+                    className="w-full h-36 rounded-lg border border-border bg-background p-3 text-xs font-sans text-slate-300 focus:outline-none focus:border-primary"
+                  />
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-slate-500">{provider}</span>
+                    <div className="flex gap-2">
+                      <button onClick={() => setOutreachDraft("")} className="rounded-lg border border-border bg-card px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer">Edit Settings</button>
+                      <button onClick={copyDraft} className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">Copy Pitch</button>
+                      {selectedChannel === "whatsapp" && currentLead.phone && (
+                        <a
+                          href={`https://wa.me/${currentLead.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition"
+                        >
+                          Send via WhatsApp
+                        </a>
+                      )}
+                    </div>
                   </div>
+                </div>
+              ) : (
+                <div className="mt-3 rounded-xl border border-border bg-background p-3.5 space-y-3">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-slate-400 font-medium">Channel:</span>
+                      <select 
+                        value={selectedChannel} 
+                        onChange={(e) => setSelectedChannel(e.target.value as any)} 
+                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
+                      >
+                        <option value="email">Email</option>
+                        <option value="linkedin">LinkedIn DM</option>
+                        <option value="whatsapp">WhatsApp Message</option>
+                        <option value="phone_script">Phone Script</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-slate-400 font-medium">Tone:</span>
+                      <select 
+                        value={selectedTone} 
+                        onChange={(e) => setSelectedTone(e.target.value as any)} 
+                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
+                      >
+                        <option value="professional">Professional</option>
+                        <option value="casual">Casual</option>
+                        <option value="bold">Bold/Direct</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={handleGenerate} 
+                    disabled={generating} 
+                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/45 py-2 text-xs font-semibold text-primary-foreground cursor-pointer transition"
+                  >
+                    {generating ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Generating Pitch...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-3.5 w-3.5" />
+                        Write Outreach Message
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-2 border-t border-border">
+              <button onClick={() => { saveLead(currentLead); toast.success("Saved to pipeline"); }} disabled={savedIds.has(currentLead.id)} className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
+                {savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-5 p-6 animate-fade-in">
+            {seoLoading ? (
+              <div className="space-y-4 py-6">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-14 w-full" />
+                </div>
+                <div className="space-y-3 pt-4">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
                 </div>
               </div>
-            ) : (
-              <div className="mt-3 rounded-xl border border-border bg-background p-3.5 space-y-3">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-slate-400 font-medium">Channel:</span>
-                    <select 
-                      value={selectedChannel} 
-                      onChange={(e) => setSelectedChannel(e.target.value as any)} 
-                      className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
+            ) : seoData ? (
+              <>
+                {/* Outreach Hook Section */}
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-semibold uppercase tracking-wide text-primary flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> Outreach SEO Hook
+                    </h4>
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(seoData.hook); toast.success("Copied outreach hook!"); }}
+                      className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 transition cursor-pointer"
                     >
-                      <option value="email">Email</option>
-                      <option value="linkedin">LinkedIn DM</option>
-                      <option value="whatsapp">WhatsApp Message</option>
-                      <option value="phone_script">Phone Script</option>
-                    </select>
+                      <Copy className="h-2.5 w-2.5" /> Copy Hook
+                    </button>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-slate-400 font-medium">Tone:</span>
-                    <select 
-                      value={selectedTone} 
-                      onChange={(e) => setSelectedTone(e.target.value as any)} 
-                      className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
-                    >
-                      <option value="professional">Professional</option>
-                      <option value="casual">Casual</option>
-                      <option value="bold">Bold/Direct</option>
-                    </select>
+                  <p className="text-xs text-slate-300 leading-relaxed italic">
+                    "{seoData.hook}"
+                  </p>
+                </div>
+
+                {/* Keywords Table */}
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Target Local Keywords</p>
+                  <div className="rounded-xl border border-border bg-background/50 overflow-hidden">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-muted/30 text-slate-400 uppercase tracking-wide text-[10px] border-b border-border">
+                        <tr>
+                          <th className="px-4 py-2.5">Keyword</th>
+                          <th className="px-4 py-2.5 text-center">Volume</th>
+                          <th className="px-4 py-2.5 text-center">Difficulty</th>
+                          <th className="px-4 py-2.5 text-right">Est. Rank</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/60 text-slate-300">
+                        {seoData.keywords.map((kw: any) => {
+                          let diffColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                          if (kw.difficulty > 50) diffColor = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                          else if (kw.difficulty > 30) diffColor = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+
+                          let rankContent = <span className="font-semibold text-emerald-400 font-mono">#{kw.rank}</span>;
+                          if (kw.rank > 100) rankContent = <span className="text-slate-500 italic">No Site</span>;
+                          else if (kw.rank > 30) rankContent = <span className="font-semibold text-rose-400 font-mono">#{kw.rank}</span>;
+                          else if (kw.rank > 10) rankContent = <span className="font-semibold text-amber-400 font-mono">#{kw.rank}</span>;
+
+                          return (
+                            <tr key={kw.keyword} className="hover:bg-muted/10 transition">
+                              <td className="px-4 py-3 font-mono text-[11px] font-semibold text-slate-200">{kw.keyword}</td>
+                              <td className="px-4 py-3 text-center">
+                                <div className="flex flex-col items-center gap-1">
+                                  <span className="font-mono font-semibold">{kw.volume}</span>
+                                  <div className="w-12 h-1 rounded-full bg-slate-800 overflow-hidden">
+                                    <div className="h-full bg-primary" style={{ width: `${Math.min(100, (kw.volume / 1500) * 100)}%` }} />
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-3 text-center">
+                                <span className={cn("px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold", diffColor)}>
+                                  {kw.difficulty}%
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-right">
+                                {rankContent}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-                <button 
-                  onClick={handleGenerate} 
-                  disabled={generating} 
-                  className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/45 py-2 text-xs font-semibold text-primary-foreground cursor-pointer transition"
-                >
-                  {generating ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Generating Pitch...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-3.5 w-3.5" />
-                      Write Outreach Message
-                    </>
-                  )}
-                </button>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-xs text-muted-foreground font-mono">Failed to load SEO data.</p>
               </div>
             )}
           </div>
-
-          <div className="flex gap-2 pt-2 border-t border-border">
-            <button onClick={() => { saveLead(currentLead); toast.success("Saved to pipeline"); }} disabled={savedIds.has(currentLead.id)} className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
-              {savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

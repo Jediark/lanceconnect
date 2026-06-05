@@ -18,7 +18,8 @@ const requestSchema = z.object({
   city: z.string().min(1),
   country: z.string().min(1),
   limit: z.number().optional().default(10),
-  product: z.string().optional()
+  product: z.string().optional(),
+  niche: z.string().optional()
 })
 
 Deno.serve(async (req) => {
@@ -41,7 +42,7 @@ Deno.serve(async (req) => {
       )
     }
 
-    const { query, city, country, limit, product } = parsed.data
+    const { query, city, country, limit, product, niche } = parsed.data
 
     // Map skill category IDs to target local business niches (potential clients)
     const categoryNiches: Record<string, string[]> = {
@@ -64,7 +65,10 @@ Deno.serve(async (req) => {
     }
 
     let searchKeyword = query
-    if (query in categoryNiches) {
+    if (niche) {
+      searchKeyword = niche
+      console.log(`Overriding search category with niche query: "${searchKeyword}"`)
+    } else if (query in categoryNiches) {
       const niches = categoryNiches[query]
       // Pick a random niche to keep results fresh and diverse
       searchKeyword = niches[Math.floor(Math.random() * niches.length)]
