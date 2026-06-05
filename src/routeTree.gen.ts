@@ -34,6 +34,7 @@ import { Route as FreelancersIndexRouteImport } from './routes/freelancers.index
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as FreelancersSlugRouteImport } from './routes/freelancers.$slug'
+import { Route as FindClientsCategoryRouteImport } from './routes/find-clients.$category'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AppUpgradeRouteImport } from './routes/app.upgrade'
 import { Route as AppTemplatesRouteImport } from './routes/app.templates'
@@ -173,6 +174,11 @@ const FreelancersSlugRoute = FreelancersSlugRouteImport.update({
   path: '/freelancers/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FindClientsCategoryRoute = FindClientsCategoryRouteImport.update({
+  id: '/find-clients/$category',
+  path: '/find-clients/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
@@ -270,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
@@ -308,6 +315,7 @@ export interface FileRoutesByTo {
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app': typeof AppIndexRoute
   '/blog': typeof BlogIndexRoute
@@ -349,6 +357,7 @@ export interface FileRoutesById {
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
@@ -391,6 +400,7 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/app/upgrade'
     | '/blog/$slug'
+    | '/find-clients/$category'
     | '/freelancers/$slug'
     | '/app/'
     | '/blog/'
@@ -429,6 +439,7 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/app/upgrade'
     | '/blog/$slug'
+    | '/find-clients/$category'
     | '/freelancers/$slug'
     | '/app'
     | '/blog'
@@ -469,6 +480,7 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/app/upgrade'
     | '/blog/$slug'
+    | '/find-clients/$category'
     | '/freelancers/$slug'
     | '/app/'
     | '/blog/'
@@ -503,6 +515,7 @@ export interface RootRouteChildren {
   UnsubscribeRoute: typeof UnsubscribeRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  FindClientsCategoryRoute: typeof FindClientsCategoryRoute
   FreelancersSlugRoute: typeof FreelancersSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   FreelancersIndexRoute: typeof FreelancersIndexRoute
@@ -685,6 +698,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FreelancersSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/find-clients/$category': {
+      id: '/find-clients/$category'
+      path: '/find-clients/$category'
+      fullPath: '/find-clients/$category'
+      preLoaderRoute: typeof FindClientsCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/blog/$slug'
@@ -846,6 +866,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeRoute: UnsubscribeRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   BlogSlugRoute: BlogSlugRoute,
+  FindClientsCategoryRoute: FindClientsCategoryRoute,
   FreelancersSlugRoute: FreelancersSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   FreelancersIndexRoute: FreelancersIndexRoute,

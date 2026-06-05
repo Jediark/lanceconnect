@@ -43,6 +43,7 @@ import {
   Package,
   Factory,
   BookOpen,
+  Brain,
 } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
@@ -1975,7 +1976,9 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
   restaurant_supplier: Utensils,
   product_export: Package,
   b2b_trade: Factory,
-  corporate_training: BookOpen,
+  human_capital: Brain,
+  training_recruitment: Target,
+  parent_tutor: Users,
 };
 
 /* ────────────────────────────────────────────────────────────
@@ -2035,7 +2038,9 @@ function categorySlug(id: string) {
     restaurant_supplier: "restaurant-suppliers",
     product_export: "product-export",
     b2b_trade: "b2b-trade",
-    corporate_training: "corporate-training",
+    human_capital: "human-capital-development",
+    training_recruitment: "training-recruitment",
+    parent_tutor: "parent-tutor-matching",
   };
   return map[id] ?? id;
 }

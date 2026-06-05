@@ -406,6 +406,22 @@ Deno.serve(async (req) => {
       console.warn("Failed to insert audit log:", auditErr);
     }
 
+    // Save to search_intelligence
+    try {
+      await supabase.from("search_intelligence").insert({
+        user_id: user.id,
+        search_query: searchKeyword,
+        category: query || null,
+        country: country || null,
+        city: city || null,
+        product: searchProduct || null,
+        results_count: finalLeads.length,
+        ip_country: ipAddress,
+      });
+    } catch (siErr) {
+      console.warn("Failed to save search intelligence:", siErr);
+    }
+
     return new Response(JSON.stringify({ success: true, leads: finalLeads }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

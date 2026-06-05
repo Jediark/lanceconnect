@@ -46,46 +46,25 @@ function PipelinePage() {
   const [view, setView] = useState<"grid" | "table">("grid");
   const [showLost, setShowLost] = useState(false);
 
-  const isB2B = [
-    "african_food_export",
-    "restaurant_supplier",
-    "product_export",
-    "b2b_trade",
-    "human_capital",
-    "training_recruitment",
-  ].includes(user?.freelancerCategory || "");
+  const PIPELINE_STAGES: Record<string, Record<PipelineStatus | "lost", string>> = {
+    supplier: { new: 'Identified', contacted: 'Contacted', interested: 'Catalogue Sent', proposal_sent: 'Negotiating', won: 'Contract Signed', lost: 'Lost' },
+    human_capital: { new: 'Identified', contacted: 'Contacted', interested: 'Needs Assessment', proposal_sent: 'Proposal Sent', won: 'Contract Signed', lost: 'Lost' },
+    training_recruitment: { new: 'Identified', contacted: 'Contacted', interested: 'Requirements Gathered', proposal_sent: 'Candidates Submitted', won: 'Placed', lost: 'Lost' },
+    tutor: { new: 'Identified', contacted: 'Contacted', interested: 'Trial Session', proposal_sent: 'Regular Student', won: 'Completed', lost: 'Dropped' },
+    freelance: { new: 'New', contacted: 'Contacted', interested: 'Interested', proposal_sent: 'Proposal Sent', won: 'Won', lost: 'Lost' },
+  };
+
+  const getPipelineType = (category: string): string => {
+    if (['african_food_export','restaurant_supplier','product_export','b2b_trade'].includes(category)) return 'supplier';
+    if (category === 'human_capital') return 'human_capital';
+    if (category === 'training_recruitment') return 'training_recruitment';
+    if (['tutor','parent_tutor'].includes(category)) return 'tutor';
+    return 'freelance';
+  };
 
   const getStatusLabel = (status: PipelineStatus | "lost") => {
-    if (isB2B) {
-      switch (status) {
-        case "new":
-          return "Identified";
-        case "contacted":
-          return "Contacted";
-        case "interested":
-          return "Catalogue Sent";
-        case "proposal_sent":
-          return "Negotiating";
-        case "won":
-          return "Contract Signed";
-        case "lost":
-          return "Lost";
-      }
-    }
-    switch (status) {
-      case "new":
-        return "New";
-      case "contacted":
-        return "Contacted";
-      case "interested":
-        return "Interested";
-      case "proposal_sent":
-        return "Proposal Sent";
-      case "won":
-        return "Won";
-      case "lost":
-        return "Lost";
-    }
+    const type = getPipelineType(user?.freelancerCategory || "");
+    return PIPELINE_STAGES[type]?.[status] || PIPELINE_STAGES.freelance[status] || status;
   };
 
 

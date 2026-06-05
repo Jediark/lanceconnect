@@ -17,6 +17,8 @@ export type Lead = {
   longitude?: number;
   facebookUrl?: string | null;
   instagramUrl?: string | null;
+  hasLinkedin?: boolean;
+  linkedinUrl?: string | null;
   googleMapsUrl?: string | null;
   source: string;
   createdAt: string;

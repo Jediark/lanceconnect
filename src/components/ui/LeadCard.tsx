@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bookmark, BookmarkCheck, Check, Copy, Globe, MapPin, Star, XCircle } from "lucide-react";
+import { Bookmark, BookmarkCheck, Check, Copy, Globe, Linkedin, MapPin, Star, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { OpportunityScore } from "./OpportunityScore";
 import { usePipeline } from "@/contexts/PipelineContext";
@@ -20,14 +20,20 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
     "training_recruitment",
   ].includes(lead.industry || "");
 
-  const buyerSignal = lead.opportunityScore >= 75 ? "Good Buyer Signal" : "Cold Prospect";
+  const getBuyerSignal = (score: number) => {
+    if (score >= 80) return { label: "Hot Lead", color: "text-rose-400 bg-rose-500/10 border-rose-500/20" };
+    if (score >= 50) return { label: "Warm Prospect", color: "text-amber-400 bg-amber-500/10 border-amber-500/20" };
+    return { label: "Cold Prospect", color: "text-slate-400 bg-slate-500/10 border-slate-500/20" };
+  };
+  const signalInfo = getBuyerSignal(lead.opportunityScore);
 
-  let companySize = "Small Business";
-  if (lead.googleReviewCount > 100) {
-    companySize = "Large Enterprise";
-  } else if (lead.googleReviewCount > 20) {
-    companySize = "Medium Business";
-  }
+  const getCompanySize = (reviewCount: number) => {
+    if (reviewCount > 500) return { label: "Large Enterprise", color: "text-purple-400 bg-purple-500/10 border-purple-500/20" };
+    if (reviewCount > 100) return { label: "Medium Company", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" };
+    if (reviewCount > 20) return { label: "Small Business", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" };
+    return { label: "Micro Business", color: "text-slate-400 bg-slate-500/10 border-slate-500/20" };
+  };
+  const sizeInfo = getCompanySize(lead.googleReviewCount);
 
   const alreadyImports =
     lead.industry === "african_food_export" &&
@@ -89,18 +95,11 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
 
       {isB2B && (
         <div className="mt-1 mb-2 flex flex-wrap gap-1.5 text-[10px] font-semibold">
-          <span
-            className={cn(
-              "px-2 py-0.5 rounded-full border",
-              lead.opportunityScore >= 75
-                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                : "bg-slate-500/10 text-slate-400 border-slate-500/20",
-            )}
-          >
-            {buyerSignal}
+          <span className={cn("px-2 py-0.5 rounded-full border", signalInfo.color)}>
+            {signalInfo.label}
           </span>
-          <span className="px-2 py-0.5 rounded-full border bg-blue-500/10 text-blue-400 border-blue-500/20">
-            {companySize}
+          <span className={cn("px-2 py-0.5 rounded-full border", sizeInfo.color)}>
+            {sizeInfo.label}
           </span>
           {alreadyImports && (
             <span className="px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-400 border-amber-500/20">
@@ -132,6 +131,17 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
         <p className="truncate text-xs text-muted-foreground">
           {lead.email ?? "Not publicly listed"}
         </p>
+        {(lead.hasLinkedin || lead.linkedinUrl) && (
+          <a
+            href={lead.linkedinUrl || `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(lead.businessName)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1 mt-1.5 text-xs text-[#0a66c2] hover:underline"
+          >
+            <Linkedin className="h-3 w-3 fill-current" /> LinkedIn Profile
+          </a>
+        )}
       </div>
 
       <div className="mt-auto flex items-center gap-2">

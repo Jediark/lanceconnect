@@ -86,32 +86,38 @@ Deno.serve(async (req) => {
     ].includes(category);
 
     if (isB2B) {
-      // B2B SCORING — bigger and established = better
+      // B2B SCORING — established = better partner
       if (lead.has_website) {
-        score += 20;
-        breakdown["has_website"] = 20;
+        score += 25;
+        breakdown["has_website"] = 25;
       }
-      if (lead.google_review_count > 50) {
+      if (lead.google_review_count > 100) {
         score += 20;
-        breakdown["established_business_reviews"] = 20;
+        breakdown["very_established_reviews"] = 20;
+      } else if (lead.google_review_count > 50) {
+        score += 15;
+        breakdown["established_business_reviews"] = 15;
       } else if (lead.google_review_count > 20) {
         score += 10;
         breakdown["semi_established_reviews"] = 10;
       }
 
       const rating = parseFloat(lead.google_rating || "0");
-      if (rating > 4.0) {
+      if (rating >= 4.0) {
         score += 15;
         breakdown["good_reputation_rating"] = 15;
+      } else if (rating >= 3.5) {
+        score += 8;
+        breakdown["average_reputation_rating"] = 8;
       }
 
       if (lead.has_facebook) {
-        score += 10;
-        breakdown["has_facebook"] = 10;
+        score += 8;
+        breakdown["has_facebook"] = 8;
       }
       if (lead.has_instagram) {
-        score += 10;
-        breakdown["has_instagram"] = 10;
+        score += 7;
+        breakdown["has_instagram"] = 7;
       }
       if (lead.phone) {
         score += 15;

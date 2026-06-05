@@ -64,6 +64,10 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
           notes: ul.notes || "",
           followUpDate: ul.follow_up_date,
           dealValue: ul.deal_value ? Number(ul.deal_value) : null,
+          facebookUrl: lead.facebook_url || null,
+          instagramUrl: lead.instagram_url || null,
+          hasLinkedin: lead.has_linkedin || false,
+          linkedinUrl: lead.linkedin_url || null,
         };
       });
 

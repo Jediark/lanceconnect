@@ -76,13 +76,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "LanceConnect — The Meeting Point for Freelancers and Clients" },
       {
         name: "description",
-        content:
-          "The Meeting Point for Freelancers and Clients. LanceConnect finds businesses that need your skills anywhere in the world.",
+        content: "Find verified business leads in 150+ countries. LanceConnect helps freelancers, exporters, and B2B suppliers discover clients using AI-powered search and opportunity scoring.",
       },
-      { property: "og:title", content: "LanceConnect" },
-      { property: "og:description", content: "The Meeting Point for Freelancers and Clients" },
+      { name: "keywords", content: "freelancer leads, find clients, business leads, B2B leads, African food export, web development clients, SEO clients, freelancer platform, lead generation" },
+      { property: "og:title", content: "LanceConnect — Find Clients Worldwide" },
+      { property: "og:description", content: "The Meeting Point for Freelancers and Clients. Find verified business leads in 150+ countries." },
+      { property: "og:image", content: "https://lanceconnect.vercel.app/og-image.png" },
+      { property: "og:url", content: "https://lanceconnect.vercel.app" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:site_name", content: "LanceConnect" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "LanceConnect — Find Clients Worldwide" },
+      { name: "twitter:description", content: "The Meeting Point for Freelancers and Clients. Find verified business leads in 150+ countries." },
+      { name: "twitter:image", content: "https://lanceconnect.vercel.app/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -107,6 +113,25 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "LanceConnect",
+              description: "The Meeting Point for Freelancers and Clients. AI-powered lead generation for freelancers, exporters, and B2B suppliers.",
+              applicationCategory: "BusinessApplication",
+              operatingSystem: "Web",
+              url: "https://lanceconnect.vercel.app",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+            }),
+          }}
+        />
       </head>
       <body>
         <script

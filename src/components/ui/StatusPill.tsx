@@ -6,38 +6,24 @@ export function StatusPill({ status, className }: { status: PipelineStatus; clas
   const { user } = useAuth();
   const meta = STATUS_META[status];
 
-  const isB2B = [
-    "african_food_export",
-    "restaurant_supplier",
-    "product_export",
-    "b2b_trade",
-    "human_capital",
-    "training_recruitment",
-  ].includes(user?.freelancerCategory || "");
+  const PIPELINE_STAGES: Record<string, Record<PipelineStatus, string>> = {
+    supplier: { new: 'Identified', contacted: 'Contacted', interested: 'Catalogue Sent', proposal_sent: 'Negotiating', won: 'Contract Signed', lost: 'Lost' },
+    human_capital: { new: 'Identified', contacted: 'Contacted', interested: 'Needs Assessment', proposal_sent: 'Proposal Sent', won: 'Contract Signed', lost: 'Lost' },
+    training_recruitment: { new: 'Identified', contacted: 'Contacted', interested: 'Requirements Gathered', proposal_sent: 'Candidates Submitted', won: 'Placed', lost: 'Lost' },
+    tutor: { new: 'Identified', contacted: 'Contacted', interested: 'Trial Session', proposal_sent: 'Regular Student', won: 'Completed', lost: 'Dropped' },
+    freelance: { new: 'New', contacted: 'Contacted', interested: 'Interested', proposal_sent: 'Proposal Sent', won: 'Won', lost: 'Lost' },
+  };
 
-  let label = meta.label;
-  if (isB2B) {
-    switch (status) {
-      case "new":
-        label = "Identified";
-        break;
-      case "contacted":
-        label = "Contacted";
-        break;
-      case "interested":
-        label = "Catalogue Sent";
-        break;
-      case "proposal_sent":
-        label = "Negotiating";
-        break;
-      case "won":
-        label = "Contract Signed";
-        break;
-      case "lost":
-        label = "Lost";
-        break;
-    }
-  }
+  const getPipelineType = (category: string): string => {
+    if (['african_food_export','restaurant_supplier','product_export','b2b_trade'].includes(category)) return 'supplier';
+    if (category === 'human_capital') return 'human_capital';
+    if (category === 'training_recruitment') return 'training_recruitment';
+    if (['tutor','parent_tutor'].includes(category)) return 'tutor';
+    return 'freelance';
+  };
+
+  const type = getPipelineType(user?.freelancerCategory || "");
+  const label = PIPELINE_STAGES[type]?.[status] || meta.label;
 
   return (
     <span

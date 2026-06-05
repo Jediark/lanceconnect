@@ -22,6 +22,10 @@ export type Lead = {
   followUpDate?: string | null;
   dealValue?: number | null;
   createdAt?: string;
+  facebookUrl?: string | null;
+  instagramUrl?: string | null;
+  hasLinkedin?: boolean;
+  linkedinUrl?: string | null;
 };
 
 export type PipelineStatus = "new" | "contacted" | "interested" | "proposal_sent" | "won" | "lost";

@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  Briefcase,
   Grid3X3,
   List,
   Search,
@@ -19,8 +20,10 @@ import {
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { LeadCard } from "@/components/ui/LeadCard";
+import { OnlineJobCard } from "@/components/ui/OnlineJobCard";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { TrendingSearches } from "@/components/ui/TrendingSearches";
 import { CATEGORIES, COUNTRIES, type Lead } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
 import { CATEGORY_TO_PLACES_QUERY } from "@/types";
@@ -34,6 +37,19 @@ export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
   component: Discover,
 });
+
+const ONLINE_ELIGIBLE = [
+  "tutor",
+  "parent_tutor",
+  "seo",
+  "copywriter",
+  "web_dev",
+  "designer",
+  "social_media",
+  "marketing",
+  "training_recruitment",
+  "human_capital",
+];
 
 function Discover() {
   const { user } = useAuth();
@@ -49,6 +65,9 @@ function Discover() {
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState("");
   const [selectedNiche, setSelectedNiche] = useState("");
+  const [onlineJobs, setOnlineJobs] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"local" | "online">("local");
+  const [loadingOnline, setLoadingOnline] = useState(false);
 
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
@@ -102,6 +121,10 @@ function Discover() {
               source: dbLead.source || "google_maps",
               savedAt: null,
               status: null,
+              facebookUrl: dbLead.facebook_url || null,
+              instagramUrl: dbLead.instagram_url || null,
+              hasLinkedin: dbLead.has_linkedin || false,
+              linkedinUrl: dbLead.linkedin_url || null,
             }));
             setResults(mapped);
           }
@@ -111,23 +134,31 @@ function Discover() {
     }
   }, [user]);
 
-  const handleSearch = async () => {
-    if (!city) {
+  const handleSearch = async (searchParams?: { category: string; country: string; city: string; product: string; niche: string }) => {
+    const queryTerm = searchParams ? searchParams.category : (category || "local business");
+    const countryName = searchParams ? searchParams.country : (country || "Nigeria");
+    const cityName = searchParams ? searchParams.city : city;
+    const productTerm = searchParams ? searchParams.product : product;
+    const nicheTerm = searchParams ? searchParams.niche : selectedNiche;
+
+    if (!cityName) {
       toast.error("Please enter a city (e.g. Lagos, London).");
       return;
     }
 
     setLoading(true);
-    try {
-      const queryTerm = category || "local business";
-      const countryName = country || "Nigeria";
+    setLoadingOnline(true);
+    setOnlineJobs([]);
+    setActiveTab("local");
 
+    try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
       const supabaseUrl =
         import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
-      const res = await fetch(`${supabaseUrl}/functions/v1/search-leads`, {
+
+      const searchLeadsPromise = fetch(`${supabaseUrl}/functions/v1/search-leads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -135,7 +166,7 @@ function Discover() {
         },
         body: JSON.stringify({
           query: queryTerm,
-          city: city,
+          city: cityName,
           country: countryName,
           limit: 20,
           product: [
@@ -143,31 +174,60 @@ function Discover() {
             "b2b_trade",
             "restaurant_supplier",
             "product_export",
-          ].includes(category)
-            ? product
+          ].includes(queryTerm)
+            ? productTerm
             : undefined,
-          niche: selectedNiche || undefined,
+          niche: nicheTerm || undefined,
         }),
+      }).then(async (res) => {
+        const data = await res.json();
+        if (!res.ok || data.error) {
+          if (data.error === "LIMIT_REACHED") {
+            toast.error("Search limit reached! Please upgrade your plan to get more leads.", {
+              action: {
+                label: "Upgrade Plan",
+                onClick: () => {
+                  window.location.href = "/app/upgrade";
+                },
+              },
+            });
+            return [];
+          }
+          throw new Error(data.error || "Failed to search leads");
+        }
+        return data?.leads || [];
       });
 
-      const data = await res.json();
-
-      if (!res.ok || data.error) {
-        if (data.error === "LIMIT_REACHED") {
-          toast.error("Search limit reached! Please upgrade your plan to get more leads.", {
-            action: {
-              label: "Upgrade Plan",
-              onClick: () => {
-                window.location.href = "/app/upgrade";
-              },
+      const onlineEligible = ONLINE_ELIGIBLE.includes(queryTerm);
+      const searchOnlinePromise = onlineEligible
+        ? fetch(`${supabaseUrl}/functions/v1/online-opportunities`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
             },
-          });
-          return;
-        }
-        throw new Error(data.error || "Failed to search leads");
-      }
+            body: JSON.stringify({
+              category: queryTerm,
+              page: 1,
+            }),
+          }).then(async (res) => {
+            const data = await res.json();
+            if (!res.ok || data.error) {
+              console.error("Online jobs error:", data.error);
+              return [];
+            }
+            return data?.jobs || [];
+          }).catch(err => {
+            console.error("Online jobs fetch failed:", err);
+            return [];
+          })
+        : Promise.resolve([]);
 
-      const rawLeads = data?.leads || [];
+      const [rawLeads, rawJobs] = await Promise.all([
+        searchLeadsPromise,
+        searchOnlinePromise,
+      ]);
+
       const mapped = rawLeads.map((dbLead: any) => ({
         id: dbLead.id,
         businessName: dbLead.business_name,
@@ -187,14 +247,27 @@ function Discover() {
         source: dbLead.source || "google_maps",
         savedAt: null,
         status: null,
+        facebookUrl: dbLead.facebook_url || null,
+        instagramUrl: dbLead.instagram_url || null,
+        hasLinkedin: dbLead.has_linkedin || false,
+        linkedinUrl: dbLead.linkedin_url || null,
       }));
-      setResults(mapped); // Respect data integrity by showing real found data
-      toast.success(`Found ${mapped.length} leads in ${city}!`);
+
+      setResults(mapped);
+      setOnlineJobs(rawJobs);
+
+      if (mapped.length > 0) {
+        toast.success(`Found ${mapped.length} leads in ${city}!`);
+      }
+      if (rawJobs.length > 0) {
+        toast.success(`Found ${rawJobs.length} online opportunities!`);
+      }
     } catch (err: any) {
       console.error(err);
       toast.error("Search temporarily unavailable — please try again in a moment.");
     } finally {
       setLoading(false);
+      setLoadingOnline(false);
     }
   };
 
@@ -267,6 +340,18 @@ function Discover() {
   return (
     <>
       <Header title="Discover Leads" subtitle="Find businesses that need your skills" />
+
+      <TrendingSearches
+        onSelectSearch={(search) => {
+          setCategory(search.category);
+          setCountry(search.country);
+          setCity(search.city);
+          setProduct(search.product);
+          setSelectedNiche(search.niche);
+          handleSearch(search);
+        }}
+        className="mx-4 lg:mx-8 mt-4"
+      />
 
       <div className="border-b border-border bg-card/60 px-4 py-3 lg:px-8">
         <div className="flex flex-wrap items-center gap-2">
@@ -396,99 +481,184 @@ function Discover() {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-4 lg:px-8">
-        <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground">
-            Showing <span className="font-semibold text-foreground">{filteredResults.length}</span>{" "}
-            leads
-          </p>
-          {filteredResults.length > 0 && (
+      {ONLINE_ELIGIBLE.includes(category) && (
+        <div className="px-4 lg:px-8 mb-2">
+          <div className="inline-flex gap-1 border border-border bg-card/50 p-1 rounded-xl backdrop-blur-sm shadow-sm">
             <button
-              onClick={downloadCSV}
-              className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer text-foreground"
+              type="button"
+              onClick={() => setActiveTab("local")}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer",
+                activeTab === "local"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+              )}
             >
-              <Download className="h-3.5 w-3.5" /> Export CSV
-            </button>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as "score" | "rating")}
-            className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs"
-          >
-            <option value="score">Sort by: Score</option>
-            <option value="rating">Sort by: Rating</option>
-          </select>
-          <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-            <button
-              onClick={() => setView("grid")}
-              className={cn("rounded-md p-1.5 cursor-pointer", view === "grid" && "bg-accent")}
-            >
-              <Grid3X3 className="h-4 w-4" />
+              🏪 Local Businesses ({filteredResults.length})
             </button>
             <button
-              onClick={() => setView("table")}
-              className={cn("rounded-md p-1.5 cursor-pointer", view === "table" && "bg-accent")}
+              type="button"
+              onClick={() => setActiveTab("online")}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer",
+                activeTab === "online"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+              )}
             >
-              <List className="h-4 w-4" />
+              🌐 Online Opportunities ({onlineJobs.length})
             </button>
           </div>
         </div>
-      </div>
+      )}
+
+      {activeTab === "local" ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-4 lg:px-8">
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              Showing <span className="font-semibold text-foreground">{filteredResults.length}</span>{" "}
+              leads
+            </p>
+            {filteredResults.length > 0 && (
+              <button
+                onClick={downloadCSV}
+                className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer text-foreground"
+              >
+                <Download className="h-3.5 w-3.5" /> Export CSV
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as "score" | "rating")}
+              className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs"
+            >
+              <option value="score">Sort by: Score</option>
+              <option value="rating">Sort by: Rating</option>
+            </select>
+            <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
+              <button
+                onClick={() => setView("grid")}
+                className={cn("rounded-md p-1.5 cursor-pointer", view === "grid" && "bg-accent")}
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setView("table")}
+                className={cn("rounded-md p-1.5 cursor-pointer", view === "table" && "bg-accent")}
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-4 lg:px-8">
+          <p className="text-sm text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{onlineJobs.length}</span> remote job listings
+          </p>
+        </div>
+      )}
 
       <div className="px-4 pb-10 lg:px-8">
-        {loading ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="group relative flex w-full flex-col rounded-2xl border border-border bg-card p-5 space-y-4"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2 flex-1">
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+        {activeTab === "local" ? (
+          loading ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="group relative flex w-full flex-col rounded-2xl border border-border bg-card p-5 space-y-4"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                    <Skeleton className="h-7 w-12 rounded-full" />
                   </div>
-                  <Skeleton className="h-7 w-12 rounded-full" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-5 w-24 rounded-full" />
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                  </div>
+                  <div className="space-y-2 py-2 border-y border-dashed border-border">
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Skeleton className="h-9 flex-1" />
+                    <Skeleton className="h-9 w-9" />
+                    <Skeleton className="h-9 w-9" />
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Skeleton className="h-5 w-24 rounded-full" />
-                  <Skeleton className="h-5 w-20 rounded-full" />
+              ))}
+            </div>
+          ) : filteredResults.length === 0 ? (
+            <EmptyState
+              icon={<Search className="h-10 w-10 text-muted-foreground/60" />}
+              title="No leads found in this area yet"
+              description="Try a different city or expand your filters."
+              action={{ label: "Clear all filters", onClick: clear }}
+            />
+          ) : view === "grid" ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredResults.map((l, i) => (
+                <div
+                  key={l.id}
+                  style={{ animationDelay: `${i * 50}ms` }}
+                  className="animate-in fade-in-50 slide-in-from-bottom-2"
+                >
+                  <LeadCard lead={l} onOpenDetail={setDetail} />
                 </div>
-                <div className="space-y-2 py-2 border-y border-dashed border-border">
-                  <Skeleton className="h-4 w-1/3" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <Skeleton className="h-9 flex-1" />
-                  <Skeleton className="h-9 w-9" />
-                  <Skeleton className="h-9 w-9" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredResults.length === 0 ? (
-          <EmptyState
-            icon={<Search className="h-10 w-10 text-muted-foreground/60" />}
-            title="No leads found in this area yet"
-            description="Try a different city or expand your filters."
-            action={{ label: "Clear all filters", onClick: clear }}
-          />
-        ) : view === "grid" ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredResults.map((l, i) => (
-              <div
-                key={l.id}
-                style={{ animationDelay: `${i * 50}ms` }}
-                className="animate-in fade-in-50 slide-in-from-bottom-2"
-              >
-                <LeadCard lead={l} onOpenDetail={setDetail} />
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <LeadTable leads={filteredResults} onOpenDetail={setDetail} />
+          )
         ) : (
-          <LeadTable leads={filteredResults} onOpenDetail={setDetail} />
+          loadingOnline ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="group relative flex w-full flex-col rounded-2xl border border-border bg-card p-5 space-y-4"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                    <Skeleton className="h-7 w-12 rounded-full" />
+                  </div>
+                  <div className="space-y-2 py-2 border-y border-dashed border-border">
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Skeleton className="h-9 flex-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : onlineJobs.length === 0 ? (
+            <EmptyState
+              icon={<Briefcase className="h-10 w-10 text-muted-foreground/60" />}
+              title="No online opportunities found"
+              description="We couldn't find any remote job listings for this category right now."
+            />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {onlineJobs.map((job, idx) => (
+                <div
+                  key={job.id}
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                  className="animate-in fade-in-50 slide-in-from-bottom-2"
+                >
+                  <OnlineJobCard job={job} />
+                </div>
+              ))}
+            </div>
+          )
         )}
       </div>
 

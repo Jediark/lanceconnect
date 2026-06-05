@@ -35,11 +35,13 @@ const FREELANCE_IDS = [
 
 const B2B_IDS = [
   "tutor",
+  "parent_tutor",
   "african_food_export",
   "restaurant_supplier",
   "product_export",
   "b2b_trade",
-  "corporate_training",
+  "human_capital",
+  "training_recruitment",
 ];
 
 export const Route = createFileRoute("/freelancers/")({
