@@ -86,7 +86,7 @@ const HERO_MOSAIC = [
 function HeroWithMosaic() {
   const { t } = usePreferences();
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background py-20 lg:py-28 text-white">
+    <section className="relative overflow-hidden border-b border-border bg-[#0B0F19] py-20 lg:py-28 text-white">
       {/* Background Image with solid dark overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img 
@@ -94,7 +94,7 @@ function HeroWithMosaic() {
           alt="" 
           className="h-full w-full object-cover opacity-10 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-background/95" />
+        <div className="absolute inset-0 bg-[#0B0F19]/95" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -112,7 +112,7 @@ function HeroWithMosaic() {
               <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20">
                 {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3.5 text-sm font-medium hover:bg-accent transition text-white">
+              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-800 transition text-white">
                 <Play className="h-4 w-4" /> {t("hero_cta_demo")}
               </Link>
             </div>
@@ -503,17 +503,34 @@ function HowItWorks() {
     { icon: LineChart, title: "Discover leads", desc: "Get a scored list of businesses that need exactly what you sell." },
     { icon: Mail, title: "Reach out", desc: "Use ready-made templates — or our AI writer — to contact them in seconds." },
   ];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
     <section 
+      ref={containerRef}
       id="how" 
-      className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
+      className="relative overflow-hidden border-y border-border py-24 text-white"
     >
-      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
+      <motion.div 
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-10 dark:opacity-15 mix-blend-luminosity"
+        style={{ 
+          backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
+          y,
+          height: "130%",
+          top: "-15%"
+        }}
+      />
+      <div className="absolute inset-0 bg-[#090C15]/90 dark:bg-[#0B0F19]/85 z-10" />
+      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// quick.workflow</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">From zero to outreach in minutes</h2>
-          <p className="mt-3 text-muted-foreground">A simple workflow built around how freelancers actually find clients.</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">From zero to outreach in minutes</h2>
+          <p className="mt-3 text-slate-300">A simple workflow built around how freelancers actually find clients.</p>
         </div>
         <div className="relative mt-14 grid gap-6 md:grid-cols-4">
           <div className="absolute left-0 right-0 top-7 hidden h-px bg-border/40 md:block" />
@@ -522,9 +539,9 @@ function HowItWorks() {
               <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-foreground text-background">
                 <s.icon className="h-6 w-6" />
               </div>
-              <p className="font-mono-data text-xs text-muted-foreground">STEP {i + 1}</p>
-              <h3 className="mt-1 font-display text-lg font-semibold text-foreground">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+              <p className="font-mono-data text-xs text-slate-400">STEP {i + 1}</p>
+              <h3 className="mt-1 font-display text-lg font-semibold text-white">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">{s.desc}</p>
             </div>
           ))}
         </div>
