@@ -66,11 +66,37 @@ function FreelancerDirectoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filter States
+  // Input States (controlled by inputs)
+  const [searchQueryInput, setSearchQueryInput] = useState("");
+  const [selectedCategoryInput, setSelectedCategoryInput] = useState("all");
+  const [selectedCountryInput, setSelectedCountryInput] = useState("all");
+  const [maxRateInput, setMaxRateInput] = useState<string>("all");
+
+  // Applied Filter States (triggering actual react list filtering)
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [maxRate, setMaxRate] = useState<string>("all");
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setSearchQuery(searchQueryInput);
+    setSelectedCategory(selectedCategoryInput);
+    setSelectedCountry(selectedCountryInput);
+    setMaxRate(maxRateInput);
+  };
+
+  const handleReset = () => {
+    setSearchQueryInput("");
+    setSelectedCategoryInput("all");
+    setSelectedCountryInput("all");
+    setMaxRateInput("all");
+
+    setSearchQuery("");
+    setSelectedCategory("all");
+    setSelectedCountry("all");
+    setMaxRate("all");
+  };
 
   const fetchFreelancers = async () => {
     setLoading(true);
@@ -132,14 +158,14 @@ function FreelancerDirectoryPage() {
   return (
     <MarketingShell>
       {/* Premium Dark Header */}
-      <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-16 text-center select-none text-white">
+      <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-16 text-center select-none text-white">
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase flex items-center justify-center gap-1.5">
             // public.freelancer.directory
           </p>
           <h1 className="font-display text-4xl font-extrabold sm:text-5xl tracking-tight leading-tight text-white">
             Connect Directly with Premium{" "}
-            <span className="text-primary bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+            <span className="text-cyan-400 font-extrabold drop-shadow-[0_0_12px_rgba(34,211,238,0.6)]">
               Freelancers.
             </span>
           </h1>
@@ -153,25 +179,28 @@ function FreelancerDirectoryPage() {
       {/* Advanced Filter Panel */}
       <section className="bg-card/40 border-b border-border py-6 select-none sticky top-[80px] z-20 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 items-center"
+          >
             {/* Search Input */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
                 placeholder="Search by name, bio, city..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background pl-9 pr-4 py-2 text-xs font-mono text-foreground placeholder-slate-500 focus:border-primary focus:outline-none transition"
+                value={searchQueryInput}
+                onChange={(e) => setSearchQueryInput(e.target.value)}
+                className="w-full rounded-xl border border-border bg-background pl-9 pr-4 py-2 text-xs font-mono text-foreground placeholder-slate-500 focus:border-primary focus:outline-none transition h-[38px]"
               />
             </div>
 
             {/* Category Select */}
             <div className="relative">
               <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer"
+                value={selectedCategoryInput}
+                onChange={(e) => setSelectedCategoryInput(e.target.value)}
+                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer h-[38px]"
               >
                 <option value="all">All Skills</option>
                 {CATEGORIES.map((c) => (
@@ -185,9 +214,9 @@ function FreelancerDirectoryPage() {
             {/* Country Select */}
             <div className="relative">
               <select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer"
+                value={selectedCountryInput}
+                onChange={(e) => setSelectedCountryInput(e.target.value)}
+                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer h-[38px]"
               >
                 <option value="all">All Countries</option>
                 {COUNTRIES.map((c) => (
@@ -201,9 +230,9 @@ function FreelancerDirectoryPage() {
             {/* Hourly Rate Select */}
             <div className="relative">
               <select
-                value={maxRate}
-                onChange={(e) => setMaxRate(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer"
+                value={maxRateInput}
+                onChange={(e) => setMaxRateInput(e.target.value)}
+                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer h-[38px]"
               >
                 <option value="all">Any Hourly Rate</option>
                 <option value="under25">Under $25 / hr</option>
@@ -212,7 +241,17 @@ function FreelancerDirectoryPage() {
                 <option value="above100">Over $100 / hr</option>
               </select>
             </div>
-          </div>
+
+            {/* Search Submit Button */}
+            <div className="relative">
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-[10px] py-2.5 h-[38px] transition duration-200 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_22px_rgba(6,182,212,0.6)] flex items-center justify-center gap-1.5 cursor-pointer uppercase tracking-wider border border-cyan-400/20"
+              >
+                <Search className="h-3.5 w-3.5" /> Find Freelancers
+              </button>
+            </div>
+          </form>
         </div>
       </section>
 
@@ -255,13 +294,8 @@ function FreelancerDirectoryPage() {
               No freelancers found matching those parameters.
             </p>
             <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("all");
-                setSelectedCountry("all");
-                setMaxRate("all");
-              }}
-              className="mt-3 text-xs font-semibold text-primary hover:underline cursor-pointer"
+              onClick={handleReset}
+              className="mt-3 text-xs font-semibold text-cyan-400 hover:text-cyan-350 hover:underline cursor-pointer"
             >
               Reset Filters
             </button>
@@ -386,7 +420,7 @@ function FreelancerDirectoryPage() {
       {/* Directory CTA */}
       <section className="px-4 pb-20 lg:px-8 bg-background">
         <div className="mx-auto max-w-5xl rounded-3xl border border-border bg-card p-12 text-center relative overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-amber-500/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-cyan-500/5 pointer-events-none" />
           <h3 className="font-display text-2xl font-bold relative z-10 flex items-center justify-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-500" /> Are you a freelance builder?
           </h3>

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/about")({
   component: () => (
     <MarketingShell>
       {/* Premium Dark Hero */}
-      <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28 text-center select-none text-white">
+      <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28 text-center select-none text-white">
         <div className="relative mx-auto max-w-3xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase">
             // about.us.connector
@@ -208,7 +208,7 @@ export const Route = createFileRoute("/about")({
         className="bg-parallax relative h-[320px] w-full flex items-center justify-center"
         style={{ backgroundImage: "url('/assets/freelancers/freelancer_14.jpg')" }}
       >
-        <div className="absolute inset-0 bg-[#080B14]/75 z-0" />
+        <div className="absolute inset-0 bg-[#020b21]/75 z-0" />
         <div className="relative z-10 text-center max-w-xl px-4 text-white">
           <p className="text-xs font-mono text-primary uppercase tracking-widest">
             // human.centered.connection

@@ -354,7 +354,7 @@ export function MarketingFooter() {
   ];
 
   return (
-    <footer className="border-t border-[#1e293b]/40 bg-[#080B14] text-white">
+    <footer className="border-t border-[#1e293b]/40 bg-[#020b21] text-white">
       <div className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
         <div className="grid gap-10 md:grid-cols-5">
           <div className="md:col-span-1">
@@ -734,7 +734,7 @@ export function PageHeader({
   image?: string;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-border bg-[#080B14]">
+    <section className="relative overflow-hidden border-b border-border bg-[#020b21]">
       <div className="absolute inset-0">
         {image && (
           <img
@@ -743,8 +743,8 @@ export function PageHeader({
             className="h-full w-full object-cover opacity-15 mix-blend-luminosity"
           />
         )}
-        <div className="absolute inset-0 bg-[#080B14]/85" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#080B14]/40 to-[#080B14]/70" />
+        <div className="absolute inset-0 bg-[#020b21]/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#020b21]/40 to-[#020b21]/70" />
       </div>
       <div className="relative mx-auto max-w-5xl px-4 py-20 text-center text-white lg:px-8 lg:py-28">
         {eyebrow && (

@@ -54,11 +54,11 @@
   --radius: 0.75rem;
 
   /* Solid Glittering Dark Navy — premium & high visibility */
-  --background: #0b0f19;
+  --background: #020b21;
   --foreground: #ffffff;
-  --card: #151c2c;
+  --card: #09132e;
   --card-foreground: #ffffff;
-  --popover: #151c2c;
+  --popover: #09132e;
   --popover-foreground: #ffffff;
 
   /* Blue primary — brand anchor */
@@ -66,14 +66,14 @@
   --primary-foreground: #ffffff;
   --secondary: #10b981;
   --secondary-foreground: #050508;
-  --muted: #1e293b;
+  --muted: #0d1b40;
   --muted-foreground: #a1a1aa;
-  --accent: #1f2937;
+  --accent: #0f1f4b;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #242f44;
-  --input: #252538;
+  --border: #11204c;
+  --input: #09132e;
   --ring: #2563eb;
 
   --brand: #1e3a8a;
@@ -82,26 +82,26 @@
   --warn: #f59e0b;
   --hot: #ef4444;
   --ink: #f2f1ff;
-  --cream: #151c2c;
+  --cream: #09132e;
 
-  --sidebar: #0b0f19;
+  --sidebar: #020b21;
   --sidebar-foreground: #a1a1aa;
   --sidebar-active: #ffffff;
   --sidebar-hover: #1e3a8a;
-  --sidebar-border: #242f44;
+  --sidebar-border: #11204c;
 
   /* Dynamic Design tokens for Grid/Dot/Shadow colors */
-  --grid-color: #242f44;
-  --dot-color: #242f44;
-  --shadow-border-color: #242f44;
+  --grid-color: #11204c;
+  --dot-color: #11204c;
+  --shadow-border-color: #11204c;
   --shadow-color: rgba(0, 0, 0, 0.4);
 
   /* Resolved dashboard ink variables */
-  --ink-bg: #0b0f19;
+  --ink-bg: #020b21;
   --ink-fg: #ffffff;
   --ink-muted: #94a3b8;
-  --ink-border: #242f44;
-  --ink-bg-2: #151c2c;
+  --ink-border: #11204c;
+  --ink-bg-2: #09132e;
 
   /* Glittering radial gradients disabled for high contrast and solid flat layout */
   --primary-glow: transparent;

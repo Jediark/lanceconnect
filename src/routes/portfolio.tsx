@@ -183,7 +183,7 @@ function PortfolioPage() {
   return (
     <MarketingShell>
       {/* Portfolio Header */}
-      <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-16 text-center select-none text-white">
+      <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-16 text-center select-none text-white">
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase">
             // portfolio.showcase

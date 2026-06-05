@@ -323,7 +323,7 @@ function HeroWithMosaic() {
   }, [embla]);
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-slate-200 dark:bg-[#0B0F19] transition-colors duration-300">
+    <section className="relative overflow-hidden border-b border-border bg-slate-200 dark:bg-[#020b21] transition-colors duration-300">
       <div ref={emblaRef} className="overflow-hidden w-full">
         <div className="flex">
           {SLIDES_DATA.map((slide, idx) => {
@@ -339,7 +339,7 @@ function HeroWithMosaic() {
                     className={`w-full h-full object-cover transition-transform duration-1000 ${isActive ? "scale-100" : "scale-105"}`}
                     alt=""
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19]/95 via-[#0B0F19]/80 to-[#0B0F19]/45 dark:block hidden transition-all duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/45 dark:block hidden transition-all duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-r from-slate-300/95 via-slate-300/85 to-slate-200/50 dark:hidden block transition-all duration-500" />
                 </div>
 
@@ -844,7 +844,7 @@ function TutorialVideoSection() {
               onClick={() => setIsPlaying(true)}
             >
               {/* Styled Mock Dashboard Graphic for Thumbnail */}
-              <div className="absolute inset-0 bg-[#080B14] opacity-80 mix-blend-multiply" />
+              <div className="absolute inset-0 bg-[#020b21] opacity-80 mix-blend-multiply" />
               <img
                 src={IMG.workspace}
                 alt="LanceConnect Tutorial Video"
@@ -1057,7 +1057,7 @@ function HowItWorks() {
           top: "-15%",
         }}
       />
-      <div className="absolute inset-0 bg-[#0B0F19]/65 dark:bg-[#0B0F19]/55 z-10" />
+      <div className="absolute inset-0 bg-[#020b21]/65 dark:bg-[#020b21]/55 z-10" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
@@ -1894,7 +1894,7 @@ function GlobalReach() {
 
           {/* Right: Map */}
           <div className="lg:col-span-7">
-            <div className="relative mx-auto w-full h-[280px] md:h-[320px] border border-[#1e293b] bg-[#0b0f19] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative mx-auto w-full h-[280px] md:h-[320px] border border-[#1e293b] bg-[#020b21] rounded-2xl overflow-hidden shadow-2xl">
               <div className="absolute inset-0 bg-dot-pattern opacity-45" />
 
               {/* Stylized world grid coordinates */}
@@ -1939,7 +1939,7 @@ function GlobalReach() {
 
                   {/* Always visible label showing City and Country */}
                   <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 pointer-events-none z-10">
-                    <div className="bg-[#0B0F19]/90 border border-primary/30 rounded-md py-0.5 px-2 text-[8px] md:text-[9px] font-mono font-medium text-slate-100 shadow-md whitespace-nowrap">
+                    <div className="bg-[#020b21]/90 border border-primary/30 rounded-md py-0.5 px-2 text-[8px] md:text-[9px] font-mono font-medium text-slate-100 shadow-md whitespace-nowrap">
                       {city.name}, {city.country}
                     </div>
                   </div>
@@ -2342,7 +2342,7 @@ function FAQ() {
           top: "-15%",
         }}
       />
-      <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#0B0F19]/55 z-10" />
+      <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#020b21]/55 z-10" />
 
       <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
