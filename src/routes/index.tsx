@@ -261,13 +261,13 @@ function HeroWithMosaic() {
   }, [embla]);
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background transition-colors duration-300">
+    <section className="relative overflow-hidden border-b border-border bg-slate-50 dark:bg-[#0B0F19] transition-colors duration-300">
       <div ref={emblaRef} className="overflow-hidden w-full">
         <div className="flex">
           {SLIDES_DATA.map((slide, idx) => {
             const isActive = idx === index;
             return (
-              <div key={idx} className="min-w-0 shrink-0 grow-0 basis-full relative min-h-[640px] lg:min-h-[680px] flex items-center overflow-hidden">
+              <div key={idx} className="min-w-0 shrink-0 grow-0 basis-full relative min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
                 <div className="absolute inset-0 z-0 select-none pointer-events-none">
                   <img 
                     src={slide.bgImg} 
@@ -275,10 +275,10 @@ function HeroWithMosaic() {
                     alt="" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19]/95 via-[#0B0F19]/80 to-[#0B0F19]/45 dark:block hidden transition-all duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/45 dark:hidden block transition-all duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-100/98 via-slate-100/85 to-slate-100/50 dark:hidden block transition-all duration-500" />
                 </div>
 
-                <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 py-16 lg:py-20 z-10">
+                <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 pt-8 pb-12 lg:pt-10 lg:pb-16 z-10">
                   <div className="grid gap-12 lg:grid-cols-2 items-center">
                     
                     <div className="text-left z-10">
