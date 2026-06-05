@@ -49,7 +49,7 @@ export function MarketingNav() {
   return (
     <div className="w-full shrink-0 sticky top-0 z-50">
       {bannerOpen && (
-        <div className="relative bg-gradient-to-r from-amber-600 via-orange-500 to-amber-500 py-2 px-4 lg:px-8 select-none flex items-center justify-between gap-3 text-xs font-semibold text-white shadow-[0_2px_10px_rgba(245,158,11,0.2)]">
+        <div className="hidden sm:flex relative bg-gradient-to-r from-amber-600 via-orange-500 to-amber-500 py-2 px-4 lg:px-8 select-none items-center justify-between gap-3 text-xs font-semibold text-white shadow-[0_2px_10px_rgba(245,158,11,0.2)]">
           <div className="flex-1 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
             <span className="bg-white/20 px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold animate-pulse">
               Special Offer
@@ -89,8 +89,8 @@ export function MarketingNav() {
             aria-label="Search"
             title="Search (⌘K)"
           >
-            <Search className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold">Search (⌘K)</span>
+            <Search className="h-4 w-4" />
+            <span className="text-xs font-bold">Search (⌘K)</span>
           </button>
 
           <div className="h-3 w-px bg-border" />
@@ -99,10 +99,10 @@ export function MarketingNav() {
           <div className="relative" ref={settingsRef}>
             <button
               onClick={() => setSettingsOpen(!settingsOpen)}
-              className="flex items-center gap-1.5 p-1 text-slate-800 dark:text-slate-300 hover:text-primary transition cursor-pointer text-[10px] font-bold hover:bg-accent rounded-lg px-2"
+              className="flex items-center gap-1.5 p-1 text-slate-800 dark:text-slate-300 hover:text-primary transition cursor-pointer text-xs font-bold hover:bg-accent rounded-lg px-2"
               aria-label="Settings"
             >
-              <Globe className="h-3.5 w-3.5" />
+              <Globe className="h-4 w-4" />
               <span>
                 {language.toUpperCase()} · {currency}
               </span>
