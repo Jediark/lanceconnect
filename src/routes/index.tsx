@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
   Globe2, BarChart3, Zap, Search, Terminal, Copy, Check, Loader2, Code2, Palette,
   PenTool, Smartphone, Film, Camera, Megaphone, AppWindow, Handshake,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
@@ -86,7 +86,7 @@ const HERO_MOSAIC = [
 function HeroWithMosaic() {
   const { t } = usePreferences();
   return (
-    <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-20 lg:py-28 text-white">
+    <section className="relative overflow-hidden border-b border-border bg-background py-20 lg:py-28 text-white">
       {/* Background Image with solid dark overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img 
@@ -94,7 +94,7 @@ function HeroWithMosaic() {
           alt="" 
           className="h-full w-full object-cover opacity-10 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-[#080B14]/95" />
+        <div className="absolute inset-0 bg-background/95" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -105,18 +105,18 @@ function HeroWithMosaic() {
             <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
               {t("hero_title")}
             </h1>
-            <p className="mt-6 text-base text-slate-300 max-w-lg leading-relaxed">
+            <p className="mt-6 text-base text-slate-200 max-w-lg leading-relaxed">
               {t("hero_sub")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20">
                 {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 px-6 py-3.5 text-sm font-medium hover:bg-accent transition text-white">
+              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3.5 text-sm font-medium hover:bg-accent transition text-white">
                 <Play className="h-4 w-4" /> {t("hero_cta_demo")}
               </Link>
             </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-[#475569]">
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-400">
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access</span>
               <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime</span>
@@ -127,7 +127,7 @@ function HeroWithMosaic() {
             {/* Core rotating cluster */}
             <div className="relative w-[380px] h-[380px] flex items-center justify-center">
               {/* Central glowing hub */}
-              <div className="absolute h-20 w-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center animate-pulse shadow-[0_0_30px_rgba(99,102,241,0.2)]">
+              <div className="absolute h-20 w-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center animate-pulse shadow-sm">
                 <div className="h-3 w-3 rounded-full bg-emerald-500" />
               </div>
 
@@ -145,7 +145,7 @@ function HeroWithMosaic() {
                   return (
                     <motion.div
                       key={i}
-                      className="absolute rounded-full overflow-hidden border-2 border-primary/40 shadow-[0_0_20px_rgba(99,102,241,0.25)] bg-card group cursor-pointer hover:border-emerald-400 hover:scale-105 transition-all duration-300"
+                      className="absolute rounded-full overflow-hidden border-2 border-primary/40 shadow-sm bg-card group cursor-pointer hover:border-emerald-400 hover:scale-105 transition-all duration-300"
                       style={{ 
                         top, 
                         left, 
@@ -160,7 +160,7 @@ function HeroWithMosaic() {
                       }}
                     >
                       <img src={img.src} alt={img.name} className="h-full w-full object-cover" loading="lazy" />
-                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/85 border border-slate-800/80 px-2 py-0.5 text-[8px] font-mono font-medium text-slate-300 whitespace-nowrap">
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-slate-950 border border-slate-800 px-2 py-0.5 text-[8px] font-mono font-medium text-slate-300 whitespace-nowrap">
                         {img.skill}
                       </span>
                     </motion.div>
@@ -170,21 +170,21 @@ function HeroWithMosaic() {
 
               {/* Floating Data Pills (positioned statically relative to right column, float in place) */}
               <motion.div 
-                className="absolute top-[8%] left-[6%] rounded-full bg-emerald-500/20 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] z-20"
+                className="absolute top-[8%] left-[6%] rounded-full bg-emerald-500 border border-emerald-500 px-3 py-1.5 text-xs font-semibold text-emerald-400 shadow-sm z-20"
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
               >
                 94 Hot Lead
               </motion.div>
               <motion.div 
-                className="absolute bottom-[8%] right-[8%] rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 text-xs font-semibold text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.2)] z-20"
+                className="absolute bottom-[8%] right-[8%] rounded-full bg-indigo-500 border border-indigo-500 px-3 py-1.5 text-xs font-semibold text-indigo-400 shadow-sm z-20"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
               >
                 +234 802...
               </motion.div>
               <motion.div 
-                className="absolute top-[50%] right-[0%] rounded-full bg-red-500/20 border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)] z-20"
+                className="absolute top-[50%] right-[0%] rounded-full bg-red-500 border border-red-500 px-3 py-1.5 text-xs font-semibold text-red-400 shadow-sm z-20"
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.0 }}
               >
@@ -356,7 +356,7 @@ function TutorialVideoSection() {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-background to-card/20 py-24 select-none transition-colors duration-300">
+    <section className="relative overflow-hidden border-b border-border bg-background py-24 select-none transition-colors duration-300">
       <div className="mx-auto max-w-5xl px-4 lg:px-8 text-center">
         <div className="max-w-3xl mx-auto mb-12">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-semibold text-primary font-mono uppercase tracking-wider">
@@ -503,24 +503,48 @@ function HowItWorks() {
     { icon: LineChart, title: "Discover leads", desc: "Get a scored list of businesses that need exactly what you sell." },
     { icon: Mail, title: "Reach out", desc: "Use ready-made templates — or our AI writer — to contact them in seconds." },
   ];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+
   return (
-    <section id="how" className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
-      <div className="mx-auto max-w-2xl text-center">
-        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">From zero to outreach in minutes</h2>
-        <p className="mt-3 text-muted-foreground">A simple workflow built around how freelancers actually find clients.</p>
-      </div>
-      <div className="relative mt-14 grid gap-6 md:grid-cols-4">
-        <div className="absolute left-0 right-0 top-7 hidden h-px bg-border md:block" />
-        {steps.map((s, i) => (
-          <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6">
-            <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-foreground text-background">
-              <s.icon className="h-6 w-6" />
+    <section 
+      ref={containerRef}
+      id="how" 
+      className="relative overflow-hidden border-y border-border py-24 text-white"
+    >
+      <motion.div 
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{ 
+          backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
+          y,
+          height: "130%",
+          top: "-15%"
+        }}
+      />
+      <div className="absolute inset-0 bg-[#090C15]/85 z-10" />
+      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// quick.workflow</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">From zero to outreach in minutes</h2>
+          <p className="mt-3 text-slate-300">A simple workflow built around how freelancers actually find clients.</p>
+        </div>
+        <div className="relative mt-14 grid gap-6 md:grid-cols-4">
+          <div className="absolute left-0 right-0 top-7 hidden h-px bg-border/40 md:block" />
+          {steps.map((s, i) => (
+            <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300">
+              <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-foreground text-background">
+                <s.icon className="h-6 w-6" />
+              </div>
+              <p className="font-mono-data text-xs text-slate-400">STEP {i + 1}</p>
+              <h3 className="mt-1 font-display text-lg font-semibold text-white">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">{s.desc}</p>
             </div>
-            <p className="font-mono-data text-xs text-muted-foreground">STEP {i + 1}</p>
-            <h3 className="mt-1 font-display text-lg font-semibold">{s.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -750,9 +774,9 @@ const FEATURES_LIST = [
     gridClass: "lg:col-start-1 lg:row-start-3 lg:col-span-3 lg:w-full lg:max-w-none",
     connector: () => null,
     footer: () => (
-      <div className="flex flex-wrap gap-1.5 mt-4 text-[9px] font-mono text-slate-700 dark:text-[#CBD5E1] w-full">
+      <div className="flex flex-wrap gap-1.5 mt-4 text-[9px] font-mono text-slate-800 dark:text-slate-200 w-full">
         {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev"].map(tag => (
-          <span key={tag} className="px-2 py-0.5 rounded bg-background border border-border text-slate-800 dark:text-slate-200">{tag}</span>
+          <span key={tag} className="px-2 py-0.5 rounded bg-background border border-border text-slate-900 dark:text-slate-100">{tag}</span>
         ))}
       </div>
     )
@@ -761,7 +785,7 @@ const FEATURES_LIST = [
 
 function Features() {
   return (
-    <section id="features" className="border-y border-border bg-card/30 py-24 select-none">
+    <section id="features" className="border-y border-border bg-background py-24 select-none">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-2xl text-center mb-16">
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
@@ -780,7 +804,7 @@ function Features() {
             return (
               <div 
                 key={card.id} 
-                className={`relative rounded-2xl border border-border bg-card/80 p-6 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300 z-10 ${card.gridClass}`}
+                className={`relative rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300 z-10 ${card.gridClass}`}
               >
                 {card.id === 7 ? (
                   <div className="flex items-center justify-between gap-8 w-full h-full text-left">
@@ -789,7 +813,7 @@ function Features() {
                         <Icon className="h-5 w-5" />
                       </div>
                       <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
-                      <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed">
+                      <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed">
                         {card.desc}
                       </p>
                     </div>
@@ -804,7 +828,7 @@ function Features() {
                         <Icon className="h-5 w-5" />
                       </div>
                       <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
-                      <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed line-clamp-3">
+                      <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed line-clamp-3">
                         {card.desc}
                       </p>
                     </div>
@@ -827,14 +851,14 @@ function Features() {
               return (
                 <div 
                   key={`m1-${card.id}`} 
-                  className="w-[280px] shrink-0 rounded-2xl border border-border bg-card/80 p-6 shadow-card flex flex-col justify-between"
+                  className="w-[280px] shrink-0 rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between"
                 >
                   <div>
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
                     <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
-                    <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed line-clamp-3">
+                    <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
                   </div>
@@ -851,14 +875,14 @@ function Features() {
               return (
                 <div 
                   key={`m2-${card.id}`} 
-                  className="w-[280px] shrink-0 rounded-2xl border border-border bg-card/80 p-6 shadow-card flex flex-col justify-between"
+                  className="w-[280px] shrink-0 rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between"
                 >
                   <div>
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
-                    <p className="text-xs md:text-sm text-slate-800 dark:text-slate-400 leading-relaxed line-clamp-3">
+                    <h3 className="font-display text-lg font-bold text-slate-955 dark:text-white mb-2">{card.title}</h3>
+                    <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
                   </div>
@@ -954,7 +978,7 @@ function LeadScannerSandbox() {
 
         <div className="grid gap-8 lg:grid-cols-12">
           {/* Controls - Left Column */}
-          <div className="lg:col-span-5 bg-card/80 border border-border rounded-2xl p-6 flex flex-col justify-between">
+          <div className="lg:col-span-5 bg-card border border-border rounded-2xl p-6 flex flex-col justify-between">
             <div className="space-y-6">
               {/* Craft Selector */}
               <div>
@@ -971,8 +995,8 @@ function LeadScannerSandbox() {
                       onClick={() => setCraft(item.id as any)}
                       className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all ${
                         craft === item.id 
-                          ? 'border-primary bg-primary/10 text-primary font-semibold shadow-[0_0_15px_rgba(99,102,241,0.08)]'
-                          : 'border-border bg-background text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-white'
+                          ? 'border-primary bg-primary/10 text-primary font-semibold'
+                          : 'border-border bg-background text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       <item.icon className="h-4.5 w-4.5 text-primary shrink-0" />
@@ -1033,7 +1057,7 @@ function LeadScannerSandbox() {
           </div>
 
           {/* Sandbox Screen Output - Right Column */}
-          <div className="lg:col-span-7 bg-card/40 border border-border rounded-2xl min-h-[420px] overflow-hidden flex flex-col">
+          <div className="lg:col-span-7 bg-card border border-border rounded-2xl min-h-[420px] overflow-hidden flex flex-col">
             {/* Screen Header */}
             <div className="bg-card border-b border-border/80 px-4 py-3 flex items-center justify-between text-xs text-slate-400">
               <div className="flex items-center gap-1.5">
@@ -1055,7 +1079,7 @@ function LeadScannerSandbox() {
               {/* Not scanned yet */}
               {!isScanning && !scanComplete && (
                 <div className="text-center max-w-sm mx-auto space-y-4 py-8">
-                  <div className="h-12 w-12 rounded-2xl bg-card/80 border border-border/80 flex items-center justify-center mx-auto shadow-md">
+                  <div className="h-12 w-12 rounded-2xl bg-card border border-border flex items-center justify-center mx-auto shadow-md">
                     <Search className="h-5 w-5 text-slate-500" />
                   </div>
                   <div>
@@ -1104,18 +1128,18 @@ function LeadScannerSandbox() {
                   {leads.map((l) => (
                     <div 
                       key={l.id} 
-                      className="bg-background/80 border border-border/80 hover:border-primary/40 rounded-xl p-4 transition-all duration-300 flex flex-col gap-3 group"
+                      className="bg-background border border-border hover:border-primary/45 rounded-xl p-4 transition-all duration-300 flex flex-col gap-3 group"
                     >
                       {/* Lead meta */}
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-display text-sm font-bold text-slate-950 dark:text-white leading-tight">{l.name}</h4>
+                            <h4 className="font-display text-sm font-bold text-slate-950 dark:text-slate-100 leading-tight">{l.name}</h4>
                             <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-primary">
                               {l.score} Match
                             </span>
                           </div>
-                          <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">{l.type} · {city}</span>
+                          <span className="text-[10px] text-slate-500 dark:text-slate-350 font-mono mt-0.5 block">{l.type} · {city}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5 justify-end">
                           {l.issues.map((issue: string, idx: number) => (
@@ -1127,7 +1151,7 @@ function LeadScannerSandbox() {
                       </div>
 
                       {/* AI Draft section */}
-                      <div className="bg-card border border-border/60 rounded-lg p-2.5 flex flex-col gap-2">
+                      <div className="bg-card border border-border rounded-lg p-2.5 flex flex-col gap-2">
                         <div className="flex justify-between items-center text-[9px] text-slate-600 dark:text-slate-400 font-mono">
                           <span>Subject: {l.subject}</span>
                           <button
@@ -1150,7 +1174,7 @@ function LeadScannerSandbox() {
                         <textarea
                           value={l.draft}
                           onChange={(e) => handleDraftChange(l.id, e.target.value)}
-                          className="bg-transparent border-0 font-mono text-[9px] text-slate-800 dark:text-slate-300 resize-none h-16 focus:outline-none focus:ring-0 leading-relaxed scrollbar-thin scrollbar-thumb-border"
+                          className="bg-transparent border-0 font-mono text-[9px] text-slate-900 dark:text-slate-200 resize-none h-16 focus:outline-none focus:ring-0 leading-relaxed scrollbar-thin scrollbar-thumb-border"
                         />
                       </div>
                     </div>
@@ -1434,16 +1458,32 @@ function Stats() {
     { k: "34%", v: "Average reply rate" },
     { k: "4.8/5", v: "Customer satisfaction" },
   ];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+
   return (
-    <section className="relative overflow-hidden border-y border-border bg-background transition-colors duration-300">
-      <div className="absolute inset-0">
-        <img src={IMG.team} alt="" className="h-full w-full object-cover opacity-10 dark:opacity-15 light:opacity-5 mix-blend-luminosity" />
-        <div className="absolute inset-0 bg-background/90 dark:bg-[#080B14]/85" />
-      </div>
-      <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8">
+    <section 
+      ref={containerRef}
+      className="relative overflow-hidden border-y border-border py-24 text-white"
+    >
+      <motion.div 
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{ 
+          backgroundImage: `url(${IMG.team})`,
+          y,
+          height: "130%",
+          top: "-15%"
+        }}
+      />
+      <div className="absolute inset-0 bg-[#090C15]/85 z-10" />
+      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">By the numbers</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// by.the.numbers</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">
             A real product, with real traction.
           </h2>
         </div>
@@ -1451,7 +1491,7 @@ function Stats() {
           {stats.map((s) => (
             <div key={s.k} className="rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300">
               <p className="font-display text-4xl font-semibold text-primary md:text-5xl">{s.k}</p>
-              <p className="mt-2 text-sm text-muted-foreground font-medium">{s.v}</p>
+              <p className="mt-2 text-sm text-slate-300 font-medium">{s.v}</p>
             </div>
           ))}
         </div>

@@ -53,12 +53,12 @@
 :root {
   --radius: 0.75rem;
 
-  /* Deep immersive dark — LeadThur-inspired */
-  --background: #050508;
+  /* Solid Glittering Dark Navy — premium & high visibility */
+  --background: #0B0F19;
   --foreground: #FFFFFF;
-  --card: #0F0F18;
+  --card: #151C2C;
   --card-foreground: #FFFFFF;
-  --popover: #0F0F18;
+  --popover: #151C2C;
   --popover-foreground: #FFFFFF;
 
   /* Blue primary — brand anchor */
@@ -66,13 +66,13 @@
   --primary-foreground: #FFFFFF;
   --secondary: #10B981;
   --secondary-foreground: #050508;
-  --muted: #14141E;
+  --muted: #1E293B;
   --muted-foreground: #A1A1AA;
-  --accent: #1A1A2E;
+  --accent: #1F2937;
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: #1E1E2E;
+  --border: #242F44;
   --input: #252538;
   --ring: #2563EB;
 
@@ -82,30 +82,30 @@
   --warn: #F59E0B;
   --hot: #EF4444;
   --ink: #F2F1FF;
-  --cream: #0F0F18;
+  --cream: #151C2C;
 
-  --sidebar: #0A0A12;
+  --sidebar: #0B0F19;
   --sidebar-foreground: #A1A1AA;
   --sidebar-active: #FFFFFF;
   --sidebar-hover: #1E3A8A;
-  --sidebar-border: #1E1E2E;
+  --sidebar-border: #242F44;
 
   /* Dynamic Design tokens for Grid/Dot/Shadow colors */
-  --grid-color: #1E1E2E;
-  --dot-color: #1E1E2E;
-  --shadow-border-color: #1E1E2E;
-  --shadow-color: rgba(0, 0, 0, 0.2);
+  --grid-color: #242F44;
+  --dot-color: #242F44;
+  --shadow-border-color: #242F44;
+  --shadow-color: rgba(0, 0, 0, 0.4);
 
   /* Resolved dashboard ink variables */
-  --ink-bg: #080B14;
+  --ink-bg: #0B0F19;
   --ink-fg: #FFFFFF;
   --ink-muted: #94A3B8;
-  --ink-border: #1E293B;
-  --ink-bg-2: #0F172A;
+  --ink-border: #242F44;
+  --ink-bg-2: #151C2C;
 
-  /* Glittering radial gradient overlay sources */
-  --primary-glow: rgba(99, 102, 241, 0.18);
-  --secondary-glow: rgba(16, 185, 129, 0.12);
+  /* Glittering radial gradients disabled for high contrast and solid flat layout */
+  --primary-glow: transparent;
+  --secondary-glow: transparent;
 }
 
 html.light {

@@ -296,7 +296,9 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const root = document.documentElement;
       if (savedTheme === "light") {
         root.classList.add("light");
+        root.classList.remove("dark");
       } else {
+        root.classList.add("dark");
         root.classList.remove("light");
       }
     }
@@ -324,7 +326,9 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
       if (root) {
         if (t === "light") {
           root.classList.add("light");
+          root.classList.remove("dark");
         } else {
+          root.classList.add("dark");
           root.classList.remove("light");
         }
       }
