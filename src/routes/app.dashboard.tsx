@@ -92,6 +92,7 @@ function Dashboard() {
 
   const [quickConnectOpen, setQuickConnectOpen] = useState(false);
   const [quickConnectLead, setQuickConnectLead] = useState<Lead | undefined>();
+  const [leadsChartData, setLeadsChartData] = useState<{ name: string; leads: number }[]>([]);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
@@ -101,6 +102,19 @@ function Dashboard() {
   const wonCount = pipeline.filter((l) => l.status === "won").length;
   const conversionRate = totalSaved > 0 ? Math.round((wonCount / totalSaved) * 100) : 0;
   const suggestedCities = COUNTRY_CITIES[quickCountry] || [];
+
+  const funnelData = [
+    { name: "New", value: pipeline.filter((l) => l.status === "new").length, color: "#7C3AED" },
+    { name: "Contacted", value: contactedCount, color: "#F59E0B" },
+    { name: "Interested", value: pipeline.filter((l) => l.status === "interested").length, color: "#3B82F6" },
+    { name: "Proposal", value: pipeline.filter((l) => l.status === "proposal_sent").length, color: "#EC4899" },
+    { name: "Won", value: wonCount, color: "#10B981" },
+  ];
+
+  const heatmapRegions = [
+    ...(user?.city && user?.country ? [{ city: user.city, country: user.country }] : []),
+    ...pipeline.map((l) => ({ city: l.city, country: l.country })),
+  ];
 
   useEffect(() => {
     if (!user) return;
@@ -200,6 +214,37 @@ function Dashboard() {
               createdAt: d.created_at,
             })),
           );
+      });
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    supabase
+      .from("leads")
+      .select("created_at")
+      .gte("created_at", sevenDaysAgo.toISOString())
+      .then(({ data, error }) => {
+        if (!error && data) {
+          const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          const last7Days = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - (6 - i));
+            return {
+              name: daysOfWeek[d.getDay()],
+              dateStr: d.toDateString(),
+              leads: 0,
+            };
+          });
+
+          data.forEach((lead: any) => {
+            const leadDate = new Date(lead.created_at).toDateString();
+            const foundDay = last7Days.find((day) => day.dateStr === leadDate);
+            if (foundDay) {
+              foundDay.leads += 1;
+            }
+          });
+
+          setLeadsChartData(last7Days.map((d) => ({ name: d.name, leads: d.leads })));
+        }
       });
   }, [user]);
 
@@ -573,16 +618,16 @@ function Dashboard() {
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-5 overflow-hidden">
             <h3 className="text-sm font-bold text-foreground mb-4">Leads Discovered</h3>
-            <LeadsOverTimeChart />
+            <LeadsOverTimeChart data={leadsChartData} />
           </div>
           <div className="rounded-2xl border border-border bg-card p-5 flex flex-col overflow-hidden">
             <h3 className="text-sm font-bold text-foreground mb-4">Conversion Pipeline</h3>
-            <PipelineFunnelChart className="flex-1" />
+            <PipelineFunnelChart data={funnelData} className="flex-1" />
           </div>
         </div>
 
         {/* ═══ HEATMAP ROW ═══ */}
-        <GlobalHeatmap className="h-[300px]" />
+        <GlobalHeatmap regions={heatmapRegions} className="h-[300px]" />
 
         {/* ═══ MAIN CONTENT: RESULTS + SIDEBAR ═══ */}
         <div className="grid gap-6 lg:grid-cols-3">
@@ -825,7 +870,7 @@ function Dashboard() {
                   </span>
                 </div>
               </div>
-              <LiveEventsTicker />
+              <LiveEventsTicker activities={activities} />
             </div>
           </div>
         </div>

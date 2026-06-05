@@ -30,11 +30,12 @@ const funnelData = [
   { name: "Won", value: 22, color: "#10B981" },
 ];
 
-export function LeadsOverTimeChart({ className }: { className?: string }) {
+export function LeadsOverTimeChart({ data, className }: { data?: { name: string; leads: number }[]; className?: string }) {
+  const chartData = data && data.length > 0 ? data : areaData;
   return (
     <div className={cn("h-64 w-full", className)}>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={areaData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#2563EB" stopOpacity={0.3} />
@@ -78,12 +79,13 @@ export function LeadsOverTimeChart({ className }: { className?: string }) {
   );
 }
 
-export function PipelineFunnelChart({ className }: { className?: string }) {
+export function PipelineFunnelChart({ data, className }: { data?: { name: string; value: number; color: string }[]; className?: string }) {
+  const chartData = data && data.length > 0 ? data : funnelData;
   return (
     <div className={cn("h-64 w-full", className)}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={funnelData}
+          data={chartData}
           layout="vertical"
           margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
         >
@@ -108,7 +110,7 @@ export function PipelineFunnelChart({ className }: { className?: string }) {
             }}
           />
           <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
-            {funnelData.map((entry, index) => (
+            {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Bar>
