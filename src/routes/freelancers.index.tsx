@@ -20,6 +20,28 @@ import {
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { IMG } from "@/data/content";
 
+const FREELANCE_IDS = [
+  "web_dev",
+  "designer",
+  "copywriter",
+  "seo",
+  "social_media",
+  "video",
+  "photography",
+  "marketing",
+  "app_dev",
+  "va",
+];
+
+const B2B_IDS = [
+  "tutor",
+  "african_food_export",
+  "restaurant_supplier",
+  "product_export",
+  "b2b_trade",
+  "corporate_training",
+];
+
 export const Route = createFileRoute("/freelancers/")({
   head: () => ({
     meta: [
@@ -196,11 +218,20 @@ function FreelancerDirectoryPage() {
                 className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer h-[38px]"
               >
                 <option value="all">All Skills</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
+                <optgroup label="Freelance Services" className="text-primary font-bold">
+                  {CATEGORIES.filter((c) => FREELANCE_IDS.includes(c.id)).map((c) => (
+                    <option key={c.id} value={c.id} className="font-mono text-foreground">
+                      {c.label}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="B2B & Niche Industries" className="text-emerald-500 font-bold">
+                  {CATEGORIES.filter((c) => B2B_IDS.includes(c.id)).map((c) => (
+                    <option key={c.id} value={c.id} className="font-mono text-foreground">
+                      {c.label}
+                    </option>
+                  ))}
+                </optgroup>
               </select>
             </div>
 
