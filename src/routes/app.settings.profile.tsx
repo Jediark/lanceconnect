@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "@/contexts/AuthContext";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
+import { COUNTRY_CITIES } from "@/data/countriesData";
 import { SettingsField } from "@/routes/app.settings";
 import { toast } from "sonner";
 import {
@@ -37,6 +38,9 @@ function ProfilePage() {
   const [category, setCategory] = useState(user?.freelancerCategory || "web_dev");
   const [country, setCountry] = useState(user?.country || "NG");
   const [city, setCity] = useState(user?.city || "");
+
+  const selectedCountryName = COUNTRIES.find((c) => c.code === country)?.name || "";
+  const suggestedCities = selectedCountryName ? (COUNTRY_CITIES[selectedCountryName] || []) : [];
 
   // Directory Settings States
   const [isPublic, setIsPublic] = useState(user?.isPublic || false);
@@ -239,9 +243,30 @@ function ProfilePage() {
                 <input
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
+                  list="profile-cities-list"
                   placeholder="e.g. Lagos or London"
                   className="input text-foreground bg-background"
                 />
+                <datalist id="profile-cities-list">
+                  {suggestedCities.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
+                {suggestedCities.length > 0 && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] text-muted-foreground">Popular:</span>
+                    {suggestedCities.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setCity(c)}
+                        className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </SettingsField>
 
               <SettingsField label="Personal Website / Link">

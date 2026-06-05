@@ -24,6 +24,7 @@ import {
   Target,
 } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
+import { COUNTRY_CITIES } from "@/data/countriesData";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -65,6 +66,9 @@ function Onboarding() {
   const [website, setWebsite] = useState("");
   const [bio, setBio] = useState("");
   const [whatsapp, setWhatsapp] = useState(user?.contactPhone || "");
+
+  const selectedCountryName = COUNTRIES.find((c) => c.code === country)?.name || "";
+  const suggestedCities = selectedCountryName ? (COUNTRY_CITIES[selectedCountryName] || []) : [];
 
   // Supplier-specific states
   const [companyName, setCompanyName] = useState("");
@@ -228,9 +232,30 @@ function Onboarding() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   disabled={worldwide}
+                  list="onboarding-cities-list"
                   placeholder="e.g. Lagos, London, São Paulo, New York"
                   className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm disabled:opacity-50"
                 />
+                <datalist id="onboarding-cities-list">
+                  {suggestedCities.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
+                {suggestedCities.length > 0 && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] text-muted-foreground">Popular:</span>
+                    {suggestedCities.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setCity(c)}
+                        className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border bg-card p-3 text-sm">
                 <input

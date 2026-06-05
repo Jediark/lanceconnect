@@ -525,11 +525,17 @@ function Dashboard() {
                 <input
                   type="text"
                   required
+                  list="dashboard-cities-list"
                   placeholder="e.g. Lagos, London..."
                   value={quickCity}
                   onChange={(e) => setQuickCity(e.target.value)}
                   className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition"
                 />
+                <datalist id="dashboard-cities-list">
+                  {suggestedCities.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
               </div>
               <div className="flex items-end">
                 <button
