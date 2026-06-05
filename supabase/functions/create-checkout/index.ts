@@ -10,6 +10,17 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
+import { checkRateLimit } from '../_shared/ratelimit.ts'
+import { z } from 'https://esm.sh/zod@3.22.0'
+
+const requestSchema = z.object({
+  priceId: z.string().optional(),
+  planName: z.string().optional().default('starter'),
+  checkoutType: z.enum(['subscription', 'credits']).optional().default('subscription'),
+  creditsAmount: z.number().optional().default(0),
+  successUrl: z.string(),
+  cancelUrl: z.string()
+})
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -23,11 +34,14 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}))
-    const { priceId, planName = 'starter', checkoutType = 'subscription', creditsAmount = 0, successUrl, cancelUrl } = body
-
-    if (!successUrl || !cancelUrl) {
-      throw new AppError('successUrl and cancelUrl are required', 400, 'BAD_REQUEST')
+    const parsed = requestSchema.safeParse(body)
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'VALIDATION_FAILED', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
+    const { priceId, planName, checkoutType, creditsAmount, successUrl, cancelUrl } = parsed.data
 
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
@@ -43,6 +57,13 @@ Deno.serve(async (req) => {
     })
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Enforce Rate Limit: 50 requests/hour for checkout creation
+    const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
+    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, 'create-checkout', 50, 3600)
+    if (!rateLimit.allowed) {
+      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
+    }
 
     // Retrieve or create Stripe customer
     const { data: profile, error: profileError } = await supabase
@@ -131,6 +152,20 @@ Deno.serve(async (req) => {
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams)
+
+    // Log Action to Audit Log
+    try {
+      await supabase.from('audit_log').insert({
+        user_id: user.id,
+        action: 'checkout.session_created',
+        entity_type: 'payment',
+        metadata: { price_id: priceId, plan_name: planName, checkout_type: checkoutType, stripe_session_id: session.id },
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null
+      })
+    } catch (auditErr) {
+      console.warn('Failed to insert audit log:', auditErr)
+    }
 
     return new Response(JSON.stringify({ sessionId: session.id, url: session.url }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

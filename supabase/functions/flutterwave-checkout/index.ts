@@ -9,6 +9,16 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { validateAuth } from '../_shared/auth.ts'
 import { handleError, AppError } from '../_shared/errors.ts'
+import { checkRateLimit } from '../_shared/ratelimit.ts'
+import { z } from 'https://esm.sh/zod@3.22.0'
+
+const requestSchema = z.object({
+  planName: z.string().optional(),
+  checkoutType: z.enum(['subscription', 'credits']).optional().default('subscription'),
+  creditsAmount: z.number().optional().default(0),
+  currency: z.string().optional().default('NGN'),
+  redirectUrl: z.string(),
+})
 
 /**
  * Flutterwave Checkout Edge Function
@@ -56,17 +66,14 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}))
-    const {
-      planName,
-      checkoutType = 'subscription',
-      creditsAmount = 0,
-      currency = 'NGN',
-      redirectUrl,
-    } = body
-
-    if (!redirectUrl) {
-      throw new AppError('redirectUrl is required', 400, 'BAD_REQUEST')
+    const parsed = requestSchema.safeParse(body)
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: 'VALIDATION_FAILED', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
+    const { planName, checkoutType, creditsAmount, currency, redirectUrl } = parsed.data
 
     const flutterwaveSecretKey = Deno.env.get('FLUTTERWAVE_SECRET_KEY')
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
@@ -77,6 +84,13 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Enforce Rate Limit: 50 requests/hour for checkout creation
+    const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
+    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, 'flutterwave-checkout', 50, 3600)
+    if (!rateLimit.allowed) {
+      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
+    }
 
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
@@ -163,6 +177,20 @@ Deno.serve(async (req) => {
         502,
         'FLUTTERWAVE_ERROR'
       )
+    }
+
+    // Log Action to Audit Log
+    try {
+      await supabase.from('audit_log').insert({
+        user_id: user.id,
+        action: 'checkout.flutterwave_initialized',
+        entity_type: 'payment',
+        metadata: { plan_name: planName || '', checkout_type: checkoutType, currency, tx_ref: txRef },
+        ip_address: ipAddress,
+        user_agent: req.headers.get('user-agent') || null
+      })
+    } catch (auditErr) {
+      console.warn('Failed to insert audit log:', auditErr)
     }
 
     return new Response(

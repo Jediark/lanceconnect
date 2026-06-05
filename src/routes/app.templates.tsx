@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Star, X } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { MOCK_TEMPLATES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/templates")({
   head: () => ({ meta: [{ title: "Outreach Templates — LanceConnect" }] }),
@@ -21,9 +24,128 @@ const CHANNELS = [
 type Template = (typeof MOCK_TEMPLATES)[number];
 
 function Templates() {
+  const { user } = useAuth();
   const [channel, setChannel] = useState("all");
   const [editing, setEditing] = useState<Template | null>(null);
-  const filtered = MOCK_TEMPLATES.filter((t) => channel === "all" || t.channel === channel);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchTemplates = async () => {
+    if (!user || user.id === "user-1") {
+      setTemplates(MOCK_TEMPLATES);
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("outreach_templates")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      const mapped = (data || []).map((t: any) => ({
+        id: t.id,
+        name: t.name,
+        channel: t.channel,
+        subject: t.subject || "",
+        body: t.body,
+        isDefault: false,
+      }));
+      setTemplates(mapped);
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to load templates");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTemplates();
+  }, [user]);
+
+  const handleSave = async (tpl: Partial<Template> & { id: string }) => {
+    if (!user) return;
+    if (user.id === "user-1") {
+      if (tpl.id === "new") {
+        const newTpl = {
+          id: Math.random().toString(),
+          name: tpl.name || "Untitled",
+          channel: tpl.channel || "email",
+          subject: tpl.subject || "",
+          body: tpl.body || "",
+          isDefault: false
+        };
+        setTemplates(prev => [newTpl, ...prev]);
+      } else {
+        setTemplates(prev => prev.map(t => t.id === tpl.id ? { ...t, ...tpl } : t));
+      }
+      toast.success("Template saved (Demo Mode)");
+      setEditing(null);
+      return;
+    }
+
+    try {
+      if (tpl.id === "new") {
+        const { error } = await supabase
+          .from("outreach_templates")
+          .insert({
+            user_id: user.id,
+            name: tpl.name,
+            channel: tpl.channel,
+            subject: tpl.subject,
+            body: tpl.body
+          });
+        if (error) throw error;
+        toast.success("Template created!");
+      } else {
+        const { error } = await supabase
+          .from("outreach_templates")
+          .update({
+            name: tpl.name,
+            channel: tpl.channel,
+            subject: tpl.subject,
+            body: tpl.body
+          })
+          .eq("id", tpl.id);
+        if (error) throw error;
+        toast.success("Template updated!");
+      }
+      fetchTemplates();
+      setEditing(null);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to save template");
+    }
+  };
+
+  const handleDelete = async (templateId: string) => {
+    if (!confirm("Are you sure you want to delete this template?")) return;
+    if (!user) return;
+    if (user.id === "user-1") {
+      setTemplates(prev => prev.filter(t => t.id !== templateId));
+      toast.success("Template deleted (Demo Mode)");
+      setEditing(null);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("outreach_templates")
+        .delete()
+        .eq("id", templateId);
+      if (error) throw error;
+      toast.success("Template deleted!");
+      fetchTemplates();
+      setEditing(null);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to delete template");
+    }
+  };
+
+  const filtered = templates.filter((t) => channel === "all" || t.channel === channel);
 
   return (
     <>
@@ -41,30 +163,45 @@ function Templates() {
         </button>
       </div>
 
-      <div className="grid gap-4 px-4 pb-10 lg:grid-cols-2 lg:px-8">
-        {filtered.map((t) => (
-          <div key={t.id} className="rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-card-hover">
-            <div className="mb-2 flex items-start justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-display text-base font-semibold">{t.name}</h3>
-                  {t.isDefault && <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />}
+      {loading ? (
+        <div className="grid gap-4 px-4 pb-10 lg:grid-cols-2 lg:px-8">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="rounded-2xl border border-border bg-card p-5 space-y-4">
+              <div className="h-4 bg-slate-800 rounded w-1/3 animate-pulse" />
+              <div className="h-3 bg-slate-800 rounded w-1/4 animate-pulse" />
+              <div className="h-16 bg-slate-800 rounded w-full animate-pulse" />
+            </div>
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="px-4 py-10 lg:px-8 text-center text-muted-foreground text-sm">
+          No templates found for this channel.
+        </div>
+      ) : (
+        <div className="grid gap-4 px-4 pb-10 lg:grid-cols-2 lg:px-8">
+          {filtered.map((t) => (
+            <div key={t.id} className="rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-card-hover">
+              <div className="mb-2 flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-display text-base font-semibold">{t.name}</h3>
+                    {t.isDefault && <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />}
+                  </div>
+                  <p className="text-xs text-muted-foreground capitalize">{t.channel.replace("_", " ")} template</p>
                 </div>
-                <p className="text-xs text-muted-foreground capitalize">{t.channel.replace("_", " ")} template</p>
+              </div>
+              {t.subject && <p className="mt-2 text-xs font-semibold">Subject: <span className="font-normal text-muted-foreground">{t.subject}</span></p>}
+              <p className="mt-2 line-clamp-4 whitespace-pre-line text-xs leading-relaxed text-muted-foreground">{t.body}</p>
+              <div className="mt-4 flex gap-2">
+                <button onClick={() => setEditing(t)} className="flex-1 rounded-md border border-border bg-background py-1.5 text-xs font-medium hover:bg-accent">Preview</button>
+                <button onClick={() => setEditing(t)} className="flex-1 rounded-md border border-border bg-background py-1.5 text-xs font-medium hover:bg-accent">Edit</button>
               </div>
             </div>
-            {t.subject && <p className="mt-2 text-xs font-semibold">Subject: <span className="font-normal text-muted-foreground">{t.subject}</span></p>}
-            <p className="mt-2 line-clamp-4 whitespace-pre-line text-xs leading-relaxed text-muted-foreground">{t.body}</p>
-            <div className="mt-4 flex gap-2">
-              <button onClick={() => setEditing(t)} className="flex-1 rounded-md border border-border bg-background py-1.5 text-xs font-medium hover:bg-accent">Preview</button>
-              <button onClick={() => setEditing(t)} className="flex-1 rounded-md border border-border bg-background py-1.5 text-xs font-medium hover:bg-accent">Edit</button>
-              <button className="flex-1 rounded-md bg-primary py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90">Use</button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {editing && <TemplateEditor template={editing} onClose={() => setEditing(null)} />}
+      {editing && <TemplateEditor template={editing} onClose={() => setEditing(null)} onSave={handleSave} onDelete={handleDelete} />}
     </>
   );
 }
@@ -76,7 +213,17 @@ function fill(body: string) {
     .replace(/{{your_name}}/g, "Alex Johnson");
 }
 
-function TemplateEditor({ template, onClose }: { template: Template; onClose: () => void }) {
+function TemplateEditor({ 
+  template, 
+  onClose, 
+  onSave, 
+  onDelete 
+}: { 
+  template: Template; 
+  onClose: () => void; 
+  onSave: (tpl: Partial<Template> & { id: string }) => Promise<void>; 
+  onDelete?: (id: string) => Promise<void>;
+}) {
   const [name, setName] = useState(template.name);
   const [channel, setChannel] = useState(template.channel);
   const [subject, setSubject] = useState(template.subject ?? "");
@@ -119,8 +266,17 @@ function TemplateEditor({ template, onClose }: { template: Template; onClose: ()
             )}
           </div>
           <div className="flex justify-end gap-2 border-t border-border p-4">
+            {template.id !== "new" && onDelete && (
+              <button 
+                type="button" 
+                onClick={() => onDelete(template.id)} 
+                className="mr-auto rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white hover:bg-destructive/90"
+              >
+                Delete
+              </button>
+            )}
             <button onClick={onClose} className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-accent">Cancel</button>
-            <button onClick={onClose} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Save Template</button>
+            <button onClick={() => onSave({ id: template.id, name, channel, subject, body })} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Save Template</button>
           </div>
         </div>
         <div className="border-t border-border bg-muted/30 p-4 lg:border-l lg:border-t-0">

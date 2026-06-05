@@ -6,6 +6,7 @@ type AuthCtx = {
   user: User | null;
   isAuthenticated: boolean;
   login: (email?: string, password?: string) => Promise<{ error: any | null }>;
+  loginWithGoogle: () => Promise<{ error: any | null }>;
   signup: (email: string, password: string, fullName: string) => Promise<{ error: any | null; session?: any | null }>;
   logout: () => Promise<void>;
   updateUser: (patch: Partial<User>) => void;
@@ -146,6 +147,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const loginWithGoogle = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: typeof window !== "undefined" ? window.location.origin + "/app/dashboard" : undefined,
+        },
+      });
+      return { error };
+    } catch (err: any) {
+      return { error: err };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const signup = async (email: string, password: string, fullName: string) => {
     setLoading(true);
     try {
@@ -211,7 +229,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, signup, logout, updateUser, loading }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, loginWithGoogle, signup, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -37,6 +37,9 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [scansCount, setScansCount] = useState(0);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [totalLeadsCount, setTotalLeadsCount] = useState(0);
+  const [savedThisMonth, setSavedThisMonth] = useState(0);
+  const [contactedCountFromDb, setContactedCountFromDb] = useState(0);
 
   const [quickCity, setQuickCity] = useState("");
   const [quickCategory, setQuickCategory] = useState("web_dev");
@@ -69,6 +72,9 @@ function Dashboard() {
     if (!user) return;
     if (user.id === "user-1") {
       setScansCount(14);
+      setTotalLeadsCount(1254);
+      setSavedThisMonth(8);
+      setContactedCountFromDb(5);
       setResults(MOCK_LEADS.slice(0, 6));
       setActivities([
         { id: "1", action: "lead.searched", entityType: "lead", metadata: { query: "Web Developer", city: "London" }, createdAt: new Date(Date.now() - 3600000).toISOString() },
@@ -78,6 +84,25 @@ function Dashboard() {
       return;
     }
     setLoading(true);
+    
+    // Total leads discovered in system
+    supabase.from("leads").select("*", { count: "exact", head: true }).then(({ count, error }) => {
+      if (!error && count !== null) setTotalLeadsCount(count);
+    });
+
+    // Leads saved this month by current user
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    supabase.from("user_leads").select("*", { count: "exact", head: true }).eq("user_id", user.id).gte("saved_at", startOfMonth.toISOString()).then(({ count, error }) => {
+      if (!error && count !== null) setSavedThisMonth(count);
+    });
+
+    // Leads contacted by current user (status != 'new')
+    supabase.from("user_leads").select("*", { count: "exact", head: true }).eq("user_id", user.id).neq("status", "new").then(({ count, error }) => {
+      if (!error && count !== null) setContactedCountFromDb(count);
+    });
+
     supabase.from("search_history").select("id", { count: "exact" }).eq("user_id", user.id).then(({ count, error }) => { if (!error && count !== null) setScansCount(count); });
     supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(6).then(({ data, error }) => {
       if (error) console.error(error);
@@ -248,9 +273,9 @@ function Dashboard() {
         {/* ═══ STATS ROW ═══ */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Searches", value: scansCount, icon: Search, bg: "bg-primary", fg: "text-white" },
-            { label: "Leads Saved", value: totalSaved, icon: Users, bg: "bg-success", fg: "text-white" },
-            { label: "Contacted", value: contactedCount, icon: MessageSquare, bg: "bg-warn", fg: "text-white" },
+            { label: "Total Discovered", value: totalLeadsCount, icon: Search, bg: "bg-primary", fg: "text-white" },
+            { label: "Saved This Month", value: savedThisMonth, icon: Users, bg: "bg-success", fg: "text-white" },
+            { label: "Leads Contacted", value: contactedCountFromDb, icon: MessageSquare, bg: "bg-warn", fg: "text-white" },
             { label: "Win Rate", value: `${conversionRate}%`, icon: Target, bg: "bg-hot", fg: "text-white" },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl border border-border bg-card p-5 hover:border-primary transition group">

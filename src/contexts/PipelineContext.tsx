@@ -73,6 +73,45 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!user || user.id === "user-1") return;
+
+    const channel = supabase
+      .channel("pipeline-lead-updates")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "leads",
+        },
+        (payload) => {
+          const updatedLead = payload.new;
+          setPipeline((prev) =>
+            prev.map((l) =>
+              l.id === updatedLead.id
+                ? {
+                    ...l,
+                    phone: updatedLead.phone || l.phone,
+                    email: updatedLead.email || l.email,
+                    websiteUrl: updatedLead.website_url || l.websiteUrl,
+                    hasWebsite: updatedLead.has_website !== undefined ? updatedLead.has_website : l.hasWebsite,
+                    googleRating: updatedLead.google_rating !== undefined ? Number(updatedLead.google_rating) : l.googleRating,
+                    googleReviewCount: updatedLead.google_review_count !== undefined ? Number(updatedLead.google_review_count) : l.googleReviewCount,
+                    opportunityScore: updatedLead.opportunity_score !== undefined ? Number(updatedLead.opportunity_score) : l.opportunityScore,
+                  }
+                : l
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   const saveLead = async (lead: Lead) => {
     if (!user || user.id === "user-1") {
       setPipeline((prev) =>

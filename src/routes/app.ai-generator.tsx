@@ -5,6 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Sparkles, Copy, RefreshCw, Crown } from "lucide-react";
 import { toast } from "sonner";
 import { MOCK_LEADS } from "@/data/mockData";
+import { usePipeline } from "@/contexts/PipelineContext";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/app/ai-generator")({
   head: () => ({ meta: [{ title: "AI Outreach Writer — LanceConnect" }] }),
@@ -15,24 +17,88 @@ const TONES = ["Friendly","Formal","Casual","Direct"] as const;
 const LANGS = ["English","Spanish","French","Italian","Portuguese"] as const;
 const CHANNELS = ["Email","WhatsApp","LinkedIn DM","Phone script"] as const;
 
+const channelMap: Record<string, string> = {
+  "Email": "email",
+  "WhatsApp": "sms",
+  "LinkedIn DM": "linkedin",
+  "Phone script": "phone_script",
+};
+
+const toneMap: Record<string, string> = {
+  "Friendly": "casual",
+  "Formal": "professional",
+  "Casual": "casual",
+  "Direct": "bold",
+};
+
 function AIPage() {
   const { user } = useAuth();
+  const { pipeline } = usePipeline();
   const isPro = (user?.plan as string) === "pro" || (user?.plan as string) === "agency";
-  const [leadId, setLeadId] = useState(MOCK_LEADS[0].id);
+  
+  const activeLeads = user?.id === "user-1" || pipeline.length === 0 ? MOCK_LEADS : pipeline;
+  const [leadId, setLeadId] = useState("");
+  const currentLeadId = leadId || activeLeads[0]?.id || "";
+  
   const [tone, setTone] = useState<typeof TONES[number]>("Friendly");
   const [lang, setLang] = useState<typeof LANGS[number]>("English");
   const [channel, setChannel] = useState<typeof CHANNELS[number]>("Email");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
-  const lead = MOCK_LEADS.find(l => l.id === leadId)!;
+  const [provider, setProvider] = useState("");
+  
+  const lead = activeLeads.find(l => l.id === currentLeadId) || activeLeads[0];
 
-  const generate = () => {
+  const generate = async () => {
     if (!isPro) { toast.error("AI Writer is a Pro feature"); return; }
+    if (!lead) { toast.error("No lead selected"); return; }
     setLoading(true);
-    setTimeout(() => {
-      setOutput(`Hi there,\n\nI was looking up small businesses in ${lead.city} this morning and ${lead.businessName} caught my eye — a ${lead.googleRating}★ ${lead.businessType.toLowerCase()} with great reviews and yet${lead.hasWebsite ? " a website that doesn't quite match the quality of the business" : " no website at all"}.\n\nI'm a freelancer who helps local businesses fix exactly this. No agency markup, just me. I'd love to send you a quick mock-up — free, no strings — so you can see what's possible.\n\nWould a 10-minute call work this week?\n\nWarmly,\n— Your name`);
+    setOutput("");
+    setProvider("");
+    
+    if (user?.id === "user-1") {
+      setTimeout(() => {
+        setOutput(`Hi there,\n\nI was looking up small businesses in ${lead.city} this morning and ${lead.businessName} caught my eye — a ${lead.googleRating}★ ${lead.businessType.toLowerCase()} with great reviews and yet${lead.hasWebsite ? " a website that doesn't quite match the quality of the business" : " no website at all"}.\n\nI'm a freelancer who helps local businesses fix exactly this. No agency markup, just me. I'd love to send you a quick mock-up — free, no strings — so you can see what's possible.\n\nWould a 10-minute call work this week?\n\nWarmly,\n— Your name`);
+        setProvider("⚡ Generated with Gemini");
+        setLoading(false);
+        toast.success("AI draft generated successfully!");
+      }, 900);
+      return;
+    }
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const apiChannel = channelMap[channel] || "email";
+      const apiTone = toneMap[tone] || "professional";
+      
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-outreach`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token}`
+          },
+          body: JSON.stringify({
+            leadId: lead.id,
+            channel: apiChannel,
+            tone: apiTone
+          })
+        }
+      );
+      
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || "Failed to generate pitch");
+      
+      setOutput(data.message || "");
+      setProvider(data.provider_label || "Generated with AI");
+      toast.success("AI Outreach Draft generated!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to generate AI outreach");
+    } finally {
       setLoading(false);
-    }, 900);
+    }
   };
 
   return (
@@ -44,7 +110,11 @@ function AIPage() {
             <Sparkles className="h-5 w-5 text-primary"/><h2 className="font-display font-semibold">Setup</h2>
             <span className="ml-auto rounded-full bg-warn/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-warn">Pro</span>
           </div>
-          <Field label="Lead"><select value={leadId} onChange={e=>setLeadId(e.target.value)} className="input">{MOCK_LEADS.map(l=><option key={l.id} value={l.id}>{l.businessName} · {l.city}</option>)}</select></Field>
+          <Field label="Lead">
+            <select value={currentLeadId} onChange={e=>setLeadId(e.target.value)} className="input text-foreground bg-background">
+              {activeLeads.map(l=><option key={l.id} value={l.id} className="text-foreground bg-background">{l.businessName} · {l.city}</option>)}
+            </select>
+          </Field>
           <Field label="Channel"><div className="grid grid-cols-2 gap-2">{CHANNELS.map(c=><button key={c} onClick={()=>setChannel(c)} type="button" className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${channel===c?"border-primary bg-primary/10 text-primary":"border-border bg-background hover:bg-accent"}`}>{c}</button>)}</div></Field>
           <Field label="Tone"><div className="grid grid-cols-2 gap-2">{TONES.map(t=><button key={t} onClick={()=>setTone(t)} type="button" className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${tone===t?"border-primary bg-primary/10 text-primary":"border-border bg-background hover:bg-accent"}`}>{t}</button>)}</div></Field>
           <Field label="Language"><select value={lang} onChange={e=>setLang(e.target.value as any)} className="input">{LANGS.map(l=><option key={l}>{l}</option>)}</select></Field>
@@ -56,7 +126,10 @@ function AIPage() {
 
         <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display font-semibold">{channel}</h2>
+            <h2 className="font-display font-semibold flex items-center gap-2">
+              {channel}
+              {provider && <span className="text-[10px] font-mono font-normal text-muted-foreground">{provider}</span>}
+            </h2>
             {output && <button onClick={()=>{navigator.clipboard.writeText(output);toast.success("Copied");}} className="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-3 py-1 text-xs font-medium hover:bg-accent"><Copy className="h-3.5 w-3.5"/> Copy</button>}
           </div>
           <textarea value={output} onChange={e=>setOutput(e.target.value)} placeholder="Your generated message will appear here…" rows={18} className="input resize-none"/>

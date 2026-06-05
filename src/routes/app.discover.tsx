@@ -12,6 +12,7 @@ import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
@@ -102,15 +103,40 @@ function Discover() {
     try {
       const queryTerm = category || "local business";
       const countryName = country || "Nigeria";
-      const { data, error } = await supabase.functions.invoke("search-leads", {
-        body: {
-          query: queryTerm,
-          city: city,
-          country: countryName,
-          limit: 20
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-leads`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token}`
+          },
+          body: JSON.stringify({
+            query: queryTerm,
+            city: city,
+            country: countryName,
+            limit: 20
+          })
         }
-      });
-      if (error) throw error;
+      );
+      
+      const data = await res.json();
+      
+      if (!res.ok || data.error) {
+        if (data.error === "LIMIT_REACHED") {
+          toast.error("Search limit reached! Please upgrade your plan to get more leads.", {
+            action: {
+              label: "Upgrade Plan",
+              onClick: () => { window.location.href = "/app/upgrade"; }
+            }
+          });
+          return;
+        }
+        throw new Error(data.error || "Failed to search leads");
+      }
+      
       const rawLeads = data?.leads || [];
       const mapped = rawLeads.map((dbLead: any) => ({
         id: dbLead.id,
@@ -259,10 +285,32 @@ function Discover() {
       </div>
 
       <div className="px-4 pb-10 lg:px-8">
-        {loading && filteredResults.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="mt-2 text-sm text-muted-foreground">Searching business indexes...</p>
+        {loading ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="group relative flex w-full flex-col rounded-2xl border border-border bg-card p-5 space-y-4">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                  <Skeleton className="h-7 w-12 rounded-full" />
+                </div>
+                <div className="flex gap-2">
+                  <Skeleton className="h-5 w-24 rounded-full" />
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                </div>
+                <div className="space-y-2 py-2 border-y border-dashed border-border">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Skeleton className="h-9 flex-1" />
+                  <Skeleton className="h-9 w-9" />
+                  <Skeleton className="h-9 w-9" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : filteredResults.length === 0 ? (
           <EmptyState icon={<Search className="h-10 w-10 text-muted-foreground/60" />} title="No leads found in this area yet" description="Try a different city or expand your filters." action={{ label: "Clear all filters", onClick: clear }} />
