@@ -59,6 +59,7 @@ lanceconnect/
 ## Rules & Conventions
 
 ### 1. Component Rules
+
 - Use Tailwind CSS for all styling (no inline styles except for dynamic values)
 - Use `cn()` utility from `@/lib/utils` for conditional classes
 - All interactive components must have proper hover/focus states
@@ -66,34 +67,40 @@ lanceconnect/
 - Mobile-first responsive design (use `lg:` prefix for desktop)
 
 ### 2. Type Rules
+
 - All types defined in `src/types/index.ts`
 - Never use `any` - always use proper types
 - Use `z.infer<typeof schema>` for form types
 
 ### 3. State Management
+
 - Auth + pipeline: React Context (simple, works well)
 - Search filters: Zustand store (`src/store/filterStore.ts`)
 - Server state: TanStack Query
 
 ### 4. API Integration
+
 - All external API calls via Supabase Edge Functions
 - NEVER call Google Places API directly from frontend
-- Use environment variables for API keys (VITE_ prefix for client)
+- Use environment variables for API keys (VITE\_ prefix for client)
 - Handle loading, error, and success states in UI
 
 ### 5. Naming Conventions
+
 - Components: PascalCase (`LeadCard`, `Header`)
 - Files: kebab-case for routes, PascalCase for components
 - Types: PascalCase (`Lead`, `User`)
 - Variables: camelCase (`leadId`, `opportunityScore`)
 
 ### 6. Styling Conventions
+
 - Colors: Use CSS variables (`var(--primary)`, `var(--ink-bg)`)
 - Fonts: Outfit for headings, DM Sans for body, JetBrains Mono for data
 - No gradients - solid color tokens only
 - Consistent spacing: `space-y-{1.5|2|3}`, `gap-{2|3|4}`
 
 ### 7. Build Commands
+
 ```bash
 npm run dev        # Start dev server
 npm run build      # Production build
@@ -106,6 +113,7 @@ npm run format     # Run Prettier
 ## Key Implementation Notes
 
 ### Lead Card Design
+
 ```tsx
 // Key elements:
 // 1. Business name + type + location
@@ -117,25 +125,27 @@ npm run format     # Run Prettier
 ```
 
 ### Opportunity Scoring Algorithm
+
 ```typescript
 function calculateOpportunityScore(place: any): number {
-  let score = 0
-  if (!place.websiteUri) score += 40          // No website
-  if ((place.rating || 5) < 3.5) score += 20  // Low rating
-  if ((place.userRatingCount || 0) < 10) score += 15 // Few reviews
-  if (place.rating >= 4.0) score += 15        // Good business
-  score += Math.min(10, Math.floor(Math.random() * 10)) // Variance
-  return Math.min(100, score)
+  let score = 0;
+  if (!place.websiteUri) score += 40; // No website
+  if ((place.rating || 5) < 3.5) score += 20; // Low rating
+  if ((place.userRatingCount || 0) < 10) score += 15; // Few reviews
+  if (place.rating >= 4.0) score += 15; // Good business
+  score += Math.min(10, Math.floor(Math.random() * 10)); // Variance
+  return Math.min(100, score);
 }
 ```
 
 ### Plan Limits
-| Plan | Leads/Month | Price |
-|------|-------------|-------|
-| Free | 10 | $0 |
-| Starter | 100 | $19 |
-| Pro | 500 | $49 |
-| Agency | Unlimited | $99 |
+
+| Plan    | Leads/Month | Price |
+| ------- | ----------- | ----- |
+| Free    | 10          | $0    |
+| Starter | 100         | $19   |
+| Pro     | 500         | $49   |
+| Agency  | Unlimited   | $99   |
 
 ---
 
@@ -192,7 +202,7 @@ npm run build
 - [x] Database schema (`supabase/migrations/001_initial_schema.sql`)
 - [x] Environment variables (`.env.example`)
 - [x] Home page hero with human mosaic + floating animations (Framer Motion)
-- [x] Stats bar 
+- [x] Stats bar
 - [x] All pages renamed to "LanceConnect"
 - [x] Slogan: "The Meeting Point for Freelancers and Clients" in all headers/footers
 

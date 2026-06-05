@@ -1,4 +1,5 @@
 # LanceConnect — Complete Backend Build Prompt for Antigravity (Gemini Edition)
+
 **Version**: 1.0 (Final) | **Date**: 2026-05-28
 **Platform**: Antigravity
 **Author**: TRENDY DEVELOPER OS v3.0
@@ -13,6 +14,7 @@
 
 Read this entire prompt before writing a single line of code.
 This backend must be:
+
 1. **Modular** — every service is independently deployable and replaceable
 2. **Secure** — assume hostile environments at all times
 3. **Scalable** — designed for 100 users today, 1 million users tomorrow
@@ -218,7 +220,7 @@ CREATE TABLE public.profiles (
   email                   TEXT NOT NULL,
   full_name               TEXT,
   avatar_url              TEXT,
-  
+
   -- Freelancer configuration
   freelancer_category     TEXT NOT NULL DEFAULT 'web_dev' CHECK (
     freelancer_category IN (
@@ -231,7 +233,7 @@ CREATE TABLE public.profiles (
   website_url             TEXT,
   country                 TEXT,
   city                    TEXT,
-  
+
   -- Subscription management
   plan                    TEXT NOT NULL DEFAULT 'free' CHECK (
     plan IN ('free', 'starter', 'pro', 'agency')
@@ -240,19 +242,19 @@ CREATE TABLE public.profiles (
   stripe_subscription_id  TEXT UNIQUE,
   subscription_status     TEXT DEFAULT 'inactive',
   subscription_end_date   TIMESTAMPTZ,
-  
+
   -- Usage tracking
   leads_used_this_month   INTEGER NOT NULL DEFAULT 0,
   leads_limit             INTEGER NOT NULL DEFAULT 10,
   credits_balance         INTEGER NOT NULL DEFAULT 0,
   month_reset_date        DATE NOT NULL DEFAULT DATE_TRUNC('month', NOW())::DATE,
-  
+
   -- Security
   last_login_at           TIMESTAMPTZ,
   login_count             INTEGER DEFAULT 0,
   is_banned               BOOLEAN DEFAULT false,
   ban_reason              TEXT,
-  
+
   -- Metadata
   onboarding_completed    BOOLEAN DEFAULT false,
   preferred_language      TEXT DEFAULT 'en',
@@ -275,13 +277,13 @@ CREATE TRIGGER profiles_updated_at
 -- ============================================================
 CREATE TABLE public.leads (
   id                    UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  
+
   -- Business Identity
   business_name         TEXT NOT NULL,
   business_type         TEXT,
   industry              TEXT NOT NULL,
   description           TEXT,
-  
+
   -- Location (indexed for geo queries)
   country               TEXT NOT NULL,
   country_code          TEXT,  -- ISO 2-letter: NG, GB, IN
@@ -293,7 +295,7 @@ CREATE TABLE public.leads (
   latitude              DECIMAL(10,7),
   longitude             DECIMAL(10,7),
   timezone              TEXT,
-  
+
   -- Contact Information
   phone                 TEXT,
   phone_verified        BOOLEAN DEFAULT false,
@@ -303,7 +305,7 @@ CREATE TABLE public.leads (
   email_verified        BOOLEAN DEFAULT false,
   email_verified_at     TIMESTAMPTZ,
   email_confidence      TEXT CHECK (email_confidence IN ('verified', 'likely', 'unverified')),
-  
+
   -- Web Presence
   website_url           TEXT,
   has_website           BOOLEAN NOT NULL DEFAULT false,
@@ -313,7 +315,7 @@ CREATE TABLE public.leads (
   website_has_ssl       BOOLEAN,         -- HTTPS?
   website_screenshot    TEXT,            -- URL to screenshot
   website_load_time_ms  INTEGER,
-  
+
   -- Social Media Presence (from Maigret)
   has_facebook          BOOLEAN DEFAULT false,
   facebook_url          TEXT,
@@ -326,7 +328,7 @@ CREATE TABLE public.leads (
   has_youtube           BOOLEAN DEFAULT false,
   social_scan_done      BOOLEAN DEFAULT false,
   social_scanned_at     TIMESTAMPTZ,
-  
+
   -- Google Maps Signals
   google_place_id       TEXT UNIQUE,
   google_maps_url       TEXT,
@@ -334,22 +336,22 @@ CREATE TABLE public.leads (
   google_review_count   INTEGER DEFAULT 0,
   google_photo_url      TEXT,
   google_categories     TEXT[],
-  
+
   -- Opportunity Scoring
   opportunity_score     INTEGER CHECK (opportunity_score BETWEEN 0 AND 100),
   score_breakdown       JSONB,  -- { no_website: 40, low_rating: 20, ... }
-  
+
   -- Data Source & Quality
   source                TEXT NOT NULL DEFAULT 'google_maps',
   data_quality_score    INTEGER CHECK (data_quality_score BETWEEN 0 AND 100),
   is_verified           BOOLEAN DEFAULT false,
   is_active             BOOLEAN DEFAULT true,
-  
+
   -- Cache Management
   last_verified_at      TIMESTAMPTZ,
   cache_expires_at      TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '30 days'),
   fetch_count           INTEGER DEFAULT 1,
-  
+
   created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -379,7 +381,7 @@ CREATE TABLE public.user_leads (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id         UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   lead_id         UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
-  
+
   -- Pipeline CRM
   status          TEXT NOT NULL DEFAULT 'new' CHECK (status IN (
     'new', 'contacted', 'interested', 'proposal_sent',
@@ -388,15 +390,15 @@ CREATE TABLE public.user_leads (
   notes           TEXT,
   follow_up_date  DATE,
   deal_value      DECIMAL(10,2),
-  
+
   -- Tracking
   contacted_at    TIMESTAMPTZ,
   responded_at    TIMESTAMPTZ,
   won_at          TIMESTAMPTZ,
-  
+
   saved_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  
+
   UNIQUE(user_id, lead_id)
 );
 
@@ -442,7 +444,7 @@ CREATE TABLE public.ai_messages (
   tokens_used   INTEGER,
   model         TEXT DEFAULT 'gemini-1.5-pro',
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  
+
   UNIQUE(user_id, lead_id, channel, tone)  -- Cache per combo
 );
 
@@ -489,7 +491,7 @@ CREATE TABLE public.rate_limit_log (
   endpoint    TEXT NOT NULL,
   count       INTEGER DEFAULT 1,
   window_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  
+
   UNIQUE(user_id, endpoint, window_start)
 );
 
@@ -692,26 +694,29 @@ Generates personalized pitch scripts via the **Gemini API** based on lead signal
 
 ```typescript
 // supabase/functions/ai-outreach/index.ts
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
-import { validateAuth } from '../_shared/auth.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders } from "../_shared/cors.ts";
+import { validateAuth } from "../_shared/auth.ts";
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const user = await validateAuth(req)
-    if (!user) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
+    const user = await validateAuth(req);
+    if (!user) return new Response("Unauthorized", { status: 401, headers: corsHeaders });
 
-    const { leadId, channel, tone = 'professional' } = await req.json()
-    const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+    const { leadId, channel, tone = "professional" } = await req.json();
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
 
     // Fetch lead details
-    const { data: lead } = await supabase.from('leads').select('*').eq('id', leadId).single()
-    if (!lead) return new Response('Lead not found', { status: 404, headers: corsHeaders })
+    const { data: lead } = await supabase.from("leads").select("*").eq("id", leadId).single();
+    if (!lead) return new Response("Lead not found", { status: 404, headers: corsHeaders });
 
     // Build the context prompt based on the signals
     const prompt = `You are a world-class freelance marketer pitching your services. 
@@ -719,7 +724,7 @@ serve(async (req: Request) => {
     Context:
     - Business Type: ${lead.business_type}
     - Location: ${lead.city}, ${lead.country}
-    - Website: ${lead.has_website ? lead.website_url : 'No Website'}
+    - Website: ${lead.has_website ? lead.website_url : "No Website"}
     - Rating: ${lead.google_rating} (${lead.google_review_count} reviews)
     - Opportunities Identified: ${JSON.stringify(lead.score_breakdown)}
 
@@ -727,44 +732,50 @@ serve(async (req: Request) => {
     - Do not use placeholders (like [Name]). 
     - Keep it short and to the point.
     - Focus on how you can solve their specific opportunity (e.g. build a website, improve rating, or run ads).
-    - Provide a single, clear call to action.`
+    - Provide a single, clear call to action.`;
 
     // Call Gemini API (using gemini-1.5-pro or gemini-1.5-flash)
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
+    const geminiApiKey = Deno.env.get("GEMINI_API_KEY");
     const geminiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
-        })
-      }
-    )
+          generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
+        }),
+      },
+    );
 
     if (!geminiRes.ok) {
-      throw new Error(`Gemini API failed with status ${geminiRes.status}`)
+      throw new Error(`Gemini API failed with status ${geminiRes.status}`);
     }
 
-    const resJson = await geminiRes.json()
-    const generatedText = resJson.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    const resJson = await geminiRes.json();
+    const generatedText = resJson.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     // Cache the message
-    await supabase.from('ai_messages').upsert({
-      user_id: user.id,
-      lead_id: leadId,
-      channel,
-      tone,
-      message: generatedText,
-      model: 'gemini-1.5-flash'
-    }, { onConflict: 'user_id,lead_id,channel,tone' })
+    await supabase.from("ai_messages").upsert(
+      {
+        user_id: user.id,
+        lead_id: leadId,
+        channel,
+        tone,
+        message: generatedText,
+        model: "gemini-1.5-flash",
+      },
+      { onConflict: "user_id,lead_id,channel,tone" },
+    );
 
     return new Response(JSON.stringify({ message: generatedText }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders })
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
-})
+});
 ```

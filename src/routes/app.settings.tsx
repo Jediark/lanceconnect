@@ -10,7 +10,10 @@ export const Route = createFileRoute("/app/settings")({
 function SettingsLayout() {
   return (
     <>
-      <Header title="Account & Settings" subtitle="Manage your profile, billing, and preferences." />
+      <Header
+        title="Account & Settings"
+        subtitle="Manage your profile, billing, and preferences."
+      />
       <div className="flex flex-col md:flex-row px-4 py-8 lg:px-8 max-w-7xl mx-auto w-full">
         <SettingsSidebar />
         <div className="flex-1 min-w-0 md:pl-8">
@@ -25,7 +28,9 @@ function SettingsLayout() {
 export function SettingsField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
       {children}
     </label>
   );

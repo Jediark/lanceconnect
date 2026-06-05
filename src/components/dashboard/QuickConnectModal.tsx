@@ -1,14 +1,21 @@
 import { useState } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import { Mail, Send, Loader2, Linkedin } from "lucide-react";
 import { toast } from "sonner";
 
-export function QuickConnectModal({ 
-  open, 
-  onOpenChange, 
-  lead 
-}: { 
-  open: boolean; 
+export function QuickConnectModal({
+  open,
+  onOpenChange,
+  lead,
+}: {
+  open: boolean;
   onOpenChange: (open: boolean) => void;
   lead?: { businessName: string; email?: string | null };
 }) {
@@ -41,7 +48,13 @@ export function QuickConnectModal({
               Quick Connect
             </SheetTitle>
             <SheetDescription className="text-xs">
-              Reach out to {lead?.businessName ? <span className="font-bold text-foreground">{lead.businessName}</span> : "your lead"} instantly.
+              Reach out to{" "}
+              {lead?.businessName ? (
+                <span className="font-bold text-foreground">{lead.businessName}</span>
+              ) : (
+                "your lead"
+              )}{" "}
+              instantly.
             </SheetDescription>
           </SheetHeader>
         </div>
@@ -65,42 +78,52 @@ export function QuickConnectModal({
           <div className="space-y-4">
             {channel === "email" && (
               <div>
-                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Recipient</label>
-                <input 
-                  type="email" 
-                  defaultValue={lead?.email || ""} 
-                  placeholder="contact@business.com" 
-                  className="w-full bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                  Recipient
+                </label>
+                <input
+                  type="email"
+                  defaultValue={lead?.email || ""}
+                  placeholder="contact@business.com"
+                  className="w-full bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
             )}
             {channel === "email" && (
               <div>
-                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Subject</label>
-                <input 
-                  type="text" 
+                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                  Subject
+                </label>
+                <input
+                  type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  placeholder="Quick question about your services..." 
-                  className="w-full bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                  placeholder="Quick question about your services..."
+                  className="w-full bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
             )}
             <div>
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">Message</label>
-              <textarea 
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                Message
+              </label>
+              <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder={channel === "linkedin" ? "Add a note to your connection request..." : "Write your email here..."}
-                className="w-full h-48 bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" 
+                placeholder={
+                  channel === "linkedin"
+                    ? "Add a note to your connection request..."
+                    : "Write your email here..."
+                }
+                className="w-full h-48 bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
               />
             </div>
           </div>
         </div>
 
         <div className="p-6 border-t border-border bg-card/50">
-          <button 
-            onClick={handleSend} 
+          <button
+            onClick={handleSend}
             disabled={sending}
             className={`w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white transition disabled:opacity-50 ${channel === "linkedin" ? "bg-[#0A66C2] hover:bg-[#084e96]" : "bg-primary hover:brightness-110 glow-primary"}`}
           >

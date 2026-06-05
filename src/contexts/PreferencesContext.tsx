@@ -30,7 +30,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     hero_eyebrow: "// find.clients.globally",
     hero_title: "The Meeting Point for Freelancers and Clients.",
-    hero_sub: "Stop waiting for work to come to you. LanceConnect finds businesses that need your skills anywhere in the world and hands you their direct contacts.",
+    hero_sub:
+      "Stop waiting for work to come to you. LanceConnect finds businesses that need your skills anywhere in the world and hands you their direct contacts.",
     hero_cta_leads: "Get 10 Free Leads",
     hero_cta_demo: "Watch Demo",
     // Pricing
@@ -60,13 +61,15 @@ const translations: Record<Language, Record<string, string>> = {
     // Sandbox
     sandbox_eyebrow: "// interactive.lead.sandbox",
     sandbox_title: "Try the lead scanner sandbox",
-    sandbox_sub: "Select your skill and a city to run a mock scan. Experience how our AI engine evaluates businesses and drafts outreach templates in seconds.",
+    sandbox_sub:
+      "Select your skill and a city to run a mock scan. Experience how our AI engine evaluates businesses and drafts outreach templates in seconds.",
     sandbox_step_1: "1. Select Your Craft",
     sandbox_step_2: "2. Target Location",
     sandbox_run: "Run Scanner Simulator",
     sandbox_running: "Scanning target directory...",
     sandbox_ready_title: "Scanner ready",
-    sandbox_ready_desc: "Choose your skill type and target market on the left, then trigger a simulated scan to view opportunity metrics.",
+    sandbox_ready_desc:
+      "Choose your skill type and target market on the left, then trigger a simulated scan to view opportunity metrics.",
   },
   fr: {
     nav_home: "Accueil",
@@ -82,7 +85,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     hero_eyebrow: "// trouver.des.clients.partout",
     hero_title: "Le Point de Rencontre des Freelances et des Clients.",
-    hero_sub: "Arrêtez d'attendre que le travail vienne à vous. LanceConnect trouve des entreprises qui ont besoin de vos compétences partout dans le monde et vous donne leurs contacts directs.",
+    hero_sub:
+      "Arrêtez d'attendre que le travail vienne à vous. LanceConnect trouve des entreprises qui ont besoin de vos compétences partout dans le monde et vous donne leurs contacts directs.",
     hero_cta_leads: "Obtenir 10 Leads Gratuits",
     hero_cta_demo: "Voir la Démo",
     // Pricing
@@ -112,13 +116,15 @@ const translations: Record<Language, Record<string, string>> = {
     // Sandbox
     sandbox_eyebrow: "// simulateur.interactif",
     sandbox_title: "Essayez le simulateur de scanneur",
-    sandbox_sub: "Sélectionnez votre domaine et une ville pour lancer une simulation de scan. Découvrez comment notre moteur IA évalue les opportunités et rédige des messages en quelques secondes.",
+    sandbox_sub:
+      "Sélectionnez votre domaine et une ville pour lancer une simulation de scan. Découvrez comment notre moteur IA évalue les opportunités et rédige des messages en quelques secondes.",
     sandbox_step_1: "1. Sélectionnez votre domaine",
     sandbox_step_2: "2. Emplacement cible",
     sandbox_run: "Lancer le simulateur de scan",
     sandbox_running: "Scan de l'annuaire cible...",
     sandbox_ready_title: "Scanneur prêt",
-    sandbox_ready_desc: "Choisissez votre compétence et votre marché cible à gauche, puis lancez une simulation de scan pour voir les opportunités.",
+    sandbox_ready_desc:
+      "Choisissez votre compétence et votre marché cible à gauche, puis lancez une simulation de scan pour voir les opportunités.",
   },
   it: {
     nav_home: "Home",
@@ -134,7 +140,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     hero_eyebrow: "// trova.clienti.globalmente",
     hero_title: "Il Punto di Incontro per Freelance e Clienti.",
-    hero_sub: "Smetti di aspettare che il lavoro arrivi da te. LanceConnect trova aziende che hanno bisogno delle tue competenze in tutto il mondo e ti fornisce i loro contatti diretti.",
+    hero_sub:
+      "Smetti di aspettare che il lavoro arrivi da te. LanceConnect trova aziende che hanno bisogno delle tue competenze in tutto il mondo e ti fornisce i loro contatti diretti.",
     hero_cta_leads: "Ottieni 10 Lead Gratuiti",
     hero_cta_demo: "Guarda la Demo",
     // Pricing
@@ -164,13 +171,15 @@ const translations: Record<Language, Record<string, string>> = {
     // Sandbox
     sandbox_eyebrow: "// sandbox.lead.interattiva",
     sandbox_title: "Prova la sandbox del lead scanner",
-    sandbox_sub: "Seleziona la tua specializzazione e una città per eseguire un finto scan. Scopri come il nostro motore AI valuta le aziende e redige modelli in pochi secondi.",
+    sandbox_sub:
+      "Seleziona la tua specializzazione e una città per eseguire un finto scan. Scopri come il nostro motore AI valuta le aziende e redige modelli in pochi secondi.",
     sandbox_step_1: "1. Seleziona la tua abilità",
     sandbox_step_2: "2. Posizione target",
     sandbox_run: "Esegui simulatore scanner",
     sandbox_running: "Scansione della cartella target...",
     sandbox_ready_title: "Scanner pronto",
-    sandbox_ready_desc: "Scegli la tua abilità e il mercato a sinistra, quindi avvia la simulazione per vedere le metriche delle opportunità.",
+    sandbox_ready_desc:
+      "Scegli la tua abilità e il mercato a sinistra, quindi avvia la simulazione per vedere le metriche delle opportunità.",
   },
   es: {
     nav_home: "Inicio",
@@ -186,7 +195,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     hero_eyebrow: "// encontrar.clientes.globalmente",
     hero_title: "El Punto de Encuentro para Freelancers y Clientes.",
-    hero_sub: "Deja de esperar a que el trabajo llegue a ti. LanceConnect encuentra empresas que necesitan tus habilidades en cualquier parte del mundo y te entrega sus contactos directos.",
+    hero_sub:
+      "Deja de esperar a que el trabajo llegue a ti. LanceConnect encuentra empresas que necesitan tus habilidades en cualquier parte del mundo y te entrega sus contactos directos.",
     hero_cta_leads: "Obtén 10 Leads Gratis",
     hero_cta_demo: "Ver Demo",
     // Pricing
@@ -216,13 +226,15 @@ const translations: Record<Language, Record<string, string>> = {
     // Sandbox
     sandbox_eyebrow: "// sandbox.interactivo.leads",
     sandbox_title: "Prueba el simulador de escáner",
-    sandbox_sub: "Selecciona tu habilidad y una ciudad para simular un escaneo. Mira cómo nuestro motor de IA evalúa los negocios y redacta mensajes en segundos.",
+    sandbox_sub:
+      "Selecciona tu habilidad y una ciudad para simular un escaneo. Mira cómo nuestro motor de IA evalúa los negocios y redacta mensajes en segundos.",
     sandbox_step_1: "1. Selecciona tu habilidad",
     sandbox_step_2: "2. Ubicación objetivo",
     sandbox_run: "Ejecutar simulador de escáner",
     sandbox_running: "Escaneando el directorio objetivo...",
     sandbox_ready_title: "Escáner listo",
-    sandbox_ready_desc: "Elige tu habilidad y el mercado objetivo en la izquierda, luego inicia una simulación de escaneo.",
+    sandbox_ready_desc:
+      "Elige tu habilidad y el mercado objetivo en la izquierda, luego inicia una simulación de escaneo.",
   },
   pt: {
     nav_home: "Início",
@@ -238,7 +250,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     hero_eyebrow: "// encontrar.clientes.globalmente",
     hero_title: "O Ponto de Encontro para Freelancers e Clientes.",
-    hero_sub: "Pare de esperar que o trabalho venha até você. O LanceConnect encontra empresas que precisam das suas habilidades em qualquer lugar do mundo e te entrega os contatos diretos.",
+    hero_sub:
+      "Pare de esperar que o trabalho venha até você. O LanceConnect encontra empresas que precisam das suas habilidades em qualquer lugar do mundo e te entrega os contatos diretos.",
     hero_cta_leads: "Ganhe 10 Leads Grátis",
     hero_cta_demo: "Ver Demo",
     // Pricing
@@ -268,14 +281,16 @@ const translations: Record<Language, Record<string, string>> = {
     // Sandbox
     sandbox_eyebrow: "// simulador.de.leads.interativo",
     sandbox_title: "Experimente a sandbox do scanner",
-    sandbox_sub: "Selecione sua habilidade e uma cidade para executar um escaneamento simulado. Veja como nosso motor de IA analisa empresas e cria mensagens em segundos.",
+    sandbox_sub:
+      "Selecione sua habilidade e uma cidade para executar um escaneamento simulado. Veja como nosso motor de IA analisa empresas e cria mensagens em segundos.",
     sandbox_step_1: "1. Escolha sua habilidade",
     sandbox_step_2: "2. Localização alvo",
     sandbox_run: "Executar simulador de scanner",
     sandbox_running: "Escaneando o diretório alvo...",
     sandbox_ready_title: "Scanner pronto",
-    sandbox_ready_desc: "Escolha sua especialidade e mercado à esquerda, depois ative o simulador para ver as métricas.",
-  }
+    sandbox_ready_desc:
+      "Escolha sua especialidade e mercado à esquerda, depois ative o simulador para ver as métricas.",
+  },
 };
 
 const PreferencesContext = createContext<PreferencesContextType | undefined>(undefined);

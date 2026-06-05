@@ -3,10 +3,15 @@ import { cn } from "@/lib/utils";
 export function GlobalHeatmap({ className }: { className?: string }) {
   // Stylized global map with pulsing nodes over dotted background.
   return (
-    <div className={cn("relative overflow-hidden rounded-2xl border border-border bg-card group", className)}>
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-2xl border border-border bg-card group",
+        className,
+      )}
+    >
       <div className="absolute inset-0 bg-dot-pattern opacity-50" />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
-      
+
       {/* Abstract Map Nodes */}
       <div className="absolute inset-0">
         <MapNode top="30%" left="20%" label="New York (US)" size="lg" />
@@ -23,7 +28,7 @@ export function GlobalHeatmap({ className }: { className?: string }) {
       <div className="relative z-10 p-5 flex flex-col h-full pointer-events-none">
         <h4 className="text-sm font-bold text-foreground mb-1">Global Activity Heatmap</h4>
         <p className="text-xs text-muted-foreground">Live tracking of your leads</p>
-        
+
         <div className="mt-auto pt-10">
           <div className="inline-flex items-center gap-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border px-3 py-1.5">
             <span className="relative flex h-2 w-2">
@@ -38,20 +43,32 @@ export function GlobalHeatmap({ className }: { className?: string }) {
   );
 }
 
-function MapNode({ top, left, label, size = "md", delay = "0s" }: { top: string, left: string, label: string, size?: "sm"|"md"|"lg", delay?: string }) {
+function MapNode({
+  top,
+  left,
+  label,
+  size = "md",
+  delay = "0s",
+}: {
+  top: string;
+  left: string;
+  label: string;
+  size?: "sm" | "md" | "lg";
+  delay?: string;
+}) {
   const sizeMap = { sm: "h-1.5 w-1.5", md: "h-2 w-2", lg: "h-3 w-3" };
   const pingSizeMap = { sm: "h-4 w-4", md: "h-5 w-5", lg: "h-6 w-6" };
-  
+
   return (
     <div className="absolute flex flex-col items-center" style={{ top, left }}>
       <div className="relative flex items-center justify-center">
-        <span 
-          className={cn("animate-ping absolute rounded-full bg-primary/40", pingSizeMap[size])} 
+        <span
+          className={cn("animate-ping absolute rounded-full bg-primary/40", pingSizeMap[size])}
           style={{ animationDuration: "3s", animationDelay: delay }}
         />
         <span className={cn("relative rounded-full bg-primary", sizeMap[size])} />
       </div>
-      <span 
+      <span
         className="mt-1 text-[9px] font-bold text-foreground bg-background/90 backdrop-blur-sm px-1.5 py-0.5 rounded border border-primary/30 tracking-wide animate-pulse"
         style={{ animationDuration: "3s", animationDelay: delay }}
       >

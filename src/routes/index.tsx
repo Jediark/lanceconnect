@@ -1,11 +1,48 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import {
-  ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
-  Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
-  Globe2, BarChart3, Zap, Search, Terminal, Copy, Check, Loader2, Code2, Palette,
-  PenTool, Smartphone, Film, Camera, Megaphone, AppWindow, Handshake, ChevronLeft, ChevronRight,
-  GraduationCap, Leaf, Utensils, Package, Factory, BookOpen
+  ArrowRight,
+  Bookmark,
+  CheckCircle2,
+  Globe,
+  LineChart,
+  Mail,
+  Map,
+  Play,
+  Sparkles,
+  Star,
+  Target,
+  Users,
+  Phone,
+  Building2,
+  MapPin,
+  Plus,
+  Minus,
+  Globe2,
+  BarChart3,
+  Zap,
+  Search,
+  Terminal,
+  Copy,
+  Check,
+  Loader2,
+  Code2,
+  Palette,
+  PenTool,
+  Smartphone,
+  Film,
+  Camera,
+  Megaphone,
+  AppWindow,
+  Handshake,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap,
+  Leaf,
+  Utensils,
+  Package,
+  Factory,
+  BookOpen,
 } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
@@ -19,7 +56,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "LanceConnect — The Meeting Point for Freelancers and Clients" },
-      { name: "description", content: "LanceConnect finds businesses that need your skills anywhere in the world, and hands you their contact details." },
+      {
+        name: "description",
+        content:
+          "LanceConnect finds businesses that need your skills anywhere in the world, and hands you their contact details.",
+      },
       { property: "og:title", content: "LanceConnect" },
       { property: "og:description", content: "The Meeting Point for Freelancers and Clients" },
       { property: "og:image", content: IMG.heroFreelancer },
@@ -70,8 +111,8 @@ const SLIDES_DATA = [
       city: "Lyon, France",
       score: 94,
       tag: "Hot Lead",
-      details: ["No website found", "Only Facebook page link"]
-    }
+      details: ["No website found", "Only Facebook page link"],
+    },
   },
   {
     bgImg: IMG.marketStall,
@@ -93,8 +134,8 @@ const SLIDES_DATA = [
       city: "Lagos, Nigeria",
       score: 87,
       tag: "Strong Lead",
-      details: ["Slow mobile speed (8.4s)", "Missing Google reviews"]
-    }
+      details: ["Slow mobile speed (8.4s)", "Missing Google reviews"],
+    },
   },
   {
     bgImg: IMG.coffeeShop,
@@ -116,8 +157,8 @@ const SLIDES_DATA = [
       city: "Naples, Italy",
       score: 79,
       tag: "AI Generated",
-      details: ["Tone: Casual & Friendly", "Intro: 'Hey Mario, saw your pizza spot...'"]
-    }
+      details: ["Tone: Casual & Friendly", "Intro: 'Hey Mario, saw your pizza spot...'"],
+    },
   },
   {
     bgImg: IMG.team,
@@ -126,7 +167,8 @@ const SLIDES_DATA = [
       <>
         One workspace.
         <br />
-        Every <span className="text-[#F59E0B] dark:text-[#FBBF24] font-black">client win</span>, tracked.
+        Every <span className="text-[#F59E0B] dark:text-[#FBBF24] font-black">client win</span>,
+        tracked.
       </>
     ),
     sub: "Discover, contact, and close — in a single, calm CRM dashboard built by freelancers, for freelancers.",
@@ -139,9 +181,9 @@ const SLIDES_DATA = [
       city: "Toronto, Canada",
       score: 81,
       tag: "Contract Won",
-      details: ["Saved: May 12", "Status: Contract Closed (+$4.8k)"]
-    }
-  }
+      details: ["Saved: May 12", "Status: Contract Closed (+$4.8k)"],
+    },
+  },
 ];
 
 const THEMES = {
@@ -180,7 +222,7 @@ const THEMES = {
     gradient: "from-amber-500/20 to-orange-500/20",
     badge: "bg-amber-500 text-white dark:bg-amber-500 dark:text-amber-950",
     glowCircle: "bg-amber-500/15 border-amber-500/30",
-  }
+  },
 };
 
 const MapVisual = () => (
@@ -188,46 +230,62 @@ const MapVisual = () => (
     <div className="absolute inset-0 bg-dot-pattern opacity-35 dark:opacity-45" />
     <div className="absolute w-[180px] h-[180px] rounded-full border border-blue-500/20 flex items-center justify-center animate-ping duration-[4s] pointer-events-none" />
     <div className="absolute w-[280px] h-[280px] rounded-full border border-blue-500/10 flex items-center justify-center animate-ping duration-[6s] pointer-events-none" />
-    
-    <motion.div 
+
+    <motion.div
       animate={{ y: [0, -6, 0] }}
       transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       className="absolute top-[20%] left-[28%] flex flex-col items-center"
     >
       <MapPin className="h-5 w-5 text-red-500 fill-red-500/30 drop-shadow-md" />
-      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">Lyon, FR</span>
+      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">
+        Lyon, FR
+      </span>
     </motion.div>
-    
-    <motion.div 
+
+    <motion.div
       animate={{ y: [0, -8, 0] }}
       transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
       className="absolute top-[40%] left-[52%] flex flex-col items-center"
     >
       <MapPin className="h-6 w-6 text-primary fill-primary/30 drop-shadow-lg" />
-      <span className="bg-slate-950 border border-slate-800 text-white text-[9px] font-mono px-2 py-0.5 rounded shadow-lg mt-1 font-bold">Naples, IT</span>
+      <span className="bg-slate-950 border border-slate-800 text-white text-[9px] font-mono px-2 py-0.5 rounded shadow-lg mt-1 font-bold">
+        Naples, IT
+      </span>
     </motion.div>
 
-    <motion.div 
+    <motion.div
       animate={{ y: [0, -5, 0] }}
       transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
       className="absolute bottom-[20%] left-[18%] flex flex-col items-center"
     >
       <MapPin className="h-5 w-5 text-emerald-500 fill-emerald-500/30 drop-shadow-md" />
-      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">Lagos, NG</span>
+      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">
+        Lagos, NG
+      </span>
     </motion.div>
 
-    <motion.div 
+    <motion.div
       animate={{ y: [0, -7, 0] }}
       transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.9 }}
       className="absolute top-[28%] right-[22%] flex flex-col items-center"
     >
       <MapPin className="h-5 w-5 text-amber-500 fill-amber-500/30 drop-shadow-md" />
-      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">Toronto, CA</span>
+      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">
+        Toronto, CA
+      </span>
     </motion.div>
   </div>
 );
 
-const CardFrame = ({ children, themeColor, title }: { children: React.ReactNode; themeColor: keyof typeof THEMES; title: string }) => {
+const CardFrame = ({
+  children,
+  themeColor,
+  title,
+}: {
+  children: React.ReactNode;
+  themeColor: keyof typeof THEMES;
+  title: string;
+}) => {
   return (
     <div className="w-[300px] sm:w-[335px] h-[215px] rounded-2xl border bg-white/85 dark:bg-slate-900/85 border-slate-200/80 dark:border-slate-800/60 shadow-xl overflow-hidden flex flex-col backdrop-blur-md transition-colors duration-300">
       <div className="flex items-center justify-between px-4 py-2.5 bg-slate-100/50 dark:bg-slate-950/45 border-b border-slate-200/80 dark:border-slate-800/60">
@@ -236,7 +294,9 @@ const CardFrame = ({ children, themeColor, title }: { children: React.ReactNode;
           <span className="h-2 w-2 rounded-full bg-amber-400/80" />
           <span className="h-2 w-2 rounded-full bg-emerald-400/80" />
         </div>
-        <span className="text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400">{title}</span>
+        <span className="text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400">
+          {title}
+        </span>
         <span className="w-8" />
       </div>
       <div className="flex-1 p-4 overflow-hidden text-left relative flex flex-col justify-center">
@@ -269,12 +329,15 @@ function HeroWithMosaic() {
           {SLIDES_DATA.map((slide, idx) => {
             const isActive = idx === index;
             return (
-              <div key={idx} className="min-w-0 shrink-0 grow-0 basis-full relative min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
+              <div
+                key={idx}
+                className="min-w-0 shrink-0 grow-0 basis-full relative min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden"
+              >
                 <div className="absolute inset-0 z-0 select-none pointer-events-none">
-                  <img 
-                    src={slide.bgImg} 
-                    className={`w-full h-full object-cover transition-transform duration-1000 ${isActive ? "scale-100" : "scale-105"}`} 
-                    alt="" 
+                  <img
+                    src={slide.bgImg}
+                    className={`w-full h-full object-cover transition-transform duration-1000 ${isActive ? "scale-100" : "scale-105"}`}
+                    alt=""
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19]/95 via-[#0B0F19]/80 to-[#0B0F19]/45 dark:block hidden transition-all duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-r from-slate-300/95 via-slate-300/85 to-slate-200/50 dark:hidden block transition-all duration-500" />
@@ -282,7 +345,6 @@ function HeroWithMosaic() {
 
                 <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 pt-8 pb-12 lg:pt-10 lg:pb-16 z-10">
                   <div className="grid gap-12 lg:grid-cols-2 items-center">
-                    
                     <div className="text-left z-10">
                       <motion.p
                         initial={{ opacity: 0, y: 15 }}
@@ -292,7 +354,7 @@ function HeroWithMosaic() {
                       >
                         {slide.eyebrow}
                       </motion.p>
-                      
+
                       <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -301,7 +363,7 @@ function HeroWithMosaic() {
                       >
                         {slide.title}
                       </motion.h1>
-                      
+
                       <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -310,35 +372,48 @@ function HeroWithMosaic() {
                       >
                         {slide.sub}
                       </motion.p>
-                      
+
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
                         className="mt-8 flex flex-wrap gap-4"
                       >
-                        <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
+                        <Link
+                          to="/register"
+                          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+                        >
                           {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
                         </Link>
-                        <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-900 dark:text-white hover:scale-[1.02]">
-                          <Play className="h-4 w-4 text-slate-500 dark:text-slate-400" /> {t("hero_cta_demo")}
+                        <Link
+                          to="/how-it-works"
+                          className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-900 dark:text-white hover:scale-[1.02]"
+                        >
+                          <Play className="h-4 w-4 text-slate-500 dark:text-slate-400" />{" "}
+                          {t("hero_cta_demo")}
                         </Link>
                       </motion.div>
-                      
+
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={isActive ? { opacity: 1 } : { opacity: 0 }}
                         transition={{ duration: 0.6, delay: 0.5 }}
                         className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-500 dark:text-slate-400"
                       >
-                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card</span>
-                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access</span>
-                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime</span>
+                        <span className="flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime
+                        </span>
                       </motion.div>
                     </div>
 
                     <div className="relative h-[380px] sm:h-[460px] w-full flex items-center justify-center select-none overflow-visible lg:mt-0 mt-8">
-                      <div 
+                      <div
                         className="absolute bottom-4 w-[340px] h-[340px] rounded-full bg-gradient-to-b from-primary/30 to-transparent border border-primary/20 opacity-70 shadow-2xl transition-all duration-500"
                         style={{ transform: "rotateX(72deg) translateY(60px)" }}
                       >
@@ -351,7 +426,8 @@ function HeroWithMosaic() {
                         className="relative z-10 transition-transform duration-500 scale-90 sm:scale-100"
                         style={{
                           transformStyle: "preserve-3d",
-                          transform: "perspective(1000px) rotateY(-18deg) rotateX(12deg) rotateZ(1deg)"
+                          transform:
+                            "perspective(1000px) rotateY(-18deg) rotateX(12deg) rotateZ(1deg)",
                         }}
                       >
                         <CardFrame themeColor={slide.themeColor} title={slide.mockLead.tag}>
@@ -359,18 +435,25 @@ function HeroWithMosaic() {
                             <div className="space-y-2.5">
                               <div className="flex justify-between items-start">
                                 <div>
-                                  <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{slide.mockLead.name}</h3>
+                                  <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                                    {slide.mockLead.name}
+                                  </h3>
                                   <p className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
-                                    <MapPin className="h-3 w-3 text-slate-400" /> {slide.mockLead.city} · Bakery
+                                    <MapPin className="h-3 w-3 text-slate-400" />{" "}
+                                    {slide.mockLead.city} · Bakery
                                   </p>
                                 </div>
                                 <div className="flex items-center gap-1 text-[10px] font-bold bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> 4.9 (412)
+                                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> 4.9
+                                  (412)
                                 </div>
                               </div>
                               <div className="border-t border-slate-100 dark:border-slate-800/50 pt-2 flex flex-col gap-1.5">
                                 {slide.mockLead.details.map((d, i) => (
-                                  <div key={i} className="flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400 font-semibold">
+                                  <div
+                                    key={i}
+                                    className="flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400 font-semibold"
+                                  >
                                     <span className="h-1.5 w-1.5 rounded-full bg-red-500" /> {d}
                                   </div>
                                 ))}
@@ -388,17 +471,23 @@ function HeroWithMosaic() {
                             <div className="space-y-2 text-[10px] font-mono flex-1 flex flex-col justify-center text-slate-700 dark:text-slate-300">
                               <div className="flex border-b border-slate-100 dark:border-slate-800/50 pb-1">
                                 <span className="text-slate-400 w-8 flex-shrink-0">To:</span>
-                                <span className="font-semibold text-slate-900 dark:text-white truncate">mario@pizzanapoli.it</span>
+                                <span className="font-semibold text-slate-900 dark:text-white truncate">
+                                  mario@pizzanapoli.it
+                                </span>
                               </div>
                               <div className="flex border-b border-slate-100 dark:border-slate-800/50 pb-1">
                                 <span className="text-slate-400 w-8 flex-shrink-0">Sub:</span>
-                                <span className="font-semibold text-slate-900 dark:text-white truncate">Website opportunity - Napoli</span>
+                                <span className="font-semibold text-slate-900 dark:text-white truncate">
+                                  Website opportunity - Napoli
+                                </span>
                               </div>
                               <p className="mt-1 leading-normal italic text-[9px] line-clamp-3">
                                 {slide.mockLead.details[1]}
                               </p>
                               <div className="flex justify-between items-center mt-1 border-t border-slate-100 dark:border-slate-800/50 pt-1">
-                                <span className="text-[8px] bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded font-bold">✦ Claude 3.5</span>
+                                <span className="text-[8px] bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded font-bold">
+                                  ✦ Claude 3.5
+                                </span>
                                 <span className="text-[8px] text-slate-400">Word count: 48</span>
                               </div>
                             </div>
@@ -407,25 +496,33 @@ function HeroWithMosaic() {
                           {slide.themeColor === "amber" && (
                             <div className="grid grid-cols-3 gap-2 h-full items-center">
                               <div className="rounded-xl border border-slate-200/80 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/20 p-2 text-center h-[125px] flex flex-col justify-between">
-                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Saved</span>
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                                  Saved
+                                </span>
                                 <div className="bg-white dark:bg-slate-900 rounded-lg p-1.5 shadow-sm border border-slate-200/50 dark:border-slate-800/30 text-[8px] font-semibold text-slate-800 dark:text-slate-200 truncate">
                                   Dental Clinic
                                 </div>
                                 <span className="text-[8px] text-slate-400">1 lead</span>
                               </div>
                               <div className="rounded-xl border border-slate-200/80 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/20 p-2 text-center h-[125px] flex flex-col justify-between">
-                                <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">Contacted</span>
+                                <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">
+                                  Contacted
+                                </span>
                                 <div className="bg-white dark:bg-slate-900 rounded-lg p-1.5 shadow-sm border border-slate-200/50 dark:border-slate-800/30 text-[8px] font-semibold text-slate-800 dark:text-slate-200 truncate">
                                   Smith Plumbers
                                 </div>
                                 <span className="text-[8px] text-slate-400">1 lead</span>
                               </div>
                               <div className="rounded-xl border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-500/5 p-2 text-center h-[125px] flex flex-col justify-between shadow-lg shadow-emerald-500/5">
-                                <span className="text-[9px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-wider">Won</span>
+                                <span className="text-[9px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-wider">
+                                  Won
+                                </span>
                                 <div className="bg-emerald-500/10 dark:bg-emerald-500/20 rounded-lg p-1.5 border border-emerald-500/30 text-[8px] font-extrabold text-emerald-700 dark:text-emerald-400 truncate shadow-sm">
                                   Lagos Salon
                                 </div>
-                                <span className="text-[8px] text-emerald-500 font-bold">+$4,200</span>
+                                <span className="text-[8px] text-emerald-500 font-bold">
+                                  +$4,200
+                                </span>
                               </div>
                             </div>
                           )}
@@ -433,13 +530,18 @@ function HeroWithMosaic() {
 
                         <motion.div
                           animate={isActive ? { y: [-5, 5, -5] } : { y: 0 }}
-                          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                          transition={{
+                            duration: 4.5,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: 0.5,
+                          }}
                           className="absolute -top-10 -right-8 z-20 flex flex-col items-center"
                         >
-                          <img 
-                            src={slide.profileImg} 
-                            className={`w-14 h-14 rounded-full border-2 object-cover shadow-lg ${slide.themeColor === "emerald" ? "border-emerald-500" : slide.themeColor === "blue" ? "border-blue-500" : slide.themeColor === "purple" ? "border-purple-500" : "border-amber-500"}`} 
-                            alt="" 
+                          <img
+                            src={slide.profileImg}
+                            className={`w-14 h-14 rounded-full border-2 object-cover shadow-lg ${slide.themeColor === "emerald" ? "border-emerald-500" : slide.themeColor === "blue" ? "border-blue-500" : slide.themeColor === "purple" ? "border-purple-500" : "border-amber-500"}`}
+                            alt=""
                           />
                           <div className="mt-1.5 bg-slate-900/90 dark:bg-slate-950/90 text-white text-[8px] font-mono px-2 py-0.5 rounded border border-slate-800 whitespace-nowrap shadow-md">
                             {slide.profileName}
@@ -452,12 +554,27 @@ function HeroWithMosaic() {
                           return (
                             <motion.div
                               key={pIdx}
-                              animate={isActive ? { y: [isFirst ? -6 : isSecond ? 6 : -4, isFirst ? 6 : isSecond ? -6 : 4, isFirst ? -6 : isSecond ? 6 : -4] } : { y: 0 }}
-                              transition={{ duration: isFirst ? 4 : isSecond ? 4.8 : 5.2, repeat: Infinity, ease: "easeInOut", delay: pIdx * 0.4 }}
+                              animate={
+                                isActive
+                                  ? {
+                                      y: [
+                                        isFirst ? -6 : isSecond ? 6 : -4,
+                                        isFirst ? 6 : isSecond ? -6 : 4,
+                                        isFirst ? -6 : isSecond ? 6 : -4,
+                                      ],
+                                    }
+                                  : { y: 0 }
+                              }
+                              transition={{
+                                duration: isFirst ? 4 : isSecond ? 4.8 : 5.2,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                                delay: pIdx * 0.4,
+                              }}
                               className={`absolute z-20 font-bold text-[9px] sm:text-[10px] px-2.5 py-1 rounded-full shadow-lg border backdrop-blur-sm ${
-                                isFirst 
+                                isFirst
                                   ? "-top-6 -left-8 bg-emerald-500/95 text-white border-emerald-400"
-                                  : isSecond 
+                                  : isSecond
                                     ? "-bottom-4 -left-6 bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-950 border-slate-700/50 dark:border-slate-200"
                                     : "top-1/2 -translate-y-1/2 -right-12 bg-primary/95 text-white border-primary/45"
                               }`}
@@ -468,7 +585,6 @@ function HeroWithMosaic() {
                         })}
                       </motion.div>
                     </div>
-
                   </div>
                 </div>
               </div>
@@ -476,8 +592,6 @@ function HeroWithMosaic() {
           })}
         </div>
       </div>
-
-
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {SLIDES_DATA.map((_, i) => (
@@ -517,7 +631,9 @@ function StatsBar() {
         <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
           {stats.map((s, i) => (
             <div key={s.v} className="text-center">
-              <p className="font-mono-data text-2xl font-bold text-primary">{counts.leads || s.k}</p>
+              <p className="font-mono-data text-2xl font-bold text-primary">
+                {counts.leads || s.k}
+              </p>
               <p className="text-[10px] text-sidebar-foreground uppercase tracking-wider">{s.v}</p>
             </div>
           ))}
@@ -534,13 +650,20 @@ function BlogTeaser() {
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">From the journal</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              From the journal
+            </p>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
               Field notes from working freelancers.
             </h2>
-            <p className="mt-3 text-muted-foreground">Real scripts, real numbers, real clients — written by the people doing the work.</p>
+            <p className="mt-3 text-muted-foreground">
+              Real scripts, real numbers, real clients — written by the people doing the work.
+            </p>
           </div>
-          <Link to="/blog" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+          <Link
+            to="/blog"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold hover:bg-accent"
+          >
             Read the blog <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -554,15 +677,28 @@ function BlogTeaser() {
               className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-card-hover"
             >
               <div className="overflow-hidden">
-                <img src={p.cover} alt={p.title} loading="lazy" className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+                <img
+                  src={p.cover}
+                  alt={p.title}
+                  loading="lazy"
+                  className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                />
               </div>
               <div className="flex flex-1 flex-col p-6">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">{p.category}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">
+                  {p.category}
+                </span>
                 <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.excerpt}</p>
                 <div className="mt-5 flex items-center gap-2 border-t border-border pt-4 text-xs text-muted-foreground">
-                  <img src={p.authorAvatar} alt={p.author} className="h-6 w-6 rounded-full object-cover" />
-                  <span>{p.author} · {p.readMins} min read</span>
+                  <img
+                    src={p.authorAvatar}
+                    alt={p.author}
+                    className="h-6 w-6 rounded-full object-cover"
+                  />
+                  <span>
+                    {p.author} · {p.readMins} min read
+                  </span>
                 </div>
               </div>
             </Link>
@@ -600,7 +736,7 @@ function ValuePropositionCards() {
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-6 md:grid-cols-3">
           {items.map((item, idx) => (
-            <div 
+            <div
               key={idx}
               className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-card hover:shadow-card-hover transition duration-300 group"
             >
@@ -611,9 +747,7 @@ function ValuePropositionCards() {
                 <h3 className="font-display text-xs font-black uppercase tracking-wider text-foreground">
                   {item.title}
                 </h3>
-                <p className="mt-1 text-xs text-muted-foreground leading-snug">
-                  {item.subtitle}
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground leading-snug">{item.subtitle}</p>
               </div>
             </div>
           ))}
@@ -635,7 +769,10 @@ function LogoStrip() {
       </p>
       <div className="mx-auto mt-6 grid max-w-5xl grid-cols-4 items-center gap-y-6 px-4 md:grid-cols-8">
         {marks.map((m) => (
-          <span key={m} className="text-center font-display text-base font-semibold tracking-tight text-foreground/55">
+          <span
+            key={m}
+            className="text-center font-display text-base font-semibold tracking-tight text-foreground/55"
+          >
             {m}
           </span>
         ))}
@@ -660,11 +797,13 @@ function PlatformManifesto() {
               Built by freelancers, for freelancers.
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
-              We believe client relationships should be direct. LanceConnect extracts real contacts and provides a public directory to connect you directly with clients. **0% commission, 100% direct outreach, zero bidding wars.**
+              We believe client relationships should be direct. LanceConnect extracts real contacts
+              and provides a public directory to connect you directly with clients. **0% commission,
+              100% direct outreach, zero bidding wars.**
             </p>
           </div>
-          <Link 
-            to="/freelancers" 
+          <Link
+            to="/freelancers"
             className="shrink-0 rounded-xl bg-primary px-5 py-3 text-xs font-bold text-white hover:brightness-110 transition shadow-lg shadow-primary/10 flex items-center gap-1.5 cursor-pointer"
           >
             Explore Freelancers Directory <ArrowRight className="h-4 w-4" />
@@ -692,19 +831,23 @@ function TutorialVideoSection() {
             Bringing Clients to Your Clipboard.
           </h2>
           <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            Watch our quick 2-minute walkthrough to see how LanceConnect scans, scores, and helps you win contracts in any city.
+            Watch our quick 2-minute walkthrough to see how LanceConnect scans, scores, and helps
+            you win contracts in any city.
           </p>
         </div>
 
         {/* Premium Player Card container */}
         <div className="relative mx-auto max-w-4xl aspect-[16/9] rounded-2xl border border-border bg-slate-950 overflow-hidden shadow-2xl group transition hover:border-primary/45">
           {!isPlaying ? (
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center cursor-pointer select-none" onClick={() => setIsPlaying(true)}>
+            <div
+              className="absolute inset-0 z-10 flex flex-col items-center justify-center cursor-pointer select-none"
+              onClick={() => setIsPlaying(true)}
+            >
               {/* Styled Mock Dashboard Graphic for Thumbnail */}
               <div className="absolute inset-0 bg-[#080B14] opacity-80 mix-blend-multiply" />
-              <img 
-                src={IMG.workspace} 
-                alt="LanceConnect Tutorial Video" 
+              <img
+                src={IMG.workspace}
+                alt="LanceConnect Tutorial Video"
                 className="absolute inset-0 h-full w-full object-cover opacity-35"
               />
               {/* Glowing Play Icon button */}
@@ -716,11 +859,11 @@ function TutorialVideoSection() {
               </span>
             </div>
           ) : (
-            <iframe 
+            <iframe
               className="w-full h-full border-0 absolute inset-0 bg-black"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
               title="LanceConnect Platform Demo"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
             />
           )}
@@ -735,16 +878,46 @@ function TutorialVideoSection() {
    ──────────────────────────────────────────────────────────── */
 function ProductShowcase() {
   const leads = [
-    { name: "Boulangerie Dupont", type: "Bakery", city: "Lyon, France", rating: 4.9, reviews: 412, phone: "+33 4 78 24 18 90", score: 92, tag: "Hot" },
-    { name: "Mario's Ristorante", type: "Italian restaurant", city: "Naples, Italy", rating: 4.7, reviews: 821, phone: "+39 081 552 47 13", score: 78, tag: "Strong" },
-    { name: "Lagos Hair Studio", type: "Hair salon", city: "Lagos, Nigeria", rating: 4.8, reviews: 196, phone: "+234 803 442 1109", score: 71, tag: "Strong" },
+    {
+      name: "Boulangerie Dupont",
+      type: "Bakery",
+      city: "Lyon, France",
+      rating: 4.9,
+      reviews: 412,
+      phone: "+33 4 78 24 18 90",
+      score: 92,
+      tag: "Hot",
+    },
+    {
+      name: "Mario's Ristorante",
+      type: "Italian restaurant",
+      city: "Naples, Italy",
+      rating: 4.7,
+      reviews: 821,
+      phone: "+39 081 552 47 13",
+      score: 78,
+      tag: "Strong",
+    },
+    {
+      name: "Lagos Hair Studio",
+      type: "Hair salon",
+      city: "Lagos, Nigeria",
+      rating: 4.8,
+      reviews: 196,
+      phone: "+234 803 442 1109",
+      score: 71,
+      tag: "Strong",
+    },
   ];
   return (
     <section className="relative" style={{ background: "var(--ink-bg)", color: "var(--ink-fg)" }}>
       <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
         <div className="grid items-end gap-6 md:grid-cols-[1.2fr_1fr]">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--ink-muted)" }}>
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.2em]"
+              style={{ color: "var(--ink-muted)" }}
+            >
               The dashboard
             </p>
             <h2 className="mt-4 font-display text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
@@ -752,14 +925,20 @@ function ProductShowcase() {
             </h2>
           </div>
           <p className="text-base leading-relaxed md:text-lg" style={{ color: "var(--ink-muted)" }}>
-            Real businesses. Real phone numbers. Real opportunity scores based on whether they
-            have a website, how dated it is, and how visible they are on Google.
+            Real businesses. Real phone numbers. Real opportunity scores based on whether they have
+            a website, how dated it is, and how visible they are on Google.
           </p>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-2xl border" style={{ borderColor: "var(--ink-border)", background: "var(--ink-bg-2)" }}>
+        <div
+          className="mt-12 overflow-hidden rounded-2xl border"
+          style={{ borderColor: "var(--ink-border)", background: "var(--ink-bg-2)" }}
+        >
           {/* Toolbar */}
-          <div className="flex items-center justify-between border-b px-5 py-3 text-xs" style={{ borderColor: "var(--ink-border)", color: "var(--ink-muted)" }}>
+          <div
+            className="flex items-center justify-between border-b px-5 py-3 text-xs"
+            style={{ borderColor: "var(--ink-border)", color: "var(--ink-muted)" }}
+          >
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-red-400/60" />
               <span className="h-2.5 w-2.5 rounded-full bg-amber-400/60" />
@@ -774,16 +953,24 @@ function ProductShowcase() {
               <li key={l.name} className="grid grid-cols-12 items-center gap-4 px-5 py-5">
                 <div className="col-span-12 md:col-span-4">
                   <div className="flex items-center gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-lg" style={{ background: "var(--ink-border)" }}>
+                    <div
+                      className="grid h-10 w-10 place-items-center rounded-lg"
+                      style={{ background: "var(--ink-border)" }}
+                    >
                       <Building2 className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
                       <p className="truncate font-display text-[15px] font-semibold">{l.name}</p>
-                      <p className="text-xs" style={{ color: "var(--ink-muted)" }}>{l.type}</p>
+                      <p className="text-xs" style={{ color: "var(--ink-muted)" }}>
+                        {l.type}
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div className="col-span-6 md:col-span-3 flex items-center gap-1.5 text-sm" style={{ color: "var(--ink-muted)" }}>
+                <div
+                  className="col-span-6 md:col-span-3 flex items-center gap-1.5 text-sm"
+                  style={{ color: "var(--ink-muted)" }}
+                >
                   <MapPin className="h-3.5 w-3.5" /> {l.city}
                 </div>
                 <div className="col-span-6 md:col-span-2 flex items-center gap-1.5 text-sm">
@@ -802,7 +989,10 @@ function ProductShowcase() {
           </ul>
         </div>
 
-        <div className="mt-10 grid gap-6 text-sm md:grid-cols-3" style={{ color: "var(--ink-muted)" }}>
+        <div
+          className="mt-10 grid gap-6 text-sm md:grid-cols-3"
+          style={{ color: "var(--ink-muted)" }}
+        >
           {[
             { k: "247", v: "leads surfaced this week in Italy alone" },
             { k: "1.8s", v: "average time to load 100 scored leads" },
@@ -824,44 +1014,69 @@ function ProductShowcase() {
    ──────────────────────────────────────────────────────────── */
 function HowItWorks() {
   const steps = [
-    { icon: Target, title: "Pick your skill", desc: "Select your freelance category — web dev, design, copywriting, and 7 more." },
-    { icon: Map, title: "Choose your market", desc: "Target any city or country in the world. Filter by industry, size, signals." },
-    { icon: LineChart, title: "Discover leads", desc: "Get a scored list of businesses that need exactly what you sell." },
-    { icon: Mail, title: "Reach out", desc: "Use ready-made templates — or our AI writer — to contact them in seconds." },
+    {
+      icon: Target,
+      title: "Pick your skill",
+      desc: "Select your freelance category — web dev, design, copywriting, and 7 more.",
+    },
+    {
+      icon: Map,
+      title: "Choose your market",
+      desc: "Target any city or country in the world. Filter by industry, size, signals.",
+    },
+    {
+      icon: LineChart,
+      title: "Discover leads",
+      desc: "Get a scored list of businesses that need exactly what you sell.",
+    },
+    {
+      icon: Mail,
+      title: "Reach out",
+      desc: "Use ready-made templates — or our AI writer — to contact them in seconds.",
+    },
   ];
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
   });
   const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
-    <section 
+    <section
       ref={containerRef}
-      id="how" 
+      id="how"
       className="relative overflow-hidden border-y border-border py-24 text-white"
     >
-      <motion.div 
+      <motion.div
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-50"
-        style={{ 
+        style={{
           backgroundImage: "url('/assets/freelancers/freelancer_5.jpg')",
           y,
           height: "130%",
-          top: "-15%"
+          top: "-15%",
         }}
       />
       <div className="absolute inset-0 bg-[#0B0F19]/65 dark:bg-[#0B0F19]/55 z-10" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// quick.workflow</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">From zero to outreach in minutes</h2>
-          <p className="mt-3 text-slate-300">A simple workflow built around how freelancers actually find clients.</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+            // quick.workflow
+          </p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">
+            From zero to outreach in minutes
+          </h2>
+          <p className="mt-3 text-slate-300">
+            A simple workflow built around how freelancers actually find clients.
+          </p>
         </div>
         <div className="relative mt-14 grid gap-6 md:grid-cols-4">
           <div className="absolute left-0 right-0 top-7 hidden h-px bg-border/40 md:block" />
           {steps.map((s, i) => (
-            <div key={s.title} className="relative rounded-2xl border border-blue-900/30 bg-[#131c31] p-6 shadow-card hover:shadow-card-hover transition duration-300">
+            <div
+              key={s.title}
+              className="relative rounded-2xl border border-blue-900/30 bg-[#131c31] p-6 shadow-card hover:shadow-card-hover transition duration-300"
+            >
               <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-[#1e293b] text-white">
                 <s.icon className="h-6 w-6" />
               </div>
@@ -877,18 +1092,19 @@ function HowItWorks() {
 }
 
 const AiOutreachFooter = () => {
-  const [tone, setTone] = useState<'casual' | 'professional' | 'bold'>('casual');
+  const [tone, setTone] = useState<"casual" | "professional" | "bold">("casual");
 
   const messages = {
     casual: "Hey Mario, saw your pizza spot has no site...",
-    professional: "Dear Mario, I noticed Mario's Ristorante does not currently have a web presence...",
-    bold: "Hey Mario, why doesn't Mario's Ristorante have a website yet? Your competitors in Naples are..."
+    professional:
+      "Dear Mario, I noticed Mario's Ristorante does not currently have a web presence...",
+    bold: "Hey Mario, why doesn't Mario's Ristorante have a website yet? Your competitors in Naples are...",
   };
 
   return (
     <div className="flex flex-col gap-2 w-full mt-2">
       <div className="flex items-center justify-between bg-background p-1 rounded-lg border border-border/80">
-        {(['casual', 'professional', 'bold'] as const).map((t) => (
+        {(["casual", "professional", "bold"] as const).map((t) => (
           <button
             key={t}
             onClick={(e) => {
@@ -897,8 +1113,8 @@ const AiOutreachFooter = () => {
             }}
             className={`text-[9px] font-mono px-2 py-0.5 rounded transition-all capitalize flex-1 text-center ${
               tone === t
-                ? 'bg-primary text-white shadow-sm font-semibold'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/45'
+                ? "bg-primary text-white shadow-sm font-semibold"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/45"
             }`}
           >
             {t}
@@ -908,7 +1124,9 @@ const AiOutreachFooter = () => {
       <div className="w-full bg-background border border-border rounded-xl p-2.5 font-mono text-[9px] text-slate-400 h-[60px] overflow-hidden select-none">
         <div className="flex justify-between items-center text-[#64748B] mb-0.5">
           <span>// Generated intro</span>
-          <span className="text-[8px] bg-primary/20 text-primary px-1 rounded uppercase tracking-wider font-semibold">Active</span>
+          <span className="text-[8px] bg-primary/20 text-primary px-1 rounded uppercase tracking-wider font-semibold">
+            Active
+          </span>
         </div>
         <motion.p
           key={tone}
@@ -931,61 +1149,97 @@ const getMockLeads = (craft: string, city: string) => {
       name: `${city} Gourmet Kitchen`,
       type: "Restaurant & Catering",
       score: 94,
-      issues: craft === 'web' ? ["No website", "Only Facebook page link"] 
-            : craft === 'design' ? ["Outdated 2012 layout", "Cluttered booking form"] 
-            : craft === 'seo' ? ["Not visible on local search", "Missing Google Business profile reviews"]
-            : ["No video presence", "Outdated food gallery"],
+      issues:
+        craft === "web"
+          ? ["No website", "Only Facebook page link"]
+          : craft === "design"
+            ? ["Outdated 2012 layout", "Cluttered booking form"]
+            : craft === "seo"
+              ? ["Not visible on local search", "Missing Google Business profile reviews"]
+              : ["No video presence", "Outdated food gallery"],
       phone: "+1 555-832-1920",
       email: `contact@${city.toLowerCase().replace(" ", "")}gourmet.com`,
-      subject: craft === 'web' ? `Website inquiry for ${city} Gourmet Kitchen`
-             : craft === 'design' ? `Branding update - ${city} Gourmet Kitchen`
-             : craft === 'seo' ? `Google visibility boost for ${city} Gourmet Kitchen`
-             : `Promo video concepts for ${city} Gourmet Kitchen`,
-      draft: craft === 'web' ? `Hi Chef,\n\nI love your menu but noticed customers can't order directly online. I'd love to build a quick, high-converting checkout site for you.\n\nBest,\n[Your Name]`
-           : craft === 'design' ? `Hello,\n\nI love the dining vibe at Gourmet Kitchen! I noticed your online logo and branding could use a premium refresh to match that feel.\n\nBest,\n[Your Name]`
-           : craft === 'seo' ? `Hi Team,\n\nI searched for restaurants in ${city} and couldn't find your kitchen on the first page. Let's optimize your profile to pull in more local customers.\n\nBest,\n[Your Name]`
-           : `Hi Chef,\n\nI saw your gorgeous dishes on Instagram. I can create a professional 30-second promo reel to drive reservations.\n\nBest,\n[Your Name]`,
+      subject:
+        craft === "web"
+          ? `Website inquiry for ${city} Gourmet Kitchen`
+          : craft === "design"
+            ? `Branding update - ${city} Gourmet Kitchen`
+            : craft === "seo"
+              ? `Google visibility boost for ${city} Gourmet Kitchen`
+              : `Promo video concepts for ${city} Gourmet Kitchen`,
+      draft:
+        craft === "web"
+          ? `Hi Chef,\n\nI love your menu but noticed customers can't order directly online. I'd love to build a quick, high-converting checkout site for you.\n\nBest,\n[Your Name]`
+          : craft === "design"
+            ? `Hello,\n\nI love the dining vibe at Gourmet Kitchen! I noticed your online logo and branding could use a premium refresh to match that feel.\n\nBest,\n[Your Name]`
+            : craft === "seo"
+              ? `Hi Team,\n\nI searched for restaurants in ${city} and couldn't find your kitchen on the first page. Let's optimize your profile to pull in more local customers.\n\nBest,\n[Your Name]`
+              : `Hi Chef,\n\nI saw your gorgeous dishes on Instagram. I can create a professional 30-second promo reel to drive reservations.\n\nBest,\n[Your Name]`,
     },
     {
       id: 2,
       name: `${city} Dental Care`,
       type: "Medical Practice",
       score: 87,
-      issues: craft === 'web' ? ["Non-responsive on mobile", "Broken appointment button"]
-            : craft === 'design' ? ["Stock-photo heavy landing page", "Hard to read fonts"]
-            : craft === 'seo' ? ["High competitor ranking", "No local schema mapping"]
-            : ["Missing patient walkthrough video", "No video introduction"],
+      issues:
+        craft === "web"
+          ? ["Non-responsive on mobile", "Broken appointment button"]
+          : craft === "design"
+            ? ["Stock-photo heavy landing page", "Hard to read fonts"]
+            : craft === "seo"
+              ? ["High competitor ranking", "No local schema mapping"]
+              : ["Missing patient walkthrough video", "No video introduction"],
       phone: "+1 555-401-3829",
       email: `office@${city.toLowerCase().replace(" ", "")}dentalcare.com`,
-      subject: craft === 'web' ? `Mobile booking issue on your site`
-             : craft === 'design' ? `Modern UI facelift for ${city} Dental`
-             : craft === 'seo' ? `Patients can't find you on Google`
-             : `Patient testimonial videos for ${city} Dental`,
-      draft: craft === 'web' ? `Hi Dr.,\n\nI tried booking an appointment on my phone and the layout was cut off. I can fix this responsiveness issue so you don't lose patients.\n\nBest,\n[Your Name]`
-           : craft === 'design' ? `Dear Practice Manager,\n\nI noticed your website uses standard stock photos. A custom illustrated interface would build much higher trust with patients.\n\nBest,\n[Your Name]`
-           : craft === 'seo' ? `Hello Dr.,\n\nYour competitors are ranking above you for 'dentist in ${city}'. I can optimize your site structure to get you to #1.\n\nBest,\n[Your Name]`
-           : `Dear Practice Manager,\n\nWe can film and edit 3 high-impact patient video testimonials to put on your home page to build instant trust.\n\nBest,\n[Your Name]`,
+      subject:
+        craft === "web"
+          ? `Mobile booking issue on your site`
+          : craft === "design"
+            ? `Modern UI facelift for ${city} Dental`
+            : craft === "seo"
+              ? `Patients can't find you on Google`
+              : `Patient testimonial videos for ${city} Dental`,
+      draft:
+        craft === "web"
+          ? `Hi Dr.,\n\nI tried booking an appointment on my phone and the layout was cut off. I can fix this responsiveness issue so you don't lose patients.\n\nBest,\n[Your Name]`
+          : craft === "design"
+            ? `Dear Practice Manager,\n\nI noticed your website uses standard stock photos. A custom illustrated interface would build much higher trust with patients.\n\nBest,\n[Your Name]`
+            : craft === "seo"
+              ? `Hello Dr.,\n\nYour competitors are ranking above you for 'dentist in ${city}'. I can optimize your site structure to get you to #1.\n\nBest,\n[Your Name]`
+              : `Dear Practice Manager,\n\nWe can film and edit 3 high-impact patient video testimonials to put on your home page to build instant trust.\n\nBest,\n[Your Name]`,
     },
     {
       id: 3,
       name: `${city} Auto Body`,
       type: "Car Service",
       score: 79,
-      issues: craft === 'web' ? ["Slow load speed (8.4s)", "Outdated HTML template"]
-            : craft === 'design' ? ["Unstructured service pricing table", "Low contrast buttons"]
-            : craft === 'seo' ? ["No Google Reviews linkage", "Low speed indexing penalty"]
-            : ["No video gallery showing repairs", "Missing TikTok/Reels presence"],
+      issues:
+        craft === "web"
+          ? ["Slow load speed (8.4s)", "Outdated HTML template"]
+          : craft === "design"
+            ? ["Unstructured service pricing table", "Low contrast buttons"]
+            : craft === "seo"
+              ? ["No Google Reviews linkage", "Low speed indexing penalty"]
+              : ["No video gallery showing repairs", "Missing TikTok/Reels presence"],
       phone: "+1 555-901-7261",
       email: `info@${city.toLowerCase().replace(" ", "")}autobody.com`,
-      subject: craft === 'web' ? `Website loading speeds at ${city} Auto`
-             : craft === 'design' ? `UI revamp for your repair list`
-             : craft === 'seo' ? `Rankings check for local auto body repairs`
-             : `Reels & Shorts promo for ${city} Auto`,
-      draft: craft === 'web' ? `Hi Manager,\n\nYour page takes over 8 seconds to load, which causes visitors to leave. Let's rebuild a lightweight, lightning-fast static site.\n\nBest,\n[Your Name]`
-           : craft === 'design' ? `Hello,\n\nYour services page is a bit hard to scan on mobile. I designed a cleaner table that makes it easy for clients to request quotes.\n\nBest,\n[Your Name]`
-           : craft === 'seo' ? `Hi Team,\n\nI saw your business lacks backlinks from local directories. I can manage a citation campaign to raise your authority score.\n\nBest,\n[Your Name]`
-           : `Hi Manager,\n\nLet's capture high-quality 'before/after' transformation reels of your paint/dent jobs to build a massive TikTok following.\n\nBest,\n[Your Name]`,
-    }
+      subject:
+        craft === "web"
+          ? `Website loading speeds at ${city} Auto`
+          : craft === "design"
+            ? `UI revamp for your repair list`
+            : craft === "seo"
+              ? `Rankings check for local auto body repairs`
+              : `Reels & Shorts promo for ${city} Auto`,
+      draft:
+        craft === "web"
+          ? `Hi Manager,\n\nYour page takes over 8 seconds to load, which causes visitors to leave. Let's rebuild a lightweight, lightning-fast static site.\n\nBest,\n[Your Name]`
+          : craft === "design"
+            ? `Hello,\n\nYour services page is a bit hard to scan on mobile. I designed a cleaner table that makes it easy for clients to request quotes.\n\nBest,\n[Your Name]`
+            : craft === "seo"
+              ? `Hi Team,\n\nI saw your business lacks backlinks from local directories. I can manage a citation campaign to raise your authority score.\n\nBest,\n[Your Name]`
+              : `Hi Manager,\n\nLet's capture high-quality 'before/after' transformation reels of your paint/dent jobs to build a massive TikTok following.\n\nBest,\n[Your Name]`,
+    },
   ];
   return leads;
 };
@@ -1004,10 +1258,16 @@ const FEATURES_LIST = [
     ),
     footer: () => (
       <div className="space-y-2 border-t border-border/60 pt-4 font-mono text-xs text-slate-600 dark:text-[#64748B] w-full">
-        <div className="flex justify-between"><span>Leads indexed</span><span className="text-slate-950 dark:text-white font-semibold">2.4M+</span></div>
-        <div className="flex justify-between"><span>Countries covered</span><span className="text-slate-950 dark:text-white font-semibold">150+</span></div>
+        <div className="flex justify-between">
+          <span>Leads indexed</span>
+          <span className="text-slate-950 dark:text-white font-semibold">2.4M+</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Countries covered</span>
+          <span className="text-slate-950 dark:text-white font-semibold">150+</span>
+        </div>
       </div>
-    )
+    ),
   },
   {
     id: 2,
@@ -1022,9 +1282,11 @@ const FEATURES_LIST = [
     ),
     footer: () => (
       <div className="flex items-center gap-2 mt-4 w-full">
-        <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">94 Hot Lead</span>
+        <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+          94 Hot Lead
+        </span>
       </div>
-    )
+    ),
   },
   {
     id: 3,
@@ -1042,7 +1304,7 @@ const FEATURES_LIST = [
         <span>+234 802...</span>
         <span className="text-emerald-500 font-semibold">✓ Verified</span>
       </div>
-    )
+    ),
   },
   {
     id: 4,
@@ -1055,7 +1317,7 @@ const FEATURES_LIST = [
         <span className="absolute top-[-2.5px] h-1.5 w-1.5 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)] animate-slide-left" />
       </div>
     ),
-    footer: AiOutreachFooter
+    footer: AiOutreachFooter,
   },
   {
     id: 5,
@@ -1070,10 +1332,14 @@ const FEATURES_LIST = [
     ),
     footer: () => (
       <div className="flex gap-1.5 mt-4 w-full">
-        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">New</span>
-        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-500/20">Contacted</span>
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
+          New
+        </span>
+        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-500/20">
+          Contacted
+        </span>
       </div>
-    )
+    ),
   },
   {
     id: 6,
@@ -1090,7 +1356,7 @@ const FEATURES_LIST = [
       <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-1.5 rounded border border-purple-500/20 mt-4 text-center block w-full">
         Remote channels auto-scraped
       </span>
-    )
+    ),
   },
   {
     id: 7,
@@ -1101,12 +1367,30 @@ const FEATURES_LIST = [
     connector: () => null,
     footer: () => (
       <div className="flex flex-wrap gap-1.5 mt-4 text-[9px] font-mono text-slate-800 dark:text-slate-200 w-full">
-        {["Web Dev", "Design", "SEO", "Copywriting", "Video", "Photo", "VA", "Marketing", "App Dev", "Tutoring", "Food Export", "B2B Trade"].map(tag => (
-          <span key={tag} className="px-2 py-0.5 rounded bg-background border border-border text-slate-900 dark:text-slate-100">{tag}</span>
+        {[
+          "Web Dev",
+          "Design",
+          "SEO",
+          "Copywriting",
+          "Video",
+          "Photo",
+          "VA",
+          "Marketing",
+          "App Dev",
+          "Tutoring",
+          "Food Export",
+          "B2B Trade",
+        ].map((tag) => (
+          <span
+            key={tag}
+            className="px-2 py-0.5 rounded bg-background border border-border text-slate-900 dark:text-slate-100"
+          >
+            {tag}
+          </span>
         ))}
       </div>
-    )
-  }
+    ),
+  },
 ];
 
 function Features() {
@@ -1117,8 +1401,12 @@ function Features() {
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
             // what.we.give.you
           </p>
-          <h2 className="font-display text-4xl font-extrabold text-foreground">Everything you need to get clients</h2>
-          <p className="mt-4 text-muted-foreground">No bloat. Just the tools freelancers actually use to win work.</p>
+          <h2 className="font-display text-4xl font-extrabold text-foreground">
+            Everything you need to get clients
+          </h2>
+          <p className="mt-4 text-muted-foreground">
+            No bloat. Just the tools freelancers actually use to win work.
+          </p>
         </div>
 
         {/* Desktop Layout: Snake Grid */}
@@ -1128,8 +1416,8 @@ function Features() {
             const FooterComponent = card.footer;
             const ConnectorComponent = card.connector;
             return (
-              <div 
-                key={card.id} 
+              <div
+                key={card.id}
                 className={`relative rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between group hover:border-[#6366F1]/30 transition duration-300 z-10 ${card.gridClass}`}
               >
                 {card.id === 7 ? (
@@ -1138,7 +1426,9 @@ function Features() {
                       <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
+                      <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">
+                        {card.title}
+                      </h3>
                       <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed">
                         {card.desc}
                       </p>
@@ -1153,7 +1443,9 @@ function Features() {
                       <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition duration-300">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
+                      <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">
+                        {card.title}
+                      </h3>
                       <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed line-clamp-3">
                         {card.desc}
                       </p>
@@ -1175,15 +1467,17 @@ function Features() {
               const Icon = card.icon;
               const FooterComponent = card.footer;
               return (
-                <div 
-                  key={`m1-${card.id}`} 
+                <div
+                  key={`m1-${card.id}`}
                   className="w-[280px] shrink-0 rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between"
                 >
                   <div>
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">{card.title}</h3>
+                    <h3 className="font-display text-lg font-bold text-slate-950 dark:text-white mb-2">
+                      {card.title}
+                    </h3>
                     <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
@@ -1199,15 +1493,17 @@ function Features() {
               const Icon = card.icon;
               const FooterComponent = card.footer;
               return (
-                <div 
-                  key={`m2-${card.id}`} 
+                <div
+                  key={`m2-${card.id}`}
                   className="w-[280px] shrink-0 rounded-2xl border border-border bg-card p-6 shadow-card flex flex-col justify-between"
                 >
                   <div>
                     <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-display text-lg font-bold text-slate-955 dark:text-white mb-2">{card.title}</h3>
+                    <h3 className="font-display text-lg font-bold text-slate-955 dark:text-white mb-2">
+                      {card.title}
+                    </h3>
                     <p className="text-xs md:text-sm text-slate-900 dark:text-slate-200 leading-relaxed line-clamp-3">
                       {card.desc}
                     </p>
@@ -1229,8 +1525,8 @@ function Features() {
    INTERACTIVE LEAD SCANNER PLAYGROUND
    ──────────────────────────────────────────────────────────── */
 function LeadScannerSandbox() {
-  const [craft, setCraft] = useState<'web' | 'design' | 'seo' | 'video'>('web');
-  const [city, setCity] = useState<string>('London');
+  const [craft, setCraft] = useState<"web" | "design" | "seo" | "video">("web");
+  const [city, setCity] = useState<string>("London");
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [scanProgress, setScanProgress] = useState<number>(0);
   const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
@@ -1240,7 +1536,7 @@ function LeadScannerSandbox() {
   const { t } = usePreferences();
 
   const handleDraftChange = (id: number, text: string) => {
-    setLeads(prev => prev.map(l => l.id === id ? { ...l, draft: text } : l));
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, draft: text } : l)));
   };
 
   const handleCopy = (id: number, text: string) => {
@@ -1262,12 +1558,12 @@ function LeadScannerSandbox() {
       `[SCAN] Scraping active website meta tags & schema...`,
       `[MODEL] Analyzing mobile speed & Core Web Vitals...`,
       `[AI] Ranking target list by opportunity potential...`,
-      `[SUCCESS] Analysis complete. 3 hot leads found!`
+      `[SUCCESS] Analysis complete. 3 hot leads found!`,
     ];
 
     let currentLogIndex = 0;
     const interval = setInterval(() => {
-      setScanProgress(prev => {
+      setScanProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           setTimeout(() => {
@@ -1277,29 +1573,32 @@ function LeadScannerSandbox() {
           }, 300);
           return 100;
         }
-        
+
         const step = Math.floor(prev / 15);
         if (step > currentLogIndex && currentLogIndex < logSequence.length) {
-          setTerminalLogs(logs => [...logs, logSequence[currentLogIndex]]);
+          setTerminalLogs((logs) => [...logs, logSequence[currentLogIndex]]);
           currentLogIndex++;
         }
-        
+
         return prev + 10;
       });
     }, 150);
   };
 
   return (
-    <section id="sandbox" className="hidden md:block border-b border-border bg-background py-24 select-none">
+    <section
+      id="sandbox"
+      className="hidden md:block border-b border-border bg-background py-24 select-none"
+    >
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-3xl text-center mb-16">
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
             {t("sandbox_eyebrow")}
           </p>
-          <h2 className="font-display text-4xl font-extrabold text-foreground">{t("sandbox_title")}</h2>
-          <p className="mt-4 text-muted-foreground">
-            {t("sandbox_sub")}
-          </p>
+          <h2 className="font-display text-4xl font-extrabold text-foreground">
+            {t("sandbox_title")}
+          </h2>
+          <p className="mt-4 text-muted-foreground">{t("sandbox_sub")}</p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-12">
@@ -1308,21 +1607,23 @@ function LeadScannerSandbox() {
             <div className="space-y-6">
               {/* Craft Selector */}
               <div>
-                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">{t("sandbox_step_1")}</label>
+                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">
+                  {t("sandbox_step_1")}
+                </label>
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
-                    { id: 'web', label: 'Web Developer', icon: Code2 },
-                    { id: 'design', label: 'Designer', icon: Palette },
-                    { id: 'seo', label: 'SEO Specialist', icon: LineChart },
-                    { id: 'video', label: 'Video Producer', icon: Play }
+                    { id: "web", label: "Web Developer", icon: Code2 },
+                    { id: "design", label: "Designer", icon: Palette },
+                    { id: "seo", label: "SEO Specialist", icon: LineChart },
+                    { id: "video", label: "Video Producer", icon: Play },
                   ].map((item) => (
                     <button
                       key={item.id}
                       onClick={() => setCraft(item.id as any)}
                       className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all ${
-                        craft === item.id 
-                          ? 'border-primary bg-primary/10 text-primary font-semibold'
-                          : 'border-border bg-background text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                        craft === item.id
+                          ? "border-primary bg-primary/10 text-primary font-semibold"
+                          : "border-border bg-background text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
                       }`}
                     >
                       <item.icon className="h-4.5 w-4.5 text-primary shrink-0" />
@@ -1334,7 +1635,9 @@ function LeadScannerSandbox() {
 
               {/* City Selector */}
               <div>
-                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">{t("sandbox_step_2")}</label>
+                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">
+                  {t("sandbox_step_2")}
+                </label>
                 <div className="relative">
                   <select
                     value={city}
@@ -1342,14 +1645,22 @@ function LeadScannerSandbox() {
                     className="w-full bg-background border border-border rounded-xl px-4 py-3 text-xs text-slate-950 dark:text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
                   >
                     {["London", "Lagos", "São Paulo", "Tokyo", "Buenos Aires"].map((c) => (
-                      <option key={c} value={c} className="bg-background text-slate-950 dark:text-white">
+                      <option
+                        key={c}
+                        value={c}
+                        className="bg-background text-slate-950 dark:text-white"
+                      >
                         {c}
                       </option>
                     ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                    <svg
+                      className="fill-current h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                     </svg>
                   </div>
                 </div>
@@ -1362,9 +1673,9 @@ function LeadScannerSandbox() {
                 onClick={startScan}
                 disabled={isScanning}
                 className={`w-full relative overflow-hidden flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-sm font-semibold text-white shadow-lg transition-all duration-300 ${
-                  isScanning 
-                    ? 'opacity-85 cursor-not-allowed' 
-                    : 'hover:bg-primary/90 hover:scale-[1.01] hover:shadow-primary/25'
+                  isScanning
+                    ? "opacity-85 cursor-not-allowed"
+                    : "hover:bg-primary/90 hover:scale-[1.01] hover:shadow-primary/25"
                 }`}
               >
                 {isScanning ? (
@@ -1409,7 +1720,9 @@ function LeadScannerSandbox() {
                     <Search className="h-5 w-5 text-slate-500" />
                   </div>
                   <div>
-                    <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">{t("sandbox_ready_title")}</h3>
+                    <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">
+                      {t("sandbox_ready_title")}
+                    </h3>
                     <p className="text-xs text-slate-700 dark:text-slate-400 mt-1">
                       {t("sandbox_ready_desc")}
                     </p>
@@ -1425,7 +1738,10 @@ function LeadScannerSandbox() {
                     <div className="absolute h-24 w-24 rounded-full border border-primary/20 flex items-center justify-center">
                       <div className="absolute h-16 w-16 rounded-full border border-primary/30" />
                       <div className="absolute h-8 w-8 rounded-full border border-primary/45" />
-                      <div className="absolute inset-0 border-t-2 border-primary rounded-full animate-spin" style={{ animationDuration: '1.2s' }} />
+                      <div
+                        className="absolute inset-0 border-t-2 border-primary rounded-full animate-spin"
+                        style={{ animationDuration: "1.2s" }}
+                      />
                     </div>
                     <div className="h-2 w-2 rounded-full bg-primary animate-ping" />
                   </div>
@@ -1435,7 +1751,15 @@ function LeadScannerSandbox() {
                     {terminalLogs.map((log, idx) => (
                       <div key={idx} className="flex gap-2">
                         <span className="text-primary font-bold">{`>`}</span>
-                        <span className={log.includes('[SUCCESS]') ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : log.includes('[SCAN]') ? 'text-amber-600 dark:text-yellow-400' : 'text-slate-800 dark:text-slate-300'}>
+                        <span
+                          className={
+                            log.includes("[SUCCESS]")
+                              ? "text-emerald-600 dark:text-emerald-400 font-semibold"
+                              : log.includes("[SCAN]")
+                                ? "text-amber-600 dark:text-yellow-400"
+                                : "text-slate-800 dark:text-slate-300"
+                          }
+                        >
                           {log}
                         </span>
                       </div>
@@ -1452,24 +1776,31 @@ function LeadScannerSandbox() {
               {scanComplete && (
                 <div className="space-y-4">
                   {leads.map((l) => (
-                    <div 
-                      key={l.id} 
+                    <div
+                      key={l.id}
                       className="bg-background border border-border hover:border-primary/45 rounded-xl p-4 transition-all duration-300 flex flex-col gap-3 group"
                     >
                       {/* Lead meta */}
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-display text-sm font-bold text-slate-950 dark:text-slate-100 leading-tight">{l.name}</h4>
+                            <h4 className="font-display text-sm font-bold text-slate-950 dark:text-slate-100 leading-tight">
+                              {l.name}
+                            </h4>
                             <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-primary">
                               {l.score} Match
                             </span>
                           </div>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-350 font-mono mt-0.5 block">{l.type} · {city}</span>
+                          <span className="text-[10px] text-slate-500 dark:text-slate-350 font-mono mt-0.5 block">
+                            {l.type} · {city}
+                          </span>
                         </div>
                         <div className="flex flex-wrap gap-1.5 justify-end">
                           {l.issues.map((issue: string, idx: number) => (
-                            <span key={idx} className="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2 py-0.5 rounded-[4px] text-[8px] font-mono">
+                            <span
+                              key={idx}
+                              className="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2 py-0.5 rounded-[4px] text-[8px] font-mono"
+                            >
                               ⚠ {issue}
                             </span>
                           ))}
@@ -1538,18 +1869,20 @@ function GlobalReach() {
             <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
               // we.are.everywhere
             </p>
-             <h2 className="font-display text-3xl font-extrabold text-foreground tracking-tight leading-tight">
-              Freelancers in every country.<br className="hidden sm:inline" /> Leads in every city.
-             </h2>
+            <h2 className="font-display text-3xl font-extrabold text-foreground tracking-tight leading-tight">
+              Freelancers in every country.
+              <br className="hidden sm:inline" /> Leads in every city.
+            </h2>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-md">
-              A truly global ecosystem matching local clients with global freelance talent. We scan 150+ countries in real-time.
+              A truly global ecosystem matching local clients with global freelance talent. We scan
+              150+ countries in real-time.
             </p>
-            
+
             {/* City badges list */}
             <div className="mt-6 flex flex-wrap gap-2">
               {cities.map((city) => (
-                <span 
-                  key={city.name} 
+                <span
+                  key={city.name}
                   className="inline-flex items-center gap-1.5 rounded-full bg-card border border-border px-3 py-1 text-xs text-slate-800 dark:text-slate-300 font-mono font-medium"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -1563,22 +1896,44 @@ function GlobalReach() {
           <div className="lg:col-span-7">
             <div className="relative mx-auto w-full h-[280px] md:h-[320px] border border-[#1e293b] bg-[#0b0f19] rounded-2xl overflow-hidden shadow-2xl">
               <div className="absolute inset-0 bg-dot-pattern opacity-45" />
-              
+
               {/* Stylized world grid coordinates */}
-              <svg className="absolute inset-0 w-full h-full text-slate-800/40" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="50%" x2="100%" y2="50%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
-                <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+              <svg
+                className="absolute inset-0 w-full h-full text-slate-800/40"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line
+                  x1="0"
+                  y1="50%"
+                  x2="100%"
+                  y2="50%"
+                  stroke="currentColor"
+                  strokeWidth="0.5"
+                  strokeDasharray="4 4"
+                />
+                <line
+                  x1="50%"
+                  y1="0"
+                  x2="50%"
+                  y2="100%"
+                  stroke="currentColor"
+                  strokeWidth="0.5"
+                  strokeDasharray="4 4"
+                />
               </svg>
 
               {/* Pulse cities */}
               {cities.map((city, i) => (
-                <div 
-                  key={city.name} 
-                  className="absolute group" 
+                <div
+                  key={city.name}
+                  className="absolute group"
                   style={{ top: city.y, left: city.x }}
                 >
                   {/* Pulse rings */}
-                  <span className="absolute inline-flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 animate-ping" style={{ animationDelay: `${city.delay}s`, animationDuration: '3s' }} />
+                  <span
+                    className="absolute inline-flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 animate-ping"
+                    style={{ animationDelay: `${city.delay}s`, animationDuration: "3s" }}
+                  />
                   <span className="absolute inline-flex h-4.5 w-4.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/45 animate-pulse" />
                   <span className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary" />
 
@@ -1630,15 +1985,23 @@ function WhoFor() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">Built for every freelancer</h2>
-        <p className="mt-3 text-muted-foreground">Whatever skill you sell, we'll help you find businesses that need it.</p>
+        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+          Built for every freelancer
+        </h2>
+        <p className="mt-3 text-muted-foreground">
+          Whatever skill you sell, we'll help you find businesses that need it.
+        </p>
       </div>
       <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {CATEGORIES.map((c) => {
           const Icon = CATEGORY_ICONS[c.id] || Sparkles;
           return (
-            <Link to="/freelancers/$slug" params={{ slug: categorySlug(c.id) }} key={c.id}
-              className="group rounded-xl border border-border bg-card p-5 transition hover:border-foreground/30 hover:shadow-card-hover">
+            <Link
+              to="/freelancers/$slug"
+              params={{ slug: categorySlug(c.id) }}
+              key={c.id}
+              className="group rounded-xl border border-border bg-card p-5 transition hover:border-foreground/30 hover:shadow-card-hover"
+            >
               <div className="text-primary h-8 w-8 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20 transition group-hover:bg-primary/20">
                 <Icon className="h-4.5 w-4.5 text-primary" />
               </div>
@@ -1657,11 +2020,22 @@ function WhoFor() {
 
 function categorySlug(id: string) {
   const map: Record<string, string> = {
-    web_dev: "web-developers", designer: "designers", copywriter: "copywriters", seo: "seo-specialists",
-    social_media: "social-media", video: "videographers", photography: "photographers", marketing: "marketers",
-    app_dev: "app-developers", va: "virtual-assistants",
-    tutor: "online-tutors", african_food_export: "african-food-export", restaurant_supplier: "restaurant-suppliers",
-    product_export: "product-export", b2b_trade: "b2b-trade", corporate_training: "corporate-training",
+    web_dev: "web-developers",
+    designer: "designers",
+    copywriter: "copywriters",
+    seo: "seo-specialists",
+    social_media: "social-media",
+    video: "videographers",
+    photography: "photographers",
+    marketing: "marketers",
+    app_dev: "app-developers",
+    va: "virtual-assistants",
+    tutor: "online-tutors",
+    african_food_export: "african-food-export",
+    restaurant_supplier: "restaurant-suppliers",
+    product_export: "product-export",
+    b2b_trade: "b2b-trade",
+    corporate_training: "corporate-training",
   };
   return map[id] ?? id;
 }
@@ -1671,29 +2045,67 @@ function categorySlug(id: string) {
    ──────────────────────────────────────────────────────────── */
 function Testimonials() {
   const items = [
-    { quote: "I found 3 new clients in my first week. The opportunity scoring tells me exactly which businesses to call first.", name: "Taiwo Adeyemi", role: "Web Developer", city: "Lagos, Nigeria", avatar: IMG.face1 },
-    { quote: "As a copywriter, I never knew how to find leads. Now I have a full pipeline every Monday morning.", name: "Maria Silva", role: "Copywriter", city: "São Paulo, Brazil", avatar: IMG.face2 },
-    { quote: "The phone scripts are gold. I went from zero cold calls to booking 2 meetings a day.", name: "James Kariuki", role: "SEO Specialist", city: "Nairobi, Kenya", avatar: IMG.face3 },
+    {
+      quote:
+        "I found 3 new clients in my first week. The opportunity scoring tells me exactly which businesses to call first.",
+      name: "Taiwo Adeyemi",
+      role: "Web Developer",
+      city: "Lagos, Nigeria",
+      avatar: IMG.face1,
+    },
+    {
+      quote:
+        "As a copywriter, I never knew how to find leads. Now I have a full pipeline every Monday morning.",
+      name: "Maria Silva",
+      role: "Copywriter",
+      city: "São Paulo, Brazil",
+      avatar: IMG.face2,
+    },
+    {
+      quote: "The phone scripts are gold. I went from zero cold calls to booking 2 meetings a day.",
+      name: "James Kariuki",
+      role: "SEO Specialist",
+      city: "Nairobi, Kenya",
+      avatar: IMG.face3,
+    },
   ];
   return (
     <section className="border-t border-border bg-background py-24">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Customer stories</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">Freelancers in 50+ countries trust us</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Customer stories
+          </p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            Freelancers in 50+ countries trust us
+          </h2>
         </div>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {items.map((t) => (
-            <figure key={t.name} className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card">
-              <img src={t.avatar} alt={t.name} className="aspect-[4/3] w-full object-cover object-top" loading="lazy" />
+            <figure
+              key={t.name}
+              className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card"
+            >
+              <img
+                src={t.avatar}
+                alt={t.name}
+                className="aspect-[4/3] w-full object-cover object-top"
+                loading="lazy"
+              />
               <div className="flex flex-1 flex-col p-6">
                 <div className="mb-3 flex gap-0.5 text-amber-500">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-current" />
+                  ))}
                 </div>
-                <blockquote className="text-sm leading-relaxed text-foreground/90">"{t.quote}"</blockquote>
+                <blockquote className="text-sm leading-relaxed text-foreground/90">
+                  "{t.quote}"
+                </blockquote>
                 <figcaption className="mt-5 border-t border-border pt-4 text-xs">
                   <p className="font-semibold text-foreground">{t.name}</p>
-                  <p className="text-muted-foreground">{t.role} · {t.city}</p>
+                  <p className="text-muted-foreground">
+                    {t.role} · {t.city}
+                  </p>
                 </figcaption>
               </div>
             </figure>
@@ -1710,9 +2122,42 @@ function Testimonials() {
 function Pricing() {
   const { t, formatPrice, getCurrencySymbol } = usePreferences();
   const plans = [
-    { name: t("plan_free"), price: 0, leads: "10", popular: false, cta: t("plan_cta_free"), features: [t("plan_free_feature_1"), t("plan_free_feature_2"), t("plan_free_feature_3")] },
-    { name: t("plan_individual"), price: 7, leads: "200", popular: true, cta: t("plan_cta_ind"), features: [t("plan_ind_feature_1"), t("plan_ind_feature_2"), t("plan_ind_feature_3"), t("plan_ind_feature_4"), t("plan_ind_feature_5")] },
-    { name: t("plan_company"), price: 20, leads: "Unlimited", popular: false, cta: t("plan_cta_comp"), features: [t("plan_comp_feature_1"), t("plan_comp_feature_2"), t("plan_comp_feature_3"), t("plan_comp_feature_4"), t("plan_comp_feature_5")] },
+    {
+      name: t("plan_free"),
+      price: 0,
+      leads: "10",
+      popular: false,
+      cta: t("plan_cta_free"),
+      features: [t("plan_free_feature_1"), t("plan_free_feature_2"), t("plan_free_feature_3")],
+    },
+    {
+      name: t("plan_individual"),
+      price: 7,
+      leads: "200",
+      popular: true,
+      cta: t("plan_cta_ind"),
+      features: [
+        t("plan_ind_feature_1"),
+        t("plan_ind_feature_2"),
+        t("plan_ind_feature_3"),
+        t("plan_ind_feature_4"),
+        t("plan_ind_feature_5"),
+      ],
+    },
+    {
+      name: t("plan_company"),
+      price: 20,
+      leads: "Unlimited",
+      popular: false,
+      cta: t("plan_cta_comp"),
+      features: [
+        t("plan_comp_feature_1"),
+        t("plan_comp_feature_2"),
+        t("plan_comp_feature_3"),
+        t("plan_comp_feature_4"),
+        t("plan_comp_feature_5"),
+      ],
+    },
   ];
   return (
     <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
@@ -1720,23 +2165,35 @@ function Pricing() {
         <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
           // simple.pricing
         </p>
-        <h2 className="font-display text-4xl font-extrabold text-foreground tracking-tight">{t("pricing_title")}</h2>
+        <h2 className="font-display text-4xl font-extrabold text-foreground tracking-tight">
+          {t("pricing_title")}
+        </h2>
         <p className="mt-4 text-muted-foreground">{t("pricing_sub")}</p>
       </div>
       <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
         {plans.map((p) => (
-          <div key={p.name} className={`relative rounded-2xl border bg-card/85 p-7 transition hover:shadow-card-hover ${p.popular ? "border-primary shadow-[0_0_25px_rgba(99,102,241,0.15)] lg:-translate-y-3" : "border-border"}`}>
+          <div
+            key={p.name}
+            className={`relative rounded-2xl border bg-card/85 p-7 transition hover:shadow-card-hover ${p.popular ? "border-primary shadow-[0_0_25px_rgba(99,102,241,0.15)] lg:-translate-y-3" : "border-border"}`}
+          >
             {p.popular && (
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                 Most Popular
               </span>
             )}
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{p.name}</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              {p.name}
+            </p>
             <div className="mt-3 flex items-baseline gap-1">
-              <span className="font-display text-4xl font-extrabold text-foreground">{getCurrencySymbol()}{formatPrice(p.price)}</span>
+              <span className="font-display text-4xl font-extrabold text-foreground">
+                {getCurrencySymbol()}
+                {formatPrice(p.price)}
+              </span>
               <span className="text-xs text-muted-foreground">{t("plan_mo")}</span>
             </div>
-            <p className="mt-2 font-mono-data text-xs text-primary font-semibold">{p.leads === "Unlimited" ? "Unlimited" : p.leads} {t("plan_leads_mo")}</p>
+            <p className="mt-2 font-mono-data text-xs text-primary font-semibold">
+              {p.leads === "Unlimited" ? "Unlimited" : p.leads} {t("plan_leads_mo")}
+            </p>
             <ul className="mt-6 space-y-2.5 text-xs text-muted-foreground">
               {p.features.map((f) => (
                 <li key={f} className="flex items-start gap-2">
@@ -1745,7 +2202,10 @@ function Pricing() {
                 </li>
               ))}
             </ul>
-            <Link to="/register" className={`mt-7 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-white hover:bg-primary/95" : "border border-border bg-background text-foreground hover:bg-accent"}`}>
+            <Link
+              to="/register"
+              className={`mt-7 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-white hover:bg-primary/95" : "border border-border bg-background text-foreground hover:bg-accent"}`}
+            >
               {p.cta}
             </Link>
           </div>
@@ -1765,15 +2225,24 @@ function CTA() {
         className="mx-auto max-w-6xl overflow-hidden rounded-3xl p-14 text-center"
         style={{ background: "var(--ink-bg)", color: "var(--ink-fg)" }}
       >
-        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl">Start finding clients today</h2>
+        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl">
+          Start finding clients today
+        </h2>
         <p className="mx-auto mt-4 max-w-xl text-base" style={{ color: "var(--ink-muted)" }}>
           Join thousands of freelancers who've stopped waiting for work to come to them.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90">
+          <Link
+            to="/register"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90"
+          >
             Create free account <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link to="/pricing" className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold text-white hover:bg-white/10" style={{ borderColor: "var(--ink-border)" }}>
+          <Link
+            to="/pricing"
+            className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+            style={{ borderColor: "var(--ink-border)" }}
+          >
             See pricing
           </Link>
         </div>
@@ -1794,19 +2263,22 @@ function Stats() {
   ];
 
   return (
-    <section 
-      className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
-    >
+    <section className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300">
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// by.the.numbers</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+            // by.the.numbers
+          </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
             A real product, with real traction.
           </h2>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s) => (
-            <div key={s.k} className="rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300">
+            <div
+              key={s.k}
+              className="rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300"
+            >
               <p className="font-display text-4xl font-semibold text-primary md:text-5xl">{s.k}</p>
               <p className="mt-2 text-sm text-muted-foreground font-medium">{s.v}</p>
             </div>
@@ -1822,43 +2294,71 @@ function Stats() {
    ──────────────────────────────────────────────────────────── */
 function FAQ() {
   const faqs = [
-    { q: "How is LanceConnect different from a job board?", a: "Job boards wait for clients to post. We do the opposite — we surface businesses who don't yet know they need you, and give you their contact details so you can reach out first." },
-    { q: "Do I need any sales experience?", a: "No. Every lead comes with a ready-made outreach template tuned to your skill — email, phone script, and DM. Pro adds an AI writer that personalises each message." },
-    { q: "Which countries do you cover?", a: "150+ countries. We have especially strong coverage of Nigeria, Italy, India, UK, France, Argentina, Malaysia, and Canada, with daily refreshed data." },
-    { q: "What if I don't find any leads?", a: "Every plan includes a 'no leads, no charge' guarantee in your first month. If your first 10 leads aren't useful, we refund you in full." },
-    { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel from your dashboard in one click. You keep access until the end of your billing period." },
-    { q: "Is my data private?", a: "Absolutely. We never share your account info, your saved leads, or your outreach history with anyone. Read our Privacy Policy for full details." },
+    {
+      q: "How is LanceConnect different from a job board?",
+      a: "Job boards wait for clients to post. We do the opposite — we surface businesses who don't yet know they need you, and give you their contact details so you can reach out first.",
+    },
+    {
+      q: "Do I need any sales experience?",
+      a: "No. Every lead comes with a ready-made outreach template tuned to your skill — email, phone script, and DM. Pro adds an AI writer that personalises each message.",
+    },
+    {
+      q: "Which countries do you cover?",
+      a: "150+ countries. We have especially strong coverage of Nigeria, Italy, India, UK, France, Argentina, Malaysia, and Canada, with daily refreshed data.",
+    },
+    {
+      q: "What if I don't find any leads?",
+      a: "Every plan includes a 'no leads, no charge' guarantee in your first month. If your first 10 leads aren't useful, we refund you in full.",
+    },
+    {
+      q: "Can I cancel anytime?",
+      a: "Yes. No contracts. Cancel from your dashboard in one click. You keep access until the end of your billing period.",
+    },
+    {
+      q: "Is my data private?",
+      a: "Absolutely. We never share your account info, your saved leads, or your outreach history with anyone. Read our Privacy Policy for full details.",
+    },
   ];
   const [open, setOpen] = useState<number | null>(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
   });
   const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
     >
-      <motion.div 
+      <motion.div
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
-        style={{ 
+        style={{
           backgroundImage: "url('/assets/freelancers/freelancer_5.jpg')",
           y,
           height: "130%",
-          top: "-15%"
+          top: "-15%",
         }}
       />
       <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#0B0F19]/55 z-10" />
-      
+
       <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// questions.answered</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">Questions, answered honestly</h2>
-          <p className="mt-3 text-muted-foreground">Still curious? <Link to="/contact" className="text-primary underline-offset-4 hover:underline">Talk to a human</Link>.</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+            // questions.answered
+          </p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
+            Questions, answered honestly
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            Still curious?{" "}
+            <Link to="/contact" className="text-primary underline-offset-4 hover:underline">
+              Talk to a human
+            </Link>
+            .
+          </p>
         </div>
         <div className="mt-12 divide-y divide-border rounded-2xl border border-border bg-card">
           {faqs.map((f, i) => {
@@ -1869,8 +2369,14 @@ function FAQ() {
                   onClick={() => setOpen(isOpen ? null : i)}
                   className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
                 >
-                  <span className="font-display text-base font-semibold md:text-lg text-foreground">{f.q}</span>
-                  {isOpen ? <Minus className="h-4 w-4 shrink-0 text-muted-foreground" /> : <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                  <span className="font-display text-base font-semibold md:text-lg text-foreground">
+                    {f.q}
+                  </span>
+                  {isOpen ? (
+                    <Minus className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  ) : (
+                    <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  )}
                 </button>
                 {isOpen && (
                   <div className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground animate-fade-in">

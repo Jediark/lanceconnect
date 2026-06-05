@@ -7,7 +7,11 @@ type AuthCtx = {
   isAuthenticated: boolean;
   login: (email?: string, password?: string) => Promise<{ error: any | null }>;
   loginWithGoogle: () => Promise<{ error: any | null }>;
-  signup: (email: string, password: string, fullName: string) => Promise<{ error: any | null; session?: any | null }>;
+  signup: (
+    email: string,
+    password: string,
+    fullName: string,
+  ) => Promise<{ error: any | null; session?: any | null }>;
   logout: () => Promise<void>;
   updateUser: (patch: Partial<User>) => void;
   loading: boolean;
@@ -33,11 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (uid: string, email: string) => {
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", uid)
-        .single();
+      const { data, error } = await supabase.from("profiles").select("*").eq("id", uid).single();
 
       if (error) {
         console.error("Error fetching profile, creating default fallback state:", error);
@@ -110,7 +110,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     // 2. Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setLoading(true);
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email!);
@@ -163,7 +165,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: typeof window !== "undefined" ? window.location.origin + "/app/dashboard" : undefined,
+          redirectTo:
+            typeof window !== "undefined" ? window.location.origin + "/app/dashboard" : undefined,
         },
       });
       return { error };
@@ -221,16 +224,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const dbPatch: any = {};
       if (patch.fullName !== undefined) dbPatch.full_name = patch.fullName;
       if (patch.avatarUrl !== undefined) dbPatch.avatar_url = patch.avatarUrl;
-      if (patch.freelancerCategory !== undefined) dbPatch.freelancer_category = patch.freelancerCategory;
+      if (patch.freelancerCategory !== undefined)
+        dbPatch.freelancer_category = patch.freelancerCategory;
       if (patch.country !== undefined) dbPatch.country = patch.country;
       if (patch.city !== undefined) dbPatch.city = patch.city;
       if (patch.bio !== undefined) dbPatch.bio = patch.bio;
       if (patch.websiteUrl !== undefined) dbPatch.website_url = patch.websiteUrl;
-      if (patch.onboardingCompleted !== undefined) dbPatch.onboarding_completed = patch.onboardingCompleted;
+      if (patch.onboardingCompleted !== undefined)
+        dbPatch.onboarding_completed = patch.onboardingCompleted;
       if (patch.isPublic !== undefined) dbPatch.is_public = patch.isPublic;
       if (patch.username !== undefined) dbPatch.username = patch.username;
       if (patch.hourlyRate !== undefined) dbPatch.hourly_rate = patch.hourlyRate;
-      if (patch.portfolioProjects !== undefined) dbPatch.portfolio_projects = patch.portfolioProjects;
+      if (patch.portfolioProjects !== undefined)
+        dbPatch.portfolio_projects = patch.portfolioProjects;
       if (patch.contactEmail !== undefined) dbPatch.contact_email = patch.contactEmail;
       if (patch.contactPhone !== undefined) dbPatch.contact_phone = patch.contactPhone;
       if (patch.githubUrl !== undefined) dbPatch.github_url = patch.githubUrl;
@@ -249,7 +255,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, loginWithGoogle, signup, logout, updateUser, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        loginWithGoogle,
+        signup,
+        logout,
+        updateUser,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

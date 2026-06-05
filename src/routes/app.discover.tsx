@@ -1,6 +1,21 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Grid3X3, List, Search, X, MapPin, Copy, Star, Phone, Mail, Globe, Check, Sparkles, Loader2, Download } from "lucide-react";
+import {
+  Grid3X3,
+  List,
+  Search,
+  X,
+  MapPin,
+  Copy,
+  Star,
+  Phone,
+  Mail,
+  Globe,
+  Check,
+  Sparkles,
+  Loader2,
+  Download,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { LeadCard } from "@/components/ui/LeadCard";
@@ -93,11 +108,17 @@ function Discover() {
           if (website === "no" && l.hasWebsite) return false;
           if (website === "yes" && !l.hasWebsite) return false;
           if (l.opportunityScore < minScore) return false;
-          if (product && ['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category)) {
+          if (
+            product &&
+            ["african_food_export", "b2b_trade", "restaurant_supplier", "product_export"].includes(
+              category,
+            )
+          ) {
             const notesText = l.notes || "";
-            const hasProduct = notesText.toLowerCase().includes(product.toLowerCase()) ||
-                              l.businessName.toLowerCase().includes(product.toLowerCase()) ||
-                              l.businessType.toLowerCase().includes(product.toLowerCase());
+            const hasProduct =
+              notesText.toLowerCase().includes(product.toLowerCase()) ||
+              l.businessName.toLowerCase().includes(product.toLowerCase()) ||
+              l.businessType.toLowerCase().includes(product.toLowerCase());
             if (!hasProduct) return false;
           }
           return true;
@@ -113,43 +134,52 @@ function Discover() {
     try {
       const queryTerm = category || "local business";
       const countryName = country || "Nigeria";
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
-      const res = await fetch(
-        `${supabaseUrl}/functions/v1/search-leads`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token}`
-          },
-          body: JSON.stringify({
-            query: queryTerm,
-            city: city,
-            country: countryName,
-            limit: 20,
-            product: ['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category) ? product : undefined,
-            niche: selectedNiche || undefined
-          })
-        }
-      );
-      
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const supabaseUrl =
+        import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
+      const res = await fetch(`${supabaseUrl}/functions/v1/search-leads`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          query: queryTerm,
+          city: city,
+          country: countryName,
+          limit: 20,
+          product: [
+            "african_food_export",
+            "b2b_trade",
+            "restaurant_supplier",
+            "product_export",
+          ].includes(category)
+            ? product
+            : undefined,
+          niche: selectedNiche || undefined,
+        }),
+      });
+
       const data = await res.json();
-      
+
       if (!res.ok || data.error) {
         if (data.error === "LIMIT_REACHED") {
           toast.error("Search limit reached! Please upgrade your plan to get more leads.", {
             action: {
               label: "Upgrade Plan",
-              onClick: () => { window.location.href = "/app/upgrade"; }
-            }
+              onClick: () => {
+                window.location.href = "/app/upgrade";
+              },
+            },
           });
           return;
         }
         throw new Error(data.error || "Failed to search leads");
       }
-      
+
       const rawLeads = data?.leads || [];
       const mapped = rawLeads.map((dbLead: any) => ({
         id: dbLead.id,
@@ -188,29 +218,53 @@ function Discover() {
       if (l.opportunityScore < minScore) return false;
       return true;
     });
-    return [...out].sort((a, b) => sort === "score" ? b.opportunityScore - a.opportunityScore : b.googleRating - a.googleRating);
+    return [...out].sort((a, b) =>
+      sort === "score" ? b.opportunityScore - a.opportunityScore : b.googleRating - a.googleRating,
+    );
   }, [results, website, minScore, sort]);
 
-  const clear = () => { setCategory(""); setCountry(""); setCity(""); setWebsite(""); setMinScore(0); setProduct(""); setSelectedNiche(""); };
+  const clear = () => {
+    setCategory("");
+    setCountry("");
+    setCity("");
+    setWebsite("");
+    setMinScore(0);
+    setProduct("");
+    setSelectedNiche("");
+  };
 
   const downloadCSV = () => {
     if (filteredResults.length === 0) return;
-    const headers = ["Business Name", "Type", "City", "Country", "Address", "Phone", "Email", "Website", "Opportunity Score", "Google Rating", "Reviews"];
+    const headers = [
+      "Business Name",
+      "Type",
+      "City",
+      "Country",
+      "Address",
+      "Phone",
+      "Email",
+      "Website",
+      "Opportunity Score",
+      "Google Rating",
+      "Reviews",
+    ];
     const csvRows = [
       headers.join(","),
-      ...filteredResults.map(l => [
-        `"${l.businessName.replace(/"/g, '""')}"`,
-        `"${l.businessType.replace(/"/g, '""')}"`,
-        `"${l.city.replace(/"/g, '""')}"`,
-        `"${l.country.replace(/"/g, '""')}"`,
-        `"${(l.fullAddress || "").replace(/"/g, '""')}"`,
-        `"${(l.phone || "").replace(/"/g, '""')}"`,
-        `"${(l.email || "").replace(/"/g, '""')}"`,
-        `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
-        l.opportunityScore,
-        l.googleRating,
-        l.googleReviewCount
-      ].join(","))
+      ...filteredResults.map((l) =>
+        [
+          `"${l.businessName.replace(/"/g, '""')}"`,
+          `"${l.businessType.replace(/"/g, '""')}"`,
+          `"${l.city.replace(/"/g, '""')}"`,
+          `"${l.country.replace(/"/g, '""')}"`,
+          `"${(l.fullAddress || "").replace(/"/g, '""')}"`,
+          `"${(l.phone || "").replace(/"/g, '""')}"`,
+          `"${(l.email || "").replace(/"/g, '""')}"`,
+          `"${(l.websiteUrl || "").replace(/"/g, '""')}"`,
+          l.opportunityScore,
+          l.googleRating,
+          l.googleReviewCount,
+        ].join(","),
+      ),
     ];
     const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -229,11 +283,21 @@ function Discover() {
 
       <div className="border-b border-border bg-card/60 px-4 py-3 lg:px-8">
         <div className="flex flex-wrap items-center gap-2">
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
+          >
             <option value="">All Categories</option>
-            {CATEGORIES.map((c) => <option key={c.id} value={c.id} className="bg-background text-foreground">{c.label}</option>)}
+            {CATEGORIES.map((c) => (
+              <option key={c.id} value={c.id} className="bg-background text-foreground">
+                {c.label}
+              </option>
+            ))}
           </select>
-          {['african_food_export', 'b2b_trade', 'restaurant_supplier', 'product_export'].includes(category) && (
+          {["african_food_export", "b2b_trade", "restaurant_supplier", "product_export"].includes(
+            category,
+          ) && (
             <input
               value={product}
               onChange={(e) => setProduct(e.target.value)}
@@ -241,26 +305,58 @@ function Discover() {
               className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary w-56 animate-in slide-in-from-left-2 duration-200"
             />
           )}
-          <select value={country} onChange={(e) => setCountry(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
+          >
             <option value="">All Countries</option>
-            {COUNTRIES.map((c) => <option key={c.code} value={c.name} className="bg-background text-foreground">{c.name}</option>)}
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.name} className="bg-background text-foreground">
+                {c.name}
+              </option>
+            ))}
           </select>
-          <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Enter city..." className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary" />
-          <select value={website} onChange={(e) => setWebsite(e.target.value)} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
+          <input
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Enter city..."
+            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+          />
+          <select
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
+          >
             <option value="">All Websites</option>
             <option value="no">No Website Only</option>
             <option value="yes">Has Website</option>
           </select>
-          <select value={minScore} onChange={(e) => setMinScore(Number(e.target.value))} className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground">
+          <select
+            value={minScore}
+            onChange={(e) => setMinScore(Number(e.target.value))}
+            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
+          >
             <option value={0}>Any Score</option>
             <option value={50}>50+</option>
             <option value={70}>70+</option>
             <option value={85}>85+</option>
           </select>
-          <button onClick={handleSearch} disabled={loading} className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
-            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />} Search Leads
+          <button
+            onClick={handleSearch}
+            disabled={loading}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
+          >
+            {loading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Search className="h-3.5 w-3.5" />
+            )}{" "}
+            Search Leads
           </button>
-          <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground">Clear filters</button>
+          <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground">
+            Clear filters
+          </button>
         </div>
 
         {/* Niche Keyword Suggestions */}
@@ -273,13 +369,17 @@ function Discover() {
                 type="button"
                 onClick={() => {
                   setSelectedNiche(selectedNiche === n ? "" : n);
-                  toast.info(selectedNiche === n ? "Cleared niche filter" : `Filtered search niche to: "${n}"`);
+                  toast.info(
+                    selectedNiche === n
+                      ? "Cleared niche filter"
+                      : `Filtered search niche to: "${n}"`,
+                  );
                 }}
                 className={cn(
                   "rounded px-2.5 py-0.5 font-medium border transition cursor-pointer text-[10px]",
                   selectedNiche === n
                     ? "bg-primary text-white border-primary"
-                    : "bg-primary/5 border-primary/20 text-primary hover:bg-primary/10"
+                    : "bg-primary/5 border-primary/20 text-primary hover:bg-primary/10",
                 )}
               >
                 {n}
@@ -296,7 +396,10 @@ function Discover() {
               <button
                 key={c}
                 type="button"
-                onClick={() => { setCity(c); toast.success(`Selected city: ${c}`); }}
+                onClick={() => {
+                  setCity(c);
+                  toast.success(`Selected city: ${c}`);
+                }}
                 className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-medium text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
               >
                 {c}
@@ -308,7 +411,10 @@ function Discover() {
 
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-4 lg:px-8">
         <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground">Showing <span className="font-semibold text-foreground">{filteredResults.length}</span> leads</p>
+          <p className="text-sm text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{filteredResults.length}</span>{" "}
+            leads
+          </p>
           {filteredResults.length > 0 && (
             <button
               onClick={downloadCSV}
@@ -319,13 +425,27 @@ function Discover() {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <select value={sort} onChange={(e) => setSort(e.target.value as "score" | "rating")} className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs">
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as "score" | "rating")}
+            className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs"
+          >
             <option value="score">Sort by: Score</option>
             <option value="rating">Sort by: Rating</option>
           </select>
           <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-            <button onClick={() => setView("grid")} className={cn("rounded-md p-1.5 cursor-pointer", view === "grid" && "bg-accent")}><Grid3X3 className="h-4 w-4" /></button>
-            <button onClick={() => setView("table")} className={cn("rounded-md p-1.5 cursor-pointer", view === "table" && "bg-accent")}><List className="h-4 w-4" /></button>
+            <button
+              onClick={() => setView("grid")}
+              className={cn("rounded-md p-1.5 cursor-pointer", view === "grid" && "bg-accent")}
+            >
+              <Grid3X3 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setView("table")}
+              className={cn("rounded-md p-1.5 cursor-pointer", view === "table" && "bg-accent")}
+            >
+              <List className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -334,7 +454,10 @@ function Discover() {
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="group relative flex w-full flex-col rounded-2xl border border-border bg-card p-5 space-y-4">
+              <div
+                key={i}
+                className="group relative flex w-full flex-col rounded-2xl border border-border bg-card p-5 space-y-4"
+              >
                 <div className="flex justify-between items-start">
                   <div className="space-y-2 flex-1">
                     <Skeleton className="h-6 w-3/4" />
@@ -359,11 +482,20 @@ function Discover() {
             ))}
           </div>
         ) : filteredResults.length === 0 ? (
-          <EmptyState icon={<Search className="h-10 w-10 text-muted-foreground/60" />} title="No leads found in this area yet" description="Try a different city or expand your filters." action={{ label: "Clear all filters", onClick: clear }} />
+          <EmptyState
+            icon={<Search className="h-10 w-10 text-muted-foreground/60" />}
+            title="No leads found in this area yet"
+            description="Try a different city or expand your filters."
+            action={{ label: "Clear all filters", onClick: clear }}
+          />
         ) : view === "grid" ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredResults.map((l, i) => (
-              <div key={l.id} style={{ animationDelay: `${i * 50}ms` }} className="animate-in fade-in-50 slide-in-from-bottom-2">
+              <div
+                key={l.id}
+                style={{ animationDelay: `${i * 50}ms` }}
+                className="animate-in fade-in-50 slide-in-from-bottom-2"
+              >
                 <LeadCard lead={l} onOpenDetail={setDetail} />
               </div>
             ))}
@@ -396,15 +528,44 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
         </thead>
         <tbody className="divide-y divide-border">
           {leads.map((l) => (
-            <tr key={l.id} className="cursor-pointer hover:bg-primary/5" onClick={() => onOpenDetail(l)}>
-              <td className="px-4 py-3 font-medium">{l.businessName}<div className="text-xs text-muted-foreground">{l.businessType}</div></td>
-              <td className="px-4 py-3 text-muted-foreground">{l.city}, {l.country}</td>
-              <td className="px-4 py-3"><OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} /></td>
-              <td className="px-4 py-3">{l.hasWebsite ? <span className="text-emerald-600 font-semibold">✓ Yes</span> : <span className="text-red-600">✗ No</span>}</td>
+            <tr
+              key={l.id}
+              className="cursor-pointer hover:bg-primary/5"
+              onClick={() => onOpenDetail(l)}
+            >
+              <td className="px-4 py-3 font-medium">
+                {l.businessName}
+                <div className="text-xs text-muted-foreground">{l.businessType}</div>
+              </td>
+              <td className="px-4 py-3 text-muted-foreground">
+                {l.city}, {l.country}
+              </td>
+              <td className="px-4 py-3">
+                <OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} />
+              </td>
+              <td className="px-4 py-3">
+                {l.hasWebsite ? (
+                  <span className="text-emerald-600 font-semibold">✓ Yes</span>
+                ) : (
+                  <span className="text-red-600">✗ No</span>
+                )}
+              </td>
               <td className="px-4 py-3 font-mono-data text-xs">{l.phone}</td>
-              <td className="px-4 py-3 text-amber-600"><span className="inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> {l.googleRating}</span></td>
+              <td className="px-4 py-3 text-amber-600">
+                <span className="inline-flex items-center gap-1">
+                  <Star className="h-3 w-3 fill-current" /> {l.googleRating}
+                </span>
+              </td>
               <td className="px-4 py-3 text-right">
-                <button onClick={(e) => { e.stopPropagation(); saveLead(l); toast.success("Saved to pipeline"); }} disabled={savedIds.has(l.id)} className="rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    saveLead(l);
+                    toast.success("Saved to pipeline");
+                  }}
+                  disabled={savedIds.has(l.id)}
+                  className="rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer"
+                >
                   {savedIds.has(l.id) ? "Saved" : "Save"}
                 </button>
               </td>
@@ -419,15 +580,19 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
 function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
   const { user } = useAuth();
   const { saveLead, savedIds } = usePipeline();
-  
+
   const [currentLead, setCurrentLead] = useState<Lead>(lead);
   const [enriching, setEnriching] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [outreachDraft, setOutreachDraft] = useState("");
-  const [selectedChannel, setSelectedChannel] = useState<'email' | 'linkedin' | 'whatsapp' | 'phone_script'>('email');
-  const [selectedTone, setSelectedTone] = useState<'casual' | 'professional' | 'bold'>('professional');
+  const [selectedChannel, setSelectedChannel] = useState<
+    "email" | "linkedin" | "whatsapp" | "phone_script"
+  >("email");
+  const [selectedTone, setSelectedTone] = useState<"casual" | "professional" | "bold">(
+    "professional",
+  );
   const [provider, setProvider] = useState("");
-  const [activeTab, setActiveTab] = useState<'overview' | 'seo'>('overview');
+  const [activeTab, setActiveTab] = useState<"overview" | "seo">("overview");
   const [seoLoading, setSeoLoading] = useState(false);
   const [seoData, setSeoData] = useState<{ keywords: any[]; hook: string } | null>(null);
 
@@ -443,15 +608,35 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
           const reviewsVal = currentLead.googleReviewCount || 10;
           const hasWeb = currentLead.hasWebsite;
           const kws = [
-            { keyword: `best ${bizType} in ${cityVal}`, volume: 850, difficulty: 42, rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 12 + 10)) : 100 },
-            { keyword: `${bizType} near me`, volume: 1400, difficulty: 58, rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 8 + 4)) : 100 },
-            { keyword: `affordable ${bizType} ${cityVal}`, volume: 320, difficulty: 25, rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 15 + 15)) : 100 },
-            { keyword: `${currentLead.businessName} ${cityVal}`, volume: 150, difficulty: 12, rank: hasWeb ? 1 : 100 }
+            {
+              keyword: `best ${bizType} in ${cityVal}`,
+              volume: 850,
+              difficulty: 42,
+              rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 12 + 10)) : 100,
+            },
+            {
+              keyword: `${bizType} near me`,
+              volume: 1400,
+              difficulty: 58,
+              rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 8 + 4)) : 100,
+            },
+            {
+              keyword: `affordable ${bizType} ${cityVal}`,
+              volume: 320,
+              difficulty: 25,
+              rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 15 + 15)) : 100,
+            },
+            {
+              keyword: `${currentLead.businessName} ${cityVal}`,
+              volume: 150,
+              difficulty: 12,
+              rank: hasWeb ? 1 : 100,
+            },
           ];
           kws.sort((a, b) => b.volume - a.volume);
           let hk = `Hi, did you know that your business doesn't currently list an active website on Google Maps? Over 75% of local searches end up visiting a business with a direct website. I can build a clean, mobile-friendly landing page for you in 3 days to help capture these leads.`;
           if (hasWeb) {
-            const worstKw = kws.find(k => k.rank > 10) || kws[0];
+            const worstKw = kws.find((k) => k.rank > 10) || kws[0];
             hk = `Hi, I was analyzing local search listings in ${cityVal} and noticed that for '${worstKw.keyword}' (which gets ${worstKw.volume} monthly searches), your website is currently ranking at #${worstKw.rank}. Over 90% of search traffic stays on page 1. I can help optimize your on-page SEO to push your site into the top spots.`;
           }
           setSeoData({ keywords: kws, hook: hk });
@@ -461,7 +646,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
       }
 
       const { data, error } = await supabase.functions.invoke("lead-seo-audit", {
-        body: { leadId: currentLead.id }
+        body: { leadId: currentLead.id },
       });
       if (error) throw error;
       setSeoData(data);
@@ -480,18 +665,20 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
     try {
       if (!user || user.id === "user-1") {
         setTimeout(() => {
-          toast.warning("No public email address found on the website of this business (Demo Mode).");
+          toast.warning(
+            "No public email address found on the website of this business (Demo Mode).",
+          );
           setEnriching(false);
         }, 1200);
         return;
       }
-      
+
       const { data, error } = await supabase.functions.invoke("enrich-contact", {
-        body: { leadId: currentLead.id }
+        body: { leadId: currentLead.id },
       });
       if (error) throw error;
       if (data?.lead?.email) {
-        setCurrentLead(prev => ({ ...prev, email: data.lead.email }));
+        setCurrentLead((prev) => ({ ...prev, email: data.lead.email }));
         toast.success(`Scrape complete! Found: ${data.lead.email}`);
       } else {
         toast.warning("No public email address found on the website.");
@@ -519,13 +706,13 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
         return;
       }
 
-      const apiChannel = selectedChannel === 'whatsapp' ? 'sms' : selectedChannel;
+      const apiChannel = selectedChannel === "whatsapp" ? "sms" : selectedChannel;
       const { data, error } = await supabase.functions.invoke("ai-outreach", {
         body: {
           leadId: currentLead.id,
           channel: apiChannel,
-          tone: selectedTone
-        }
+          tone: selectedTone,
+        },
       });
       if (error) throw error;
       setOutreachDraft(data.message || "");
@@ -552,61 +739,104 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   ].filter(Boolean) as { label: string; pts: number }[];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-card border border-border animate-in zoom-in-95">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-card border border-border animate-in zoom-in-95"
+      >
         <div className="flex items-start justify-between border-b border-border p-6">
           <div>
-            <h3 className="font-display text-xl font-bold text-white">{currentLead.businessName}</h3>
-            <p className="text-sm text-slate-400">{currentLead.businessType} · {currentLead.city}, {currentLead.country}</p>
+            <h3 className="font-display text-xl font-bold text-white">
+              {currentLead.businessName}
+            </h3>
+            <p className="text-sm text-slate-400">
+              {currentLead.businessType} · {currentLead.city}, {currentLead.country}
+            </p>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 hover:bg-accent text-slate-400 hover:text-white cursor-pointer"><X className="h-4 w-4" /></button>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1.5 hover:bg-accent text-slate-400 hover:text-white cursor-pointer"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         <div className="flex border-b border-border px-6 select-none bg-[#0e1322]">
           <button
-            onClick={() => setActiveTab('overview')}
+            onClick={() => setActiveTab("overview")}
             className={cn(
               "px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 -mb-px transition cursor-pointer",
-              activeTab === 'overview' ? "border-primary text-primary" : "border-transparent text-slate-400 hover:text-slate-200"
+              activeTab === "overview"
+                ? "border-primary text-primary"
+                : "border-transparent text-slate-400 hover:text-slate-200",
             )}
           >
             Overview & Outreach
           </button>
           <button
-            onClick={() => { setActiveTab('seo'); handleLoadSeo(); }}
+            onClick={() => {
+              setActiveTab("seo");
+              handleLoadSeo();
+            }}
             className={cn(
               "px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 -mb-px transition cursor-pointer flex items-center gap-1.5",
-              activeTab === 'seo' ? "border-primary text-primary" : "border-transparent text-slate-400 hover:text-slate-200"
+              activeTab === "seo"
+                ? "border-primary text-primary"
+                : "border-transparent text-slate-400 hover:text-slate-200",
             )}
           >
             <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> SEO & Keywords
           </button>
         </div>
 
-        {activeTab === 'overview' ? (
+        {activeTab === "overview" ? (
           <div className="space-y-5 p-6">
             <div>
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold uppercase tracking-wide text-slate-400">Opportunity Score</span>
+                <span className="font-semibold uppercase tracking-wide text-slate-400">
+                  Opportunity Score
+                </span>
                 <OpportunityScore score={currentLead.opportunityScore} />
               </div>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
-                <div className="h-full bg-primary" style={{ width: `${currentLead.opportunityScore}%` }} />
+                <div
+                  className="h-full bg-primary"
+                  style={{ width: `${currentLead.opportunityScore}%` }}
+                />
               </div>
             </div>
 
             <div className="space-y-2 rounded-xl bg-background border border-border p-4 text-sm text-slate-300">
-              <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.fullAddress || ""}</p>
+              <p className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-slate-500 shrink-0" />{" "}
+                {currentLead.fullAddress || ""}
+              </p>
               <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-2 font-mono text-xs"><Phone className="h-3.5 w-3.5 text-slate-500" /> {currentLead.phone}</span>
+                <span className="inline-flex items-center gap-2 font-mono text-xs">
+                  <Phone className="h-3.5 w-3.5 text-slate-500" /> {currentLead.phone}
+                </span>
                 {currentLead.phone && (
-                  <button onClick={() => { navigator.clipboard?.writeText(currentLead.phone); toast.success("Copied!"); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard?.writeText(currentLead.phone);
+                      toast.success("Copied!");
+                    }}
+                    className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer"
+                  >
                     <Copy className="h-2.5 w-2.5" /> Copy
                   </button>
                 )}
               </div>
               <div className="flex items-center justify-between gap-2">
-                <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.email ?? <span className="italic text-slate-500">Not publicly listed</span>}</p>
+                <p className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-slate-500 shrink-0" />{" "}
+                  {currentLead.email ?? (
+                    <span className="italic text-slate-500">Not publicly listed</span>
+                  )}
+                </p>
                 {!currentLead.email && currentLead.websiteUrl && (
                   <button
                     onClick={handleEnrich}
@@ -617,16 +847,31 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                   </button>
                 )}
               </div>
-              <p className="flex items-center gap-2"><Globe className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.websiteUrl ?? <span className="italic text-slate-500">No website</span>}</p>
-              <p className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" /> {currentLead.googleRating} · {currentLead.googleReviewCount} reviews</p>
+              <p className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-slate-500 shrink-0" />{" "}
+                {currentLead.websiteUrl ?? (
+                  <span className="italic text-slate-500">No website</span>
+                )}
+              </p>
+              <p className="flex items-center gap-2">
+                <Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" />{" "}
+                {currentLead.googleRating} · {currentLead.googleReviewCount} reviews
+              </p>
             </div>
 
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Opportunity Breakdown</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                Opportunity Breakdown
+              </p>
               <ul className="mt-2 space-y-1.5 text-sm">
                 {reasons.map((r) => (
-                  <li key={r.label} className="flex items-center justify-between rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-emerald-400">
-                    <span className="inline-flex items-center gap-2"><Check className="h-4 w-4" /> {r.label}</span>
+                  <li
+                    key={r.label}
+                    className="flex items-center justify-between rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-emerald-400"
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <Check className="h-4 w-4" /> {r.label}
+                    </span>
                     <span className="font-mono text-xs font-semibold">+{r.pts} pts</span>
                   </li>
                 ))}
@@ -638,10 +883,10 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
               <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5 text-primary" /> AI Personalized Pitch
               </h4>
-              
+
               {outreachDraft ? (
                 <div className="mt-3 space-y-2">
-                  <textarea 
+                  <textarea
                     value={outreachDraft}
                     onChange={(e) => setOutreachDraft(e.target.value)}
                     className="w-full h-36 rounded-lg border border-border bg-background p-3 text-xs font-sans text-slate-300 focus:outline-none focus:border-primary"
@@ -649,8 +894,18 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-slate-500">{provider}</span>
                     <div className="flex gap-2">
-                      <button onClick={() => setOutreachDraft("")} className="rounded-lg border border-border bg-card px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer">Edit Settings</button>
-                      <button onClick={copyDraft} className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer">Copy Pitch</button>
+                      <button
+                        onClick={() => setOutreachDraft("")}
+                        className="rounded-lg border border-border bg-card px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer"
+                      >
+                        Edit Settings
+                      </button>
+                      <button
+                        onClick={copyDraft}
+                        className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer"
+                      >
+                        Copy Pitch
+                      </button>
                       {selectedChannel === "whatsapp" && currentLead.phone && (
                         <a
                           href={`https://wa.me/${currentLead.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
@@ -669,9 +924,9 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                   <div className="flex items-center justify-between gap-3 flex-wrap">
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-slate-400 font-medium">Channel:</span>
-                      <select 
-                        value={selectedChannel} 
-                        onChange={(e) => setSelectedChannel(e.target.value as any)} 
+                      <select
+                        value={selectedChannel}
+                        onChange={(e) => setSelectedChannel(e.target.value as any)}
                         className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
                       >
                         <option value="email">Email</option>
@@ -682,9 +937,9 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-slate-400 font-medium">Tone:</span>
-                      <select 
-                        value={selectedTone} 
-                        onChange={(e) => setSelectedTone(e.target.value as any)} 
+                      <select
+                        value={selectedTone}
+                        onChange={(e) => setSelectedTone(e.target.value as any)}
                         className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
                       >
                         <option value="professional">Professional</option>
@@ -693,9 +948,9 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                       </select>
                     </div>
                   </div>
-                  <button 
-                    onClick={handleGenerate} 
-                    disabled={generating} 
+                  <button
+                    onClick={handleGenerate}
+                    disabled={generating}
                     className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/45 py-2 text-xs font-semibold text-primary-foreground cursor-pointer transition"
                   >
                     {generating ? (
@@ -715,7 +970,14 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
             </div>
 
             <div className="flex gap-2 pt-2 border-t border-border">
-              <button onClick={() => { saveLead(currentLead); toast.success("Saved to pipeline"); }} disabled={savedIds.has(currentLead.id)} className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer">
+              <button
+                onClick={() => {
+                  saveLead(currentLead);
+                  toast.success("Saved to pipeline");
+                }}
+                disabled={savedIds.has(currentLead.id)}
+                className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
+              >
                 {savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
               </button>
             </div>
@@ -740,23 +1002,27 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                 <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-semibold uppercase tracking-wide text-primary flex items-center gap-1.5">
-                      <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> Outreach SEO Hook
+                      <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> Outreach SEO
+                      Hook
                     </h4>
                     <button
-                      onClick={() => { navigator.clipboard.writeText(seoData.hook); toast.success("Copied outreach hook!"); }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(seoData.hook);
+                        toast.success("Copied outreach hook!");
+                      }}
                       className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 transition cursor-pointer"
                     >
                       <Copy className="h-2.5 w-2.5" /> Copy Hook
                     </button>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed italic">
-                    "{seoData.hook}"
-                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed italic">"{seoData.hook}"</p>
                 </div>
 
                 {/* Keywords Table */}
                 <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Target Local Keywords</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Target Local Keywords
+                  </p>
                   <div className="rounded-xl border border-border bg-background/50 overflow-hidden">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-muted/30 text-slate-400 uppercase tracking-wide text-[10px] border-b border-border">
@@ -769,34 +1035,62 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                       </thead>
                       <tbody className="divide-y divide-border/60 text-slate-300">
                         {seoData.keywords.map((kw: any) => {
-                          let diffColor = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                          if (kw.difficulty > 50) diffColor = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
-                          else if (kw.difficulty > 30) diffColor = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                          let diffColor =
+                            "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                          if (kw.difficulty > 50)
+                            diffColor = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                          else if (kw.difficulty > 30)
+                            diffColor = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
 
-                          let rankContent = <span className="font-semibold text-emerald-400 font-mono">#{kw.rank}</span>;
-                          if (kw.rank > 100) rankContent = <span className="text-slate-500 italic">No Site</span>;
-                          else if (kw.rank > 30) rankContent = <span className="font-semibold text-rose-400 font-mono">#{kw.rank}</span>;
-                          else if (kw.rank > 10) rankContent = <span className="font-semibold text-amber-400 font-mono">#{kw.rank}</span>;
+                          let rankContent = (
+                            <span className="font-semibold text-emerald-400 font-mono">
+                              #{kw.rank}
+                            </span>
+                          );
+                          if (kw.rank > 100)
+                            rankContent = <span className="text-slate-500 italic">No Site</span>;
+                          else if (kw.rank > 30)
+                            rankContent = (
+                              <span className="font-semibold text-rose-400 font-mono">
+                                #{kw.rank}
+                              </span>
+                            );
+                          else if (kw.rank > 10)
+                            rankContent = (
+                              <span className="font-semibold text-amber-400 font-mono">
+                                #{kw.rank}
+                              </span>
+                            );
 
                           return (
                             <tr key={kw.keyword} className="hover:bg-muted/10 transition">
-                              <td className="px-4 py-3 font-mono text-[11px] font-semibold text-slate-200">{kw.keyword}</td>
+                              <td className="px-4 py-3 font-mono text-[11px] font-semibold text-slate-200">
+                                {kw.keyword}
+                              </td>
                               <td className="px-4 py-3 text-center">
                                 <div className="flex flex-col items-center gap-1">
                                   <span className="font-mono font-semibold">{kw.volume}</span>
                                   <div className="w-12 h-1 rounded-full bg-slate-800 overflow-hidden">
-                                    <div className="h-full bg-primary" style={{ width: `${Math.min(100, (kw.volume / 1500) * 100)}%` }} />
+                                    <div
+                                      className="h-full bg-primary"
+                                      style={{
+                                        width: `${Math.min(100, (kw.volume / 1500) * 100)}%`,
+                                      }}
+                                    />
                                   </div>
                                 </div>
                               </td>
                               <td className="px-4 py-3 text-center">
-                                <span className={cn("px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold", diffColor)}>
+                                <span
+                                  className={cn(
+                                    "px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold",
+                                    diffColor,
+                                  )}
+                                >
                                   {kw.difficulty}%
                                 </span>
                               </td>
-                              <td className="px-4 py-3 text-right">
-                                {rankContent}
-                              </td>
+                              <td className="px-4 py-3 text-right">{rankContent}</td>
                             </tr>
                           );
                         })}

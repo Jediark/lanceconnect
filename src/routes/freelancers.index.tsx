@@ -2,16 +2,38 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Star, MapPin, Search, ArrowRight, ExternalLink, Globe, Github, Linkedin, Twitter, Sparkles, DollarSign, Filter, RefreshCw } from "lucide-react";
+import {
+  Star,
+  MapPin,
+  Search,
+  ArrowRight,
+  ExternalLink,
+  Globe,
+  Github,
+  Linkedin,
+  Twitter,
+  Sparkles,
+  DollarSign,
+  Filter,
+  RefreshCw,
+} from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 
 export const Route = createFileRoute("/freelancers/")({
   head: () => ({
     meta: [
       { title: "Hire Global Freelancers — LanceConnect" },
-      { name: "description", content: "Browse our directory of top-tier verified freelancers. Hire web developers, designers, copywriters, and marketers directly off-platform." },
+      {
+        name: "description",
+        content:
+          "Browse our directory of top-tier verified freelancers. Hire web developers, designers, copywriters, and marketers directly off-platform.",
+      },
       { property: "og:title", content: "LanceConnect Freelancer Directory" },
-      { property: "og:description", content: "Find the perfect skills for your business and outbound outreach. Hire directly without agency markup fees." },
+      {
+        property: "og:description",
+        content:
+          "Find the perfect skills for your business and outbound outreach. Hire directly without agency markup fees.",
+      },
     ],
   }),
   component: FreelancerDirectoryPage,
@@ -76,21 +98,18 @@ function FreelancerDirectoryPage() {
   const filteredFreelancers = freelancers.filter((f) => {
     // 1. Search Query
     const query = searchQuery.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       !query ||
       f.full_name.toLowerCase().includes(query) ||
       (f.bio && f.bio.toLowerCase().includes(query)) ||
       (f.city && f.city.toLowerCase().includes(query));
 
     // 2. Category
-    const matchesCategory = 
-      selectedCategory === "all" || 
-      f.freelancer_category === selectedCategory;
+    const matchesCategory =
+      selectedCategory === "all" || f.freelancer_category === selectedCategory;
 
     // 3. Country
-    const matchesCountry = 
-      selectedCountry === "all" || 
-      f.country === selectedCountry;
+    const matchesCountry = selectedCountry === "all" || f.country === selectedCountry;
 
     // 4. Hourly Rate
     let matchesRate = true;
@@ -106,7 +125,7 @@ function FreelancerDirectoryPage() {
   });
 
   const getCategoryLabel = (id: string) => {
-    const cat = CATEGORIES.find(c => c.id === id);
+    const cat = CATEGORIES.find((c) => c.id === id);
     return cat ? `${cat.emoji} ${cat.label}` : id;
   };
 
@@ -115,12 +134,18 @@ function FreelancerDirectoryPage() {
       {/* Premium Dark Header */}
       <section className="relative overflow-hidden border-b border-border bg-[#080B14] py-16 text-center select-none text-white">
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
-          <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase flex items-center justify-center gap-1.5">// public.freelancer.directory</p>
+          <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase flex items-center justify-center gap-1.5">
+            // public.freelancer.directory
+          </p>
           <h1 className="font-display text-4xl font-extrabold sm:text-5xl tracking-tight leading-tight text-white">
-            Connect Directly with Premium <span className="text-primary bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Freelancers.</span>
+            Connect Directly with Premium{" "}
+            <span className="text-primary bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+              Freelancers.
+            </span>
           </h1>
           <p className="mt-4 text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Search top global independent builders. View their verified portfolio projects and reach them directly on email, phone, or website without middleman markup fees.
+            Search top global independent builders. View their verified portfolio projects and reach
+            them directly on email, phone, or website without middleman markup fees.
           </p>
         </div>
       </section>
@@ -129,7 +154,6 @@ function FreelancerDirectoryPage() {
       <section className="bg-card/40 border-b border-border py-6 select-none sticky top-[80px] z-20 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            
             {/* Search Input */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -151,7 +175,9 @@ function FreelancerDirectoryPage() {
               >
                 <option value="all">All Skills</option>
                 {CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.emoji} {c.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -165,7 +191,9 @@ function FreelancerDirectoryPage() {
               >
                 <option value="all">All Countries</option>
                 {COUNTRIES.map((c) => (
-                  <option key={c.code} value={c.name}>{c.flag} {c.name}</option>
+                  <option key={c.code} value={c.name}>
+                    {c.flag} {c.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -184,7 +212,6 @@ function FreelancerDirectoryPage() {
                 <option value="above100">Over $100 / hr</option>
               </select>
             </div>
-
           </div>
         </div>
       </section>
@@ -195,7 +222,10 @@ function FreelancerDirectoryPage() {
           /* Dynamic Skeleton Loaders */
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="rounded-3xl border border-border bg-card p-6 space-y-4 animate-pulse">
+              <div
+                key={i}
+                className="rounded-3xl border border-border bg-card p-6 space-y-4 animate-pulse"
+              >
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-full bg-slate-800" />
                   <div className="flex-1 space-y-2">
@@ -212,7 +242,7 @@ function FreelancerDirectoryPage() {
         ) : error ? (
           <div className="text-center py-16 border border-dashed border-red-500/20 rounded-3xl bg-red-950/10">
             <p className="text-sm text-red-500 font-mono">{error}</p>
-            <button 
+            <button
               onClick={fetchFreelancers}
               className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition cursor-pointer"
             >
@@ -221,9 +251,16 @@ function FreelancerDirectoryPage() {
           </div>
         ) : filteredFreelancers.length === 0 ? (
           <div className="text-center py-16 border border-dashed border-border rounded-3xl bg-card/40">
-            <p className="text-sm text-muted-foreground font-mono">No freelancers found matching those parameters.</p>
-            <button 
-              onClick={() => { setSearchQuery(""); setSelectedCategory("all"); setSelectedCountry("all"); setMaxRate("all"); }} 
+            <p className="text-sm text-muted-foreground font-mono">
+              No freelancers found matching those parameters.
+            </p>
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory("all");
+                setSelectedCountry("all");
+                setMaxRate("all");
+              }}
               className="mt-3 text-xs font-semibold text-primary hover:underline cursor-pointer"
             >
               Reset Filters
@@ -232,8 +269,8 @@ function FreelancerDirectoryPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredFreelancers.map((free) => (
-              <div 
-                key={free.id} 
+              <div
+                key={free.id}
                 className="rounded-3xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300 flex flex-col justify-between group hover:border-primary/20"
               >
                 <div>
@@ -241,13 +278,18 @@ function FreelancerDirectoryPage() {
                   <div className="flex items-start gap-4">
                     <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary/20 shrink-0 bg-primary/10 flex items-center justify-center font-bold text-primary text-sm">
                       {free.avatar_url ? (
-                        <img 
-                          src={free.avatar_url} 
-                          alt={free.full_name} 
-                          className="h-full w-full object-cover" 
+                        <img
+                          src={free.avatar_url}
+                          alt={free.full_name}
+                          className="h-full w-full object-cover"
                         />
                       ) : (
-                        free.full_name.split(" ").map(n=>n[0]).join("").toUpperCase().slice(0, 2)
+                        free.full_name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                          .slice(0, 2)
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -257,13 +299,14 @@ function FreelancerDirectoryPage() {
                       <p className="text-[11px] text-primary font-medium mt-0.5 leading-none">
                         {getCategoryLabel(free.freelancer_category)}
                       </p>
-                      
+
                       {/* Location & Rate Row */}
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[10px] font-mono text-muted-foreground">
                         {(free.city || free.country) && (
                           <span className="flex items-center gap-0.5">
                             <MapPin className="h-3 w-3 shrink-0 text-slate-500" />
-                            {free.city ? `${free.city}, ` : ""}{free.country}
+                            {free.city ? `${free.city}, ` : ""}
+                            {free.country}
                           </span>
                         )}
                         {free.hourly_rate && (
@@ -294,14 +337,41 @@ function FreelancerDirectoryPage() {
                 {/* Card Action Link */}
                 <div className="mt-6 pt-4 border-t border-border/40 flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    {free.github_url && <a href={free.github_url} target="_blank" rel="noreferrer" className="text-slate-500 hover:text-white transition"><Github className="h-3.5 w-3.5" /></a>}
-                    {free.linkedin_url && <a href={free.linkedin_url} target="_blank" rel="noreferrer" className="text-slate-500 hover:text-white transition"><Linkedin className="h-3.5 w-3.5" /></a>}
-                    {free.twitter_url && <a href={free.twitter_url} target="_blank" rel="noreferrer" className="text-slate-500 hover:text-white transition"><Twitter className="h-3.5 w-3.5" /></a>}
+                    {free.github_url && (
+                      <a
+                        href={free.github_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-500 hover:text-white transition"
+                      >
+                        <Github className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    {free.linkedin_url && (
+                      <a
+                        href={free.linkedin_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-500 hover:text-white transition"
+                      >
+                        <Linkedin className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    {free.twitter_url && (
+                      <a
+                        href={free.twitter_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-500 hover:text-white transition"
+                      >
+                        <Twitter className="h-3.5 w-3.5" />
+                      </a>
+                    )}
                   </div>
-                  
-                  <Link 
-                    to="/freelancers/$slug" 
-                    params={{ slug: free.username || free.id }} 
+
+                  <Link
+                    to="/freelancers/$slug"
+                    params={{ slug: free.username || free.id }}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
                   >
                     View profile <ArrowRight className="h-3 w-3" />
@@ -321,11 +391,12 @@ function FreelancerDirectoryPage() {
             <Sparkles className="h-5 w-5 text-amber-500" /> Are you a freelance builder?
           </h3>
           <p className="mt-3 text-sm text-muted-foreground max-w-lg mx-auto relative z-10">
-            List your skills, hourly rate, and portfolio link in the public directory to get direct inquiries from founders and agencies looking to hire.
+            List your skills, hourly rate, and portfolio link in the public directory to get direct
+            inquiries from founders and agencies looking to hire.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3 relative z-10">
-            <Link 
-              to="/register" 
+            <Link
+              to="/register"
               className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg"
             >
               Get Listed Today <ArrowRight className="h-4 w-4" />

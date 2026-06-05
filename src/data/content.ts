@@ -20,12 +20,12 @@ export const IMG = {
   va: "/assets/freelancers/freelancer_13.jpg",
   // Faces — for testimonials & team. Real people photos.
   face1: "/assets/freelancers/freelancer_11.jpg", // Taiwo Adeyemi (black man in suit outdoors)
-  face2: "/assets/freelancers/freelancer_4.jpg",  // Maria Silva (woman on sea-view balcony)
-  face3: "/assets/freelancers/freelancer_8.jpg",  // James Kariuki (man sitting on park bench)
-  face4: "/assets/freelancers/freelancer_1.jpg",  // Priya Patel (South Asian man sitting outside in pink shirt)
-  face5: "/assets/freelancers/freelancer_5.jpg",  // Alex Johnson / Lucas Fernández (man with turban)
-  face6: "/assets/freelancers/freelancer_6.jpg",  // Sofia Romano (young woman with pink hair on balcony)
-  face7: "/assets/freelancers/freelancer_2.jpg",  // Kenji (man typing on laptop)
+  face2: "/assets/freelancers/freelancer_4.jpg", // Maria Silva (woman on sea-view balcony)
+  face3: "/assets/freelancers/freelancer_8.jpg", // James Kariuki (man sitting on park bench)
+  face4: "/assets/freelancers/freelancer_1.jpg", // Priya Patel (South Asian man sitting outside in pink shirt)
+  face5: "/assets/freelancers/freelancer_5.jpg", // Alex Johnson / Lucas Fernández (man with turban)
+  face6: "/assets/freelancers/freelancer_6.jpg", // Sofia Romano (young woman with pink hair on balcony)
+  face7: "/assets/freelancers/freelancer_2.jpg", // Kenji (man typing on laptop)
   face8: "/assets/freelancers/freelancer_10.jpg", // Sofia / other (man with glasses and lamp)
   // Blog images
   blog1: "/assets/freelancers/freelancer_1.jpg",
@@ -35,7 +35,6 @@ export const IMG = {
   blog5: "/assets/freelancers/freelancer_5.jpg",
   blog6: "/assets/freelancers/freelancer_6.jpg",
 };
-
 
 export type BlogPost = {
   slug: string;
@@ -56,160 +55,497 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "The first 5 cold emails I sent as a freelance web developer",
     excerpt: "What worked, what flopped, and the script I now use on every Monday morning.",
     body: `When I started freelancing in Lagos in 2023, I had a portfolio of three projects and zero leads. Cold email felt awkward. But it was the only honest way to start a pipeline without spending money.\n\nThe first email I sent was a 400-word essay about my services. No reply. The second was shorter but full of "I"s and "my experience". No reply. The third was three sentences long. It ended in a simple question. It got a reply in 17 minutes.\n\n## The Three-Sentence Formula\nAfter sending hundreds of emails, I boiled it down to a simple, reliable framework:\n- **The Observation**: Call out something specific about their current setup. ("I saw your bakery's website doesn't load on mobile.")\n- **The Value**: Offer a clear, quick win. ("I made a quick layout showing how your menu could look on a phone.")\n- **The Simple CTA**: End with a low-pressure, yes/no question. ("Would you like me to send you the link to look at?")\n\n## What I Learned\nPeople don't owe you a reply. They owe you about four seconds of attention. If your email is a wall of text, they will archive it. If it is short, friendly, and focused on **their** business, they will reply. Keep it simple. Start conversations, don't pitch.`,
-    cover: IMG.blog1, author: "Taiwo Adeyemi", authorAvatar: IMG.face1, date: "May 21, 2026", readMins: 6, category: "Outreach",
+    cover: IMG.blog1,
+    author: "Taiwo Adeyemi",
+    authorAvatar: IMG.face1,
+    date: "May 21, 2026",
+    readMins: 6,
+    category: "Outreach",
   },
   {
     slug: "scoring-leads-without-ai",
     title: "How to score leads without fancy AI",
     excerpt: "A back-of-the-envelope framework for ranking businesses before you reach out.",
     body: `Lead scoring sounds like enterprise software jargon. But it is actually something a 15-year-old with a spreadsheet could do. I used this simple manual scoring system for two years before any AI got involved. It saved me hours of wasted pitching.\n\nInstead of writing to every business you find, you need to score them. This helps you focus your energy on the ones who need you most.\n\n## The Simple +1 / -1 Checklist\nHere is the sheet I set up. Start a lead at a base score of 50, then add or subtract points:\n- **No website at all**: +15 points. They need help immediately.\n- **Not mobile-friendly**: +10 points. They are losing half their traffic.\n- **Last social post was in 2022**: +10 points. They are too busy to manage their brand.\n- **Low Google reviews**: -10 points. They might not care about their online reputation.\n- **Broken contact forms**: +15 points. They are losing actual customer leads right now.\n\n## Filter the Best First\nOnce you run this list, sort your sheet. The businesses with scores above 75 are your goldmine. Write to them first. They have active problems that you can solve today.`,
-    cover: IMG.blog2, author: "Maria Silva", authorAvatar: IMG.face2, date: "May 14, 2026", readMins: 4, category: "Sales",
+    cover: IMG.blog2,
+    author: "Maria Silva",
+    authorAvatar: IMG.face2,
+    date: "May 14, 2026",
+    readMins: 4,
+    category: "Sales",
   },
   {
     slug: "pricing-as-a-new-freelancer",
     title: "Pricing as a new freelancer (without underselling yourself)",
     excerpt: "Three pricing mistakes I made in my first year — and what I'd do differently.",
     body: `My first website design cost the client $80. It took me 32 hours of design, code, and revisions. That is $2.50 per hour. It was less than a coffee in Naples. I was working day and night, but I could barely pay my bills.\n\nI made every pricing mistake in the book. Here are the three lessons that changed my business.\n\n## 1. Stop Charging by the Hour\nWhen you charge by the hour, you are penalized for being fast. If you get better and finish a site in 5 hours instead of 10, you get paid half as much. Charge by the project instead. Focus on the value you bring to the business.\n\n## 2. Limit Your Revisions\nIf you do not set a limit, clients will ask for changes forever. Always include a limit in your proposal:\n- **Round 1**: Big structural feedback.\n- **Round 2**: Text edits and polish.\n- **Anything else**: Charged at a flat rate.\n\n## 3. Factor in Admin Time\nA project is not just design and development. It is also emails, calls, and project management. Always add a 20% buffer to your estimates to cover this unbilled time. It will keep your business healthy.`,
-    cover: IMG.blog3, author: "James Kariuki", authorAvatar: IMG.face3, date: "May 7, 2026", readMins: 5, category: "Business",
+    cover: IMG.blog3,
+    author: "James Kariuki",
+    authorAvatar: IMG.face3,
+    date: "May 7, 2026",
+    readMins: 5,
+    category: "Business",
   },
   {
     slug: "calling-strangers-cold-calls",
     title: "Calling strangers: a freelancer's guide to cold calls that don't suck",
-    excerpt: "The opening line that works, the question that doesn't, and how to handle the 'send me an email' brush-off.",
+    excerpt:
+      "The opening line that works, the question that doesn't, and how to handle the 'send me an email' brush-off.",
     body: `Cold calls are not dead. They're just badly done. A good cold call is one minute long, ends in a question, and never tries to sell anything. Here is the exact cold calling playbook I use to land local projects.\n\n## The 60-Second Script\nYour call should never exceed one minute. Here is the structure:\n- **The Hook**: "Hi, is this the owner? This is Priya. I live down the street." (People trust locals.)\n- **The Notice**: "I was looking at your Google page. I noticed your phone number link does not dial when tapped on mobile."\n- **The Offer**: "I can fix that for you in ten minutes. No charge. I just wanted to help out."\n- **The Close**: "Is it okay if I email you the details?"\n\n## Handle the Brush-off\nIf they say "send me an email", say: "Sure! What is the best address? I will send a quick screenshot of the issue." Do not push. Keep it warm and helpful.`,
-    cover: IMG.blog4, author: "Priya Patel", authorAvatar: IMG.face4, date: "April 30, 2026", readMins: 7, category: "Outreach",
+    cover: IMG.blog4,
+    author: "Priya Patel",
+    authorAvatar: IMG.face4,
+    date: "April 30, 2026",
+    readMins: 7,
+    category: "Outreach",
   },
   {
     slug: "freelance-from-anywhere",
     title: "Freelancing from anywhere: clients I won from a beach in Goa",
-    excerpt: "A week-by-week breakdown of how location stopped mattering for my consulting practice.",
+    excerpt:
+      "A week-by-week breakdown of how location stopped mattering for my consulting practice.",
     body: `Two years ago, I packed my bags and moved my freelance business from London to Goa. I assumed my income would take a hit. Instead, it tripled. I realized that clients do not care where you sit, as long as you deliver results.\n\nBut working remotely takes system and discipline. Here is how I manage it.\n\n## Clear Communication is King\nWhen you do not see clients in person, you must over-communicate:\n- **Weekly updates**: Send a simple email every Friday listing what you did.\n- **Video walkthroughs**: Send 2-minute Loom videos instead of long emails.\n- **Async tools**: Use tools like Slack or Trello to keep everything visible.\n\n## Manage the Timezones\nIf you work from a beach, align your hours with your clients. I work late afternoons and evenings in Goa so I can match my UK clients' mornings. It gives me free mornings to swim and surf, and my clients never feel the distance.`,
-    cover: IMG.blog5, author: "Alex Johnson", authorAvatar: IMG.face5, date: "April 23, 2026", readMins: 8, category: "Lifestyle",
+    cover: IMG.blog5,
+    author: "Alex Johnson",
+    authorAvatar: IMG.face5,
+    date: "April 23, 2026",
+    readMins: 8,
+    category: "Lifestyle",
   },
   {
     slug: "templates-vs-personal-outreach",
     title: "Templates vs personal outreach: the unsexy truth",
     excerpt: "When templates work, when they backfire, and the 80/20 rule that saved my Mondays.",
     body: `Templates aren't shortcuts — they're scaffolding. The first three sentences are templated. The fourth is yours. I follow a simple 80/20 rule to keep my outreach fast but deeply personal.\n\n## The 80/20 Rule\n- **The 80% (Templated)**: Your introduction, your credentials, and your call-to-action. These do not need to change.\n- **The 20% (Personalized)**: The specific problem you found on their website, and the quick tip you suggest. This must be written from scratch for every business.\n\n## Make it Feel Personal\nNever send an email that could apply to any business. If your template says "I can improve your digital presence", it is too vague. Say: "I noticed your menu page is a PDF that takes 8 seconds to load." That is specific. It proves you actually looked at their business.`,
-    cover: IMG.blog6, author: "Sofia Romano", authorAvatar: IMG.face6, date: "April 16, 2026", readMins: 5, category: "Outreach",
+    cover: IMG.blog6,
+    author: "Sofia Romano",
+    authorAvatar: IMG.face6,
+    date: "April 16, 2026",
+    readMins: 5,
+    category: "Outreach",
   },
 ];
 
-export const CHANGELOG: { date: string; version: string; title: string; items: string[]; tag: "feature" | "improvement" | "fix" }[] = [
-  { date: "May 28, 2026", version: "v2.4.0", title: "AI Outreach Writer is live for Pro", tag: "feature", items: ["Personalised email + DM generator, fed from each lead's profile", "Tone slider: friendly, formal, casual, direct", "5 languages: English, Spanish, French, Italian, Portuguese"] },
-  { date: "May 14, 2026", version: "v2.3.2", title: "Faster discovery in dense cities", tag: "improvement", items: ["Discover queries in Lagos, Mumbai and São Paulo are 3× faster", "Lead cards now lazy-load — pages with 100+ leads stay snappy"] },
-  { date: "May 02, 2026", version: "v2.3.0", title: "Pipeline kanban with drag-and-drop", tag: "feature", items: ["Move leads between stages by dragging", "Per-stage filters and weekly follow-up view", "CSV export of your full pipeline"] },
-  { date: "Apr 19, 2026", version: "v2.2.4", title: "Fix: WhatsApp links not opening on iOS 17", tag: "fix", items: ["Outreach links to WhatsApp now use the universal wa.me handler"] },
-  { date: "Apr 04, 2026", version: "v2.2.0", title: "9 new freelancer categories", tag: "feature", items: ["Added VAs, photographers, video editors, marketers and 5 more", "Each category gets its own opportunity-scoring model"] },
+export const CHANGELOG: {
+  date: string;
+  version: string;
+  title: string;
+  items: string[];
+  tag: "feature" | "improvement" | "fix";
+}[] = [
+  {
+    date: "May 28, 2026",
+    version: "v2.4.0",
+    title: "AI Outreach Writer is live for Pro",
+    tag: "feature",
+    items: [
+      "Personalised email + DM generator, fed from each lead's profile",
+      "Tone slider: friendly, formal, casual, direct",
+      "5 languages: English, Spanish, French, Italian, Portuguese",
+    ],
+  },
+  {
+    date: "May 14, 2026",
+    version: "v2.3.2",
+    title: "Faster discovery in dense cities",
+    tag: "improvement",
+    items: [
+      "Discover queries in Lagos, Mumbai and São Paulo are 3× faster",
+      "Lead cards now lazy-load — pages with 100+ leads stay snappy",
+    ],
+  },
+  {
+    date: "May 02, 2026",
+    version: "v2.3.0",
+    title: "Pipeline kanban with drag-and-drop",
+    tag: "feature",
+    items: [
+      "Move leads between stages by dragging",
+      "Per-stage filters and weekly follow-up view",
+      "CSV export of your full pipeline",
+    ],
+  },
+  {
+    date: "Apr 19, 2026",
+    version: "v2.2.4",
+    title: "Fix: WhatsApp links not opening on iOS 17",
+    tag: "fix",
+    items: ["Outreach links to WhatsApp now use the universal wa.me handler"],
+  },
+  {
+    date: "Apr 04, 2026",
+    version: "v2.2.0",
+    title: "9 new freelancer categories",
+    tag: "feature",
+    items: [
+      "Added VAs, photographers, video editors, marketers and 5 more",
+      "Each category gets its own opportunity-scoring model",
+    ],
+  },
 ];
 
 export const TEAM = [
-  { name: "Taiwo Adeyemi", role: "Co-founder, Engineering", city: "Lagos, Nigeria", avatar: IMG.face1, bio: "Ex-freelance web dev. Built the first version on weekends." },
-  { name: "Maria Silva", role: "Co-founder, Design", city: "São Paulo, Brazil", avatar: IMG.face2, bio: "Designed the product after years of cold-emailing her own clients." },
-  { name: "James Kariuki", role: "Growth & Sales", city: "Nairobi, Kenya", avatar: IMG.face3, bio: "Helps freelancers close their first 10 clients." },
-  { name: "Priya Patel", role: "Engineering", city: "Mumbai, India", avatar: IMG.face4, bio: "Lead-discovery pipelines, opportunity scoring." },
-  { name: "Sofia Romano", role: "Content", city: "Naples, Italy", avatar: IMG.face6, bio: "Writes the playbooks freelancers actually use." },
-  { name: "Lucas Fernández", role: "Support", city: "Buenos Aires, Argentina", avatar: IMG.face5, bio: "Replies within 4 hours, every day, in 3 languages." },
+  {
+    name: "Taiwo Adeyemi",
+    role: "Co-founder, Engineering",
+    city: "Lagos, Nigeria",
+    avatar: IMG.face1,
+    bio: "Ex-freelance web dev. Built the first version on weekends.",
+  },
+  {
+    name: "Maria Silva",
+    role: "Co-founder, Design",
+    city: "São Paulo, Brazil",
+    avatar: IMG.face2,
+    bio: "Designed the product after years of cold-emailing her own clients.",
+  },
+  {
+    name: "James Kariuki",
+    role: "Growth & Sales",
+    city: "Nairobi, Kenya",
+    avatar: IMG.face3,
+    bio: "Helps freelancers close their first 10 clients.",
+  },
+  {
+    name: "Priya Patel",
+    role: "Engineering",
+    city: "Mumbai, India",
+    avatar: IMG.face4,
+    bio: "Lead-discovery pipelines, opportunity scoring.",
+  },
+  {
+    name: "Sofia Romano",
+    role: "Content",
+    city: "Naples, Italy",
+    avatar: IMG.face6,
+    bio: "Writes the playbooks freelancers actually use.",
+  },
+  {
+    name: "Lucas Fernández",
+    role: "Support",
+    city: "Buenos Aires, Argentina",
+    avatar: IMG.face5,
+    bio: "Replies within 4 hours, every day, in 3 languages.",
+  },
 ];
 
 export const FREELANCER_CATEGORIES: {
-  slug: string; label: string; emoji: string; image: string; tagline: string; description: string;
-  problems: string[]; sampleBusinesses: { name: string; reason: string }[];
+  slug: string;
+  label: string;
+  emoji: string;
+  image: string;
+  tagline: string;
+  description: string;
+  problems: string[];
+  sampleBusinesses: { name: string; reason: string }[];
 }[] = [
-  { slug: "web-developers", label: "Web Developers", emoji: "", image: IMG.webDev,
+  {
+    slug: "web-developers",
+    label: "Web Developers",
+    emoji: "",
+    image: IMG.webDev,
     tagline: "Find local businesses still running on a Facebook page.",
-    description: "Every week, LanceConnect surfaces hundreds of restaurants, salons, plumbers and clinics in your area that have no website — or a broken one from 2014. Reach them before someone else does.",
-    problems: ["No website at all", "Outdated WordPress with broken links", "No mobile-friendly version", "No online booking form"],
-    sampleBusinesses: [{name:"Boulangerie Dupont, Lyon",reason:"4.9★ on Google, no website"},{name:"Mario's Ristorante, Naples",reason:"Facebook-only presence"},{name:"Lagos Hair Studio",reason:"Website returns 502"}],
+    description:
+      "Every week, LanceConnect surfaces hundreds of restaurants, salons, plumbers and clinics in your area that have no website — or a broken one from 2014. Reach them before someone else does.",
+    problems: [
+      "No website at all",
+      "Outdated WordPress with broken links",
+      "No mobile-friendly version",
+      "No online booking form",
+    ],
+    sampleBusinesses: [
+      { name: "Boulangerie Dupont, Lyon", reason: "4.9★ on Google, no website" },
+      { name: "Mario's Ristorante, Naples", reason: "Facebook-only presence" },
+      { name: "Lagos Hair Studio", reason: "Website returns 502" },
+    ],
   },
-  { slug: "designers", label: "Graphic Designers", emoji: "", image: IMG.designer,
+  {
+    slug: "designers",
+    label: "Graphic Designers",
+    emoji: "",
+    image: IMG.designer,
     tagline: "Spot brands that desperately need a refresh.",
-    description: "Logos from 2008. Menus printed in Comic Sans. Inconsistent colours across every channel. These businesses don't know they need you — until you show them.",
-    problems: ["Dated or pixelated logo", "No brand consistency online", "Ugly menus and price lists", "No social media graphics"],
-    sampleBusinesses: [{name:"Smith & Sons Plumbing, Manchester",reason:"Logo is clip-art"},{name:"Café Mirador, Buenos Aires",reason:"Different colours on each platform"},{name:"AutoFix Garage, Toronto",reason:"No brand kit"}],
+    description:
+      "Logos from 2008. Menus printed in Comic Sans. Inconsistent colours across every channel. These businesses don't know they need you — until you show them.",
+    problems: [
+      "Dated or pixelated logo",
+      "No brand consistency online",
+      "Ugly menus and price lists",
+      "No social media graphics",
+    ],
+    sampleBusinesses: [
+      { name: "Smith & Sons Plumbing, Manchester", reason: "Logo is clip-art" },
+      { name: "Café Mirador, Buenos Aires", reason: "Different colours on each platform" },
+      { name: "AutoFix Garage, Toronto", reason: "No brand kit" },
+    ],
   },
-  { slug: "copywriters", label: "Copywriters", emoji: "", image: IMG.copywriter,
+  {
+    slug: "copywriters",
+    label: "Copywriters",
+    emoji: "",
+    image: IMG.copywriter,
     tagline: "Find websites whose copy is putting customers to sleep.",
-    description: "Generic 'About Us' pages. Headlines that say 'Welcome to our site'. Product descriptions written by the founder at 11pm. The web is full of businesses that need a copywriter — they just don't know it.",
-    problems: ["Generic homepage hero copy", "No clear value proposition", "Empty or thin blog", "Vague service descriptions"],
-    sampleBusinesses: [{name:"Dr. Patel Dental Clinic, Mumbai",reason:"Homepage says 'Welcome to our website'"},{name:"AutoFix Garage, Toronto",reason:"No services described"}],
+    description:
+      "Generic 'About Us' pages. Headlines that say 'Welcome to our site'. Product descriptions written by the founder at 11pm. The web is full of businesses that need a copywriter — they just don't know it.",
+    problems: [
+      "Generic homepage hero copy",
+      "No clear value proposition",
+      "Empty or thin blog",
+      "Vague service descriptions",
+    ],
+    sampleBusinesses: [
+      { name: "Dr. Patel Dental Clinic, Mumbai", reason: "Homepage says 'Welcome to our website'" },
+      { name: "AutoFix Garage, Toronto", reason: "No services described" },
+    ],
   },
-  { slug: "seo-specialists", label: "SEO Specialists", emoji: "", image: IMG.seo,
+  {
+    slug: "seo-specialists",
+    label: "SEO Specialists",
+    emoji: "",
+    image: IMG.seo,
     tagline: "Find businesses invisible on Google.",
-    description: "If a restaurant doesn't appear in 'best pizza near me' results in their own city, you have a client. We'll show you which ones.",
-    problems: ["No Google Business Profile", "Not indexed for their main keyword", "No backlinks", "Slow page speed"],
-    sampleBusinesses: [{name:"Boulangerie Dupont, Lyon",reason:"Not ranking for 'bakery Lyon'"},{name:"Kuala Lumpur Yoga Studio",reason:"No GMB profile"}],
+    description:
+      "If a restaurant doesn't appear in 'best pizza near me' results in their own city, you have a client. We'll show you which ones.",
+    problems: [
+      "No Google Business Profile",
+      "Not indexed for their main keyword",
+      "No backlinks",
+      "Slow page speed",
+    ],
+    sampleBusinesses: [
+      { name: "Boulangerie Dupont, Lyon", reason: "Not ranking for 'bakery Lyon'" },
+      { name: "Kuala Lumpur Yoga Studio", reason: "No GMB profile" },
+    ],
   },
-  { slug: "social-media", label: "Social Media Managers", emoji: "", image: IMG.social,
+  {
+    slug: "social-media",
+    label: "Social Media Managers",
+    emoji: "",
+    image: IMG.social,
     tagline: "Spot brands whose Instagram hasn't posted since 2022.",
-    description: "Restaurants, gyms, boutiques — they all know they 'should' be posting. They just don't have time. That's your opening.",
-    problems: ["Last post 6+ months ago", "No Reels or short-form video", "Inconsistent branding across platforms", "No paid social presence"],
-    sampleBusinesses: [{name:"Mario's Ristorante, Naples",reason:"Last post: 2022"},{name:"Café Mirador, Buenos Aires",reason:"Only 47 followers"}],
+    description:
+      "Restaurants, gyms, boutiques — they all know they 'should' be posting. They just don't have time. That's your opening.",
+    problems: [
+      "Last post 6+ months ago",
+      "No Reels or short-form video",
+      "Inconsistent branding across platforms",
+      "No paid social presence",
+    ],
+    sampleBusinesses: [
+      { name: "Mario's Ristorante, Naples", reason: "Last post: 2022" },
+      { name: "Café Mirador, Buenos Aires", reason: "Only 47 followers" },
+    ],
   },
-  { slug: "videographers", label: "Videographers", emoji: "", image: IMG.video,
+  {
+    slug: "videographers",
+    label: "Videographers",
+    emoji: "",
+    image: IMG.video,
     tagline: "Find businesses whose YouTube is a wasteland.",
-    description: "Hotels with zero room-tour videos. Restaurants with no behind-the-scenes content. Schools with no campus tours. These need video — and they have budgets.",
-    problems: ["No video content at all", "Only one shaky phone video", "No Reels or TikTok presence", "Outdated promo from 2019"],
-    sampleBusinesses: [{name:"Kuala Lumpur Yoga Studio",reason:"No class previews"},{name:"Dr. Patel Dental Clinic",reason:"No clinic tour"}],
+    description:
+      "Hotels with zero room-tour videos. Restaurants with no behind-the-scenes content. Schools with no campus tours. These need video — and they have budgets.",
+    problems: [
+      "No video content at all",
+      "Only one shaky phone video",
+      "No Reels or TikTok presence",
+      "Outdated promo from 2019",
+    ],
+    sampleBusinesses: [
+      { name: "Kuala Lumpur Yoga Studio", reason: "No class previews" },
+      { name: "Dr. Patel Dental Clinic", reason: "No clinic tour" },
+    ],
   },
-  { slug: "photographers", label: "Photographers", emoji: "", image: IMG.photo,
+  {
+    slug: "photographers",
+    label: "Photographers",
+    emoji: "",
+    image: IMG.photo,
     tagline: "Find restaurants using stock photos of pasta.",
-    description: "Hotels with blurry lobby shots. Restaurants with dimly-lit menu photos. Salons with no portfolio. Your camera is the answer.",
-    problems: ["Stock photos instead of real shots", "Blurry phone photos on Google", "No portfolio of their actual work", "No team headshots"],
-    sampleBusinesses: [{name:"Boulangerie Dupont, Lyon",reason:"Generic croissant stock photo"},{name:"Lagos Hair Studio",reason:"No before/after gallery"}],
+    description:
+      "Hotels with blurry lobby shots. Restaurants with dimly-lit menu photos. Salons with no portfolio. Your camera is the answer.",
+    problems: [
+      "Stock photos instead of real shots",
+      "Blurry phone photos on Google",
+      "No portfolio of their actual work",
+      "No team headshots",
+    ],
+    sampleBusinesses: [
+      { name: "Boulangerie Dupont, Lyon", reason: "Generic croissant stock photo" },
+      { name: "Lagos Hair Studio", reason: "No before/after gallery" },
+    ],
   },
-  { slug: "marketers", label: "Digital Marketers", emoji: "", image: IMG.marketing,
+  {
+    slug: "marketers",
+    label: "Digital Marketers",
+    emoji: "",
+    image: IMG.marketing,
     tagline: "Spot businesses spending zero on ads — and growing flat.",
-    description: "If they're not on Meta Ads, Google Ads, or running email campaigns, you can probably double their reach in 90 days.",
-    problems: ["No paid advertising at all", "No email list", "No remarketing pixels", "No analytics installed"],
-    sampleBusinesses: [{name:"Smith & Sons Plumbing",reason:"No tracking pixels"},{name:"AutoFix Garage, Toronto",reason:"No email signup"}],
+    description:
+      "If they're not on Meta Ads, Google Ads, or running email campaigns, you can probably double their reach in 90 days.",
+    problems: [
+      "No paid advertising at all",
+      "No email list",
+      "No remarketing pixels",
+      "No analytics installed",
+    ],
+    sampleBusinesses: [
+      { name: "Smith & Sons Plumbing", reason: "No tracking pixels" },
+      { name: "AutoFix Garage, Toronto", reason: "No email signup" },
+    ],
   },
-  { slug: "virtual-assistants", label: "Virtual Assistants", emoji: "", image: IMG.va,
+  {
+    slug: "virtual-assistants",
+    label: "Virtual Assistants",
+    emoji: "",
+    image: IMG.va,
     tagline: "Find solo founders drowning in admin.",
-    description: "Coaches, consultants, agency owners — they all do too much themselves. We surface the busy ones who're showing the signs.",
-    problems: ["Founder still doing all email", "No CRM or inbox management", "Manual invoicing", "Booking calls done over DMs"],
-    sampleBusinesses: [{name:"Dr. Patel Dental Clinic",reason:"Owner replies to every DM personally"},{name:"Café Mirador",reason:"Owner doing all bookings via WhatsApp"}],
+    description:
+      "Coaches, consultants, agency owners — they all do too much themselves. We surface the busy ones who're showing the signs.",
+    problems: [
+      "Founder still doing all email",
+      "No CRM or inbox management",
+      "Manual invoicing",
+      "Booking calls done over DMs",
+    ],
+    sampleBusinesses: [
+      { name: "Dr. Patel Dental Clinic", reason: "Owner replies to every DM personally" },
+      { name: "Café Mirador", reason: "Owner doing all bookings via WhatsApp" },
+    ],
   },
-  { slug: "app-developers", label: "App Developers", emoji: "", image: IMG.appDev,
+  {
+    slug: "app-developers",
+    label: "App Developers",
+    emoji: "",
+    image: IMG.appDev,
     tagline: "Spot businesses that need a mobile app — not just a website.",
-    description: "Loyalty programs, booking apps, delivery apps. There's a huge middle market of established businesses with no app at all.",
-    problems: ["No loyalty app for repeat customers", "Booking done via phone only", "No mobile ordering", "No staff scheduling app"],
-    sampleBusinesses: [{name:"Kuala Lumpur Yoga Studio",reason:"Bookings via WhatsApp"},{name:"AutoFix Garage, Toronto",reason:"Paper service records"}],
+    description:
+      "Loyalty programs, booking apps, delivery apps. There's a huge middle market of established businesses with no app at all.",
+    problems: [
+      "No loyalty app for repeat customers",
+      "Booking done via phone only",
+      "No mobile ordering",
+      "No staff scheduling app",
+    ],
+    sampleBusinesses: [
+      { name: "Kuala Lumpur Yoga Studio", reason: "Bookings via WhatsApp" },
+      { name: "AutoFix Garage, Toronto", reason: "Paper service records" },
+    ],
   },
-  { slug: "online-tutors", label: "Online Tutors", emoji: "🎓", image: IMG.coffeeShop,
+  {
+    slug: "online-tutors",
+    label: "Online Tutors",
+    emoji: "🎓",
+    image: IMG.coffeeShop,
     tagline: "Find schools, academies, and families looking for remote tutors.",
-    description: "From language instructors to math coaches, remote education is booming. We scan language schools, local academies, and tutoring platforms needing subject matter experts.",
-    problems: ["High student-to-teacher ratio", "No native language tutors listed", "Outdated learning materials online", "No online class booking portal"],
-    sampleBusinesses: [{name:"London Language Academy",reason:"Looking for Igbo/Yoruba instructors"},{name:"Peckham Tutoring Center",reason:"Math tutor positions vacant"}],
+    description:
+      "From language instructors to math coaches, remote education is booming. We scan language schools, local academies, and tutoring platforms needing subject matter experts.",
+    problems: [
+      "High student-to-teacher ratio",
+      "No native language tutors listed",
+      "Outdated learning materials online",
+      "No online class booking portal",
+    ],
+    sampleBusinesses: [
+      { name: "London Language Academy", reason: "Looking for Igbo/Yoruba instructors" },
+      { name: "Peckham Tutoring Center", reason: "Math tutor positions vacant" },
+    ],
   },
-  { slug: "african-food-export", label: "African Food Exporters", emoji: "🌍", image: IMG.marketStall,
+  {
+    slug: "african-food-export",
+    label: "African Food Exporters",
+    emoji: "🌍",
+    image: IMG.marketStall,
     tagline: "Find international buyers, supermarkets, and ethnic wholesalers.",
-    description: "Looking to export palm oil, garri, ogbono, or cocoa? We identify supermarkets, restaurants, and wholesalers in the UK, US, and EU carrying ethnic food products.",
-    problems: ["No direct African import contacts", "Looking for palm oil/garri suppliers", "Struggling to find reliable importers", "Relying on expensive intermediaries"],
-    sampleBusinesses: [{name:"Wanis International Foods, UK",reason:"Major ethnic food distributor"},{name:"Peckham Quality Foods, London",reason:"High retail demand for African food"}],
+    description:
+      "Looking to export palm oil, garri, ogbono, or cocoa? We identify supermarkets, restaurants, and wholesalers in the UK, US, and EU carrying ethnic food products.",
+    problems: [
+      "No direct African import contacts",
+      "Looking for palm oil/garri suppliers",
+      "Struggling to find reliable importers",
+      "Relying on expensive intermediaries",
+    ],
+    sampleBusinesses: [
+      { name: "Wanis International Foods, UK", reason: "Major ethnic food distributor" },
+      { name: "Peckham Quality Foods, London", reason: "High retail demand for African food" },
+    ],
   },
-  { slug: "restaurant-suppliers", label: "Restaurant Suppliers", emoji: "🍽️", image: IMG.coffeeShop,
+  {
+    slug: "restaurant-suppliers",
+    label: "Restaurant Suppliers",
+    emoji: "🍽️",
+    image: IMG.coffeeShop,
     tagline: "Connect with local restaurants, hotels, and cafes needing fresh supply.",
-    description: "Get your ingredients, fresh produce, or cooked meals into local kitchens. We surface hospitality businesses, restaurants, and catering services in any city.",
-    problems: ["High ingredient procurement costs", "Looking for local food suppliers", "Frequent supply stockouts", "No organic or specialized menu partners"],
-    sampleBusinesses: [{name:"Mario's Ristorante, Naples",reason:"Needs direct tomato/oil supplier"},{name:"Lagos Catering Services",reason:"High-volume weekly orders"}],
+    description:
+      "Get your ingredients, fresh produce, or cooked meals into local kitchens. We surface hospitality businesses, restaurants, and catering services in any city.",
+    problems: [
+      "High ingredient procurement costs",
+      "Looking for local food suppliers",
+      "Frequent supply stockouts",
+      "No organic or specialized menu partners",
+    ],
+    sampleBusinesses: [
+      { name: "Mario's Ristorante, Naples", reason: "Needs direct tomato/oil supplier" },
+      { name: "Lagos Catering Services", reason: "High-volume weekly orders" },
+    ],
   },
-  { slug: "product-export", label: "Product Importers & Exporters", emoji: "🛒", image: IMG.marketStall,
+  {
+    slug: "product-export",
+    label: "Product Importers & Exporters",
+    emoji: "🛒",
+    image: IMG.marketStall,
     tagline: "Find global wholesalers and international buyers for your products.",
-    description: "Expand your trade borders. We map commodity traders, import-export agencies, and wholesalers seeking new consumer goods, agricultural products, or manufactured items.",
-    problems: ["High customs brokerage friction", "Struggling to find overseas distributors", "No verified international buyer leads", "Inefficient agent networks"],
-    sampleBusinesses: [{name:"Global Trade Importers, NY",reason:"Active buyer of organic goods"},{name:"Euro Foods Wholesaler",reason:"Expansive distribution network"}],
+    description:
+      "Expand your trade borders. We map commodity traders, import-export agencies, and wholesalers seeking new consumer goods, agricultural products, or manufactured items.",
+    problems: [
+      "High customs brokerage friction",
+      "Struggling to find overseas distributors",
+      "No verified international buyer leads",
+      "Inefficient agent networks",
+    ],
+    sampleBusinesses: [
+      { name: "Global Trade Importers, NY", reason: "Active buyer of organic goods" },
+      { name: "Euro Foods Wholesaler", reason: "Expansive distribution network" },
+    ],
   },
-  { slug: "b2b-trade", label: "B2B Trade Partners", emoji: "🏭", image: IMG.workspace,
+  {
+    slug: "b2b-trade",
+    label: "B2B Trade Partners",
+    emoji: "🏭",
+    image: IMG.workspace,
     tagline: "Find manufacturers and procurement agencies looking for your products.",
-    description: "For raw materials, manufacturing inputs, or wholesale supplies. We surface factories, industrial distributors, and procurement companies seeking new supply channels.",
-    problems: ["High material sourcing costs", "Supply chain bottleneck constraints", "Relying on single-source suppliers", "No backup procurement channels"],
-    sampleBusinesses: [{name:"Sheffield Manufacturing, UK",reason:"Looking for metal/polymer parts"},{name:"Lagos Industrial Packagers",reason:"Needs bulk paper/carton inputs"}],
+    description:
+      "For raw materials, manufacturing inputs, or wholesale supplies. We surface factories, industrial distributors, and procurement companies seeking new supply channels.",
+    problems: [
+      "High material sourcing costs",
+      "Supply chain bottleneck constraints",
+      "Relying on single-source suppliers",
+      "No backup procurement channels",
+    ],
+    sampleBusinesses: [
+      { name: "Sheffield Manufacturing, UK", reason: "Looking for metal/polymer parts" },
+      { name: "Lagos Industrial Packagers", reason: "Needs bulk paper/carton inputs" },
+    ],
   },
-  { slug: "corporate-training", label: "Corporate Training & L&D", emoji: "📚", image: IMG.team,
+  {
+    slug: "corporate-training",
+    label: "Corporate Training & L&D",
+    emoji: "📚",
+    image: IMG.team,
     tagline: "Find corporate offices and HR teams needing leadership and L&D solutions.",
-    description: "Pitch your leadership workshops, technical training, or AI courses. We identify corporate offices, business headquarters, and HR departments looking to upskill their workforce.",
-    problems: ["Skills gaps in AI or leadership", "No structured workforce L&D plan", "High employee turnover rates", "Manual/outdated staff training tools"],
-    sampleBusinesses: [{name:"Acme Corporate HQ, London",reason:"HR department actively hiring external trainers"},{name:"Lagos Financial Training Center",reason:"High employee training budget"}],
+    description:
+      "Pitch your leadership workshops, technical training, or AI courses. We identify corporate offices, business headquarters, and HR departments looking to upskill their workforce.",
+    problems: [
+      "Skills gaps in AI or leadership",
+      "No structured workforce L&D plan",
+      "High employee turnover rates",
+      "Manual/outdated staff training tools",
+    ],
+    sampleBusinesses: [
+      {
+        name: "Acme Corporate HQ, London",
+        reason: "HR department actively hiring external trainers",
+      },
+      { name: "Lagos Financial Training Center", reason: "High employee training budget" },
+    ],
   },
 ];

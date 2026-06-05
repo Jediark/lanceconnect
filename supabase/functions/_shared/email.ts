@@ -15,21 +15,21 @@ export interface EmailParams {
  * Sends a transactional email using Resend.
  */
 export async function sendEmail(params: EmailParams): Promise<boolean> {
-  const apiKey = Deno.env.get('RESEND_API_KEY_LANCECONNECT') || Deno.env.get('RESEND_API_KEY');
+  const apiKey = Deno.env.get("RESEND_API_KEY_LANCECONNECT") || Deno.env.get("RESEND_API_KEY");
   if (!apiKey) {
-    console.error('RESEND_API_KEY is not configured. Email aborted.');
+    console.error("RESEND_API_KEY is not configured. Email aborted.");
     return false;
   }
 
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: `LanceConnect <hello@${(Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app').replace(/^https?:\/\//, '')}>`,
+        from: `LanceConnect <hello@${(Deno.env.get("APP_URL") || "https://lanceconnect.vercel.app").replace(/^https?:\/\//, "")}>`,
         to: [params.to],
         subject: params.subject,
         html: params.html,
@@ -45,7 +45,7 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
     console.log(`Email sent successfully to ${params.to}: "${params.subject}"`);
     return true;
   } catch (err) {
-    console.error('Failed to send email via Resend:', err);
+    console.error("Failed to send email via Resend:", err);
     return false;
   }
 }
@@ -94,7 +94,7 @@ export function getQuotaWarningEmailHtml(fullName: string, used: number, limit: 
       <p style="color: #475569; line-height: 1.5;">Hello ${fullName},</p>
       <p style="color: #475569; line-height: 1.5;">You have used <strong>${used}</strong> out of your monthly quota of <strong>${limit}</strong> leads.</p>
       <p style="color: #475569; line-height: 1.5;">To avoid interruptions in finding new clients, consider upgrading to a larger plan inside your dashboard settings.</p>
-      <a href="${Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app'}/app/upgrade" style="display: inline-block; background-color: #0f172a; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Upgrade Plan</a>
+      <a href="${Deno.env.get("APP_URL") || "https://lanceconnect.vercel.app"}/app/upgrade" style="display: inline-block; background-color: #0f172a; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Upgrade Plan</a>
       <p style="color: #475569; margin-top: 24px;">Best regards,<br/>The LanceConnect Team</p>
     </div>
   `;
@@ -110,7 +110,7 @@ export function getPaymentFailedEmailHtml(fullName: string): string {
       <p style="color: #475569; line-height: 1.5;">Hello ${fullName},</p>
       <p style="color: #475569; line-height: 1.5;">We were unable to process your recurring subscription payment for your LanceConnect plan.</p>
       <p style="color: #475569; line-height: 1.5;">We will attempt to retry the charge in a few days. Please review and update your payment details on the dashboard to keep your premium access active.</p>
-      <a href="${Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app'}/app/upgrade" style="display: inline-block; background-color: #be123c; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Update Payment Method</a>
+      <a href="${Deno.env.get("APP_URL") || "https://lanceconnect.vercel.app"}/app/upgrade" style="display: inline-block; background-color: #be123c; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px;">Update Payment Method</a>
       <p style="color: #475569; margin-top: 24px;">Best regards,<br/>The LanceConnect Team</p>
     </div>
   `;

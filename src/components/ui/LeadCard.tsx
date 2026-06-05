@@ -30,7 +30,10 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
 
   const openMaps = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.fullAddress || "")}`, "_blank");
+    window.open(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.fullAddress || "")}`,
+      "_blank",
+    );
   };
 
   return (
@@ -40,7 +43,9 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
       className={cn(
         "group relative flex w-full flex-col rounded-2xl border bg-card p-5 text-left transition-all duration-300",
         "hover:border-primary/50 hover:bg-card/80",
-        isSaved ? "border-emerald-500/70 ring-1 ring-emerald-500/10 bg-emerald-500/[0.01]" : "border-border/90",
+        isSaved
+          ? "border-emerald-500/70 ring-1 ring-emerald-500/10 bg-emerald-500/[0.01]"
+          : "border-border/90",
       )}
     >
       {isSaved && (
@@ -98,9 +103,13 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
           {saving ? (
             <span className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
           ) : isSaved ? (
-            <><BookmarkCheck className="h-3.5 w-3.5" /> Saved</>
+            <>
+              <BookmarkCheck className="h-3.5 w-3.5" /> Saved
+            </>
           ) : (
-            <><Bookmark className="h-3.5 w-3.5" /> Save</>
+            <>
+              <Bookmark className="h-3.5 w-3.5" /> Save
+            </>
           )}
         </button>
         <button

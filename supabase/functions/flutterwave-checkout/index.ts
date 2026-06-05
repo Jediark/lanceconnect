@@ -1,24 +1,24 @@
-import * as Sentry from 'npm:@sentry/deno'
+import * as Sentry from "npm:@sentry/deno";
 Sentry.init({
-  dsn: Deno.env.get('SENTRY_DSN_BACKEND'),
-  environment: Deno.env.get('ENVIRONMENT') || 'production',
+  dsn: Deno.env.get("SENTRY_DSN_BACKEND"),
+  environment: Deno.env.get("ENVIRONMENT") || "production",
   tracesSampleRate: 0.1,
-})
+});
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
-import { validateAuth } from '../_shared/auth.ts'
-import { handleError, AppError } from '../_shared/errors.ts'
-import { checkRateLimit } from '../_shared/ratelimit.ts'
-import { z } from 'https://esm.sh/zod@3.22.0'
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders } from "../_shared/cors.ts";
+import { validateAuth } from "../_shared/auth.ts";
+import { handleError, AppError } from "../_shared/errors.ts";
+import { checkRateLimit } from "../_shared/ratelimit.ts";
+import { z } from "https://esm.sh/zod@3.22.0";
 
 const requestSchema = z.object({
   planName: z.string().optional(),
-  checkoutType: z.enum(['subscription', 'credits']).optional().default('subscription'),
+  checkoutType: z.enum(["subscription", "credits"]).optional().default("subscription"),
   creditsAmount: z.number().optional().default(0),
-  currency: z.string().optional().default('NGN'),
+  currency: z.string().optional().default("NGN"),
   redirectUrl: z.string(),
-})
+});
 
 /**
  * Flutterwave Checkout Edge Function
@@ -31,111 +31,122 @@ const requestSchema = z.object({
 
 const PRICING: Record<string, Record<string, { amount: number; currency: string }>> = {
   individual: {
-    NGN: { amount: 10_000, currency: 'NGN' },
-    USD: { amount: 7, currency: 'USD' },
-    GHS: { amount: 50, currency: 'GHS' },
-    ZAR: { amount: 120, currency: 'ZAR' },
-    KES: { amount: 1_000, currency: 'KES' },
+    NGN: { amount: 10_000, currency: "NGN" },
+    USD: { amount: 7, currency: "USD" },
+    GHS: { amount: 50, currency: "GHS" },
+    ZAR: { amount: 120, currency: "ZAR" },
+    KES: { amount: 1_000, currency: "KES" },
   },
   company: {
-    NGN: { amount: 30_000, currency: 'NGN' },
-    USD: { amount: 20, currency: 'USD' },
-    GHS: { amount: 150, currency: 'GHS' },
-    ZAR: { amount: 350, currency: 'ZAR' },
-    KES: { amount: 3_000, currency: 'KES' },
+    NGN: { amount: 30_000, currency: "NGN" },
+    USD: { amount: 20, currency: "USD" },
+    GHS: { amount: 150, currency: "GHS" },
+    ZAR: { amount: 350, currency: "ZAR" },
+    KES: { amount: 3_000, currency: "KES" },
   },
-}
+};
 
 const CREDIT_RATES: Record<string, number> = {
   NGN: 50,
-  USD: 0.20,
+  USD: 0.2,
   GHS: 5,
   ZAR: 6,
   KES: 50,
-}
+};
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const user = await validateAuth(req)
+    const user = await validateAuth(req);
     if (!user) {
-      throw new AppError('Unauthorized', 401, 'UNAUTHORIZED')
+      throw new AppError("Unauthorized", 401, "UNAUTHORIZED");
     }
 
-    const body = await req.json().catch(() => ({}))
-    const parsed = requestSchema.safeParse(body)
+    const body = await req.json().catch(() => ({}));
+    const parsed = requestSchema.safeParse(body);
     if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: 'VALIDATION_FAILED', details: parsed.error.flatten() }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+        JSON.stringify({ error: "VALIDATION_FAILED", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
-    const { planName, checkoutType, creditsAmount, currency, redirectUrl } = parsed.data
+    const { planName, checkoutType, creditsAmount, currency, redirectUrl } = parsed.data;
 
-    const flutterwaveSecretKey = Deno.env.get('FLUTTERWAVE_SECRET_KEY')
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const flutterwaveSecretKey = Deno.env.get("FLUTTERWAVE_SECRET_KEY");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!flutterwaveSecretKey || !supabaseUrl || !supabaseServiceKey) {
-      throw new AppError('Server is not configured correctly', 500, 'MISCONFIGURED')
+      throw new AppError("Server is not configured correctly", 500, "MISCONFIGURED");
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Enforce Rate Limit: 50 requests/hour for checkout creation
-    const ipAddress = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || null
-    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, 'flutterwave-checkout', 50, 3600)
+    const ipAddress = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || null;
+    const rateLimit = await checkRateLimit(
+      supabase,
+      user.id,
+      ipAddress,
+      "flutterwave-checkout",
+      50,
+      3600,
+    );
     if (!rateLimit.allowed) {
-      throw new AppError('Too many requests. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
+      throw new AppError("Too many requests. Please try again later.", 429, "RATE_LIMIT_EXCEEDED");
     }
 
     const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('email, full_name')
-      .eq('id', user.id)
-      .single()
+      .from("profiles")
+      .select("email, full_name")
+      .eq("id", user.id)
+      .single();
 
     if (profileError || !profile) {
-      throw new AppError('User profile not found', 404, 'NOT_FOUND')
+      throw new AppError("User profile not found", 404, "NOT_FOUND");
     }
 
-    let amount: number
-    let txCurrency: string
-    let description: string
+    let amount: number;
+    let txCurrency: string;
+    let description: string;
 
-    if (checkoutType === 'subscription') {
+    if (checkoutType === "subscription") {
       if (!planName || !PRICING[planName]) {
         throw new AppError(
-          `Invalid planName. Supported: ${Object.keys(PRICING).join(', ')}`,
+          `Invalid planName. Supported: ${Object.keys(PRICING).join(", ")}`,
           400,
-          'BAD_REQUEST'
-        )
+          "BAD_REQUEST",
+        );
       }
 
-      const currencyKey = currency.toUpperCase()
-      const tier = PRICING[planName][currencyKey] || PRICING[planName]['USD']
-      amount = tier.amount
-      txCurrency = tier.currency
-      description = `LanceConnect ${planName.charAt(0).toUpperCase() + planName.slice(1)} Plan – Monthly`
-    } else if (checkoutType === 'credits') {
+      const currencyKey = currency.toUpperCase();
+      const tier = PRICING[planName][currencyKey] || PRICING[planName]["USD"];
+      amount = tier.amount;
+      txCurrency = tier.currency;
+      description = `LanceConnect ${planName.charAt(0).toUpperCase() + planName.slice(1)} Plan – Monthly`;
+    } else if (checkoutType === "credits") {
       if (creditsAmount <= 0) {
-        throw new AppError('creditsAmount must be greater than 0', 400, 'BAD_REQUEST')
+        throw new AppError("creditsAmount must be greater than 0", 400, "BAD_REQUEST");
       }
 
-      const currencyKey = currency.toUpperCase()
-      const rate = CREDIT_RATES[currencyKey] || CREDIT_RATES['USD']
-      txCurrency = currencyKey in CREDIT_RATES ? currencyKey : 'USD'
-      amount = creditsAmount * rate
-      description = `${creditsAmount} LanceConnect Lead Credits`
+      const currencyKey = currency.toUpperCase();
+      const rate = CREDIT_RATES[currencyKey] || CREDIT_RATES["USD"];
+      txCurrency = currencyKey in CREDIT_RATES ? currencyKey : "USD";
+      amount = creditsAmount * rate;
+      description = `${creditsAmount} LanceConnect Lead Credits`;
     } else {
-      throw new AppError('Invalid checkoutType. Supported: subscription, credits', 400, 'BAD_REQUEST')
+      throw new AppError(
+        "Invalid checkoutType. Supported: subscription, credits",
+        400,
+        "BAD_REQUEST",
+      );
     }
 
     // Generate unique transaction reference
-    const txRef = `lc_${checkoutType}_${user.id.substring(0, 8)}_${Date.now()}`
+    const txRef = `lc_${checkoutType}_${user.id.substring(0, 8)}_${Date.now()}`;
 
     const flutterwavePayload = {
       tx_ref: txRef,
@@ -149,48 +160,53 @@ Deno.serve(async (req) => {
       meta: {
         supabase_user_id: user.id,
         checkout_type: checkoutType,
-        plan_name: planName || '',
+        plan_name: planName || "",
         credits_amount: creditsAmount,
       },
       customizations: {
-        title: 'LanceConnect',
+        title: "LanceConnect",
         description,
-        logo: `${Deno.env.get('APP_URL') || 'https://lanceconnect.vercel.app'}/logo.png`,
+        logo: `${Deno.env.get("APP_URL") || "https://lanceconnect.vercel.app"}/logo.png`,
       },
-    }
+    };
 
-    const flwRes = await fetch('https://api.flutterwave.com/v3/payments', {
-      method: 'POST',
+    const flwRes = await fetch("https://api.flutterwave.com/v3/payments", {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${flutterwaveSecretKey}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(flutterwavePayload),
-    })
+    });
 
-    const flwData = await flwRes.json()
+    const flwData = await flwRes.json();
 
-    if (flwData.status !== 'success') {
-      console.error('Flutterwave init failed:', flwData)
+    if (flwData.status !== "success") {
+      console.error("Flutterwave init failed:", flwData);
       throw new AppError(
-        flwData.message || 'Flutterwave payment initialization failed',
+        flwData.message || "Flutterwave payment initialization failed",
         502,
-        'FLUTTERWAVE_ERROR'
-      )
+        "FLUTTERWAVE_ERROR",
+      );
     }
 
     // Log Action to Audit Log
     try {
-      await supabase.from('audit_log').insert({
+      await supabase.from("audit_log").insert({
         user_id: user.id,
-        action: 'checkout.flutterwave_initialized',
-        entity_type: 'payment',
-        metadata: { plan_name: planName || '', checkout_type: checkoutType, currency, tx_ref: txRef },
+        action: "checkout.flutterwave_initialized",
+        entity_type: "payment",
+        metadata: {
+          plan_name: planName || "",
+          checkout_type: checkoutType,
+          currency,
+          tx_ref: txRef,
+        },
         ip_address: ipAddress,
-        user_agent: req.headers.get('user-agent') || null
-      })
+        user_agent: req.headers.get("user-agent") || null,
+      });
     } catch (auditErr) {
-      console.warn('Failed to insert audit log:', auditErr)
+      console.warn("Failed to insert audit log:", auditErr);
     }
 
     return new Response(
@@ -198,10 +214,10 @@ Deno.serve(async (req) => {
         payment_link: flwData.data.link,
         tx_ref: txRef,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (error) {
-    Sentry.captureException(error)
-    return handleError(error)
+    Sentry.captureException(error);
+    return handleError(error);
   }
-})
+});

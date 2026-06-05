@@ -4,7 +4,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { SettingsField } from "@/routes/app.settings";
 import { toast } from "sonner";
-import { User as UserIcon, Eye, FolderKanban, Plus, Trash2, Globe, Github, Linkedin, Twitter, MessageSquare, Phone, Mail, Link as LinkIcon, Camera } from "lucide-react";
+import {
+  User as UserIcon,
+  Eye,
+  FolderKanban,
+  Plus,
+  Trash2,
+  Globe,
+  Github,
+  Linkedin,
+  Twitter,
+  MessageSquare,
+  Phone,
+  Mail,
+  Link as LinkIcon,
+  Camera,
+} from "lucide-react";
 
 export const Route = createFileRoute("/app/settings/profile")({
   component: ProfilePage,
@@ -12,37 +27,38 @@ export const Route = createFileRoute("/app/settings/profile")({
 
 function ProfilePage() {
   const { user, updateUser } = useAuth();
-  if (!user) return null;
 
   const [activeTab, setActiveTab] = useState<"basic" | "directory" | "portfolio">("basic");
 
   // Basic Details States
-  const [fullName, setFullName] = useState(user.fullName || "");
-  const [bio, setBio] = useState(user.bio || "");
-  const [websiteUrl, setWebsiteUrl] = useState(user.websiteUrl || "");
-  const [category, setCategory] = useState(user.freelancerCategory || "web_dev");
-  const [country, setCountry] = useState(user.country || "NG");
-  const [city, setCity] = useState(user.city || "");
+  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [bio, setBio] = useState(user?.bio || "");
+  const [websiteUrl, setWebsiteUrl] = useState(user?.websiteUrl || "");
+  const [category, setCategory] = useState(user?.freelancerCategory || "web_dev");
+  const [country, setCountry] = useState(user?.country || "NG");
+  const [city, setCity] = useState(user?.city || "");
 
   // Directory Settings States
-  const [isPublic, setIsPublic] = useState(user.isPublic || false);
-  const [username, setUsername] = useState(user.username || "");
-  const [hourlyRate, setHourlyRate] = useState(user.hourlyRate || "");
-  const [contactEmail, setContactEmail] = useState(user.contactEmail || "");
-  const [contactPhone, setContactPhone] = useState(user.contactPhone || "");
-  
+  const [isPublic, setIsPublic] = useState(user?.isPublic || false);
+  const [username, setUsername] = useState(user?.username || "");
+  const [hourlyRate, setHourlyRate] = useState(user?.hourlyRate || "");
+  const [contactEmail, setContactEmail] = useState(user?.contactEmail || "");
+  const [contactPhone, setContactPhone] = useState(user?.contactPhone || "");
+
   // Social Links States
-  const [githubUrl, setGithubUrl] = useState(user.githubUrl || "");
-  const [linkedinUrl, setLinkedinUrl] = useState(user.linkedinUrl || "");
-  const [dribbbleUrl, setDribbbleUrl] = useState(user.dribbbleUrl || "");
-  const [twitterUrl, setTwitterUrl] = useState(user.twitterUrl || "");
+  const [githubUrl, setGithubUrl] = useState(user?.githubUrl || "");
+  const [linkedinUrl, setLinkedinUrl] = useState(user?.linkedinUrl || "");
+  const [dribbbleUrl, setDribbbleUrl] = useState(user?.dribbbleUrl || "");
+  const [twitterUrl, setTwitterUrl] = useState(user?.twitterUrl || "");
 
   // Portfolio Projects States
-  const [portfolioProjects, setPortfolioProjects] = useState<any[]>(user.portfolioProjects || []);
+  const [portfolioProjects, setPortfolioProjects] = useState<any[]>(user?.portfolioProjects || []);
   const [newProjTitle, setNewProjTitle] = useState("");
   const [newProjDesc, setNewProjDesc] = useState("");
   const [newProjLink, setNewProjLink] = useState("");
   const [newProjImage, setNewProjImage] = useState("");
+
+  if (!user) return null;
 
   const handleAddProject = () => {
     if (!newProjTitle.trim()) {
@@ -53,7 +69,8 @@ function ProfilePage() {
       title: newProjTitle,
       desc: newProjDesc,
       link: newProjLink,
-      image: newProjImage || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80"
+      image:
+        newProjImage || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80",
     };
     setPortfolioProjects([...portfolioProjects, newProj]);
     setNewProjTitle("");
@@ -77,7 +94,9 @@ function ProfilePage() {
     }
 
     if (username && !/^[a-zA-Z0-9_-]{3,30}$/.test(username)) {
-      toast.error("Vanity username must be between 3 and 30 characters and only contain letters, numbers, hyphens, or underscores.");
+      toast.error(
+        "Vanity username must be between 3 and 30 characters and only contain letters, numbers, hyphens, or underscores.",
+      );
       return;
     }
 
@@ -141,91 +160,107 @@ function ProfilePage() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card transition duration-300">
-        
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card transition duration-300"
+      >
         {/* TAB 1: BASIC DETAILS */}
         {activeTab === "basic" && (
           <div className="space-y-5">
             <div className="flex items-center gap-4 border-b border-border/40 pb-4">
               <div className="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 border border-primary/20 text-md font-bold text-primary">
-                {(fullName || "User").split(" ").map(n=>n[0]).join("").toUpperCase()}
+                {(fullName || "User")
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()}
               </div>
               <div>
                 <h3 className="font-display font-bold text-foreground text-sm">Account Bio Info</h3>
-                <p className="text-xs text-muted-foreground">This metadata is displayed globally across your outreach panels.</p>
+                <p className="text-xs text-muted-foreground">
+                  This metadata is displayed globally across your outreach panels.
+                </p>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <SettingsField label="Full name">
-                <input 
-                  value={fullName} 
-                  onChange={e=>setFullName(e.target.value)} 
+                <input
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. Alex Johnson"
-                  className="input text-foreground bg-background" 
+                  className="input text-foreground bg-background"
                   required
                 />
               </SettingsField>
 
               <SettingsField label="Email (Private Login)">
-                <input 
-                  value={user.email} 
-                  disabled 
-                  type="email" 
-                  className="input opacity-60 cursor-not-allowed text-foreground bg-background" 
+                <input
+                  value={user.email}
+                  disabled
+                  type="email"
+                  className="input opacity-60 cursor-not-allowed text-foreground bg-background"
                 />
               </SettingsField>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <SettingsField label="Freelancer category">
-                <select 
-                  value={category} 
-                  onChange={e=>setCategory(e.target.value)} 
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
                   className="input text-foreground bg-background cursor-pointer"
                 >
-                  {CATEGORIES.map(c=><option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
+                  {CATEGORIES.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.emoji} {c.label}
+                    </option>
+                  ))}
                 </select>
               </SettingsField>
 
               <SettingsField label="Country">
-                <select 
-                  value={country} 
-                  onChange={e=>setCountry(e.target.value)} 
+                <select
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
                   className="input text-foreground bg-background cursor-pointer"
                 >
-                  {COUNTRIES.map(c=><option key={c.code} value={c.code}>{c.flag} {c.name}</option>)}
+                  {COUNTRIES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.flag} {c.name}
+                    </option>
+                  ))}
                 </select>
               </SettingsField>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <SettingsField label="City">
-                <input 
-                  value={city} 
-                  onChange={e=>setCity(e.target.value)} 
+                <input
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
                   placeholder="e.g. Lagos or London"
-                  className="input text-foreground bg-background" 
+                  className="input text-foreground bg-background"
                 />
               </SettingsField>
 
               <SettingsField label="Personal Website / Link">
-                <input 
-                  value={websiteUrl} 
-                  onChange={e=>setWebsiteUrl(e.target.value)} 
-                  placeholder="https://example.com" 
-                  className="input text-foreground bg-background" 
+                <input
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  className="input text-foreground bg-background"
                 />
               </SettingsField>
             </div>
 
             <SettingsField label="Short Bio / Pitch Summary">
-              <textarea 
-                value={bio} 
-                onChange={e=>setBio(e.target.value)} 
-                rows={3} 
-                placeholder="Briefly state your expertise and target value proposition..." 
-                className="input text-foreground bg-background" 
+              <textarea
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                rows={3}
+                placeholder="Briefly state your expertise and target value proposition..."
+                className="input text-foreground bg-background"
               />
             </SettingsField>
           </div>
@@ -237,39 +272,51 @@ function ProfilePage() {
             <div className="flex items-start gap-4 border-b border-border/40 pb-4">
               <Eye className="h-6 w-6 text-primary shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-display font-bold text-foreground text-sm">Directory Listing Settings</h3>
-                <p className="text-xs text-muted-foreground">Control how clients find you. Public profiles allow clients to contact you directly off-platform.</p>
+                <h3 className="font-display font-bold text-foreground text-sm">
+                  Directory Listing Settings
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Control how clients find you. Public profiles allow clients to contact you
+                  directly off-platform.
+                </p>
               </div>
             </div>
 
             {/* Visibility toggle card */}
             <div className="rounded-2xl border border-border bg-background p-4 flex items-center justify-between shadow-sm">
               <div className="space-y-1">
-                <span className="text-xs font-semibold font-mono block">Show Profile in Directory</span>
-                <span className="text-xs text-muted-foreground block leading-normal">Allows anonymous clients to browse your credentials in search outputs.</span>
+                <span className="text-xs font-semibold font-mono block">
+                  Show Profile in Directory
+                </span>
+                <span className="text-xs text-muted-foreground block leading-normal">
+                  Allows anonymous clients to browse your credentials in search outputs.
+                </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer select-none">
-                <input 
-                  type="checkbox" 
-                  checked={isPublic} 
-                  onChange={e=>setIsPublic(e.target.checked)} 
-                  className="sr-only peer" 
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="sr-only peer"
                 />
                 <div className="w-10 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
               </label>
             </div>
 
             {/* Config fields, only enabled/critical if isPublic is true */}
-            <div className={`space-y-5 transition duration-200 ${isPublic ? "opacity-100" : "opacity-50 pointer-events-none select-none"}`}>
-              
+            <div
+              className={`space-y-5 transition duration-200 ${isPublic ? "opacity-100" : "opacity-50 pointer-events-none select-none"}`}
+            >
               <div className="grid gap-4 sm:grid-cols-2">
                 <SettingsField label="Vanity Username">
                   <div className="relative">
-                    <input 
-                      value={username} 
-                      onChange={e=>setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))} 
+                    <input
+                      value={username}
+                      onChange={(e) =>
+                        setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))
+                      }
                       placeholder="e.g. alex-dev"
-                      className="input text-foreground bg-background" 
+                      className="input text-foreground bg-background"
                       required={isPublic}
                     />
                   </div>
@@ -281,83 +328,97 @@ function ProfilePage() {
                 </SettingsField>
 
                 <SettingsField label="Hourly Rate ($/hr)">
-                  <input 
-                    type="number" 
-                    value={hourlyRate} 
-                    onChange={e=>setHourlyRate(e.target.value)} 
+                  <input
+                    type="number"
+                    value={hourlyRate}
+                    onChange={(e) => setHourlyRate(e.target.value)}
                     placeholder="e.g. 50"
                     min="1"
-                    className="input text-foreground bg-background" 
+                    className="input text-foreground bg-background"
                   />
                 </SettingsField>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 border-t border-border/40 pt-4">
                 <SettingsField label="Public Contact Email">
-                  <input 
-                    type="email" 
-                    value={contactEmail} 
-                    onChange={e=>setContactEmail(e.target.value)} 
+                  <input
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
                     placeholder="e.g. contact@alexjohnson.com"
-                    className="input text-foreground bg-background" 
+                    className="input text-foreground bg-background"
                   />
-                  <span className="text-[9px] text-muted-foreground block mt-1">If blank, defaults to your private account email.</span>
+                  <span className="text-[9px] text-muted-foreground block mt-1">
+                    If blank, defaults to your private account email.
+                  </span>
                 </SettingsField>
 
                 <SettingsField label="Public Phone / WhatsApp">
-                  <input 
-                    type="text" 
-                    value={contactPhone} 
-                    onChange={e=>setContactPhone(e.target.value)} 
+                  <input
+                    type="text"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
                     placeholder="e.g. +2348012345678"
-                    className="input text-foreground bg-background" 
+                    className="input text-foreground bg-background"
                   />
-                  <span className="text-[9px] text-muted-foreground block mt-1">Enter in international format (with +) for direct WhatsApp links.</span>
+                  <span className="text-[9px] text-muted-foreground block mt-1">
+                    Enter in international format (with +) for direct WhatsApp links.
+                  </span>
                 </SettingsField>
               </div>
 
               {/* Social Links Sub-section */}
               <div className="border-t border-border/40 pt-4 space-y-3">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Social Presence</h4>
-                
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Social Presence
+                </h4>
+
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="flex items-center gap-2">
-                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400"><Github className="h-4 w-4" /></span>
-                    <input 
-                      value={githubUrl} 
-                      onChange={e=>setGithubUrl(e.target.value)} 
-                      placeholder="GitHub URL" 
-                      className="input text-foreground bg-background" 
+                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400">
+                      <Github className="h-4 w-4" />
+                    </span>
+                    <input
+                      value={githubUrl}
+                      onChange={(e) => setGithubUrl(e.target.value)}
+                      placeholder="GitHub URL"
+                      className="input text-foreground bg-background"
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400"><Linkedin className="h-4 w-4" /></span>
-                    <input 
-                      value={linkedinUrl} 
-                      onChange={e=>setLinkedinUrl(e.target.value)} 
-                      placeholder="LinkedIn URL" 
-                      className="input text-foreground bg-background" 
+                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400">
+                      <Linkedin className="h-4 w-4" />
+                    </span>
+                    <input
+                      value={linkedinUrl}
+                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      placeholder="LinkedIn URL"
+                      className="input text-foreground bg-background"
                     />
                   </div>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="flex items-center gap-2">
-                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400"><Globe className="h-4 w-4" /></span>
-                    <input 
-                      value={dribbbleUrl} 
-                      onChange={e=>setDribbbleUrl(e.target.value)} 
-                      placeholder="Dribbble/Portfolio Link" 
-                      className="input text-foreground bg-background" 
+                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400">
+                      <Globe className="h-4 w-4" />
+                    </span>
+                    <input
+                      value={dribbbleUrl}
+                      onChange={(e) => setDribbbleUrl(e.target.value)}
+                      placeholder="Dribbble/Portfolio Link"
+                      className="input text-foreground bg-background"
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400"><Twitter className="h-4 w-4" /></span>
-                    <input 
-                      value={twitterUrl} 
-                      onChange={e=>setTwitterUrl(e.target.value)} 
-                      placeholder="Twitter/X URL" 
-                      className="input text-foreground bg-background" 
+                    <span className="p-2 border border-border bg-background rounded-lg text-slate-400">
+                      <Twitter className="h-4 w-4" />
+                    </span>
+                    <input
+                      value={twitterUrl}
+                      onChange={(e) => setTwitterUrl(e.target.value)}
+                      placeholder="Twitter/X URL"
+                      className="input text-foreground bg-background"
                     />
                   </div>
                 </div>
@@ -372,8 +433,13 @@ function ProfilePage() {
             <div className="flex items-start gap-4 border-b border-border/40 pb-4">
               <FolderKanban className="h-6 w-6 text-primary shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-display font-bold text-foreground text-sm">Portfolio Case Studies</h3>
-                <p className="text-xs text-muted-foreground">List visual representations of your past client deliveries. Add titles, descriptions, and mock/live screenshots.</p>
+                <h3 className="font-display font-bold text-foreground text-sm">
+                  Portfolio Case Studies
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  List visual representations of your past client deliveries. Add titles,
+                  descriptions, and mock/live screenshots.
+                </p>
               </div>
             </div>
 
@@ -381,27 +447,36 @@ function ProfilePage() {
             <div className="space-y-3">
               {portfolioProjects.length === 0 ? (
                 <div className="text-center py-8 border border-dashed border-border rounded-2xl bg-background">
-                  <p className="text-xs text-muted-foreground font-mono">No portfolio projects uploaded yet.</p>
+                  <p className="text-xs text-muted-foreground font-mono">
+                    No portfolio projects uploaded yet.
+                  </p>
                 </div>
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {portfolioProjects.map((p, idx) => (
-                    <div key={idx} className="relative group border border-border bg-background rounded-2xl p-4 flex flex-col justify-between hover:border-slate-700 transition">
+                    <div
+                      key={idx}
+                      className="relative group border border-border bg-background rounded-2xl p-4 flex flex-col justify-between hover:border-slate-700 transition"
+                    >
                       <div>
                         {p.image && (
-                          <img 
-                            src={p.image} 
-                            alt={p.title} 
-                            className="aspect-[16/9] w-full rounded-lg object-cover mb-3 border border-border/60" 
+                          <img
+                            src={p.image}
+                            alt={p.title}
+                            className="aspect-[16/9] w-full rounded-lg object-cover mb-3 border border-border/60"
                           />
                         )}
                         <h4 className="text-xs font-bold text-foreground truncate">{p.title}</h4>
-                        <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{p.desc}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                          {p.desc}
+                        </p>
                       </div>
                       <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-2 text-[10px] font-mono">
-                        <span className="text-primary truncate max-w-[120px]">{p.link || "No links"}</span>
-                        <button 
-                          type="button" 
+                        <span className="text-primary truncate max-w-[120px]">
+                          {p.link || "No links"}
+                        </span>
+                        <button
+                          type="button"
                           onClick={() => handleRemoveProject(idx)}
                           className="text-red-500 hover:text-red-600 transition flex items-center gap-1 cursor-pointer"
                         >
@@ -419,37 +494,37 @@ function ProfilePage() {
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Plus className="h-4 w-4 text-primary" /> Add New Project Case Study
               </h4>
-              
+
               <div className="grid gap-3 sm:grid-cols-2">
                 <SettingsField label="Project Title *">
-                  <input 
-                    value={newProjTitle} 
-                    onChange={e=>setNewProjTitle(e.target.value)} 
+                  <input
+                    value={newProjTitle}
+                    onChange={(e) => setNewProjTitle(e.target.value)}
                     placeholder="e.g. E-Commerce Platform"
-                    className="input text-foreground bg-background" 
+                    className="input text-foreground bg-background"
                   />
                 </SettingsField>
                 <SettingsField label="Live URL / Link">
-                  <input 
-                    value={newProjLink} 
-                    onChange={e=>setNewProjLink(e.target.value)} 
+                  <input
+                    value={newProjLink}
+                    onChange={(e) => setNewProjLink(e.target.value)}
                     placeholder="https://example.com/project"
-                    className="input text-foreground bg-background" 
+                    className="input text-foreground bg-background"
                   />
                 </SettingsField>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <SettingsField label="Project Image URL (Optional)">
-                  <input 
-                    value={newProjImage} 
-                    onChange={e=>setNewProjImage(e.target.value)} 
+                  <input
+                    value={newProjImage}
+                    onChange={(e) => setNewProjImage(e.target.value)}
                     placeholder="https://images.unsplash.com/... or blank"
-                    className="input text-foreground bg-background" 
+                    className="input text-foreground bg-background"
                   />
                 </SettingsField>
                 <div className="flex flex-col justify-end">
-                  <button 
+                  <button
                     type="button"
                     onClick={handleAddProject}
                     className="h-10 w-full rounded-lg bg-accent text-foreground hover:bg-accent/80 border border-border/60 hover:border-border text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
@@ -460,12 +535,12 @@ function ProfilePage() {
               </div>
 
               <SettingsField label="Short Case Description">
-                <textarea 
-                  value={newProjDesc} 
-                  onChange={e=>setNewProjDesc(e.target.value)} 
-                  rows={2} 
-                  placeholder="Describe the client problem you solved and the output delivered..." 
-                  className="input text-foreground bg-background" 
+                <textarea
+                  value={newProjDesc}
+                  onChange={(e) => setNewProjDesc(e.target.value)}
+                  rows={2}
+                  placeholder="Describe the client problem you solved and the output delivered..."
+                  className="input text-foreground bg-background"
                 />
               </SettingsField>
             </div>
@@ -474,7 +549,10 @@ function ProfilePage() {
 
         {/* Global Save Button */}
         <div className="pt-4 border-t border-border/40 flex justify-end">
-          <button type="submit" className="rounded-xl bg-primary px-6 py-2.5 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition shadow-sm hover:shadow cursor-pointer">
+          <button
+            type="submit"
+            className="rounded-xl bg-primary px-6 py-2.5 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition shadow-sm hover:shadow cursor-pointer"
+          >
             Save changes
           </button>
         </div>

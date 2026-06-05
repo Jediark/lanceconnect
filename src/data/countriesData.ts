@@ -198,7 +198,7 @@ export const COUNTRIES: Country[] = [
   { code: "VN", name: "Vietnam" },
   { code: "YE", name: "Yemen" },
   { code: "ZM", name: "Zambia" },
-  { code: "ZW", name: "Zimbabwe" }
+  { code: "ZW", name: "Zimbabwe" },
 ];
 
 export const COUNTRY_CITIES: Record<string, string[]> = {
@@ -385,8 +385,25 @@ export const COUNTRY_CITIES: Record<string, string[]> = {
   Uganda: ["Kampala", "Entebbe", "Gulu", "Mbarara", "Jinja"],
   Ukraine: ["Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro"],
   "United Arab Emirates": ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Al Ain"],
-  "United Kingdom": ["London", "Manchester", "Birmingham", "Edinburgh", "Glasgow", "Leeds", "Belfast"],
-  "United States": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco", "Miami", "Seattle", "Austin"],
+  "United Kingdom": [
+    "London",
+    "Manchester",
+    "Birmingham",
+    "Edinburgh",
+    "Glasgow",
+    "Leeds",
+    "Belfast",
+  ],
+  "United States": [
+    "New York",
+    "Los Angeles",
+    "Chicago",
+    "Houston",
+    "San Francisco",
+    "Miami",
+    "Seattle",
+    "Austin",
+  ],
   Uruguay: ["Montevideo", "Salto", "Ciudad de la Costa"],
   Uzbekistan: ["Tashkent", "Samarkand", "Namangan", "Bukhara"],
   Vanuatu: ["Port Vila", "Luganville"],
@@ -395,5 +412,5 @@ export const COUNTRY_CITIES: Record<string, string[]> = {
   Vietnam: ["Hanoi", "Ho Chi Minh City", "Da Nang", "Haiphong", "Nha Trang"],
   Yemen: ["Sana'a", "Aden", "Taiz", "Al Hudaydah"],
   Zambia: ["Lusaka", "Kitwe", "Ndola"],
-  Zimbabwe: ["Harare", "Bulawayo", "Chitungwiza", "Mutare"]
+  Zimbabwe: ["Harare", "Bulawayo", "Chitungwiza", "Mutare"],
 };

@@ -11,14 +11,14 @@ const SETTINGS_NAV = [
 ];
 
 export function SettingsSidebar() {
-  const pathname = useRouterState({ select: s => s.location.pathname });
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <aside className="w-full md:w-64 shrink-0 pr-4 md:border-r border-border md:pr-8 mb-6 md:mb-0">
       <nav className="flex flex-row md:flex-col gap-1 overflow-x-auto pb-4 md:pb-0">
         {SETTINGS_NAV.map((item) => {
-          const active = item.exact 
-            ? pathname === item.to || pathname === "/app/settings/" 
+          const active = item.exact
+            ? pathname === item.to || pathname === "/app/settings/"
             : pathname === item.to;
           const Icon = item.icon;
           return (
@@ -29,7 +29,7 @@ export function SettingsSidebar() {
                 "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition whitespace-nowrap",
                 active
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
               )}
             >
               <Icon className="h-4 w-4" />

@@ -1,4 +1,5 @@
 # LanceConnect — Final Frontend Build Prompt
+
 **Version**: 2.0 (Final) | **Date**: 2026-06-03
 **Platform**: Kilo
 **Stack**: React + TypeScript + TanStack Start (Vite) + Tailwind CSS + Framer Motion + shadcn/ui
@@ -11,26 +12,29 @@
 ## BRAND IDENTITY
 
 ### Logo Design
+
 `<LanceConnectLogo />` SVG component:
+
 - Left node: filled circle (#6366F1 indigo) — represents freelancer
 - Center: stylized connector line
-- Right node: filled circle (#10B981 emerald) — represents client  
+- Right node: filled circle (#10B981 emerald) — represents client
 - Wordmark: "Lance" in Outfit 700 white + "Connect" in Outfit 700 indigo
 - Slogan below: "The Meeting Point for Freelancers and Clients" in JetBrains Mono 11px
 
 ### Favicon
+
 `/public/favicon.svg`:
+
 - Dark background: #080B14
 - Two dots: left indigo (#6366F1), right emerald (#10B981)
 - Connected by thin diagonal line
 - Rounded square container (rx=8)
 
 ### Color System
+
 ```css
---lc-indigo:  #6366F1   /* Primary — CTAs, links */
---lc-emerald: #10B981   /* Success signals */
---lc-bg-base: #080B14   /* Page background */
---lc-bg-surface: #0F172A /* Cards, sidebar */
+--lc-indigo: #6366f1 /* Primary — CTAs, links */ --lc-emerald: #10b981 /* Success signals */
+  --lc-bg-base: #080b14 /* Page background */ --lc-bg-surface: #0f172a /* Cards, sidebar */;
 ```
 
 ---
@@ -41,7 +45,7 @@
 
 ```
 APP DASHBOARD & SIDEBAR  → linear.app
-LANDING PAGE TRUST       → stripe.com  
+LANDING PAGE TRUST       → stripe.com
 FEATURE SECTIONS         → notion.so
 LEAD CARDS & TABLES      → apollo.io
 HERO DARK AESTHETIC      → vercel.com
@@ -61,7 +65,8 @@ BENTO GRID + DATA FEEL  → abacus.ai
 Global platform = global imagery. Use real Unsplash photos with diverse ethnicities.
 
 ### Hero Mosaic Images
-- africanManLaptop: woman with laptop (Brooke Cagle)  
+
+- africanManLaptop: woman with laptop (Brooke Cagle)
 - indianWomanWork: professional workspace
 - whiteManCall: video call setup
 - latinaDesigner: creative work
@@ -69,6 +74,7 @@ Global platform = global imagery. Use real Unsplash photos with diverse ethnicit
 - africanWomanSmile: confident freelancer
 
 ### Implementation
+
 ```tsx
 const HUMAN_IMAGES = {
   africanManLaptop: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&q=80",
@@ -85,6 +91,7 @@ const HUMAN_IMAGES = {
 ## ALL 42 PAGES TO BUILD
 
 ### PUBLIC ROUTES (MarketingShell)
+
 1. `/` - Home page
 2. `/about` - About
 3. `/features` - Features
@@ -96,9 +103,10 @@ const HUMAN_IMAGES = {
 9. `/blog` - Blog index (6 posts)
 10. `/blog/$slug` - Single blog post
 11. `/changelog` - Changelog
-12-21. `/freelancers/{web-developers,designers,copywriters,seo-specialists,social-media,videographers,photographers,marketers,virtual-assistants,app-developers}`
+    12-21. `/freelancers/{web-developers,designers,copywriters,seo-specialists,social-media,videographers,photographers,marketers,virtual-assistants,app-developers}`
 
 ### AUTH ROUTES (AuthSplit layout)
+
 22. `/register` - Sign up
 23. `/login` - Log in
 24. `/forgot-password` - Password reset
@@ -107,6 +115,7 @@ const HUMAN_IMAGES = {
 27. `/onboarding` - 3-step wizard
 
 ### APP ROUTES (AppLayout with sidebar)
+
 28. `/app/dashboard` - Stats + quick search
 29. `/app/discover` - Lead discovery (CORE)
 30. `/app/pipeline` - CRM kanban + table
@@ -115,6 +124,7 @@ const HUMAN_IMAGES = {
 33. `/app/upgrade` - In-app pricing
 
 ### SETTINGS ROUTES
+
 34. `/app/settings` - Settings hub
 35. `/app/settings/profile` - Profile editor
 36. `/app/settings/subscription` - Plan + billing
@@ -122,6 +132,7 @@ const HUMAN_IMAGES = {
 38. `/app/settings/danger-zone` - Delete account
 
 ### SYSTEM
+
 39. `/404` - Not found
 40. `/500` - Server error
 41. `/maintenance` - Maintenance mode
@@ -132,7 +143,9 @@ const HUMAN_IMAGES = {
 ## KEY IMPLEMENTATION NOTES
 
 ### Section Labels
+
 Every section must have `// label.style` prefix in JetBrains Mono 11px:
+
 ```tsx
 <p className="text-[11px] font-mono-data text-muted-foreground uppercase tracking-widest">
   // find.clients.globally
@@ -140,6 +153,7 @@ Every section must have `// label.style` prefix in JetBrains Mono 11px:
 ```
 
 ### Opportunity Score Colors
+
 - 90–100: emerald-500 "🔥 Hot Lead"
 - 70–89: blue-500 "⭐ Strong"
 - 50–69: amber-500 "👍 Good"
@@ -147,12 +161,15 @@ Every section must have `// label.style` prefix in JetBrains Mono 11px:
 - 1–29: slate-400 "🔍 Weak"
 
 ### Pipeline Status Columns
+
 ```
 NEW → CONTACTED → INTERESTED → PROPOSAL SENT → WON / LOST
 ```
+
 Colors: slate, blue, indigo, amber, emerald, red
 
 ### Dependencies
+
 ```bash
 npm install framer-motion zustand lucide-react sonner
 npm install react-hook-form zod @hookform/resolvers
@@ -178,5 +195,5 @@ npx shadcn-ui@latest add button card badge dialog select tabs
 
 ---
 
-*End of LanceConnect Frontend Build Prompt v2.0*
-*Ready for Kilo to complete remaining 42 pages and polish UI*
+_End of LanceConnect Frontend Build Prompt v2.0_
+_Ready for Kilo to complete remaining 42 pages and polish UI_

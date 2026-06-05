@@ -1,6 +1,26 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, Check, Code, Palette, PenTool, TrendingUp, MessageSquare, Video, Camera, Megaphone, Smartphone, Users, Globe, GraduationCap, Leaf, Utensils, Package, Factory, BookOpen } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Code,
+  Palette,
+  PenTool,
+  TrendingUp,
+  MessageSquare,
+  Video,
+  Camera,
+  Megaphone,
+  Smartphone,
+  Users,
+  Globe,
+  GraduationCap,
+  Leaf,
+  Utensils,
+  Package,
+  Factory,
+  BookOpen,
+} from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,7 +41,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   restaurant_supplier: <Utensils className="h-5 w-5 text-primary" />,
   product_export: <Package className="h-5 w-5 text-primary" />,
   b2b_trade: <Factory className="h-5 w-5 text-primary" />,
-  corporate_training: <BookOpen className="h-5 w-5 text-primary" />
+  corporate_training: <BookOpen className="h-5 w-5 text-primary" />,
 };
 
 export const Route = createFileRoute("/onboarding")({
@@ -58,7 +78,7 @@ function Onboarding() {
         city: city || null,
         bio: bio || null,
         websiteUrl: website || null,
-        onboardingCompleted: true
+        onboardingCompleted: true,
       });
     }
     nav({ to: "/app/discover" });
@@ -69,7 +89,13 @@ function Onboarding() {
       <div className="mx-auto max-w-3xl px-4 py-10 lg:py-16">
         <div className="mb-8 flex items-center gap-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className={cn("h-1.5 flex-1 rounded-full transition", i <= step ? "bg-primary" : "bg-border")} />
+            <div
+              key={i}
+              className={cn(
+                "h-1.5 flex-1 rounded-full transition",
+                i <= step ? "bg-primary" : "bg-border",
+              )}
+            />
           ))}
         </div>
         <p className="mb-2 text-xs font-mono-data text-muted-foreground">STEP {step} OF 3</p>
@@ -77,7 +103,9 @@ function Onboarding() {
         {step === 1 && (
           <>
             <h1 className="font-display text-3xl font-bold md:text-4xl">What do you do?</h1>
-            <p className="mt-2 text-muted-foreground">We'll find businesses that specifically need your skills.</p>
+            <p className="mt-2 text-muted-foreground">
+              We'll find businesses that specifically need your skills.
+            </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {CATEGORIES.map((c) => {
                 const active = category === c.id;
@@ -95,7 +123,9 @@ function Onboarding() {
                         <Check className="h-3 w-3" />
                       </span>
                     )}
-                    <div className="mb-2 text-primary">{CATEGORY_ICONS[c.id] || <Code className="h-5 w-5" />}</div>
+                    <div className="mb-2 text-primary">
+                      {CATEGORY_ICONS[c.id] || <Code className="h-5 w-5" />}
+                    </div>
                     <p className="mt-2 font-display text-sm font-semibold">{c.label}</p>
                     <p className="mt-1 text-[11px] text-muted-foreground">{c.example}</p>
                   </button>
@@ -103,7 +133,11 @@ function Onboarding() {
               })}
             </div>
             <div className="mt-10 flex justify-end">
-              <button onClick={next} disabled={!category} className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-40">
+              <button
+                onClick={next}
+                disabled={!category}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-40"
+              >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -113,19 +147,32 @@ function Onboarding() {
         {step === 2 && (
           <>
             <h1 className="font-display text-3xl font-bold md:text-4xl">Where should we look?</h1>
-            <p className="mt-2 text-muted-foreground">We find leads globally — start with your best target market.</p>
+            <p className="mt-2 text-muted-foreground">
+              We find leads globally — start with your best target market.
+            </p>
             <div className="mt-8 space-y-4">
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Country</label>
-                <select value={country} onChange={(e) => setCountry(e.target.value)} disabled={worldwide} className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm disabled:opacity-50">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Country
+                </label>
+                <select
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  disabled={worldwide}
+                  className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm disabled:opacity-50"
+                >
                   <option value="">Select a country</option>
                   {COUNTRIES.map((c) => (
-                    <option key={c.code} value={c.code}>{c.name}</option>
+                    <option key={c.code} value={c.code}>
+                      {c.name}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">City</label>
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  City
+                </label>
                 <input
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
@@ -135,13 +182,27 @@ function Onboarding() {
                 />
               </div>
               <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border bg-card p-3 text-sm">
-                <input type="checkbox" checked={worldwide} onChange={(e) => setWorldwide(e.target.checked)} className="h-4 w-4 accent-primary" />
+                <input
+                  type="checkbox"
+                  checked={worldwide}
+                  onChange={(e) => setWorldwide(e.target.checked)}
+                  className="h-4 w-4 accent-primary"
+                />
                 <Globe className="h-4 w-4 text-muted-foreground" /> <span>Search worldwide</span>
               </label>
             </div>
             <div className="mt-10 flex justify-between">
-              <button onClick={() => setStep(1)} className="rounded-lg border border-border px-5 py-2.5 text-sm font-medium hover:bg-accent">Back</button>
-              <button onClick={next} disabled={!worldwide && !country} className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-40">
+              <button
+                onClick={() => setStep(1)}
+                className="rounded-lg border border-border px-5 py-2.5 text-sm font-medium hover:bg-accent"
+              >
+                Back
+              </button>
+              <button
+                onClick={next}
+                disabled={!worldwide && !country}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-40"
+              >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -151,22 +212,49 @@ function Onboarding() {
         {step === 3 && (
           <>
             <h1 className="font-display text-3xl font-bold md:text-4xl">Almost there!</h1>
-            <p className="mt-2 text-muted-foreground">Tell us a little about yourself so your outreach feels personal.</p>
+            <p className="mt-2 text-muted-foreground">
+              Tell us a little about yourself so your outreach feels personal.
+            </p>
             <div className="mt-8 space-y-4">
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Full name</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Alex Johnson" className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm" />
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Full name
+                </label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Alex Johnson"
+                  className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
+                />
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Website or portfolio (optional)</label>
-                <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://your-site.com" className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm" />
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Website or portfolio (optional)
+                </label>
+                <input
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  placeholder="https://your-site.com"
+                  className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
+                />
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Short bio — what you offer</label>
-                <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} placeholder="I build fast, affordable websites for restaurants and local businesses." className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm" />
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Short bio — what you offer
+                </label>
+                <textarea
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  rows={3}
+                  placeholder="I build fast, affordable websites for restaurants and local businesses."
+                  className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
+                />
               </div>
             </div>
-            <button onClick={handleComplete} className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+            <button
+              onClick={handleComplete}
+              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
               Start Finding Clients <ArrowRight className="h-4 w-4" />
             </button>
           </>

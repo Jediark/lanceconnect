@@ -25,6 +25,6 @@ export const useFilterStore = create<FilterState>()(
         set((state) => ({ filters: { ...state.filters, ...newFilters } })),
       resetFilters: () => set({ filters: initialFilters }),
     }),
-    { name: "filter-store" }
-  )
+    { name: "filter-store" },
+  ),
 );

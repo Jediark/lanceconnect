@@ -26,13 +26,7 @@ export type Lead = {
   followUpDate?: string | null;
 };
 
-export type PipelineStatus =
-  | "new"
-  | "contacted"
-  | "interested"
-  | "proposal_sent"
-  | "won"
-  | "lost";
+export type PipelineStatus = "new" | "contacted" | "interested" | "proposal_sent" | "won" | "lost";
 
 export type User = {
   id: string;
@@ -113,10 +107,53 @@ export const CATEGORY_TO_PLACES_QUERY: Record<string, string[]> = {
   marketing: ["startup", "retail store", "clinic", "sports club"],
   app_dev: ["restaurant chain", "retail store", "healthcare provider"],
   va: ["entrepreneur", "small business", "consultant", "coach"],
-  tutor: ["primary school", "secondary school", "learning center", "tutoring center", "language school", "university", "college"],
-  african_food_export: ["african food store", "caribbean food importer", "ethnic food wholesaler", "african restaurant", "international food distributor", "african caribbean supermarket", "ethnic grocery"],
-  restaurant_supplier: ["restaurant", "hotel kitchen", "catering company", "food service company", "pub kitchen", "cafe"],
-  product_export: ["food importer", "commodity trader", "wholesale distributor", "import export company", "international trader"],
-  b2b_trade: ["manufacturer", "wholesale supplier", "distributor", "procurement company", "buying agent", "trading company"],
-  corporate_training: ["corporate office", "hr department", "private school administrative office", "training center", "business headquarters", "non profit organization"]
+  tutor: [
+    "primary school",
+    "secondary school",
+    "learning center",
+    "tutoring center",
+    "language school",
+    "university",
+    "college",
+  ],
+  african_food_export: [
+    "african food store",
+    "caribbean food importer",
+    "ethnic food wholesaler",
+    "african restaurant",
+    "international food distributor",
+    "african caribbean supermarket",
+    "ethnic grocery",
+  ],
+  restaurant_supplier: [
+    "restaurant",
+    "hotel kitchen",
+    "catering company",
+    "food service company",
+    "pub kitchen",
+    "cafe",
+  ],
+  product_export: [
+    "food importer",
+    "commodity trader",
+    "wholesale distributor",
+    "import export company",
+    "international trader",
+  ],
+  b2b_trade: [
+    "manufacturer",
+    "wholesale supplier",
+    "distributor",
+    "procurement company",
+    "buying agent",
+    "trading company",
+  ],
+  corporate_training: [
+    "corporate office",
+    "hr department",
+    "private school administrative office",
+    "training center",
+    "business headquarters",
+    "non profit organization",
+  ],
 };

@@ -2,36 +2,37 @@ export const logger = {
   info(message: string, context?: Record<string, any>) {
     console.log(
       JSON.stringify({
-        level: 'INFO',
+        level: "INFO",
         timestamp: new Date().toISOString(),
         message,
-        ...context
-      })
-    )
+        ...context,
+      }),
+    );
   },
   warn(message: string, context?: Record<string, any>) {
     console.warn(
       JSON.stringify({
-        level: 'WARN',
+        level: "WARN",
         timestamp: new Date().toISOString(),
         message,
-        ...context
-      })
-    )
+        ...context,
+      }),
+    );
   },
   error(message: string, error?: unknown, context?: Record<string, any>) {
-    const errorDetails = error instanceof Error 
-      ? { errorName: error.name, errorMessage: error.message, errorStack: error.stack }
-      : { rawError: String(error) }
+    const errorDetails =
+      error instanceof Error
+        ? { errorName: error.name, errorMessage: error.message, errorStack: error.stack }
+        : { rawError: String(error) };
 
     console.error(
       JSON.stringify({
-        level: 'ERROR',
+        level: "ERROR",
         timestamp: new Date().toISOString(),
         message,
         ...errorDetails,
-        ...context
-      })
-    )
-  }
-}
+        ...context,
+      }),
+    );
+  },
+};

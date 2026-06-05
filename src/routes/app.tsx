@@ -7,7 +7,9 @@ export const Route = createFileRoute("/app")({
   beforeLoad: () => {
     if (typeof window !== "undefined") {
       const isDemo = localStorage.getItem("lance_auth") === "1";
-      const hasSupabaseSession = Object.keys(localStorage).some((k) => k.startsWith("sb-") && k.endsWith("-auth-token"));
+      const hasSupabaseSession = Object.keys(localStorage).some(
+        (k) => k.startsWith("sb-") && k.endsWith("-auth-token"),
+      );
       if (!isDemo && !hasSupabaseSession) {
         throw redirect({ to: "/login" });
       }

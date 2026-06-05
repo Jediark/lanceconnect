@@ -1,6 +1,14 @@
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Cell,
 } from "recharts";
 import { cn } from "@/lib/utils";
 
@@ -34,13 +42,36 @@ export function LeadsOverTimeChart({ className }: { className?: string }) {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
-          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} dy={10} />
-          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
-          <Tooltip 
-            contentStyle={{ backgroundColor: "var(--color-card)", borderColor: "var(--color-border)", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+            dy={10}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--color-card)",
+              borderColor: "var(--color-border)",
+              borderRadius: "12px",
+              fontSize: "12px",
+              fontWeight: "bold",
+            }}
             itemStyle={{ color: "#2563EB" }}
           />
-          <Area type="monotone" dataKey="leads" stroke="#2563EB" strokeWidth={3} fillOpacity={1} fill="url(#colorLeads)" />
+          <Area
+            type="monotone"
+            dataKey="leads"
+            stroke="#2563EB"
+            strokeWidth={3}
+            fillOpacity={1}
+            fill="url(#colorLeads)"
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
@@ -51,13 +82,30 @@ export function PipelineFunnelChart({ className }: { className?: string }) {
   return (
     <div className={cn("h-64 w-full", className)}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={funnelData} layout="vertical" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
+        <BarChart
+          data={funnelData}
+          layout="vertical"
+          margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
+        >
           <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--color-border)" />
           <XAxis type="number" hide />
-          <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "var(--color-foreground)", fontWeight: 600 }} width={80} />
-          <Tooltip 
+          <YAxis
+            type="category"
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 11, fill: "var(--color-foreground)", fontWeight: 600 }}
+            width={80}
+          />
+          <Tooltip
             cursor={{ fill: "transparent" }}
-            contentStyle={{ backgroundColor: "var(--color-card)", borderColor: "var(--color-border)", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}
+            contentStyle={{
+              backgroundColor: "var(--color-card)",
+              borderColor: "var(--color-border)",
+              borderRadius: "12px",
+              fontSize: "12px",
+              fontWeight: "bold",
+            }}
           />
           <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
             {funnelData.map((entry, index) => (

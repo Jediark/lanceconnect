@@ -8,7 +8,13 @@ type Ctx = {
   savedIds: Set<string>;
   saveLead: (lead: Lead) => Promise<void>;
   removeLead: (id: string) => Promise<void>;
-  updateStatus: (id: string, status: PipelineStatus, notes?: string, followUpDate?: string | null, dealValue?: number | null) => Promise<void>;
+  updateStatus: (
+    id: string,
+    status: PipelineStatus,
+    notes?: string,
+    followUpDate?: string | null,
+    dealValue?: number | null,
+  ) => Promise<void>;
 };
 
 const PipelineContext = createContext<Ctx | null>(null);
@@ -24,10 +30,12 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
     try {
       const { data, error } = await supabase
         .from("user_leads")
-        .select(`
+        .select(
+          `
           *,
           lead:leads(*)
-        `)
+        `,
+        )
         .eq("user_id", user.id);
 
       if (error) throw error;
@@ -95,15 +103,27 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
                     phone: updatedLead.phone || l.phone,
                     email: updatedLead.email || l.email,
                     websiteUrl: updatedLead.website_url || l.websiteUrl,
-                    hasWebsite: updatedLead.has_website !== undefined ? updatedLead.has_website : l.hasWebsite,
-                    googleRating: updatedLead.google_rating !== undefined ? Number(updatedLead.google_rating) : l.googleRating,
-                    googleReviewCount: updatedLead.google_review_count !== undefined ? Number(updatedLead.google_review_count) : l.googleReviewCount,
-                    opportunityScore: updatedLead.opportunity_score !== undefined ? Number(updatedLead.opportunity_score) : l.opportunityScore,
+                    hasWebsite:
+                      updatedLead.has_website !== undefined
+                        ? updatedLead.has_website
+                        : l.hasWebsite,
+                    googleRating:
+                      updatedLead.google_rating !== undefined
+                        ? Number(updatedLead.google_rating)
+                        : l.googleRating,
+                    googleReviewCount:
+                      updatedLead.google_review_count !== undefined
+                        ? Number(updatedLead.google_review_count)
+                        : l.googleReviewCount,
+                    opportunityScore:
+                      updatedLead.opportunity_score !== undefined
+                        ? Number(updatedLead.opportunity_score)
+                        : l.opportunityScore,
                   }
-                : l
-            )
+                : l,
+            ),
           );
-        }
+        },
       )
       .subscribe();
 
@@ -117,7 +137,16 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
       setPipeline((prev) =>
         prev.find((l) => l.id === lead.id)
           ? prev
-          : [{ ...lead, savedAt: new Date().toISOString().slice(0, 10), status: "new" as PipelineStatus, notes: "", followUpDate: null }, ...prev],
+          : [
+              {
+                ...lead,
+                savedAt: new Date().toISOString().slice(0, 10),
+                status: "new" as PipelineStatus,
+                notes: "",
+                followUpDate: null,
+              },
+              ...prev,
+            ],
       );
       return;
     }
@@ -127,14 +156,20 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
         body: {
           action: "save",
           leadId: lead.id,
-          status: "new"
-        }
+          status: "new",
+        },
       });
       if (error) throw error;
 
       setPipeline((prev) => [
-        { ...lead, savedAt: new Date().toISOString().slice(0, 10), status: "new" as PipelineStatus, notes: "", followUpDate: null },
-        ...prev
+        {
+          ...lead,
+          savedAt: new Date().toISOString().slice(0, 10),
+          status: "new" as PipelineStatus,
+          notes: "",
+          followUpDate: null,
+        },
+        ...prev,
       ]);
     } catch (err) {
       console.error("Error saving lead to database:", err);
@@ -151,8 +186,8 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.functions.invoke("pipeline-ops", {
         body: {
           action: "delete",
-          leadId: id
-        }
+          leadId: id,
+        },
       });
       if (error) throw error;
 
@@ -163,20 +198,26 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
   };
 
   const updateStatus = async (
-    id: string, 
-    status: PipelineStatus, 
-    notes?: string, 
-    followUpDate?: string | null, 
-    dealValue?: number | null
+    id: string,
+    status: PipelineStatus,
+    notes?: string,
+    followUpDate?: string | null,
+    dealValue?: number | null,
   ) => {
     if (!user || user.id === "user-1") {
-      setPipeline((p) => p.map((l) => (l.id === id ? { 
-        ...l, 
-        status, 
-        notes: notes !== undefined ? notes : l.notes, 
-        followUpDate: followUpDate !== undefined ? followUpDate : l.followUpDate,
-        dealValue: dealValue !== undefined ? dealValue : l.dealValue 
-      } : l)));
+      setPipeline((p) =>
+        p.map((l) =>
+          l.id === id
+            ? {
+                ...l,
+                status,
+                notes: notes !== undefined ? notes : l.notes,
+                followUpDate: followUpDate !== undefined ? followUpDate : l.followUpDate,
+                dealValue: dealValue !== undefined ? dealValue : l.dealValue,
+              }
+            : l,
+        ),
+      );
       return;
     }
 
@@ -188,8 +229,8 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
           status,
           notes,
           followUpDate,
-          dealValue
-        }
+          dealValue,
+        },
       });
       if (error) throw error;
 
@@ -203,8 +244,8 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
                 followUpDate: followUpDate !== undefined ? followUpDate : l.followUpDate,
                 dealValue: dealValue !== undefined ? dealValue : l.dealValue,
               }
-            : l
-        )
+            : l,
+        ),
       );
     } catch (err) {
       console.error("Error updating lead status in database:", err);

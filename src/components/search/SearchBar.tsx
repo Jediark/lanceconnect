@@ -9,7 +9,13 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSearch(); }} className="flex flex-1 items-center gap-2">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSearch();
+      }}
+      className="flex flex-1 items-center gap-2"
+    >
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input
@@ -20,7 +26,10 @@ export function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
           className="w-full rounded-lg border border-input bg-background pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
-      <button type="submit" className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+      <button
+        type="submit"
+        className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+      >
         Search
       </button>
     </form>
@@ -56,7 +65,12 @@ interface LocationPickerProps {
   onCityChange: (value: string) => void;
 }
 
-export function LocationPicker({ country, city, onCountryChange, onCityChange }: LocationPickerProps) {
+export function LocationPicker({
+  country,
+  city,
+  onCountryChange,
+  onCityChange,
+}: LocationPickerProps) {
   const COUNTRIES = [
     { code: "NG", flag: "🇳🇬", name: "Nigeria" },
     { code: "IT", flag: "🇮🇹", name: "Italy" },
