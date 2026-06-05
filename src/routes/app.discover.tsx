@@ -21,7 +21,7 @@ import { Header } from "@/components/layout/Header";
 import { LeadCard } from "@/components/ui/LeadCard";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
+import { CATEGORIES, COUNTRIES, type Lead } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
 import { CATEGORY_TO_PLACES_QUERY } from "@/types";
 import { usePipeline } from "@/contexts/PipelineContext";
@@ -53,9 +53,7 @@ function Discover() {
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
   useEffect(() => {
-    if (!user || user.id === "user-1") {
-      setResults(MOCK_LEADS);
-    } else {
+    if (user) {
       setLoading(true);
       supabase
         .from("leads")
@@ -86,47 +84,17 @@ function Discover() {
               savedAt: null,
               status: null,
             }));
-            setResults(mapped); // No automatic fallback emails for database leads for integrity
+            setResults(mapped);
           }
         });
+    } else {
+      setResults([]);
     }
   }, [user]);
 
   const handleSearch = async () => {
     if (!city) {
       toast.error("Please enter a city (e.g. Lagos, London).");
-      return;
-    }
-
-    if (!user || user.id === "user-1") {
-      setLoading(true);
-      setTimeout(() => {
-        const filtered = MOCK_LEADS.filter((l) => {
-          if (category && l.industry !== category) return false;
-          if (country && !l.country.toLowerCase().includes(country.toLowerCase())) return false;
-          if (city && !l.city.toLowerCase().includes(city.toLowerCase())) return false;
-          if (website === "no" && l.hasWebsite) return false;
-          if (website === "yes" && !l.hasWebsite) return false;
-          if (l.opportunityScore < minScore) return false;
-          if (
-            product &&
-            ["african_food_export", "b2b_trade", "restaurant_supplier", "product_export"].includes(
-              category,
-            )
-          ) {
-            const notesText = l.notes || "";
-            const hasProduct =
-              notesText.toLowerCase().includes(product.toLowerCase()) ||
-              l.businessName.toLowerCase().includes(product.toLowerCase()) ||
-              l.businessType.toLowerCase().includes(product.toLowerCase());
-            if (!hasProduct) return false;
-          }
-          return true;
-        });
-        setResults(filtered);
-        setLoading(false);
-        toast.success(`Found ${filtered.length} leads in ${city} (Demo Mode)`);
-      }, 500);
       return;
     }
 
@@ -205,7 +173,7 @@ function Discover() {
       toast.success(`Found ${mapped.length} leads in ${city}!`);
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Failed to search leads");
+      toast.error("Search temporarily unavailable — please try again in a moment.");
     } finally {
       setLoading(false);
     }
@@ -600,51 +568,6 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
     if (seoData) return;
     setSeoLoading(true);
     try {
-      if (!user || user.id === "user-1") {
-        setTimeout(() => {
-          const bizType = currentLead.businessType || "business";
-          const cityVal = currentLead.city || "local";
-          const ratingVal = currentLead.googleRating || 4.0;
-          const reviewsVal = currentLead.googleReviewCount || 10;
-          const hasWeb = currentLead.hasWebsite;
-          const kws = [
-            {
-              keyword: `best ${bizType} in ${cityVal}`,
-              volume: 850,
-              difficulty: 42,
-              rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 12 + 10)) : 100,
-            },
-            {
-              keyword: `${bizType} near me`,
-              volume: 1400,
-              difficulty: 58,
-              rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 8 + 4)) : 100,
-            },
-            {
-              keyword: `affordable ${bizType} ${cityVal}`,
-              volume: 320,
-              difficulty: 25,
-              rank: hasWeb ? Math.max(1, Math.floor((5 - ratingVal) * 15 + 15)) : 100,
-            },
-            {
-              keyword: `${currentLead.businessName} ${cityVal}`,
-              volume: 150,
-              difficulty: 12,
-              rank: hasWeb ? 1 : 100,
-            },
-          ];
-          kws.sort((a, b) => b.volume - a.volume);
-          let hk = `Hi, did you know that your business doesn't currently list an active website on Google Maps? Over 75% of local searches end up visiting a business with a direct website. I can build a clean, mobile-friendly landing page for you in 3 days to help capture these leads.`;
-          if (hasWeb) {
-            const worstKw = kws.find((k) => k.rank > 10) || kws[0];
-            hk = `Hi, I was analyzing local search listings in ${cityVal} and noticed that for '${worstKw.keyword}' (which gets ${worstKw.volume} monthly searches), your website is currently ranking at #${worstKw.rank}. Over 90% of search traffic stays on page 1. I can help optimize your on-page SEO to push your site into the top spots.`;
-          }
-          setSeoData({ keywords: kws, hook: hk });
-          setSeoLoading(false);
-        }, 800);
-        return;
-      }
-
       const { data, error } = await supabase.functions.invoke("lead-seo-audit", {
         body: { leadId: currentLead.id },
       });
@@ -663,16 +586,6 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
     setEnriching(true);
     toast.info("Scraping website for verified contact email...");
     try {
-      if (!user || user.id === "user-1") {
-        setTimeout(() => {
-          toast.warning(
-            "No public email address found on the website of this business (Demo Mode).",
-          );
-          setEnriching(false);
-        }, 1200);
-        return;
-      }
-
       const { data, error } = await supabase.functions.invoke("enrich-contact", {
         body: { leadId: currentLead.id },
       });
@@ -695,17 +608,6 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
     setGenerating(true);
     setOutreachDraft("");
     try {
-      if (!user || user.id === "user-1") {
-        setTimeout(() => {
-          const draftText = `Subject: Helping ${currentLead.businessName} with design and web optimization\n\nHi Manager,\n\nI noticed your business online and saw a few areas where a redesigned mobile interface or faster load speeds could increase your customer bookings. I'd love to jump on a quick 5-minute call this week to share some suggestions.\n\nBest,\nAlex`;
-          setOutreachDraft(draftText);
-          setProvider("Generated with Gemini");
-          setGenerating(false);
-          toast.success("AI draft generated successfully!");
-        }, 1000);
-        return;
-      }
-
       const apiChannel = selectedChannel === "whatsapp" ? "sms" : selectedChannel;
       const { data, error } = await supabase.functions.invoke("ai-outreach", {
         body: {

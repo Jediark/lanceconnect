@@ -104,37 +104,6 @@ function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
-    if (user.id === "user-1") {
-      setScansCount(14);
-      setTotalLeadsCount(1254);
-      setSavedThisMonth(8);
-      setContactedCountFromDb(5);
-      setResults(MOCK_LEADS.slice(0, 6));
-      setActivities([
-        {
-          id: "1",
-          action: "lead.searched",
-          entityType: "lead",
-          metadata: { query: "Web Developer", city: "London" },
-          createdAt: new Date(Date.now() - 3600000).toISOString(),
-        },
-        {
-          id: "2",
-          action: "pipeline.lead_saved",
-          entityType: "lead",
-          metadata: { business_name: "Apex Design Agency", status: "new" },
-          createdAt: new Date(Date.now() - 7200000).toISOString(),
-        },
-        {
-          id: "3",
-          action: "ai.message_generated",
-          entityType: "lead",
-          metadata: { business_name: "Café Nero" },
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-        },
-      ]);
-      return;
-    }
     setLoading(true);
 
     // Total leads discovered in system
@@ -232,13 +201,8 @@ function Dashboard() {
     setEnriching(true);
     toast.info("Scraping website for verified contact email...");
     try {
-      if (!user || user.id === "user-1") {
-        setTimeout(() => {
-          toast.warning(
-            "No public email address found on the website of this business (Demo Mode).",
-          );
-          setEnriching(false);
-        }, 1200);
+      if (!user) {
+        setEnriching(false);
         return;
       }
 
@@ -270,28 +234,8 @@ function Dashboard() {
       return;
     }
     setSearchLoading(true);
-    if (!user || user.id === "user-1") {
-      setTimeout(() => {
-        const filtered = MOCK_LEADS.filter((l) => {
-          if (quickCategory && l.industry !== quickCategory) return false;
-          if (quickCity && !l.city.toLowerCase().includes(quickCity.toLowerCase())) return false;
-          return true;
-        });
-        setResults(filtered);
-        setSearchLoading(false);
-        setScansCount((p) => p + 1);
-        setActivities((prev) => [
-          {
-            id: String(Date.now()),
-            action: "lead.searched",
-            entityType: "lead",
-            metadata: { query: quickCategory, city: quickCity },
-            createdAt: new Date().toISOString(),
-          },
-          ...prev,
-        ]);
-        toast.success(`Found ${filtered.length} leads in ${quickCity} (Demo)`);
-      }, 600);
+    if (!user) {
+      setSearchLoading(false);
       return;
     }
     try {
@@ -341,7 +285,7 @@ function Dashboard() {
       toast.success(`Found ${mapped.length} prospects in ${quickCity}!`);
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Failed to search");
+      toast.error("Search temporarily unavailable — please try again in a moment.");
     } finally {
       setSearchLoading(false);
     }

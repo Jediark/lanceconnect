@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Star, X } from "lucide-react";
 import { Header } from "@/components/layout/Header";
-import { MOCK_TEMPLATES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -31,8 +30,8 @@ function Templates() {
   const [loading, setLoading] = useState(false);
 
   const fetchTemplates = async () => {
-    if (!user || user.id === "user-1") {
-      setTemplates(MOCK_TEMPLATES);
+    if (!user) {
+      setTemplates([]);
       return;
     }
     setLoading(true);
@@ -67,24 +66,7 @@ function Templates() {
 
   const handleSave = async (tpl: Partial<Template> & { id: string }) => {
     if (!user) return;
-    if (user.id === "user-1") {
-      if (tpl.id === "new") {
-        const newTpl = {
-          id: Math.random().toString(),
-          name: tpl.name || "Untitled",
-          channel: tpl.channel || "email",
-          subject: tpl.subject || "",
-          body: tpl.body || "",
-          isDefault: false,
-        };
-        setTemplates((prev) => [newTpl, ...prev]);
-      } else {
-        setTemplates((prev) => prev.map((t) => (t.id === tpl.id ? { ...t, ...tpl } : t)));
-      }
-      toast.success("Template saved (Demo Mode)");
-      setEditing(null);
-      return;
-    }
+
 
     try {
       if (tpl.id === "new") {
@@ -121,12 +103,7 @@ function Templates() {
   const handleDelete = async (templateId: string) => {
     if (!confirm("Are you sure you want to delete this template?")) return;
     if (!user) return;
-    if (user.id === "user-1") {
-      setTemplates((prev) => prev.filter((t) => t.id !== templateId));
-      toast.success("Template deleted (Demo Mode)");
-      setEditing(null);
-      return;
-    }
+
 
     try {
       const { error } = await supabase.from("outreach_templates").delete().eq("id", templateId);

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { MOCK_PIPELINE_LEADS, type Lead, type PipelineStatus } from "@/data/mockData";
+import { type Lead, type PipelineStatus } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -21,12 +21,12 @@ const PipelineContext = createContext<Ctx | null>(null);
 
 export function PipelineProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [pipeline, setPipeline] = useState<Lead[]>(MOCK_PIPELINE_LEADS);
+  const [pipeline, setPipeline] = useState<Lead[]>([]);
 
   const savedIds = new Set(pipeline.map((l) => l.id));
 
   const fetchPipeline = async () => {
-    if (!user || user.id === "user-1") return;
+    if (!user) return;
     try {
       const { data, error } = await supabase
         .from("user_leads")
@@ -74,15 +74,15 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (user && user.id !== "user-1") {
+    if (user) {
       fetchPipeline();
     } else {
-      setPipeline(MOCK_PIPELINE_LEADS);
+      setPipeline([]);
     }
   }, [user]);
 
   useEffect(() => {
-    if (!user || user.id === "user-1") return;
+    if (!user) return;
 
     const channel = supabase
       .channel("pipeline-lead-updates")
@@ -133,23 +133,7 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   const saveLead = async (lead: Lead) => {
-    if (!user || user.id === "user-1") {
-      setPipeline((prev) =>
-        prev.find((l) => l.id === lead.id)
-          ? prev
-          : [
-              {
-                ...lead,
-                savedAt: new Date().toISOString().slice(0, 10),
-                status: "new" as PipelineStatus,
-                notes: "",
-                followUpDate: null,
-              },
-              ...prev,
-            ],
-      );
-      return;
-    }
+    if (!user) return;
 
     try {
       const { error } = await supabase.functions.invoke("pipeline-ops", {
@@ -177,10 +161,7 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
   };
 
   const removeLead = async (id: string) => {
-    if (!user || user.id === "user-1") {
-      setPipeline((p) => p.filter((l) => l.id !== id));
-      return;
-    }
+    if (!user) return;
 
     try {
       const { error } = await supabase.functions.invoke("pipeline-ops", {
@@ -204,22 +185,7 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
     followUpDate?: string | null,
     dealValue?: number | null,
   ) => {
-    if (!user || user.id === "user-1") {
-      setPipeline((p) =>
-        p.map((l) =>
-          l.id === id
-            ? {
-                ...l,
-                status,
-                notes: notes !== undefined ? notes : l.notes,
-                followUpDate: followUpDate !== undefined ? followUpDate : l.followUpDate,
-                dealValue: dealValue !== undefined ? dealValue : l.dealValue,
-              }
-            : l,
-        ),
-      );
-      return;
-    }
+    if (!user) return;
 
     try {
       const { error } = await supabase.functions.invoke("pipeline-ops", {

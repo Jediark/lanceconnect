@@ -15,10 +15,8 @@ function DangerZone() {
   const handleDelete = async () => {
     if (!confirm("Permanently delete your account? This cannot be undone.")) return;
 
-    if (!user || user.id === "user-1") {
-      toast.success("Account deleted (Demo Mode)");
-      await logout();
-      nav({ to: "/" });
+    if (!user) {
+      toast.error("You must be logged in to delete your account.");
       return;
     }
 

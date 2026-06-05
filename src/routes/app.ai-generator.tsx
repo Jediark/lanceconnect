@@ -4,7 +4,6 @@ import { Header } from "@/components/layout/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sparkles, Copy, RefreshCw, Crown } from "lucide-react";
 import { toast } from "sonner";
-import { MOCK_LEADS } from "@/data/mockData";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { supabase } from "@/lib/supabase";
 
@@ -36,7 +35,7 @@ function AIPage() {
   const { pipeline } = usePipeline();
   const isPro = (user?.plan as string) === "pro" || (user?.plan as string) === "agency";
 
-  const activeLeads = user?.id === "user-1" || pipeline.length === 0 ? MOCK_LEADS : pipeline;
+  const activeLeads = pipeline;
   const [leadId, setLeadId] = useState("");
   const currentLeadId = leadId || activeLeads[0]?.id || "";
 
@@ -61,18 +60,6 @@ function AIPage() {
     setLoading(true);
     setOutput("");
     setProvider("");
-
-    if (user?.id === "user-1") {
-      setTimeout(() => {
-        setOutput(
-          `Hi there,\n\nI was looking up small businesses in ${lead.city} this morning and ${lead.businessName} caught my eye — a ${lead.googleRating}★ ${lead.businessType.toLowerCase()} with great reviews and yet${lead.hasWebsite ? " a website that doesn't quite match the quality of the business" : " no website at all"}.\n\nI'm a freelancer who helps local businesses fix exactly this. No agency markup, just me. I'd love to send you a quick mock-up — free, no strings — so you can see what's possible.\n\nWould a 10-minute call work this week?\n\nWarmly,\n— Your name`,
-        );
-        setProvider("⚡ Generated with Gemini");
-        setLoading(false);
-        toast.success("AI draft generated successfully!");
-      }, 900);
-      return;
-    }
 
     try {
       const {
@@ -127,12 +114,17 @@ function AIPage() {
               value={currentLeadId}
               onChange={(e) => setLeadId(e.target.value)}
               className="input text-foreground bg-background"
+              disabled={activeLeads.length === 0}
             >
-              {activeLeads.map((l) => (
-                <option key={l.id} value={l.id} className="text-foreground bg-background">
-                  {l.businessName} · {l.city}
-                </option>
-              ))}
+              {activeLeads.length === 0 ? (
+                <option value="">No leads in pipeline</option>
+              ) : (
+                activeLeads.map((l) => (
+                  <option key={l.id} value={l.id} className="text-foreground bg-background">
+                    {l.businessName} · {l.city}
+                  </option>
+                ))
+              )}
             </select>
           </Field>
           <Field label="Channel">
@@ -172,8 +164,8 @@ function AIPage() {
           </Field>
           <button
             onClick={generate}
-            disabled={loading}
-            className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+            disabled={loading || activeLeads.length === 0}
+            className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60 cursor-pointer"
           >
             {loading ? (
               <>

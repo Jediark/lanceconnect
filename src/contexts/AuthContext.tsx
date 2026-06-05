@@ -19,18 +19,6 @@ type AuthCtx = {
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
-const DEFAULT_USER: User = {
-  id: "user-1",
-  fullName: "Alex Johnson",
-  email: "alex@example.com",
-  freelancerCategory: "web_dev",
-  plan: "free",
-  leadsUsedThisMonth: 7,
-  leadsLimit: 10,
-  country: "Nigeria",
-  avatarUrl: null,
-};
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -99,12 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email!);
       } else {
-        const stored = localStorage.getItem("lance_auth");
-        if (stored === "1") {
-          setUser(DEFAULT_USER);
-        } else {
-          setUser(null);
-        }
+        setUser(null);
       }
       setLoading(false);
     });
@@ -117,9 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email!);
       } else {
-        if (localStorage.getItem("lance_auth") !== "1") {
-          setUser(null);
-        }
+        setUser(null);
       }
       setLoading(false);
     });
@@ -129,11 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email?: string, password?: string) => {
     if (!email || !password) {
-      setUser(DEFAULT_USER);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("lance_auth", "1");
-      }
-      return { error: null };
+      return { error: new Error("Email and password are required") };
     }
 
     setLoading(true);
@@ -220,7 +197,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateUser = (patch: Partial<User>) => {
     setUser((u) => (u ? { ...u, ...patch } : u));
-    if (user && user.id !== "user-1") {
+    if (user) {
       const dbPatch: any = {};
       if (patch.fullName !== undefined) dbPatch.full_name = patch.fullName;
       if (patch.avatarUrl !== undefined) dbPatch.avatar_url = patch.avatarUrl;

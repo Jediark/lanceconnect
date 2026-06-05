@@ -18,26 +18,10 @@ async def scrape_leads(
 
     apify_token = token_from_header or os.environ.get("APIFY_API_KEY_LANCECONNECT") or os.environ.get("APIFY_API_TOKEN")
     if not apify_token:
-        # For development ease, if token is not configured, we return mock data so local dev does not break
-        print("Warning: APIFY_API_TOKEN is not configured. Returning mock leads for testing.")
-        return {
-            "success": True,
-            "leads": [
-                {
-                    "business_name": f"Mock {keyword.capitalize()} Studio",
-                    "business_type": f"{keyword.capitalize()} Consultant",
-                    "description": f"A premier {keyword} shop located in {city}.",
-                    "full_address": f"123 Main St, {city}, {country}",
-                    "phone": "+1234567890",
-                    "email": f"contact@mock{keyword.replace(' ', '')}.com",
-                    "website_url": f"https://mock{keyword.replace(' ', '')}.com",
-                    "google_place_id": f"mock_place_id_{keyword.replace(' ', '')}_{city.lower()}",
-                    "google_rating": 4.2,
-                    "google_review_count": 18,
-                    "google_maps_url": "https://maps.google.com/?cid=123"
-                }
-            ]
-        }
+        raise HTTPException(
+            status_code=500,
+            detail="Apify API token is not configured on the server."
+        )
 
     search_string = f"{keyword} in {city}, {country}"
     url = f"https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token={apify_token}"

@@ -70,7 +70,7 @@ function Onboarding() {
   const next = () => setStep((s) => s + 1);
 
   const handleComplete = () => {
-    if (user && user.id !== "user-1") {
+    if (user) {
       updateUser({
         fullName: name || user.fullName,
         freelancerCategory: category || "web_dev",

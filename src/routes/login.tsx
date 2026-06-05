@@ -93,8 +93,8 @@ function LoginPage() {
   const { login } = useAuth();
   const nav = useNavigate();
   const [show, setShow] = useState(false);
-  const [email, setEmail] = useState("alex@example.com");
-  const [password, setPassword] = useState("demo1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -110,13 +110,7 @@ function LoginPage() {
     }
   };
 
-  const handleDemo = async () => {
-    setLoading(true);
-    await login();
-    setLoading(false);
-    toast.success("Logged in as Demo User!");
-    nav({ to: "/app/dashboard" });
-  };
+
 
   return (
     <AuthSplit title="Welcome back">
@@ -165,14 +159,7 @@ function LoginPage() {
         >
           {loading ? "Logging in..." : "Log In"}
         </button>
-        <button
-          type="button"
-          disabled={loading}
-          onClick={handleDemo}
-          className="w-full rounded-lg border border-dashed border-primary/40 py-2 text-xs font-medium text-primary hover:bg-primary/5 disabled:opacity-50"
-        >
-          Continue as Demo User →
-        </button>
+
       </form>
       <p className="mt-5 text-center text-xs text-muted-foreground">
         Don't have an account?{" "}
