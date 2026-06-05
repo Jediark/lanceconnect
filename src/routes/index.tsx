@@ -829,7 +829,7 @@ function HowItWorks() {
       <motion.div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-50"
         style={{ 
-          backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
+          backgroundImage: "url('/assets/freelancers/freelancer_5.jpg')",
           y,
           height: "130%",
           top: "-15%"
@@ -1783,7 +1783,7 @@ function Stats() {
       <motion.div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
         style={{ 
-          backgroundImage: `url(${IMG.team})`,
+          backgroundImage: "url('/assets/freelancers/freelancer_5.jpg')",
           y,
           height: "130%",
           top: "-15%"
@@ -1839,7 +1839,7 @@ function FAQ() {
       <motion.div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
         style={{ 
-          backgroundImage: "url('/assets/freelancers/freelancer_17.jpg')",
+          backgroundImage: "url('/assets/freelancers/freelancer_5.jpg')",
           y,
           height: "130%",
           top: "-15%"
