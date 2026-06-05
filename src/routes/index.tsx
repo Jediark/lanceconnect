@@ -475,24 +475,7 @@ function HeroWithMosaic() {
         </div>
       </div>
 
-      <div className="absolute inset-y-0 left-2 lg:left-6 z-20 flex items-center pointer-events-none">
-        <button 
-          onClick={(e) => { e.preventDefault(); embla?.scrollPrev(); }} 
-          className="pointer-events-auto w-10 h-10 rounded-full border border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95"
-          aria-label="Previous Slide"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-      </div>
-      <div className="absolute inset-y-0 right-2 lg:right-6 z-20 flex items-center pointer-events-none">
-        <button 
-          onClick={(e) => { e.preventDefault(); embla?.scrollNext(); }} 
-          className="pointer-events-auto w-10 h-10 rounded-full border border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95"
-          aria-label="Next Slide"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </div>
+
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {SLIDES_DATA.map((_, i) => (
@@ -845,13 +828,13 @@ function HowItWorks() {
         <div className="relative mt-14 grid gap-6 md:grid-cols-4">
           <div className="absolute left-0 right-0 top-7 hidden h-px bg-border/40 md:block" />
           {steps.map((s, i) => (
-            <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300">
-              <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-foreground text-background">
+            <div key={s.title} className="relative rounded-2xl border border-blue-900/30 bg-[#131c31] p-6 shadow-card hover:shadow-card-hover transition duration-300">
+              <div className="mb-4 grid h-14 w-14 place-items-center rounded-xl bg-[#1e293b] text-white">
                 <s.icon className="h-6 w-6" />
               </div>
-              <p className="font-mono-data text-xs text-slate-400">STEP {i + 1}</p>
+              <p className="font-mono-data text-xs text-blue-400 font-bold">STEP {i + 1}</p>
               <h3 className="mt-1 font-display text-lg font-semibold text-white">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">{s.desc}</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-100">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -1768,25 +1751,15 @@ function Stats() {
     { k: "34%", v: "Average reply rate" },
     { k: "4.8/5", v: "Customer satisfaction" },
   ];
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
     <section 
-      ref={containerRef}
       className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
     >
-      <motion.div 
+      <div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
         style={{ 
           backgroundImage: "url('/assets/freelancers/freelancer_5.jpg')",
-          y,
-          height: "130%",
-          top: "-15%"
         }}
       />
       <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#0B0F19]/55 z-10" />
