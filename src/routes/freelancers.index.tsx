@@ -67,32 +67,18 @@ function FreelancerDirectoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Input States (controlled by inputs)
-  const [searchQueryInput, setSearchQueryInput] = useState("");
-  const [selectedCategoryInput, setSelectedCategoryInput] = useState("all");
-  const [selectedCountryInput, setSelectedCountryInput] = useState("all");
-  const [maxRateInput, setMaxRateInput] = useState<string>("all");
-
-  // Applied Filter States (triggering actual react list filtering)
+  // Filter States — filtering happens instantly on every change
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [maxRate, setMaxRate] = useState<string>("all");
 
-  const handleSearchSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    setSearchQuery(searchQueryInput);
-    setSelectedCategory(selectedCategoryInput);
-    setSelectedCountry(selectedCountryInput);
-    setMaxRate(maxRateInput);
+  const handleFindFreelancers = () => {
+    const el = document.getElementById("freelancer-results");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const handleReset = () => {
-    setSearchQueryInput("");
-    setSelectedCategoryInput("all");
-    setSelectedCountryInput("all");
-    setMaxRateInput("all");
-
     setSearchQuery("");
     setSelectedCategory("all");
     setSelectedCountry("all");
@@ -124,12 +110,13 @@ function FreelancerDirectoryPage() {
 
   const filteredFreelancers = freelancers.filter((f) => {
     // 1. Search Query
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.toLowerCase().trim();
     const matchesSearch =
       !query ||
       f.full_name.toLowerCase().includes(query) ||
       (f.bio && f.bio.toLowerCase().includes(query)) ||
-      (f.city && f.city.toLowerCase().includes(query));
+      (f.city && f.city.toLowerCase().includes(query)) ||
+      (f.freelancer_category && f.freelancer_category.toLowerCase().includes(query));
 
     // 2. Category
     const matchesCategory =
@@ -186,20 +173,17 @@ function FreelancerDirectoryPage() {
       </section>
 
       {/* Advanced Filter Panel */}
-      <section className="bg-card/40 border-b border-border py-6 select-none sticky top-[122px] z-20 backdrop-blur-md">
+      <section className="bg-card/40 border-b border-border py-6 select-none backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 space-y-4">
-          <form
-            onSubmit={handleSearchSubmit}
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 items-center"
-          >
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 items-center">
             {/* Search Input */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
                 placeholder="Search by name, bio, city..."
-                value={searchQueryInput}
-                onChange={(e) => setSearchQueryInput(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-xl border border-border bg-background pl-9 pr-4 py-2 text-xs font-mono text-foreground placeholder-slate-500 focus:border-primary focus:outline-none transition h-[38px]"
               />
             </div>
@@ -207,8 +191,8 @@ function FreelancerDirectoryPage() {
             {/* Category Select */}
             <div className="relative">
               <select
-                value={selectedCategoryInput}
-                onChange={(e) => setSelectedCategoryInput(e.target.value)}
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer h-[38px]"
               >
                 <option value="all">All Skills</option>
@@ -223,8 +207,8 @@ function FreelancerDirectoryPage() {
             {/* Country Select */}
             <div className="relative">
               <select
-                value={selectedCountryInput}
-                onChange={(e) => setSelectedCountryInput(e.target.value)}
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
                 className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer h-[38px]"
               >
                 <option value="all">All Countries</option>
@@ -239,8 +223,8 @@ function FreelancerDirectoryPage() {
             {/* Hourly Rate Select */}
             <div className="relative">
               <select
-                value={maxRateInput}
-                onChange={(e) => setMaxRateInput(e.target.value)}
+                value={maxRate}
+                onChange={(e) => setMaxRate(e.target.value)}
                 className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer h-[38px]"
               >
                 <option value="all">Any Hourly Rate</option>
@@ -251,22 +235,22 @@ function FreelancerDirectoryPage() {
               </select>
             </div>
 
-            {/* Search Submit Button */}
+            {/* Find Freelancers Button — scrolls to results */}
             <div className="relative">
               <button
-                type="submit"
-                onClick={handleSearchSubmit}
+                type="button"
+                onClick={handleFindFreelancers}
                 className="w-full rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-[10px] py-2.5 h-[38px] transition duration-200 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_22px_rgba(6,182,212,0.6)] flex items-center justify-center gap-1.5 cursor-pointer uppercase tracking-wider border border-cyan-400/20"
               >
                 <Search className="h-3.5 w-3.5" /> Find Freelancers
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </section>
 
       {/* Directory Grid */}
-      <section className="mx-auto max-w-7xl px-4 py-12 lg:px-8 bg-background min-h-[400px]">
+      <section id="freelancer-results" className="mx-auto max-w-7xl px-4 py-12 lg:px-8 bg-background min-h-[400px] scroll-mt-24">
         {loading ? (
           /* Dynamic Skeleton Loaders */
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
