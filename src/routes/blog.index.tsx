@@ -53,8 +53,25 @@ function BlogIndex() {
           ))}
         </div>
 
+        {/* Parallax Divider */}
+        <section 
+          className="bg-parallax relative h-[280px] w-full flex items-center justify-center my-16 rounded-3xl"
+          style={{ backgroundImage: "url('/assets/freelancers/freelancer_18.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-[#080B14]/85 z-0" />
+          <div className="relative z-10 text-center max-w-xl px-4 text-white">
+            <p className="text-xs font-mono text-primary uppercase tracking-widest">// proven.strategies.shared</p>
+            <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-white">
+              We don't publish theory. Only direct results.
+            </h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Written by freelancers who face the same cold calls and proposals as you do every day.
+            </p>
+          </div>
+        </section>
+
         {/* Global Community Map */}
-        <div className="mt-20 border-t border-border pt-16">
+        <div className="mt-12 border-t border-border pt-12">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-semibold uppercase tracking-widest text-primary font-mono">// global.contributors</span>
             <h2 className="mt-2 font-display text-2xl font-bold tracking-tight md:text-3xl text-foreground">Global Freelancer Registry</h2>

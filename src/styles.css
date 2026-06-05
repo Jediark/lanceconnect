@@ -255,4 +255,16 @@ html.light {
     background-size: 200% 100%;
     animation: shimmer 2s ease-in-out infinite;
   }
+
+  .bg-parallax {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  @media (max-width: 1024px) {
+    .bg-parallax {
+      background-attachment: scroll;
+    }
+  }
 }

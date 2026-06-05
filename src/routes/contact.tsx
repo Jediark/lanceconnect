@@ -76,6 +76,23 @@ function ContactPage() {
         </form>
       </section>
 
+      {/* Parallax Divider */}
+      <section 
+        className="bg-parallax relative h-[260px] w-full flex items-center justify-center my-12 rounded-3xl"
+        style={{ backgroundImage: "url('/assets/freelancers/freelancer_15.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-[#080B14]/80 z-0" />
+        <div className="relative z-10 text-center max-w-xl px-4 text-white">
+          <p className="text-xs font-mono text-primary uppercase tracking-widest">// global.support.connected</p>
+          <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-white">
+            A truly global support network.
+          </h3>
+          <p className="mt-2 text-sm text-slate-300">
+            Connecting freelancers and clients across 150+ countries.
+          </p>
+        </div>
+      </section>
+
       {/* Map Section */}
       <section className="mx-auto max-w-6xl px-4 pb-16 lg:px-8">
         <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-xl">

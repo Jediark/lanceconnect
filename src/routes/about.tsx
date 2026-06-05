@@ -146,6 +146,20 @@ export const Route = createFileRoute("/about")({
         </div>
       </section>
 
+      {/* Parallax Divider */}
+      <section 
+        className="bg-parallax relative h-[320px] w-full flex items-center justify-center"
+        style={{ backgroundImage: "url('/assets/freelancers/freelancer_14.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-[#080B14]/75 z-0" />
+        <div className="relative z-10 text-center max-w-xl px-4 text-white">
+          <p className="text-xs font-mono text-primary uppercase tracking-widest">// human.centered.connection</p>
+          <blockquote className="mt-4 font-display text-2xl font-bold italic leading-relaxed text-white">
+            "A calm workspace designed for doing your best work, winning clients, and building a sustainable business."
+          </blockquote>
+        </div>
+      </section>
+
       {/* The Team Section */}
       <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8 bg-background">
         <div className="mx-auto max-w-2xl text-center mb-12">

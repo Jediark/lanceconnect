@@ -73,7 +73,24 @@ function PricingPage() {
           ))}
         </div>
 
-        <div className="mt-16 overflow-x-auto rounded-2xl border border-border bg-card">
+        {/* Parallax Divider */}
+        <section 
+          className="bg-parallax relative h-[280px] w-full flex items-center justify-center my-12 rounded-3xl"
+          style={{ backgroundImage: "url('/assets/freelancers/freelancer_16.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-[#080B14]/80 z-0" />
+          <div className="relative z-10 text-center max-w-xl px-4 text-white">
+            <p className="text-xs font-mono text-primary uppercase tracking-widest">// pay.with.confidence</p>
+            <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-white">
+              Invest in client acquisition that pays for itself.
+            </h3>
+            <p className="mt-2 text-sm text-slate-300">
+              One won project pays for years of LanceConnect Pro.
+            </p>
+          </div>
+        </section>
+
+        <div className="mt-12 overflow-x-auto rounded-2xl border border-border bg-card">
           <table className="w-full text-sm">
             <thead className="bg-paper border-b border-border">
               <tr>
