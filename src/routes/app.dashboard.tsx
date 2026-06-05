@@ -214,6 +214,27 @@ function Dashboard() {
 
       <div className="px-4 py-6 lg:px-8 space-y-8">
 
+        {/* Platform Philosophy Notice */}
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
+              <Sparkles className="h-5 w-5 animate-pulse" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">LanceConnect Vision & Philosophy</p>
+              <p className="text-[11px] text-muted-foreground leading-normal mt-0.5">
+                Built by freelancers, for freelancers. Direct client contacts, 0% platform commissions, zero bidding wars.
+              </p>
+            </div>
+          </div>
+          <Link 
+            to="/freelancers" 
+            className="shrink-0 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition"
+          >
+            Browse Public Directory
+          </Link>
+        </div>
+
         {/* ═══ HERO SEARCH ═══ */}
         <section
           className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-10"

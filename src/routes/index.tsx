@@ -30,6 +30,7 @@ export const Route = createFileRoute("/")({
       <StatsBar />
       <ValuePropositionCards />
       <LogoStrip />
+      <PlatformManifesto />
       <TutorialVideoSection />
       <HeroCarousel />
       <ProductShowcase />
@@ -637,6 +638,37 @@ function LogoStrip() {
             {m}
           </span>
         ))}
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   PLATFORM MANIFESTO / PHILOSOPHY BANNER
+   ──────────────────────────────────────────────────────────── */
+function PlatformManifesto() {
+  return (
+    <section className="bg-muted/30 border-b border-border py-12 select-none transition-colors duration-300">
+      <div className="mx-auto max-w-5xl px-4 lg:px-8">
+        <div className="rounded-3xl border border-primary/20 bg-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 text-left">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-[10px] font-semibold text-primary font-mono uppercase tracking-wider">
+              ✦ Our Philosophy
+            </span>
+            <h3 className="font-display text-xl font-extrabold text-foreground tracking-tight sm:text-2xl">
+              Built by freelancers, for freelancers.
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
+              We believe client relationships should be direct. LanceConnect extracts real contacts and provides a public directory to connect you directly with clients. **0% commission, 100% direct outreach, zero bidding wars.**
+            </p>
+          </div>
+          <Link 
+            to="/freelancers" 
+            className="shrink-0 rounded-xl bg-primary px-5 py-3 text-xs font-bold text-white hover:brightness-110 transition shadow-lg shadow-primary/10 flex items-center gap-1.5 cursor-pointer"
+          >
+            Explore Freelancers Directory <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );
