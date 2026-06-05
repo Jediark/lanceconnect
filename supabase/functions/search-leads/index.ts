@@ -44,6 +44,34 @@ Deno.serve(async (req) => {
 
     const { query, city, country, limit, product, niche } = parsed.data;
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const apifyServiceUrl =
+      Deno.env.get("APIFY_SERVICE_URL") || "http://apify-service.internal:8002";
+    const openCageApiKey = Deno.env.get("OPENCAGE_API_KEY");
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new AppError("Server is not configured correctly", 500, "MISCONFIGURED");
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Enforce Rate Limit: 10 requests/hour for search-leads
+    const ipAddress = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || null;
+    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, "search-leads", 10, 3600);
+    if (!rateLimit.allowed) {
+      throw new AppError("Too many requests. Please try again later.", 429, "RATE_LIMIT_EXCEEDED");
+    }
+
+    // Fetch user details for welcome email, quota warnings, and supplier profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select(
+        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit, supplier_profile",
+      )
+      .eq("id", user.id)
+      .single();
+
     // Map skill category IDs to target local business niches (potential clients)
     const categoryNiches: Record<string, string[]> = {
       web_dev: ["restaurant", "bakery", "beauty salon", "plumber", "auto repair", "dry cleaner"],
@@ -65,94 +93,113 @@ Deno.serve(async (req) => {
         "university",
         "college",
       ],
-      african_food_export: [
-        "african food store",
-        "caribbean food importer",
-        "ethnic food wholesaler",
-        "african restaurant",
-        "international food distributor",
-        "african caribbean supermarket",
-        "ethnic grocery",
-      ],
-      restaurant_supplier: [
-        "restaurant",
-        "hotel kitchen",
-        "catering company",
-        "food service company",
-        "pub kitchen",
-        "cafe",
-      ],
-      product_export: [
-        "food importer",
-        "commodity trader",
-        "wholesale distributor",
-        "import export company",
-        "international trader",
-      ],
-      b2b_trade: [
-        "manufacturer",
-        "wholesale supplier",
-        "distributor",
-        "procurement company",
-        "buying agent",
-        "trading company",
-      ],
-      corporate_training: [
-        "corporate office",
-        "hr department",
-        "private school administrative office",
-        "training center",
-        "business headquarters",
-        "non profit organization",
-      ],
     };
 
+    const GLOBAL_CATEGORY_TERMS: Record<string, Record<string, string[]>> = {
+      african_food_export: {
+        en: [
+          "african food importer",
+          "caribbean food wholesaler",
+          "ethnic food distributor",
+          "african restaurant supplier",
+          "international food broker",
+          "african caribbean supermarket",
+          "ethnic grocery wholesaler",
+          "food import export company",
+        ],
+        fr: ["importateur alimentaire africain", "grossiste en produits exotiques"],
+        de: ["afrikanischer lebensmittelimporteur", "afrikanischer lebensmittel grosshandel"],
+        pt: ["importador de alimentos africanos", "grossista de alimentos tropicais"],
+        ar: ["مستورد الأغذية الأفريقية", "تاجر الجملة للأغذية الأفريقية"],
+      },
+      restaurant_supplier: {
+        en: ["restaurant", "hotel kitchen", "catering company", "food service company", "pub kitchen", "cafe"],
+        fr: ["restaurant", "cuisine hotel", "traiteur", "service alimentaire"],
+        de: ["Restaurant", "Hotelküche", "Catering-Unternehmen"],
+        es: ["restaurante", "cocina de hotel", "empresa de catering"],
+      },
+      product_export: {
+        en: ["food importer", "commodity trader", "wholesale distributor", "import export company", "international trader"],
+        fr: ["importateur de produits", "distributeur en gros", "societe import export"],
+        de: ["Lebensmittelimporteur", "Grosshaendler", "Import Export Unternehmen"],
+      },
+      b2b_trade: {
+        en: ["manufacturer", "wholesale supplier", "distributor", "procurement company", "buying agent", "trading company"],
+        fr: ["fabricant", "fournisseur en gros", "distributeur", "agent d'achat"],
+        de: ["Hersteller", "Grosshaendler", "Vertriebspartner", "Einkaufsagentur"],
+      },
+      parent_tutor: {
+        en: ["primary school", "secondary school", "learning center", "tutoring center", "homeschool cooperative", "after school program", "educational center"],
+        fr: ["centre de tutorat", "ecole primaire", "soutien scolaire"],
+        de: ["Nachhilfezentrum", "Grundschule", "Nachhilfelehrer"],
+        es: ["centro de tutoría", "escuela primaria", "clases de apoyo escolar"],
+        ar: ["مركز الدروس الخصوصية", "مدرسة ابتدائية"],
+        ja: ["家庭教師センター", "小学校", "学習塾"],
+        zh: ["补习中心", "小学", "课后辅导"],
+      },
+      human_capital: {
+        en: ["bank headquarters", "hospital group", "corporation", "large company", "multinational company", "NGO headquarters", "university administration", "insurance company", "telecoms company"],
+        fr: ["siege social de banque", "groupe hospitalier", "siege social", "grande entreprise", "multinationale"],
+        de: ["Firmenzentrale Bank", "Konzernzentrale", "Krankenhausgruppe", "Großunternehmen"],
+        es: ["sede bancaria", "sede corporativa", "grupo empresarial", "gran empresa"],
+        pt: ["sede bancaria", "sede corporativa", "grupo empresarial", "grande empresa"],
+      },
+      training_recruitment: {
+        en: ["company hiring", "recruitment agency client", "staffing needs", "HR department", "company expansion", "new office opening", "graduate recruitment program"],
+        fr: ["cabinet de recrutement", "recrutement entreprise", "ressources humaines"],
+        de: ["Personalvermittlung", "Stellenangebote Unternehmen", "HR Abteilung"],
+        es: ["agencia de seleccion de personal", "empresa contratando", "departamento de recursos humanos"],
+        pt: ["agencia de recrutamento", "empresa contratando", "departamento de recursos humanos"],
+      },
+    };
+
+    function getLanguageFromCountry(countryName: string): string {
+      const c = countryName.toLowerCase().trim();
+      if (c.includes("france") || c.includes("belgium") || c.includes("senegal") || c.includes("cote d") || c.includes("ivory coast") || c.includes("cameroon")) return "fr";
+      if (c.includes("germany") || c.includes("austria") || c.includes("switzerland")) return "de";
+      if (c.includes("portugal") || c.includes("brazil") || c.includes("angola")) return "pt";
+      if (c.includes("spain") || c.includes("mexico") || c.includes("argentina") || c.includes("colombia") || c.includes("chile") || c.includes("peru")) return "es";
+      if (c.includes("japan")) return "ja";
+      if (c.includes("china") || c.includes("taiwan")) return "zh";
+      if (c.includes("egypt") || c.includes("saudi") || c.includes("uae") || c.includes("united arab") || c.includes("morocco")) return "ar";
+      return "en";
+    }
+
+    const lang = getLanguageFromCountry(country);
     let searchKeyword = query;
+
     if (niche) {
       searchKeyword = niche;
       console.log(`Overriding search category with niche query: "${searchKeyword}"`);
+    } else if (query in GLOBAL_CATEGORY_TERMS) {
+      const termsMap = GLOBAL_CATEGORY_TERMS[query];
+      const terms = termsMap[lang] || termsMap["en"] || [];
+      searchKeyword = terms[Math.floor(Math.random() * terms.length)];
+      console.log(`Mapped B2B category "${query}" in language "${lang}" to: "${searchKeyword}"`);
     } else if (query in categoryNiches) {
       const niches = categoryNiches[query];
-      // Pick a random niche to keep results fresh and diverse
       searchKeyword = niches[Math.floor(Math.random() * niches.length)];
       console.log(`Mapped category "${query}" to client niche keyword "${searchKeyword}"`);
     }
 
+    // Prefill products from profile if not provided in search params
+    let searchProduct = product;
+    if (!searchProduct && profile?.supplier_profile) {
+      const supProfile = profile.supplier_profile as any;
+      if (supProfile.products) {
+        searchProduct = Array.isArray(supProfile.products)
+          ? supProfile.products.join(", ")
+          : String(supProfile.products);
+      }
+    }
+
     if (
-      product &&
+      searchProduct &&
       ["african_food_export", "b2b_trade", "restaurant_supplier", "product_export"].includes(query)
     ) {
-      searchKeyword = `${searchKeyword} ${product}`;
+      searchKeyword = `${searchKeyword} ${searchProduct}`;
       console.log(`Appended product to query: "${searchKeyword}"`);
     }
-
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const apifyServiceUrl =
-      Deno.env.get("APIFY_SERVICE_URL") || "http://apify-service.internal:8002";
-    const openCageApiKey = Deno.env.get("OPENCAGE_API_KEY");
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new AppError("Server is not configured correctly", 500, "MISCONFIGURED");
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Enforce Rate Limit: 10 requests/hour for search-leads
-    const ipAddress = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || null;
-    const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, "search-leads", 10, 3600);
-    if (!rateLimit.allowed) {
-      throw new AppError("Too many requests. Please try again later.", 429, "RATE_LIMIT_EXCEEDED");
-    }
-
-    // Fetch user details for welcome email and quota warnings
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select(
-        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit",
-      )
-      .eq("id", user.id)
-      .single();
 
     // 1. Welcome on registration email check
     if (profile && !profile.welcome_email_sent) {
@@ -164,6 +211,7 @@ Deno.serve(async (req) => {
       });
       await supabase.from("profiles").update({ welcome_email_sent: true }).eq("id", user.id);
     }
+
 
     // 2. Check user lead limits
     const { data: limitCheck, error: limitErr } = await supabase.rpc("check_lead_limit", {
@@ -225,12 +273,13 @@ Deno.serve(async (req) => {
 
     // 5. Fallback to scrape if cache is empty or insufficient
     if (finalLeads.length < 3) {
+      const apifyKeyword = `${searchKeyword} in ${city}, ${country}`;
       console.log(
-        `Cache miss for category "${query}" (keyword "${searchKeyword}") in ${city}, ${country}. Invoking Apify scraper...`,
+        `Cache miss for category "${query}" (keyword "${apifyKeyword}") in ${city}, ${country}. Invoking Apify scraper...`,
       );
 
       try {
-        let scrapeUrl = `${apifyServiceUrl}/scrape?keyword=${encodeURIComponent(searchKeyword)}&city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&limit=10`;
+        let scrapeUrl = `${apifyServiceUrl}/scrape?keyword=${encodeURIComponent(apifyKeyword)}&city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&limit=10`;
         if (lat !== null && lng !== null) {
           scrapeUrl += `&lat=${lat}&lng=${lng}`;
         }

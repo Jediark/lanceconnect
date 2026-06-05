@@ -54,6 +54,25 @@ function Discover() {
 
   useEffect(() => {
     if (user) {
+      if (
+        ["african_food_export", "b2b_trade", "restaurant_supplier", "product_export", "human_capital", "training_recruitment"].includes(
+          user.freelancerCategory || "",
+        )
+      ) {
+        setCategory(user.freelancerCategory);
+        if (user.supplierProfile?.products) {
+          const prodStr = Array.isArray(user.supplierProfile.products)
+            ? user.supplierProfile.products.join(", ")
+            : String(user.supplierProfile.products);
+          setProduct(prodStr);
+        }
+      }
+    }
+  }, [user]);
+
+
+  useEffect(() => {
+    if (user) {
       setLoading(true);
       supabase
         .from("leads")
@@ -554,11 +573,12 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   const [generating, setGenerating] = useState(false);
   const [outreachDraft, setOutreachDraft] = useState("");
   const [selectedChannel, setSelectedChannel] = useState<
-    "email" | "linkedin" | "whatsapp" | "phone_script"
+    "email" | "linkedin" | "whatsapp" | "phone_script" | "letter"
   >("email");
   const [selectedTone, setSelectedTone] = useState<"casual" | "professional" | "bold">(
     "professional",
   );
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [provider, setProvider] = useState("");
   const [activeTab, setActiveTab] = useState<"overview" | "seo">("overview");
   const [seoLoading, setSeoLoading] = useState(false);
@@ -614,6 +634,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
           leadId: currentLead.id,
           channel: apiChannel,
           tone: selectedTone,
+          language: selectedLanguage,
         },
       });
       if (error) throw error;
@@ -823,18 +844,21 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                 </div>
               ) : (
                 <div className="mt-3 rounded-xl border border-border bg-background p-3.5 space-y-3">
-                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0d1222] p-2 rounded-lg">
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-slate-400 font-medium">Channel:</span>
                       <select
                         value={selectedChannel}
                         onChange={(e) => setSelectedChannel(e.target.value as any)}
-                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
+                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white focus:outline-none focus:ring-1 focus:ring-primary"
                       >
                         <option value="email">Email</option>
                         <option value="linkedin">LinkedIn DM</option>
                         <option value="whatsapp">WhatsApp Message</option>
                         <option value="phone_script">Phone Script</option>
+                        {["african_food_export", "restaurant_supplier", "product_export", "b2b_trade", "human_capital", "training_recruitment"].includes(currentLead.industry || "") && (
+                          <option value="letter">Physical Letter</option>
+                        )}
                       </select>
                     </div>
                     <div className="flex items-center gap-1">
@@ -842,11 +866,28 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                       <select
                         value={selectedTone}
                         onChange={(e) => setSelectedTone(e.target.value as any)}
-                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white"
+                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white focus:outline-none focus:ring-1 focus:ring-primary"
                       >
                         <option value="professional">Professional</option>
                         <option value="casual">Casual</option>
                         <option value="bold">Bold/Direct</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-slate-400 font-medium">Language:</span>
+                      <select
+                        value={selectedLanguage}
+                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                      >
+                        <option value="English">English</option>
+                        <option value="French">French</option>
+                        <option value="German">German</option>
+                        <option value="Spanish">Spanish</option>
+                        <option value="Portuguese">Portuguese</option>
+                        <option value="Arabic">Arabic</option>
+                        <option value="Japanese">Japanese</option>
+                        <option value="Chinese">Chinese</option>
                       </select>
                     </div>
                   </div>

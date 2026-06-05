@@ -260,7 +260,7 @@ export const MOCK_LEADS: Lead[] = [
     id: "mock-training-1",
     businessName: "Acme Corporate HQ",
     businessType: "Corporate Office",
-    industry: "corporate_training",
+    industry: "human_capital",
     city: "London",
     country: "United Kingdom",
     fullAddress: "30 St Mary Axe, London EC3A 8BF",
@@ -401,6 +401,12 @@ export const CATEGORIES = [
     example: "Find schools and learning centers needing tutors",
   },
   {
+    id: "parent_tutor",
+    emoji: "👨👩👧",
+    label: "Parent-Tutor Matching",
+    example: "Find parents actively looking for tutors",
+  },
+  {
     id: "african_food_export",
     emoji: "🌍",
     label: "African Food Export",
@@ -414,21 +420,27 @@ export const CATEGORIES = [
   },
   {
     id: "product_export",
-    emoji: "🛒",
+    emoji: "📦",
     label: "Product Import/Export",
     example: "Find global wholesalers and trade buyers",
   },
   {
     id: "b2b_trade",
-    emoji: "🏭",
+    emoji: "🤝",
     label: "B2B Trade",
     example: "Find manufacturers needing bulk materials",
   },
   {
-    id: "corporate_training",
-    emoji: "📚",
-    label: "Workforce Development",
-    example: "Find organizations needing leadership or L&D solutions",
+    id: "human_capital",
+    emoji: "🧠",
+    label: "Human Capital Development",
+    example: "Find companies needing talent/organizational training",
+  },
+  {
+    id: "training_recruitment",
+    emoji: "🎯",
+    label: "Training & Recruitment",
+    example: "Find companies hiring or needing staffing partners",
   },
 ];
 

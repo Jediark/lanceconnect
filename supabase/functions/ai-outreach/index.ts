@@ -14,8 +14,9 @@ import { z } from "https://esm.sh/zod@3.22.0";
 
 const requestSchema = z.object({
   leadId: z.string().uuid(),
-  channel: z.enum(["email", "phone_script", "sms", "linkedin"]),
+  channel: z.enum(["email", "phone_script", "sms", "linkedin", "whatsapp", "letter"]),
   tone: z.enum(["casual", "professional", "bold"]).optional().default("professional"),
+  language: z.string().optional(),
 });
 
 Deno.serve(async (req) => {
@@ -67,42 +68,131 @@ Deno.serve(async (req) => {
     // Fetch user profile plan details
     const { data: profile } = await supabase
       .from("profiles")
-      .select("plan, full_name, email, welcome_email_sent")
+      .select("plan, full_name, email, welcome_email_sent, freelancer_category, supplier_profile")
       .eq("id", user.id)
       .single();
 
     const plan = profile?.plan || "free";
     const userName = profile?.full_name || "Freelancer";
 
+    const userCategory = profile?.freelancer_category || lead.industry || "web_dev";
+    const supplierProfile = (profile?.supplier_profile as any) || {};
+
     let promptRole = "world-class freelance marketer pitching your services";
     let promptGoal =
       "Focus on how you can solve their specific opportunity (e.g. build a website, improve rating, or run ads).";
     let promptExtraRules = "";
 
-    const industry = lead.industry;
-    if (industry === "tutor") {
+    if (
+      ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"].includes(
+        userCategory,
+      )
+    ) {
+      const supplierName = supplierProfile.companyName || profile?.full_name || "Je'moorel UK";
+      let supplierProducts = "premium products";
+      if (supplierProfile.products) {
+        supplierProducts = Array.isArray(supplierProfile.products)
+          ? supplierProfile.products.join(", ")
+          : String(supplierProfile.products);
+      } else if (lead.description) {
+        const productMatch = lead.description.match(/Product Interest:\s*([^\n)]+)/i);
+        if (productMatch) {
+          supplierProducts = productMatch[1].trim();
+        }
+      }
+      const supplierCerts = Array.isArray(supplierProfile.certifications)
+        ? supplierProfile.certifications.join(", ")
+        : supplierProfile.certifications || "NAFDAC, ISO, Organic, Halal certified";
+      const supplierMoq = supplierProfile.moq || "negotiable wholesale quantities";
+
+      promptRole = `B2B supplier and import-export trade representative representing ${supplierName}`;
+      promptGoal = `Introduce your company as a premier supplier of ${supplierProducts}. 
+Pitch a supply/trade wholesale partnership to distribute or wholesale your products to them.
+Include details about your products: ${supplierProducts}, certifications: ${supplierCerts}, and minimum order quantity (MOQ): ${supplierMoq}.
+Do NOT pitch digital marketing, web dev, or freelance services. Keep it highly professional, B2B focused.
+Offer to send a product catalogue or schedule a brief call.`;
+    } else if (userCategory === "human_capital") {
+      const supplierName = supplierProfile.companyName || profile?.full_name || "Je'moorel UK";
+      const services = Array.isArray(supplierProfile.services)
+        ? supplierProfile.services.join(", ")
+        : supplierProfile.services || "workforce development, talent training, leadership workshops";
+
+      promptRole = `Corporate HR & Talent Development consultant from ${supplierName}`;
+      promptGoal = `Write a formal corporate B2B proposal targeting their HR/L&D department.
+Offer high-quality training and organizational development services: ${services}.
+Highlight:
+- A complimentary Training Needs Analysis (TNA) offer.
+- The ROI of investing in staff training and development.
+- Request a meeting to discuss their specific organizational talent development needs.`;
+    } else if (userCategory === "training_recruitment") {
+      const supplierName = supplierProfile.companyName || profile?.full_name || "LanceConnect Partner";
+      const services = Array.isArray(supplierProfile.services)
+        ? supplierProfile.services.join(", ")
+        : supplierProfile.services || "recruitment, headhunting, staffing solutions";
+
+      promptRole = `Professional recruiter and staffing partner from ${supplierName}`;
+      promptGoal = `Write a recruitment partnership pitch.
+Introduce your staffing and recruitment services: ${services}.
+Emphasize:
+- Speed of candidate placement.
+- High quality of vetted candidates.
+- Cost savings compared to internal HR hiring search.
+- Ask if they have open roles we can help fill.`;
+    } else if (userCategory === "parent_tutor") {
+      const subjects = Array.isArray(supplierProfile.subjects)
+        ? supplierProfile.subjects.join(", ")
+        : supplierProfile.subjects || "academic subjects";
+      const ageGroups = Array.isArray(supplierProfile.ageGroups)
+        ? supplierProfile.ageGroups.join(", ")
+        : supplierProfile.ageGroups || "all ages";
+      const format = supplierProfile.format || "online";
+      const qualifications = supplierProfile.qualifications || "experienced educator";
+
+      const isSchool = /school|academy|college|center|centre|learning/i.test(lead.business_type || lead.business_name || "");
+
+      if (isSchool) {
+        promptRole = `Professional tutor and educational contractor`;
+        promptGoal = `Write a message to the school or learning center director/administrator.
+Introduce yourself as an experienced tutor (${qualifications}) available to work with their students or support their after-school tutoring programs.
+Subjects: ${subjects}. Age groups: ${ageGroups}. Format: ${format}.`;
+      } else {
+        promptRole = `Friendly local tutor and educational coach`;
+        promptGoal = `Write a warm, family-focused message to a parent.
+Introduce your tutoring services: ${subjects}.
+Focus on:
+- Helping their child achieve their full potential and improve their grades.
+- Supporting ages: ${ageGroups}. Format: ${format}.
+- Certifications/Qualifications: ${qualifications}.`;
+      }
+    } else if (userCategory === "tutor") {
       promptRole = "world-class online tutor and professional educator";
       promptGoal =
         "Introduce your tutoring services, language classes, or academic coaching. Highlight how you can support their students or educational needs.";
-    } else if (
-      ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"].includes(
-        industry,
-      )
-    ) {
-      const productMatch = lead.description
-        ? lead.description.match(/Product Interest:\s*([^\n)]+)/i)
-        : null;
-      const suppliedProduct = productMatch
-        ? productMatch[1].trim()
-        : "ethnic food products and supply";
-      promptRole = `B2B supplier and import-export trade representative`;
-      promptGoal = `Introduce your company as a premier supplier of ${suppliedProduct}. Pitch a supply/trade partnership to distribute or wholesale your products to them.`;
-      promptExtraRules = `\n- Do NOT pitch digital marketing or freelance services (like websites or SEO).\n- Mention your ability to supply ${suppliedProduct} reliably and offer to send product catalogs or samples.`;
-    } else if (industry === "corporate_training") {
-      promptRole = "professional corporate L&D trainer and workforce development consultant";
-      promptGoal =
-        "Pitch your workforce development solutions, team leadership programs, AI training, or corporate L&D workshops to improve their organizational capabilities.";
     }
+
+    // Determine target language
+    let targetLang = parsed.data.language || "";
+    if (!targetLang) {
+      // Auto-detect based on country
+      const c = (lead.country || "").toLowerCase();
+      if (c.includes("france") || c.includes("belgium") || c.includes("senegal") || c.includes("cote d") || c.includes("ivory coast") || c.includes("cameroon")) {
+        targetLang = "French";
+      } else if (c.includes("germany") || c.includes("austria") || c.includes("switzerland")) {
+        targetLang = "German";
+      } else if (c.includes("brazil") || c.includes("portugal")) {
+        targetLang = "Portuguese";
+      } else if (c.includes("japan")) {
+        targetLang = "Japanese";
+      } else if (c.includes("spain") || c.includes("mexico") || c.includes("argentina") || c.includes("colombia")) {
+        targetLang = "Spanish";
+      } else if (c.includes("egypt") || c.includes("saudi") || c.includes("uae") || c.includes("united arab") || c.includes("morocco")) {
+        targetLang = "Arabic";
+      } else {
+        targetLang = "English";
+      }
+    }
+
+    promptExtraRules += `\n- The output message MUST be written in ${targetLang}.`;
 
     const prompt = `You are a ${promptRole}. 
 Write a short, highly personalized ${channel} message in a ${tone} tone to ${lead.business_name}.

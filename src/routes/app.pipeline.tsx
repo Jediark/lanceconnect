@@ -21,6 +21,7 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { STATUS_META, type PipelineStatus } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/app/pipeline")({
   head: () => ({ meta: [{ title: "My Pipeline — LanceConnect" }] }),
@@ -39,10 +40,54 @@ const STATUS_ICONS: Record<PipelineStatus | "lost", any> = {
 };
 
 function PipelinePage() {
+  const { user } = useAuth();
   const { pipeline, updateStatus, removeLead } = usePipeline();
   const [selectedStatus, setSelectedStatus] = useState<PipelineStatus | "all">("all");
   const [view, setView] = useState<"grid" | "table">("grid");
   const [showLost, setShowLost] = useState(false);
+
+  const isB2B = [
+    "african_food_export",
+    "restaurant_supplier",
+    "product_export",
+    "b2b_trade",
+    "human_capital",
+    "training_recruitment",
+  ].includes(user?.freelancerCategory || "");
+
+  const getStatusLabel = (status: PipelineStatus | "lost") => {
+    if (isB2B) {
+      switch (status) {
+        case "new":
+          return "Identified";
+        case "contacted":
+          return "Contacted";
+        case "interested":
+          return "Catalogue Sent";
+        case "proposal_sent":
+          return "Negotiating";
+        case "won":
+          return "Contract Signed";
+        case "lost":
+          return "Lost";
+      }
+    }
+    switch (status) {
+      case "new":
+        return "New";
+      case "contacted":
+        return "Contacted";
+      case "interested":
+        return "Interested";
+      case "proposal_sent":
+        return "Proposal Sent";
+      case "won":
+        return "Won";
+      case "lost":
+        return "Lost";
+    }
+  };
+
 
   const downloadCSV = () => {
     if (pipeline.length === 0) return;
@@ -199,10 +244,10 @@ function PipelinePage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-base font-bold text-foreground leading-tight mb-1">
-                      {meta.label}
+                      {getStatusLabel(status)}
                     </h3>
                     <p className="text-[11px] text-muted-foreground leading-snug">
-                      Track leads currently in the {meta.label.toLowerCase()} phase.
+                      Track leads currently in the {getStatusLabel(status).toLowerCase()} phase.
                     </p>
                   </div>
                 </div>
@@ -261,7 +306,7 @@ function PipelinePage() {
                           >
                             {Object.entries(STATUS_META).map(([k, v]) => (
                               <option key={k} value={k}>
-                                {v.label}
+                                {getStatusLabel(k as PipelineStatus)}
                               </option>
                             ))}
                           </select>
@@ -314,7 +359,7 @@ function PipelinePage() {
                         >
                           {Object.entries(STATUS_META).map(([k, v]) => (
                             <option key={k} value={k}>
-                              {v.label}
+                              {getStatusLabel(k as PipelineStatus)}
                             </option>
                           ))}
                         </select>

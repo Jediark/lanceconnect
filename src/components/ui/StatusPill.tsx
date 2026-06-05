@@ -1,8 +1,44 @@
 import { STATUS_META, type PipelineStatus } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function StatusPill({ status, className }: { status: PipelineStatus; className?: string }) {
+  const { user } = useAuth();
   const meta = STATUS_META[status];
+
+  const isB2B = [
+    "african_food_export",
+    "restaurant_supplier",
+    "product_export",
+    "b2b_trade",
+    "human_capital",
+    "training_recruitment",
+  ].includes(user?.freelancerCategory || "");
+
+  let label = meta.label;
+  if (isB2B) {
+    switch (status) {
+      case "new":
+        label = "Identified";
+        break;
+      case "contacted":
+        label = "Contacted";
+        break;
+      case "interested":
+        label = "Catalogue Sent";
+        break;
+      case "proposal_sent":
+        label = "Negotiating";
+        break;
+      case "won":
+        label = "Contract Signed";
+        break;
+      case "lost":
+        label = "Lost";
+        break;
+    }
+  }
+
   return (
     <span
       className={cn(
@@ -12,7 +48,8 @@ export function StatusPill({ status, className }: { status: PipelineStatus; clas
       )}
     >
       <span>{meta.emoji}</span>
-      <span>{meta.label}</span>
+      <span>{label}</span>
     </span>
   );
 }
+

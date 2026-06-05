@@ -20,6 +20,8 @@ import {
   Package,
   Factory,
   BookOpen,
+  Brain,
+  Target,
 } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { cn } from "@/lib/utils";
@@ -37,11 +39,13 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   app_dev: <Smartphone className="h-5 w-5 text-primary" />,
   va: <Users className="h-5 w-5 text-primary" />,
   tutor: <GraduationCap className="h-5 w-5 text-primary" />,
+  parent_tutor: <Users className="h-5 w-5 text-primary" />,
   african_food_export: <Leaf className="h-5 w-5 text-primary" />,
   restaurant_supplier: <Utensils className="h-5 w-5 text-primary" />,
   product_export: <Package className="h-5 w-5 text-primary" />,
   b2b_trade: <Factory className="h-5 w-5 text-primary" />,
-  corporate_training: <BookOpen className="h-5 w-5 text-primary" />,
+  human_capital: <Brain className="h-5 w-5 text-primary" />,
+  training_recruitment: <Target className="h-5 w-5 text-primary" />,
 };
 
 export const Route = createFileRoute("/onboarding")({
@@ -61,6 +65,25 @@ function Onboarding() {
   const [website, setWebsite] = useState("");
   const [bio, setBio] = useState("");
 
+  // Supplier-specific states
+  const [companyName, setCompanyName] = useState("");
+  const [productsSupplied, setProductsSupplied] = useState("");
+  const [certifications, setCertifications] = useState<string[]>([]);
+  const [moq, setMoq] = useState("");
+  const [countriesSupply, setCountriesSupply] = useState("");
+
+  // Tutor states
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [ageGroups, setAgeGroups] = useState<string[]>([]);
+  const [format, setFormat] = useState("both");
+  const [qualifications, setQualifications] = useState("");
+
+  // HR/Recruitment states
+  const [servicesOffered, setServicesOffered] = useState<string[]>([]);
+  const [industriesServed, setIndustriesServed] = useState<string[]>([]);
+  const [yearsExperience, setYearsExperience] = useState("");
+  const [teamSize, setTeamSize] = useState("");
+
   useEffect(() => {
     if (user?.fullName && !name) {
       setName(user.fullName);
@@ -71,6 +94,30 @@ function Onboarding() {
 
   const handleComplete = () => {
     if (user) {
+      const supplierProfile: any = {};
+      if (
+        ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"].includes(
+          category || "",
+        )
+      ) {
+        supplierProfile.companyName = companyName;
+        supplierProfile.products = productsSupplied;
+        supplierProfile.certifications = certifications;
+        supplierProfile.moq = moq;
+        supplierProfile.targetCountries = countriesSupply;
+      } else if (category === "parent_tutor") {
+        supplierProfile.subjects = subjects;
+        supplierProfile.ageGroups = ageGroups;
+        supplierProfile.format = format;
+        supplierProfile.qualifications = qualifications;
+      } else if (["human_capital", "training_recruitment"].includes(category || "")) {
+        supplierProfile.companyName = companyName;
+        supplierProfile.services = servicesOffered;
+        supplierProfile.industries = industriesServed;
+        supplierProfile.yearsExperience = yearsExperience;
+        supplierProfile.teamSize = teamSize;
+      }
+
       updateUser({
         fullName: name || user.fullName,
         freelancerCategory: category || "web_dev",
@@ -79,6 +126,7 @@ function Onboarding() {
         bio: bio || null,
         websiteUrl: website || null,
         onboardingCompleted: true,
+        supplierProfile: Object.keys(supplierProfile).length > 0 ? supplierProfile : null,
       });
     }
     nav({ to: "/app/discover" });
@@ -106,7 +154,7 @@ function Onboarding() {
             <p className="mt-2 text-muted-foreground">
               We'll find businesses that specifically need your skills.
             </p>
-            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {CATEGORIES.map((c) => {
                 const active = category === c.id;
                 return (
@@ -213,12 +261,12 @@ function Onboarding() {
           <>
             <h1 className="font-display text-3xl font-bold md:text-4xl">Almost there!</h1>
             <p className="mt-2 text-muted-foreground">
-              Tell us a little about yourself so your outreach feels personal.
+              Configure your profile to find target opportunities.
             </p>
             <div className="mt-8 space-y-4">
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Full name
+                  Full name / Contact Name
                 </label>
                 <input
                   value={name}
@@ -227,29 +275,278 @@ function Onboarding() {
                   className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
                 />
               </div>
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Website or portfolio (optional)
-                </label>
-                <input
-                  value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
-                  placeholder="https://your-site.com"
-                  className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Short bio — what you offer
-                </label>
-                <textarea
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  rows={3}
-                  placeholder="I build fast, affordable websites for restaurants and local businesses."
-                  className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
-                />
-              </div>
+
+              {/* Conditional Sub-forms */}
+              {[
+                "african_food_export",
+                "restaurant_supplier",
+                "product_export",
+                "b2b_trade",
+              ].includes(category || "") && (
+                <div className="space-y-4 p-4 rounded-xl border border-border bg-card/50">
+                  <h3 className="text-sm font-semibold text-primary">Supplier Details</h3>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Company Name
+                    </label>
+                    <input
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="e.g. Je'moorel UK"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Products Supplied (e.g. Palm oil, Garri, Ogbono)
+                    </label>
+                    <input
+                      value={productsSupplied}
+                      onChange={(e) => setProductsSupplied(e.target.value)}
+                      placeholder="Enter products you supply..."
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Certifications (Select all that apply)
+                    </label>
+                    <div className="mt-1.5 flex flex-wrap gap-2">
+                      {["NAFDAC", "ISO", "Organic", "Halal", "FDA"].map((cert) => {
+                        const active = certifications.includes(cert);
+                        return (
+                          <button
+                            type="button"
+                            key={cert}
+                            onClick={() => {
+                              setCertifications((prev) =>
+                                active ? prev.filter((c) => c !== cert) : [...prev, cert],
+                              );
+                            }}
+                            className={cn(
+                              "px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer",
+                              active
+                                ? "bg-primary text-white border-primary"
+                                : "bg-card border-border hover:bg-accent text-slate-400",
+                            )}
+                          >
+                            {cert}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Minimum Order Quantity (MOQ)
+                    </label>
+                    <input
+                      value={moq}
+                      onChange={(e) => setMoq(e.target.value)}
+                      placeholder="e.g. 50 boxes, 1 container"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Countries you can supply to
+                    </label>
+                    <input
+                      value={countriesSupply}
+                      onChange={(e) => setCountriesSupply(e.target.value)}
+                      placeholder="e.g. United Kingdom, Germany, EU"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {category === "parent_tutor" && (
+                <div className="space-y-4 p-4 rounded-xl border border-border bg-card/50">
+                  <h3 className="text-sm font-semibold text-primary">Tutor Profile</h3>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Subjects Taught (comma-separated)
+                    </label>
+                    <input
+                      value={subjects.join(", ")}
+                      onChange={(e) =>
+                        setSubjects(
+                          e.target.value
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean),
+                        )
+                      }
+                      placeholder="e.g. Mathematics, Chemistry, English"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Age Groups (Select all that apply)
+                    </label>
+                    <div className="mt-1.5 flex flex-wrap gap-2">
+                      {["5-8", "9-12", "13-16", "17-18", "Adult"].map((age) => {
+                        const active = ageGroups.includes(age);
+                        return (
+                          <button
+                            type="button"
+                            key={age}
+                            onClick={() => {
+                              setAgeGroups((prev) =>
+                                active ? prev.filter((a) => a !== age) : [...prev, age],
+                              );
+                            }}
+                            className={cn(
+                              "px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer",
+                              active
+                                ? "bg-primary text-white border-primary"
+                                : "bg-card border-border hover:bg-accent text-slate-400",
+                            )}
+                          >
+                            {age}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Teaching Format
+                    </label>
+                    <select
+                      value={format}
+                      onChange={(e) => setFormat(e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background text-foreground"
+                    >
+                      <option value="both">Both Online and In-Person</option>
+                      <option value="online">Online Only</option>
+                      <option value="in_person">In-Person Only</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Qualifications
+                    </label>
+                    <textarea
+                      value={qualifications}
+                      onChange={(e) => setQualifications(e.target.value)}
+                      rows={2}
+                      placeholder="e.g. B.Sc. in Mathematics, 5 years teaching experience"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background text-foreground"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {["human_capital", "training_recruitment"].includes(category || "") && (
+                <div className="space-y-4 p-4 rounded-xl border border-border bg-card/50">
+                  <h3 className="text-sm font-semibold text-primary">
+                    HR / Training Partner Profile
+                  </h3>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Company Name
+                    </label>
+                    <input
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="e.g. Je'moorel Capacity Partners"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Services Offered (comma-separated)
+                    </label>
+                    <input
+                      value={servicesOffered.join(", ")}
+                      onChange={(e) =>
+                        setServicesOffered(
+                          e.target.value
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean),
+                        )
+                      }
+                      placeholder="e.g. Leadership Training, HR Consulting, Staffing"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Industries Served (comma-separated)
+                    </label>
+                    <input
+                      value={industriesServed.join(", ")}
+                      onChange={(e) =>
+                        setIndustriesServed(
+                          e.target.value
+                            .split(",")
+                            .map((i) => i.trim())
+                            .filter(Boolean),
+                        )
+                      }
+                      placeholder="e.g. Banking, Healthcare, Government, Tech"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Years of Experience
+                      </label>
+                      <input
+                        value={yearsExperience}
+                        onChange={(e) => setYearsExperience(e.target.value)}
+                        placeholder="e.g. 5+ years"
+                        className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Team Size
+                      </label>
+                      <input
+                        value={teamSize}
+                        onChange={(e) => setTeamSize(e.target.value)}
+                        placeholder="e.g. 1-10, 50+"
+                        className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm bg-background"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Standard text inputs as fallback/regular */}
+              {!["african_food_export", "restaurant_supplier", "product_export", "b2b_trade", "parent_tutor", "human_capital", "training_recruitment"].includes(category || "") && (
+                <>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Website or portfolio (optional)
+                    </label>
+                    <input
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      placeholder="https://your-site.com"
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Short bio — what you offer
+                    </label>
+                    <textarea
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      rows={3}
+                      placeholder="I build fast, affordable websites for restaurants and local businesses."
+                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm"
+                    />
+                  </div>
+                </>
+              )}
             </div>
             <button
               onClick={handleComplete}
@@ -263,3 +560,4 @@ function Onboarding() {
     </div>
   );
 }
+

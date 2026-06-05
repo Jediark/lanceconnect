@@ -74,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         linkedinUrl: data.linkedin_url,
         dribbbleUrl: data.dribbble_url,
         twitterUrl: data.twitter_url,
+        supplierProfile: data.supplier_profile,
       });
     } catch (err) {
       console.error("Error mapping profile:", err);
@@ -220,6 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (patch.linkedinUrl !== undefined) dbPatch.linkedin_url = patch.linkedinUrl;
       if (patch.dribbbleUrl !== undefined) dbPatch.dribbble_url = patch.dribbbleUrl;
       if (patch.twitterUrl !== undefined) dbPatch.twitter_url = patch.twitterUrl;
+      if (patch.supplierProfile !== undefined) dbPatch.supplier_profile = patch.supplierProfile;
 
       supabase
         .from("profiles")

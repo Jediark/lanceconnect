@@ -75,81 +75,157 @@ Deno.serve(async (req) => {
     let score = 0;
     const breakdown: Record<string, number> = {};
 
-    // 1. Website signal (up to 40 pts)
-    if (!lead.has_website || !lead.website_url) {
-      score += 40;
-      breakdown["no_website"] = 40;
-    } else {
-      const websiteScore = lead.website_score || 100;
-      if (websiteScore < 50) {
-        score += 25;
-        breakdown["slow_website"] = 25;
-      } else if (websiteScore < 80) {
-        score += 15;
-        breakdown["average_website_speed"] = 15;
-      }
+    const category = lead.industry || "web_dev";
+    const isB2B = [
+      "african_food_export",
+      "restaurant_supplier",
+      "product_export",
+      "b2b_trade",
+      "human_capital",
+      "training_recruitment",
+    ].includes(category);
 
-      if (lead.website_mobile_ok === false) {
-        score += 10;
-        breakdown["mobile_unfriendly"] = 10;
-      }
-
-      if (lead.website_has_ssl === false) {
-        score += 5;
-        breakdown["no_https"] = 5;
-      }
-    }
-
-    // 2. Google Maps / Yelp Signals (up to 30 pts)
-    if (lead.google_rating) {
-      const rating = parseFloat(lead.google_rating);
-      if (rating < 3.5) {
+    if (isB2B) {
+      // B2B SCORING — bigger and established = better
+      if (lead.has_website) {
         score += 20;
-        breakdown["poor_google_rating"] = 20;
-      } else if (rating < 4.5) {
+        breakdown["has_website"] = 20;
+      }
+      if (lead.google_review_count > 50) {
+        score += 20;
+        breakdown["established_business_reviews"] = 20;
+      } else if (lead.google_review_count > 20) {
         score += 10;
-        breakdown["suboptimal_google_rating"] = 10;
+        breakdown["semi_established_reviews"] = 10;
       }
 
-      const reviews = lead.google_review_count || 0;
-      if (reviews < 5) {
+      const rating = parseFloat(lead.google_rating || "0");
+      if (rating > 4.0) {
+        score += 15;
+        breakdown["good_reputation_rating"] = 15;
+      }
+
+      if (lead.has_facebook) {
         score += 10;
-        breakdown["very_few_google_reviews"] = 10;
-      } else if (reviews < 20) {
+        breakdown["has_facebook"] = 10;
+      }
+      if (lead.has_instagram) {
+        score += 10;
+        breakdown["has_instagram"] = 10;
+      }
+      if (lead.phone) {
+        score += 15;
+        breakdown["contactable_phone"] = 15;
+      }
+      if (lead.email) {
+        score += 10;
+        breakdown["contactable_email"] = 10;
+      }
+    } else {
+      // FREELANCE SCORING — existing code stays
+      // 1. Website signal (up to 40 pts)
+      if (!lead.has_website || !lead.website_url) {
+        score += 40;
+        breakdown["no_website"] = 40;
+
+        // Digital gap bonus — businesses in emerging markets with no website score HIGHER
+        const DIGITAL_GAP_BONUS: Record<string, number> = {
+          // Africa
+          Nigeria: 15,
+          Ghana: 15,
+          Kenya: 12,
+          Ethiopia: 15,
+          Tanzania: 15,
+          Uganda: 12,
+          Cameroon: 12,
+          // Asia
+          Bangladesh: 12,
+          Pakistan: 10,
+          Myanmar: 12,
+          Cambodia: 12,
+          Nepal: 12,
+          // Latin America
+          Haiti: 15,
+          Bolivia: 10,
+          Honduras: 10,
+        };
+        const bonus = DIGITAL_GAP_BONUS[lead.country || ""] || 0;
+        if (bonus > 0) {
+          score += bonus;
+          breakdown[`digital_gap_bonus_${(lead.country || "").toLowerCase()}`] = bonus;
+        }
+      } else {
+        const websiteScore = lead.website_score || 100;
+        if (websiteScore < 50) {
+          score += 25;
+          breakdown["slow_website"] = 25;
+        } else if (websiteScore < 80) {
+          score += 15;
+          breakdown["average_website_speed"] = 15;
+        }
+
+        if (lead.website_mobile_ok === false) {
+          score += 10;
+          breakdown["mobile_unfriendly"] = 10;
+        }
+
+        if (lead.website_has_ssl === false) {
+          score += 5;
+          breakdown["no_https"] = 5;
+        }
+      }
+
+      // 2. Google Maps / Yelp Signals (up to 30 pts)
+      if (lead.google_rating) {
+        const rating = parseFloat(lead.google_rating);
+        if (rating < 3.5) {
+          score += 20;
+          breakdown["poor_google_rating"] = 20;
+        } else if (rating < 4.5) {
+          score += 10;
+          breakdown["suboptimal_google_rating"] = 10;
+        }
+
+        const reviews = lead.google_review_count || 0;
+        if (reviews < 5) {
+          score += 10;
+          breakdown["very_few_google_reviews"] = 10;
+        } else if (reviews < 20) {
+          score += 5;
+          breakdown["few_google_reviews"] = 5;
+        }
+      } else {
+        score += 15;
+        breakdown["no_google_business_rating"] = 15;
+      }
+
+      // 3. Social Media Presence (up to 20 pts)
+      if (lead.social_scan_done) {
+        let missingSocials = 0;
+        if (!lead.has_facebook) missingSocials++;
+        if (!lead.has_instagram) missingSocials++;
+        if (!lead.has_twitter) missingSocials++;
+        if (!lead.has_linkedin) missingSocials++;
+
+        const socialPenalty = missingSocials * 5;
+        if (socialPenalty > 0) {
+          score += socialPenalty;
+          breakdown[`missing_${missingSocials}_social_channels`] = socialPenalty;
+        }
+      } else {
+        score += 10;
+        breakdown["social_presence_unchecked"] = 10;
+      }
+
+      // 4. Contact signals (up to 10 pts)
+      if (!lead.email) {
         score += 5;
-        breakdown["few_google_reviews"] = 5;
+        breakdown["no_email_listed"] = 5;
       }
-    } else {
-      score += 15;
-      breakdown["no_google_business_rating"] = 15;
-    }
-
-    // 3. Social Media Presence (up to 20 pts)
-    if (lead.social_scan_done) {
-      let missingSocials = 0;
-      if (!lead.has_facebook) missingSocials++;
-      if (!lead.has_instagram) missingSocials++;
-      if (!lead.has_twitter) missingSocials++;
-      if (!lead.has_linkedin) missingSocials++;
-
-      const socialPenalty = missingSocials * 5;
-      if (socialPenalty > 0) {
-        score += socialPenalty;
-        breakdown[`missing_${missingSocials}_social_channels`] = socialPenalty;
+      if (!lead.phone) {
+        score += 5;
+        breakdown["no_phone_listed"] = 5;
       }
-    } else {
-      score += 10;
-      breakdown["social_presence_unchecked"] = 10;
-    }
-
-    // 4. Contact signals (up to 10 pts)
-    if (!lead.email) {
-      score += 5;
-      breakdown["no_email_listed"] = 5;
-    }
-    if (!lead.phone) {
-      score += 5;
-      breakdown["no_phone_listed"] = 5;
     }
 
     // Clamp score to 100 max, 0 min

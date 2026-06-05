@@ -11,6 +11,29 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
   const isSaved = savedIds.has(lead.id);
   const [saving, setSaving] = useState(false);
 
+  const isB2B = [
+    "african_food_export",
+    "restaurant_supplier",
+    "product_export",
+    "b2b_trade",
+    "human_capital",
+    "training_recruitment",
+  ].includes(lead.industry || "");
+
+  const buyerSignal = lead.opportunityScore >= 75 ? "Good Buyer Signal" : "Cold Prospect";
+
+  let companySize = "Small Business";
+  if (lead.googleReviewCount > 100) {
+    companySize = "Large Enterprise";
+  } else if (lead.googleReviewCount > 20) {
+    companySize = "Medium Business";
+  }
+
+  const alreadyImports =
+    lead.industry === "african_food_export" &&
+    (/importer|wholesaler|distributor|supermarket|ethnic|african/i.test(lead.businessType || "") ||
+      /importer|wholesaler|distributor|supermarket|ethnic|african/i.test(lead.businessName || ""));
+
   const handleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isSaved) return;
@@ -63,6 +86,29 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
         </div>
         <OpportunityScore score={lead.opportunityScore} />
       </div>
+
+      {isB2B && (
+        <div className="mt-1 mb-2 flex flex-wrap gap-1.5 text-[10px] font-semibold">
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-full border",
+              lead.opportunityScore >= 75
+                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                : "bg-slate-500/10 text-slate-400 border-slate-500/20",
+            )}
+          >
+            {buyerSignal}
+          </span>
+          <span className="px-2 py-0.5 rounded-full border bg-blue-500/10 text-blue-400 border-blue-500/20">
+            {companySize}
+          </span>
+          {alreadyImports && (
+            <span className="px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-400 border-amber-500/20">
+              Already Imports African Food
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="my-3 flex flex-wrap items-center gap-2 border-y border-dashed border-border py-2.5 text-xs">
         {lead.hasWebsite ? (

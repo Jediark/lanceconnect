@@ -28,6 +28,22 @@ export type Lead = {
 
 export type PipelineStatus = "new" | "contacted" | "interested" | "proposal_sent" | "won" | "lost";
 
+export type SupplierProfile = {
+  companyName?: string;
+  products?: string[] | string;
+  certifications?: string[] | string;
+  moq?: string;
+  targetCountries?: string[] | string;
+  subjects?: string[];
+  ageGroups?: string[];
+  format?: string;
+  qualifications?: string;
+  services?: string[];
+  industries?: string[];
+  yearsExperience?: string;
+  teamSize?: string;
+};
+
 export type User = {
   id: string;
   email: string;
@@ -54,6 +70,7 @@ export type User = {
   linkedinUrl?: string | null;
   dribbbleUrl?: string | null;
   twitterUrl?: string | null;
+  supplierProfile?: SupplierProfile | null;
 };
 
 export type OutreachTemplate = {
@@ -116,14 +133,24 @@ export const CATEGORY_TO_PLACES_QUERY: Record<string, string[]> = {
     "university",
     "college",
   ],
+  parent_tutor: [
+    "primary school",
+    "secondary school",
+    "learning center",
+    "tutoring center",
+    "homeschool cooperative",
+    "after school program",
+    "educational center",
+  ],
   african_food_export: [
-    "african food store",
-    "caribbean food importer",
-    "ethnic food wholesaler",
-    "african restaurant",
-    "international food distributor",
+    "african food importer",
+    "caribbean food wholesaler",
+    "ethnic food distributor",
+    "african restaurant supplier",
+    "international food broker",
     "african caribbean supermarket",
-    "ethnic grocery",
+    "ethnic grocery wholesaler",
+    "food import export company",
   ],
   restaurant_supplier: [
     "restaurant",
@@ -148,12 +175,25 @@ export const CATEGORY_TO_PLACES_QUERY: Record<string, string[]> = {
     "buying agent",
     "trading company",
   ],
-  corporate_training: [
-    "corporate office",
-    "hr department",
-    "private school administrative office",
-    "training center",
-    "business headquarters",
-    "non profit organization",
+  human_capital: [
+    "bank headquarters",
+    "hospital group",
+    "government agency",
+    "large corporation",
+    "multinational company",
+    "NGO headquarters",
+    "university administration",
+    "insurance company",
+    "telecoms company",
+  ],
+  training_recruitment: [
+    "company hiring",
+    "recruitment agency client",
+    "staffing needs",
+    "HR department",
+    "company expansion",
+    "new office opening",
+    "graduate recruitment program",
   ],
 };
+
