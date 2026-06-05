@@ -4,14 +4,15 @@ import {
   ArrowRight, Bookmark, CheckCircle2, Globe, LineChart, Mail, Map, Play,
   Sparkles, Star, Target, Users, Phone, Building2, MapPin, Plus, Minus,
   Globe2, BarChart3, Zap, Search, Terminal, Copy, Check, Loader2, Code2, Palette,
-  PenTool, Smartphone, Film, Camera, Megaphone, AppWindow, Handshake,
+  PenTool, Smartphone, Film, Camera, Megaphone, AppWindow, Handshake, ChevronLeft, ChevronRight
 } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
 import { IMG, BLOG_POSTS } from "@/data/content";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import useEmblaCarousel from "embla-carousel-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,153 +47,462 @@ export const Route = createFileRoute("/")({
     </MarketingShell>
   ),
 });
-
-const HERO_SLIDES = [
+const SLIDES_DATA = [
   {
-    img: IMG.workspace,
+    bgImg: IMG.workspace,
     eyebrow: "Now scanning leads in 150+ countries",
-    title: <>Find clients. <span className="text-primary">Win work.</span><br/>Without the chase.</>,
-    sub: "LanceConnect scans the internet for businesses that need your skills — then hands you their phone numbers, emails, and a ready-made way in.",
+    title: (
+      <>
+        Find clients. <span className="text-primary font-black">Win work.</span>
+        <br />
+        Without the chase.
+      </>
+    ),
+    sub: "LanceConnect scans the internet for businesses that need your skills — then hands you their phone numbers, emails, and opportunity scores.",
+    themeColor: "emerald" as const,
+    profileImg: "/assets/freelancers/freelancer_11.jpg",
+    profileName: "Taiwo (Web Developer)",
+    pills: ["94 Hot Lead", "Web Dev", "✓ Email Verified"],
+    mockLead: {
+      name: "Boulangerie Dupont",
+      city: "Lyon, France",
+      score: 94,
+      tag: "Hot Lead",
+      details: ["No website found", "Only Facebook page link"]
+    }
   },
   {
-    img: IMG.marketStall,
+    bgImg: IMG.marketStall,
     eyebrow: "Real leads · Real cities",
-    title: <>Local businesses,<br/><span className="text-primary">ready to hire</span> today.</>,
-    sub: "From bakeries in Lyon to studios in Lagos — we surface the businesses already searching for what you do.",
+    title: (
+      <>
+        Local businesses,
+        <br />
+        <span className="text-[#3B82F6] dark:text-[#60A5FA] font-black">ready to hire</span> today.
+      </>
+    ),
+    sub: "From bakeries in Lyon to clinics in Lagos — we surface the businesses already searching for what you do.",
+    themeColor: "blue" as const,
+    profileImg: "/assets/freelancers/freelancer_8.jpg",
+    profileName: "James (SEO Specialist)",
+    pills: ["Lagos, NG", "89% Accuracy", "SEO Audit"],
+    mockLead: {
+      name: "Lagos Dental Care",
+      city: "Lagos, Nigeria",
+      score: 87,
+      tag: "Strong Lead",
+      details: ["Slow mobile speed (8.4s)", "Missing Google reviews"]
+    }
   },
   {
-    img: IMG.coffeeShop,
+    bgImg: IMG.coffeeShop,
     eyebrow: "Built for working freelancers",
-    title: <>Stop pitching cold.<br/>Start <span className="text-primary">conversations</span>.</>,
+    title: (
+      <>
+        Stop pitching cold.
+        <br />
+        Start <span className="text-[#8B5CF6] dark:text-[#A78BFA] font-black">conversations</span>.
+      </>
+    ),
     sub: "Every lead comes with a scored opportunity, a verified contact, and an outreach script written for your craft.",
+    themeColor: "purple" as const,
+    profileImg: "/assets/freelancers/freelancer_6.jpg",
+    profileName: "Sofia (Designer)",
+    pills: ["✦ Claude 3.5", "Email + DM", "⚡ 1.8s Response"],
+    mockLead: {
+      name: "Mario's Ristorante",
+      city: "Naples, Italy",
+      score: 79,
+      tag: "AI Generated",
+      details: ["Tone: Casual & Friendly", "Intro: 'Hey Mario, saw your pizza spot...'"]
+    }
   },
   {
-    img: IMG.team,
-    eyebrow: "Loved in 50+ countries",
-    title: <>One workspace.<br/>Every <span className="text-primary">client win</span>, tracked.</>,
-    sub: "Discover, contact, and close — in a single, calm dashboard built by freelancers, for freelancers.",
-  },
+    bgImg: IMG.team,
+    eyebrow: "One workspace · Direct reach",
+    title: (
+      <>
+        One workspace.
+        <br />
+        Every <span className="text-[#F59E0B] dark:text-[#FBBF24] font-black">client win</span>, tracked.
+      </>
+    ),
+    sub: "Discover, contact, and close — in a single, calm CRM dashboard built by freelancers, for freelancers.",
+    themeColor: "amber" as const,
+    profileImg: "/assets/freelancers/freelancer_2.jpg",
+    profileName: "Kenji (App Developer)",
+    pills: ["Pipeline CRM", "100% Free", "+$4,800 Won"],
+    mockLead: {
+      name: "Toronto Auto Body",
+      city: "Toronto, Canada",
+      score: 81,
+      tag: "Contract Won",
+      details: ["Saved: May 12", "Status: Contract Closed (+$4.8k)"]
+    }
+  }
 ];
 
-const HERO_MOSAIC = [
-  { src: "/assets/freelancers/freelancer_11.jpg", name: "Taiwo", skill: "Web Dev", size: 100, top: "8%", left: "8%", delay: 0 },
-  { src: "/assets/freelancers/freelancer_1.jpg", name: "Priya", skill: "SEO", size: 110, top: "10%", left: "62%", delay: 0.4 },
-  { src: "/assets/freelancers/freelancer_8.jpg", name: "Alex", skill: "Marketer", size: 85, top: "42%", left: "80%", delay: 0.8 },
-  { src: "/assets/freelancers/freelancer_4.jpg", name: "Maria", skill: "Designer", size: 90, top: "46%", left: "4%", delay: 1.2 },
-  { src: "/assets/freelancers/freelancer_2.jpg", name: "Kenji", skill: "Developer", size: 95, top: "72%", left: "66%", delay: 1.6 },
-  { src: "/assets/freelancers/freelancer_6.jpg", name: "Sofia", skill: "Video", size: 100, top: "74%", left: "14%", delay: 2.0 },
-];
+const THEMES = {
+  emerald: {
+    accent: "text-emerald-600 dark:text-emerald-400",
+    bgAccent: "bg-emerald-500/10 dark:bg-emerald-500/20",
+    borderAccent: "border-emerald-500/30 dark:border-emerald-400/30",
+    glow: "shadow-[0_0_50px_rgba(16,185,129,0.25)]",
+    gradient: "from-emerald-500/20 to-teal-500/20",
+    badge: "bg-emerald-500 text-white dark:bg-emerald-500 dark:text-emerald-950",
+    glowCircle: "bg-emerald-500/15 border-emerald-500/30",
+  },
+  blue: {
+    accent: "text-blue-600 dark:text-blue-400",
+    bgAccent: "bg-blue-500/10 dark:bg-blue-500/20",
+    borderAccent: "border-blue-500/30 dark:border-blue-400/30",
+    glow: "shadow-[0_0_50px_rgba(59,130,246,0.25)]",
+    gradient: "from-blue-500/20 to-sky-500/20",
+    badge: "bg-blue-500 text-white dark:bg-blue-500 dark:text-blue-950",
+    glowCircle: "bg-blue-500/15 border-blue-500/30",
+  },
+  purple: {
+    accent: "text-purple-600 dark:text-purple-400",
+    bgAccent: "bg-purple-500/10 dark:bg-purple-500/20",
+    borderAccent: "border-purple-500/30 dark:border-purple-400/30",
+    glow: "shadow-[0_0_50px_rgba(139,92,246,0.25)]",
+    gradient: "from-purple-500/20 to-fuchsia-500/20",
+    badge: "bg-purple-500 text-white dark:bg-purple-500 dark:text-purple-950",
+    glowCircle: "bg-purple-500/15 border-purple-500/30",
+  },
+  amber: {
+    accent: "text-amber-600 dark:text-amber-400",
+    bgAccent: "bg-amber-500/10 dark:bg-amber-500/20",
+    borderAccent: "border-amber-500/30 dark:border-amber-400/30",
+    glow: "shadow-[0_0_50px_rgba(245,158,11,0.25)]",
+    gradient: "from-amber-500/20 to-orange-500/20",
+    badge: "bg-amber-500 text-white dark:bg-amber-500 dark:text-amber-950",
+    glowCircle: "bg-amber-500/15 border-amber-500/30",
+  }
+};
+
+const MapVisual = () => (
+  <div className="relative w-full h-full flex items-center justify-center bg-transparent overflow-hidden">
+    <div className="absolute inset-0 bg-dot-pattern opacity-35 dark:opacity-45" />
+    <div className="absolute w-[180px] h-[180px] rounded-full border border-blue-500/20 flex items-center justify-center animate-ping duration-[4s] pointer-events-none" />
+    <div className="absolute w-[280px] h-[280px] rounded-full border border-blue-500/10 flex items-center justify-center animate-ping duration-[6s] pointer-events-none" />
+    
+    <motion.div 
+      animate={{ y: [0, -6, 0] }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute top-[20%] left-[28%] flex flex-col items-center"
+    >
+      <MapPin className="h-5 w-5 text-red-500 fill-red-500/30 drop-shadow-md" />
+      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">Lyon, FR</span>
+    </motion.div>
+    
+    <motion.div 
+      animate={{ y: [0, -8, 0] }}
+      transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+      className="absolute top-[40%] left-[52%] flex flex-col items-center"
+    >
+      <MapPin className="h-6 w-6 text-primary fill-primary/30 drop-shadow-lg" />
+      <span className="bg-slate-950 border border-slate-800 text-white text-[9px] font-mono px-2 py-0.5 rounded shadow-lg mt-1 font-bold">Naples, IT</span>
+    </motion.div>
+
+    <motion.div 
+      animate={{ y: [0, -5, 0] }}
+      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+      className="absolute bottom-[20%] left-[18%] flex flex-col items-center"
+    >
+      <MapPin className="h-5 w-5 text-emerald-500 fill-emerald-500/30 drop-shadow-md" />
+      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">Lagos, NG</span>
+    </motion.div>
+
+    <motion.div 
+      animate={{ y: [0, -7, 0] }}
+      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.9 }}
+      className="absolute top-[28%] right-[22%] flex flex-col items-center"
+    >
+      <MapPin className="h-5 w-5 text-amber-500 fill-amber-500/30 drop-shadow-md" />
+      <span className="bg-slate-950 border border-slate-800 text-white text-[8px] font-mono px-1.5 py-0.5 rounded shadow mt-1">Toronto, CA</span>
+    </motion.div>
+  </div>
+);
+
+const CardFrame = ({ children, themeColor, title }: { children: React.ReactNode; themeColor: keyof typeof THEMES; title: string }) => {
+  return (
+    <div className="w-[300px] sm:w-[335px] h-[215px] rounded-2xl border bg-white/85 dark:bg-slate-900/85 border-slate-200/80 dark:border-slate-800/60 shadow-xl overflow-hidden flex flex-col backdrop-blur-md transition-colors duration-300">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-100/50 dark:bg-slate-950/45 border-b border-slate-200/80 dark:border-slate-800/60">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-red-400/80" />
+          <span className="h-2 w-2 rounded-full bg-amber-400/80" />
+          <span className="h-2 w-2 rounded-full bg-emerald-400/80" />
+        </div>
+        <span className="text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400">{title}</span>
+        <span className="w-8" />
+      </div>
+      <div className="flex-1 p-4 overflow-hidden text-left relative flex flex-col justify-center">
+        {children}
+      </div>
+    </div>
+  );
+};
 
 function HeroWithMosaic() {
   const { t } = usePreferences();
+  const [emblaRef, embla] = useEmblaCarousel({ loop: true, align: "start" });
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (!embla) return;
+    const onSelect = () => setIndex(embla.selectedScrollSnap());
+    embla.on("select", onSelect);
+    const id = setInterval(() => embla.scrollNext(), 6500);
+    return () => {
+      embla.off("select", onSelect);
+      clearInterval(id);
+    };
+  }, [embla]);
+
   return (
-    <section className="relative overflow-hidden border-b border-border bg-[#0B0F19] py-20 lg:py-28 text-white">
-      {/* Background Image with solid dark overlay */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <img 
-          src={IMG.heroFreelancer} 
-          alt="" 
-          className="h-full w-full object-cover opacity-10 mix-blend-luminosity"
-        />
-        <div className="absolute inset-0 bg-[#0B0F19]/95" />
-      </div>
-      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-10">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <div className="z-10">
-            <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
-              {t("hero_eyebrow")}
-            </p>
-            <h1 className="font-display text-4xl font-extrabold text-white mt-3 sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight">
-              {t("hero_title")}
-            </h1>
-            <p className="mt-6 text-base text-slate-200 max-w-lg leading-relaxed">
-              {t("hero_sub")}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20">
-                {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-800 transition text-white">
-                <Play className="h-4 w-4" /> {t("hero_cta_demo")}
-              </Link>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-400">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime</span>
-            </div>
-          </div>
+    <section className="relative overflow-hidden border-b border-border bg-background transition-colors duration-300">
+      <div ref={emblaRef} className="overflow-hidden w-full">
+        <div className="flex">
+          {SLIDES_DATA.map((slide, idx) => {
+            const isActive = idx === index;
+            return (
+              <div key={idx} className="min-w-0 shrink-0 grow-0 basis-full relative min-h-[640px] lg:min-h-[680px] flex items-center overflow-hidden">
+                <div className="absolute inset-0 z-0 select-none pointer-events-none">
+                  <img 
+                    src={slide.bgImg} 
+                    className={`w-full h-full object-cover transition-transform duration-1000 ${isActive ? "scale-100" : "scale-105"}`} 
+                    alt="" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19]/95 via-[#0B0F19]/80 to-[#0B0F19]/45 dark:block hidden transition-all duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/45 dark:hidden block transition-all duration-500" />
+                </div>
 
-          <div className="relative h-[480px] flex items-center justify-center select-none overflow-hidden lg:overflow-visible">
-            {/* Core rotating cluster */}
-            <div className="relative w-[380px] h-[380px] flex items-center justify-center">
-              {/* Central glowing hub */}
-              <div className="absolute h-20 w-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center animate-pulse shadow-sm">
-                <div className="h-3 w-3 rounded-full bg-emerald-500" />
+                <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 py-16 lg:py-20 z-10">
+                  <div className="grid gap-12 lg:grid-cols-2 items-center">
+                    
+                    <div className="text-left z-10">
+                      <motion.p
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="text-xs font-mono font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400 mb-3"
+                      >
+                        {slide.eyebrow}
+                      </motion.p>
+                      
+                      <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="font-display text-4xl font-black text-slate-900 dark:text-white sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight"
+                      >
+                        {slide.title}
+                      </motion.h1>
+                      
+                      <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="mt-6 text-base text-slate-600 dark:text-slate-200 max-w-lg leading-relaxed font-medium"
+                      >
+                        {slide.sub}
+                      </motion.p>
+                      
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        className="mt-8 flex flex-wrap gap-4"
+                      >
+                        <Link to="/register" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]">
+                          {t("hero_cta_leads")} <ArrowRight className="h-4 w-4" />
+                        </Link>
+                        <Link to="/how-it-works" className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-900 dark:text-white hover:scale-[1.02]">
+                          <Play className="h-4 w-4 text-slate-500 dark:text-slate-400" /> {t("hero_cta_demo")}
+                        </Link>
+                      </motion.div>
+                      
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={isActive ? { opacity: 1 } : { opacity: 0 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
+                        className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-500 dark:text-slate-400"
+                      >
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card</span>
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Instant access</span>
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime</span>
+                      </motion.div>
+                    </div>
+
+                    <div className="relative h-[380px] sm:h-[460px] w-full flex items-center justify-center select-none overflow-visible lg:mt-0 mt-8">
+                      <div 
+                        className="absolute bottom-4 w-[340px] h-[340px] rounded-full bg-gradient-to-b from-primary/30 to-transparent border border-primary/20 opacity-70 shadow-2xl transition-all duration-500"
+                        style={{ transform: "rotateX(72deg) translateY(60px)" }}
+                      >
+                        <div className="absolute inset-4 rounded-full border border-primary/20 bg-primary/5 animate-pulse" />
+                      </div>
+
+                      <motion.div
+                        animate={isActive ? { y: [-8, 8, -8] } : { y: 0 }}
+                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                        className="relative z-10 transition-transform duration-500 scale-90 sm:scale-100"
+                        style={{
+                          transformStyle: "preserve-3d",
+                          transform: "perspective(1000px) rotateY(-18deg) rotateX(12deg) rotateZ(1deg)"
+                        }}
+                      >
+                        <CardFrame themeColor={slide.themeColor} title={slide.mockLead.tag}>
+                          {slide.themeColor === "emerald" && (
+                            <div className="space-y-2.5">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{slide.mockLead.name}</h3>
+                                  <p className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                                    <MapPin className="h-3 w-3 text-slate-400" /> {slide.mockLead.city} · Bakery
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] font-bold bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> 4.9 (412)
+                                </div>
+                              </div>
+                              <div className="border-t border-slate-100 dark:border-slate-800/50 pt-2 flex flex-col gap-1.5">
+                                {slide.mockLead.details.map((d, i) => (
+                                  <div key={i} className="flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400 font-semibold">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-red-500" /> {d}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {slide.themeColor === "blue" && (
+                            <div className="absolute inset-0 overflow-hidden rounded-b-2xl">
+                              <MapVisual />
+                            </div>
+                          )}
+
+                          {slide.themeColor === "purple" && (
+                            <div className="space-y-2 text-[10px] font-mono flex-1 flex flex-col justify-center text-slate-700 dark:text-slate-300">
+                              <div className="flex border-b border-slate-100 dark:border-slate-800/50 pb-1">
+                                <span className="text-slate-400 w-8 flex-shrink-0">To:</span>
+                                <span className="font-semibold text-slate-900 dark:text-white truncate">mario@pizzanapoli.it</span>
+                              </div>
+                              <div className="flex border-b border-slate-100 dark:border-slate-800/50 pb-1">
+                                <span className="text-slate-400 w-8 flex-shrink-0">Sub:</span>
+                                <span className="font-semibold text-slate-900 dark:text-white truncate">Website opportunity - Napoli</span>
+                              </div>
+                              <p className="mt-1 leading-normal italic text-[9px] line-clamp-3">
+                                {slide.mockLead.details[1]}
+                              </p>
+                              <div className="flex justify-between items-center mt-1 border-t border-slate-100 dark:border-slate-800/50 pt-1">
+                                <span className="text-[8px] bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded font-bold">✦ Claude 3.5</span>
+                                <span className="text-[8px] text-slate-400">Word count: 48</span>
+                              </div>
+                            </div>
+                          )}
+
+                          {slide.themeColor === "amber" && (
+                            <div className="grid grid-cols-3 gap-2 h-full items-center">
+                              <div className="rounded-xl border border-slate-200/80 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/20 p-2 text-center h-[125px] flex flex-col justify-between">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Saved</span>
+                                <div className="bg-white dark:bg-slate-900 rounded-lg p-1.5 shadow-sm border border-slate-200/50 dark:border-slate-800/30 text-[8px] font-semibold text-slate-800 dark:text-slate-200 truncate">
+                                  Dental Clinic
+                                </div>
+                                <span className="text-[8px] text-slate-400">1 lead</span>
+                              </div>
+                              <div className="rounded-xl border border-slate-200/80 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/20 p-2 text-center h-[125px] flex flex-col justify-between">
+                                <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">Contacted</span>
+                                <div className="bg-white dark:bg-slate-900 rounded-lg p-1.5 shadow-sm border border-slate-200/50 dark:border-slate-800/30 text-[8px] font-semibold text-slate-800 dark:text-slate-200 truncate">
+                                  Smith Plumbers
+                                </div>
+                                <span className="text-[8px] text-slate-400">1 lead</span>
+                              </div>
+                              <div className="rounded-xl border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-500/5 p-2 text-center h-[125px] flex flex-col justify-between shadow-lg shadow-emerald-500/5">
+                                <span className="text-[9px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-wider">Won</span>
+                                <div className="bg-emerald-500/10 dark:bg-emerald-500/20 rounded-lg p-1.5 border border-emerald-500/30 text-[8px] font-extrabold text-emerald-700 dark:text-emerald-400 truncate shadow-sm">
+                                  Lagos Salon
+                                </div>
+                                <span className="text-[8px] text-emerald-500 font-bold">+$4,200</span>
+                              </div>
+                            </div>
+                          )}
+                        </CardFrame>
+
+                        <motion.div
+                          animate={isActive ? { y: [-5, 5, -5] } : { y: 0 }}
+                          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                          className="absolute -top-10 -right-8 z-20 flex flex-col items-center"
+                        >
+                          <img 
+                            src={slide.profileImg} 
+                            className={`w-14 h-14 rounded-full border-2 object-cover shadow-lg ${slide.themeColor === "emerald" ? "border-emerald-500" : slide.themeColor === "blue" ? "border-blue-500" : slide.themeColor === "purple" ? "border-purple-500" : "border-amber-500"}`} 
+                            alt="" 
+                          />
+                          <div className="mt-1.5 bg-slate-900/90 dark:bg-slate-950/90 text-white text-[8px] font-mono px-2 py-0.5 rounded border border-slate-800 whitespace-nowrap shadow-md">
+                            {slide.profileName}
+                          </div>
+                        </motion.div>
+
+                        {slide.pills.map((pill, pIdx) => {
+                          const isFirst = pIdx === 0;
+                          const isSecond = pIdx === 1;
+                          return (
+                            <motion.div
+                              key={pIdx}
+                              animate={isActive ? { y: [isFirst ? -6 : isSecond ? 6 : -4, isFirst ? 6 : isSecond ? -6 : 4, isFirst ? -6 : isSecond ? 6 : -4] } : { y: 0 }}
+                              transition={{ duration: isFirst ? 4 : isSecond ? 4.8 : 5.2, repeat: Infinity, ease: "easeInOut", delay: pIdx * 0.4 }}
+                              className={`absolute z-20 font-bold text-[9px] sm:text-[10px] px-2.5 py-1 rounded-full shadow-lg border backdrop-blur-sm ${
+                                isFirst 
+                                  ? "-top-6 -left-8 bg-emerald-500/95 text-white border-emerald-400"
+                                  : isSecond 
+                                    ? "-bottom-4 -left-6 bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-950 border-slate-700/50 dark:border-slate-200"
+                                    : "top-1/2 -translate-y-1/2 -right-12 bg-primary/95 text-white border-primary/45"
+                              }`}
+                            >
+                              {pill}
+                            </motion.div>
+                          );
+                        })}
+                      </motion.div>
+                    </div>
+
+                  </div>
+                </div>
               </div>
-
-              {/* Orbital rotation container */}
-              <motion.div
-                className="absolute w-full h-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              >
-                {HERO_MOSAIC.map((img, i) => {
-                  const angle = (i * 2 * Math.PI) / 6;
-                  const radius = 120; // 120px radius from center for compact packing
-                  const left = `calc(50% + ${radius * Math.cos(angle)}px - ${img.size / 2}px)`;
-                  const top = `calc(50% + ${radius * Math.sin(angle)}px - ${img.size / 2}px)`;
-                  return (
-                    <motion.div
-                      key={i}
-                      className="absolute rounded-full overflow-hidden border-2 border-primary/40 shadow-sm bg-card group cursor-pointer hover:border-emerald-400 hover:scale-105 transition-all duration-300"
-                      style={{ 
-                        top, 
-                        left, 
-                        width: img.size, 
-                        height: img.size 
-                      }}
-                      animate={{ rotate: -360 }}
-                      transition={{
-                        duration: 40,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                    >
-                      <img src={img.src} alt={img.name} className="h-full w-full object-cover" loading="lazy" />
-                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-slate-950 border border-slate-800 px-2 py-0.5 text-[8px] font-mono font-medium text-slate-300 whitespace-nowrap">
-                        {img.skill}
-                      </span>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-
-              {/* Floating Data Pills (positioned statically relative to right column, float in place) */}
-              <motion.div 
-                className="absolute top-[8%] left-[6%] rounded-full bg-emerald-500 border border-emerald-500 px-3 py-1.5 text-xs font-semibold text-emerald-400 shadow-sm z-20"
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              >
-                94 Hot Lead
-              </motion.div>
-              <motion.div 
-                className="absolute bottom-[8%] right-[8%] rounded-full bg-indigo-500 border border-indigo-500 px-3 py-1.5 text-xs font-semibold text-indigo-400 shadow-sm z-20"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
-              >
-                +234 802...
-              </motion.div>
-              <motion.div 
-                className="absolute top-[50%] right-[0%] rounded-full bg-red-500 border border-red-500 px-3 py-1.5 text-xs font-semibold text-red-400 shadow-sm z-20"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.0 }}
-              >
-                No website
-              </motion.div>
-            </div>
-          </div>
+            );
+          })}
         </div>
+      </div>
+
+      <div className="absolute inset-y-0 left-2 lg:left-6 z-20 flex items-center pointer-events-none">
+        <button 
+          onClick={(e) => { e.preventDefault(); embla?.scrollPrev(); }} 
+          className="pointer-events-auto w-10 h-10 rounded-full border border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95"
+          aria-label="Previous Slide"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+      </div>
+      <div className="absolute inset-y-0 right-2 lg:right-6 z-20 flex items-center pointer-events-none">
+        <button 
+          onClick={(e) => { e.preventDefault(); embla?.scrollNext(); }} 
+          className="pointer-events-auto w-10 h-10 rounded-full border border-slate-200/80 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95"
+          aria-label="Next Slide"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
+
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        {SLIDES_DATA.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => embla?.scrollTo(i)}
+            className={`h-2 rounded-full transition-all duration-300 ${i === index ? "w-8 bg-slate-900 dark:bg-white" : "w-2 bg-slate-300 dark:bg-slate-700"}`}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
       </div>
     </section>
   );
