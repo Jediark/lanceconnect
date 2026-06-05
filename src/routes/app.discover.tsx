@@ -105,8 +105,9 @@ function Discover() {
       const countryName = country || "Nigeria";
       
       const { data: { session } } = await supabase.auth.getSession();
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-leads`,
+        `${supabaseUrl}/functions/v1/search-leads`,
         {
           method: 'POST',
           headers: {

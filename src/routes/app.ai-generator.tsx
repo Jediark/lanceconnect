@@ -71,8 +71,9 @@ function AIPage() {
       const apiChannel = channelMap[channel] || "email";
       const apiTone = toneMap[tone] || "professional";
       
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-outreach`,
+        `${supabaseUrl}/functions/v1/ai-outreach`,
         {
           method: 'POST',
           headers: {

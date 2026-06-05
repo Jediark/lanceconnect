@@ -30,8 +30,9 @@ function DangerZone() {
         return;
       }
 
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`,
+        `${supabaseUrl}/functions/v1/delete-account`,
         { 
           method: 'POST', 
           headers: { 
