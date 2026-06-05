@@ -1756,13 +1756,6 @@ function Stats() {
     <section 
       className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
     >
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
-        style={{ 
-          backgroundImage: "url('/assets/freelancers/freelancer_5.jpg')",
-        }}
-      />
-      <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#0B0F19]/55 z-10" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">// by.the.numbers</p>
