@@ -18,6 +18,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
+import { IMG } from "@/data/content";
 
 export const Route = createFileRoute("/freelancers/")({
   head: () => ({
@@ -159,6 +160,14 @@ function FreelancerDirectoryPage() {
     <MarketingShell>
       {/* Premium Dark Header */}
       <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-16 text-center select-none text-white">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src={IMG.heroLaptop}
+            className="w-full h-full object-cover opacity-35"
+            alt=""
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/40" />
+        </div>
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase flex items-center justify-center gap-1.5">
             // public.freelancer.directory
@@ -177,7 +186,7 @@ function FreelancerDirectoryPage() {
       </section>
 
       {/* Advanced Filter Panel */}
-      <section className="bg-card/40 border-b border-border py-6 select-none sticky top-[80px] z-20 backdrop-blur-md">
+      <section className="bg-card/40 border-b border-border py-6 select-none sticky top-[122px] z-20 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 lg:px-8 space-y-4">
           <form
             onSubmit={handleSearchSubmit}
@@ -246,6 +255,7 @@ function FreelancerDirectoryPage() {
             <div className="relative">
               <button
                 type="submit"
+                onClick={handleSearchSubmit}
                 className="w-full rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-[10px] py-2.5 h-[38px] transition duration-200 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_22px_rgba(6,182,212,0.6)] flex items-center justify-center gap-1.5 cursor-pointer uppercase tracking-wider border border-cyan-400/20"
               >
                 <Search className="h-3.5 w-3.5" /> Find Freelancers

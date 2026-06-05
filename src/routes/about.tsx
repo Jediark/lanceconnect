@@ -23,6 +23,14 @@ export const Route = createFileRoute("/about")({
     <MarketingShell>
       {/* Premium Dark Hero */}
       <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28 text-center select-none text-white">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src={IMG.team}
+            className="w-full h-full object-cover opacity-35"
+            alt=""
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/40" />
+        </div>
         <div className="relative mx-auto max-w-3xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase">
             // about.us.connector

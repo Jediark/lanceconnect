@@ -740,11 +740,10 @@ export function PageHeader({
           <img
             src={image}
             alt=""
-            className="h-full w-full object-cover opacity-15 mix-blend-luminosity"
+            className="h-full w-full object-cover opacity-35"
           />
         )}
-        <div className="absolute inset-0 bg-[#020b21]/85" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#020b21]/40 to-[#020b21]/70" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/40" />
       </div>
       <div className="relative mx-auto max-w-5xl px-4 py-20 text-center text-white lg:px-8 lg:py-28">
         {eyebrow && (

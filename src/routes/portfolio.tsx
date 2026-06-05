@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { useState } from "react";
 import { Star, MapPin, Search, ArrowRight, ExternalLink } from "lucide-react";
+import { IMG } from "@/data/content";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -184,6 +185,14 @@ function PortfolioPage() {
     <MarketingShell>
       {/* Portfolio Header */}
       <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-16 text-center select-none text-white">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src={IMG.workspace}
+            className="w-full h-full object-cover opacity-35"
+            alt=""
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/40" />
+        </div>
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase">
             // portfolio.showcase
