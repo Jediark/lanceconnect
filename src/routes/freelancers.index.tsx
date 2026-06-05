@@ -198,7 +198,7 @@ function FreelancerDirectoryPage() {
                 <option value="all">All Skills</option>
                 {CATEGORIES.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.emoji} {c.label}
+                    {c.label}
                   </option>
                 ))}
               </select>

@@ -112,8 +112,8 @@ function PipelinePage() {
   return (
     <>
       <Header title="My Pipeline" subtitle={`${pipeline.length} leads in your funnel`} />
-      <div className="flex items-center justify-between gap-2 px-4 py-4 lg:px-8 flex-wrap">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 py-4 lg:px-8 border-b border-border/50">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setSelectedStatus("all")}
             className={cn(
@@ -125,12 +125,12 @@ function PipelinePage() {
           >
             All Categories
           </button>
-          <div className="h-4 w-px bg-border mx-2" />
+          <div className="h-4 w-px bg-border mx-1 sm:mx-2" />
           <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
             <button
               onClick={() => setView("grid")}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium",
+                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium sm:px-3 sm:py-1.5",
                 view === "grid" && "bg-primary text-primary-foreground",
               )}
             >
@@ -139,7 +139,7 @@ function PipelinePage() {
             <button
               onClick={() => setView("table")}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium",
+                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium sm:px-3 sm:py-1.5",
                 view === "table" && "bg-primary text-primary-foreground",
               )}
             >
@@ -149,13 +149,13 @@ function PipelinePage() {
           {pipeline.length > 0 && (
             <button
               onClick={downloadCSV}
-              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer shadow-sm text-foreground"
+              className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-semibold hover:bg-accent flex items-center gap-1.5 cursor-pointer shadow-sm text-foreground sm:py-1.5"
             >
               <Download className="h-3.5 w-3.5" /> Export
             </button>
           )}
         </div>
-        <label className="flex items-center gap-2 text-xs text-muted-foreground">
+        <label className="flex items-center gap-2 text-xs text-muted-foreground self-start sm:self-auto">
           <input
             type="checkbox"
             checked={showLost}

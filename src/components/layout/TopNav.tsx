@@ -205,76 +205,84 @@ export function TopNav() {
       </header>
 
       {/* Mobile Navigation Sheet */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] lg:hidden">
-          <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="absolute inset-y-0 right-0 w-3/4 max-w-sm bg-card border-l border-border shadow-2xl animate-in slide-in-from-right">
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <LanceConnectLogo className="h-6 w-auto" />
-              <button
+      <div
+        className={cn(
+          "fixed inset-0 z-[100] lg:hidden transition-all duration-300",
+          mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+        )}
+      >
+        <div
+          className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+        <div
+          className={cn(
+            "absolute inset-y-0 right-0 w-3/4 max-w-sm bg-card border-l border-border shadow-2xl transition-transform duration-300 ease-in-out",
+            mobileMenuOpen ? "translate-x-0" : "translate-x-full",
+          )}
+        >
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <LanceConnectLogo className="h-6 w-auto" />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-lg hover:bg-accent"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="p-4 space-y-4">
+            <MobileNavLink
+              to="/app/dashboard"
+              icon={Home}
+              label="Dashboard"
+              active={pathname === "/app/dashboard"}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <MobileNavLink
+              to="/app/discover"
+              icon={Search}
+              label="Discover"
+              active={pathname === "/app/discover"}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <MobileNavLink
+              to="/app/pipeline"
+              icon={Kanban}
+              label="Pipeline"
+              active={pathname === "/app/pipeline"}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div className="pt-4 border-t border-border">
+              <p className="px-3 text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                Outreach
+              </p>
+              <MobileNavLink
+                to="/app/templates"
+                icon={Mail}
+                label="Email Templates"
+                active={pathname.includes("/templates")}
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg hover:bg-accent"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              />
+              <MobileNavLink
+                to="/app/ai-generator"
+                icon={Sparkles}
+                label="AI Generator"
+                active={pathname.includes("/ai-generator")}
+                onClick={() => setMobileMenuOpen(false)}
+              />
             </div>
-            <div className="p-4 space-y-4">
+            <div className="pt-4 border-t border-border">
               <MobileNavLink
-                to="/app/dashboard"
-                icon={Home}
-                label="Dashboard"
-                active={pathname === "/app/dashboard"}
+                to="/app/settings"
+                icon={SettingsIcon}
+                label="Settings"
+                active={pathname.includes("/settings")}
                 onClick={() => setMobileMenuOpen(false)}
               />
-              <MobileNavLink
-                to="/app/discover"
-                icon={Search}
-                label="Discover"
-                active={pathname === "/app/discover"}
-                onClick={() => setMobileMenuOpen(false)}
-              />
-              <MobileNavLink
-                to="/app/pipeline"
-                icon={Kanban}
-                label="Pipeline"
-                active={pathname === "/app/pipeline"}
-                onClick={() => setMobileMenuOpen(false)}
-              />
-              <div className="pt-4 border-t border-border">
-                <p className="px-3 text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                  Outreach
-                </p>
-                <MobileNavLink
-                  to="/app/templates"
-                  icon={Mail}
-                  label="Email Templates"
-                  active={pathname.includes("/templates")}
-                  onClick={() => setMobileMenuOpen(false)}
-                />
-                <MobileNavLink
-                  to="/app/ai-generator"
-                  icon={Sparkles}
-                  label="AI Generator"
-                  active={pathname.includes("/ai-generator")}
-                  onClick={() => setMobileMenuOpen(false)}
-                />
-              </div>
-              <div className="pt-4 border-t border-border">
-                <MobileNavLink
-                  to="/app/settings"
-                  icon={SettingsIcon}
-                  label="Settings"
-                  active={pathname.includes("/settings")}
-                  onClick={() => setMobileMenuOpen(false)}
-                />
-              </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

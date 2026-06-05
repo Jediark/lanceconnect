@@ -621,11 +621,11 @@ function Dashboard() {
 
         {/* ═══ ANALYTICS ROW ═══ */}
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-5">
+          <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-5 overflow-hidden">
             <h3 className="text-sm font-bold text-foreground mb-4">Leads Discovered</h3>
             <LeadsOverTimeChart />
           </div>
-          <div className="rounded-2xl border border-border bg-card p-5 flex flex-col">
+          <div className="rounded-2xl border border-border bg-card p-5 flex flex-col overflow-hidden">
             <h3 className="text-sm font-bold text-foreground mb-4">Conversion Pipeline</h3>
             <PipelineFunnelChart className="flex-1" />
           </div>
