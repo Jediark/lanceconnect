@@ -188,17 +188,16 @@ Deno.serve(async (req) => {
             if (upsertError) {
               console.error('Failed to upsert scraped leads into database:', upsertError)
             } else if (insertedLeads) {
-              // Trigger scoring and socials lookup for the newly scraped leads asynchronously
+              // Trigger socials lookup (which in turn triggers scoring) for the newly scraped leads asynchronously
               for (const newLead of insertedLeads) {
-                // Trigger opportunity scoring (internal endpoint)
-                fetch(`${supabaseUrl}/functions/v1/score-opportunity`, {
+                fetch(`${supabaseUrl}/functions/v1/check-social`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
                     'Authorization': req.headers.get('Authorization') || ''
                   },
                   body: JSON.stringify({ leadId: newLead.id })
-                }).catch(err => console.error('Async scoring trigger failed for lead:', newLead.id, err))
+                }).catch(err => console.error('Async social check trigger failed for lead:', newLead.id, err))
               }
               
               // Append to final results
