@@ -26,7 +26,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        os.environ.get("APP_URL", "https://lanceconnect.com"),
+        os.environ.get("APP_URL", "https://lanceconnect.vercel.app"),
         "https://lanceconnect.vercel.app",
         "http://localhost:3000",
         "http://localhost:5173",
@@ -177,7 +177,7 @@ async def scrape_emails(
     source = 'none'
 
     headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; LanceConnect/1.0; +https://lanceconnect.com)",
+        "User-Agent": "Mozilla/5.0 (compatible; LanceConnect/1.0; +https://lanceconnect.vercel.app)",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
     }

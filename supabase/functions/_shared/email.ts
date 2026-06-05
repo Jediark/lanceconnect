@@ -15,7 +15,7 @@ export interface EmailParams {
  * Sends a transactional email using Resend.
  */
 export async function sendEmail(params: EmailParams): Promise<boolean> {
-  const apiKey = Deno.env.get('RESEND_API_KEY');
+  const apiKey = Deno.env.get('RESEND_API_KEY_LANCECONNECT') || Deno.env.get('RESEND_API_KEY');
   if (!apiKey) {
     console.error('RESEND_API_KEY is not configured. Email aborted.');
     return false;
