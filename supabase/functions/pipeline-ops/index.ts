@@ -77,16 +77,13 @@ Deno.serve(async (req) => {
 
       if (error) throw error
 
-      // Automatically trigger contact enrichment in the background after saving to pipeline
+      const savedLead = { id: data.lead_id }
+
+      // Automatically trigger contact enrichment after saving to pipeline
       try {
-        fetch(`${supabaseUrl}/functions/v1/enrich-contact`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': req.headers.get('Authorization') || ''
-          },
-          body: JSON.stringify({ leadId })
-        }).catch(err => console.error('Background enrichment trigger failed:', err))
+        await supabase.functions.invoke('enrich-contact', {
+          body: { leadId: savedLead.id }
+        })
       } catch (enrichErr) {
         console.error('Failed to trigger enrich-contact after pipeline save:', enrichErr)
       }

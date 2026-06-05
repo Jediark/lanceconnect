@@ -95,12 +95,13 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 2. Email discovery (Prospeo + Website Crawler)
+    // 2. Email discovery (Prospeo + Vercel Email Scraper)
     let emailFound = lead.email
     if (!lead.email && lead.website_url) {
       try {
         const domain = new URL(lead.website_url).hostname.replace('www.', '')
         
+        // Layer 1 — Prospeo
         if (prospeoApiKey) {
           const prospeoRes = await fetch('https://api.prospeo.io/domain-search', {
             method: 'POST',
@@ -118,22 +119,37 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Layer 2 - Website crawler fallback
+        // Layer 2 — Our Vercel Email Scraper
         if (!emailFound) {
           try {
-            const testUrl = lead.website_url.startsWith('http') ? lead.website_url : `https://${lead.website_url}`
-            const siteRes = await fetch(testUrl, { signal: AbortSignal.timeout(8000) })
-            if (siteRes.ok) {
-              const html = await siteRes.text()
-              const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/)
-              if (mailtoMatches && mailtoMatches[1]) {
-                emailFound = mailtoMatches[1]
+            const emailScraperUrl = Deno.env.get('EMAIL_SCRAPER_URL') || 'https://lanceconnect.vercel.app/api/scrape'
+            const internalApiKey = Deno.env.get('INTERNAL_API_KEY')
+            
+            const scraperRes = await fetch(emailScraperUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Internal-Key': internalApiKey || ''
+              },
+              body: JSON.stringify({
+                url: lead.website_url,
+                deduplicate: true,
+                filter_noreply: true,
+                lowercase: true
+              }),
+              signal: AbortSignal.timeout(12000)
+            })
+
+            if (scraperRes.ok) {
+              const scraperData = await scraperRes.json()
+              if (scraperData.emails && scraperData.emails.length > 0) {
+                emailFound = scraperData.emails[0]
                 updateData.email = emailFound
-                updateData.email_confidence = 'unverified'
+                updateData.email_confidence = 'likely'
               }
             }
           } catch (err) {
-            console.error('Website crawler fallback failed:', err)
+            console.error('Vercel email scraper failed:', err)
           }
         }
       } catch (err) {

@@ -499,7 +499,7 @@ function Dashboard() {
                   {detail.phone && <button onClick={() => { navigator.clipboard?.writeText(detail.phone); toast.success("Copied!"); }} className="rounded-lg border border-border px-2 py-0.5 text-[10px] text-muted-foreground hover:text-foreground transition cursor-pointer"><Copy className="inline h-2.5 w-2.5 mr-0.5" />Copy</button>}
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <p className="flex items-center gap-2 text-sm text-muted-foreground flex-1 truncate"><Mail className="h-4 w-4 shrink-0 text-muted-foreground/60" />{detail.email || "No email"}</p>
+                  <p className="flex items-center gap-2 text-sm text-muted-foreground flex-1 truncate"><Mail className="h-4 w-4 shrink-0 text-muted-foreground/60" />{detail.email || "Not publicly listed"}</p>
                   {!detail.email && detail.websiteUrl && (
                     <button
                       onClick={handleEnrich}

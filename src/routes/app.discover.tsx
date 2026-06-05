@@ -445,7 +445,7 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
               )}
             </div>
             <div className="flex items-center justify-between gap-2">
-              <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.email ?? <span className="italic text-slate-500">Not found</span>}</p>
+              <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-slate-500 shrink-0" /> {currentLead.email ?? <span className="italic text-slate-500">Not publicly listed</span>}</p>
               {!currentLead.email && currentLead.websiteUrl && (
                 <button
                   onClick={handleEnrich}

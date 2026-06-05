@@ -33,7 +33,7 @@ export function ContactRow({ phone, email }: { phone: string; email: string | nu
       ) : (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Mail className="h-3.5 w-3.5" />
-          <span className="text-xs italic">Email not found</span>
+          <span className="text-xs italic">Not publicly listed</span>
         </div>
       )}
     </div>

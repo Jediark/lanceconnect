@@ -79,7 +79,7 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
       <div className="mb-4 space-y-1 text-sm">
         <p className="font-mono-data text-[13px]">{lead.phone}</p>
         <p className="truncate text-xs text-muted-foreground">
-          {lead.email ?? "Email not found"}
+          {lead.email ?? "Not publicly listed"}
         </p>
       </div>
 
