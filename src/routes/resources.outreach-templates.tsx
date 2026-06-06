@@ -137,8 +137,8 @@ Best regards,
             <div className="h-10 w-10 rounded-xl bg-cyan-400/10 text-cyan-400 flex items-center justify-center border border-cyan-400/20">
               <Sparkles className="h-5 w-5" />
             </div>
-            <h3 className="font-display text-sm font-bold text-white">Give Value First</h3>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <h3 className="font-display text-sm font-bold text-foreground">Give Value First</h3>
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
               Never pitch your service immediately. Offer a quick audit, point out a specific fixable error (like a GMB gap), or suggest a mobile mockup. This lowers their defense.
             </p>
           </div>
@@ -146,8 +146,8 @@ Best regards,
             <div className="h-10 w-10 rounded-xl bg-purple-400/10 text-purple-400 flex items-center justify-center border border-purple-400/20">
               <UserCheck className="h-5 w-5" />
             </div>
-            <h3 className="font-display text-sm font-bold text-white">Be Local & Human</h3>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <h3 className="font-display text-sm font-bold text-foreground">Be Local & Human</h3>
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
               Refer to their specific city and competitor names. Keep the tone friendly and conversational. Avoid sounding like a massive, impersonal agency.
             </p>
           </div>
@@ -155,8 +155,8 @@ Best regards,
             <div className="h-10 w-10 rounded-xl bg-emerald-400/10 text-emerald-400 flex items-center justify-center border border-emerald-400/20">
               <CheckCircle className="h-5 w-5" />
             </div>
-            <h3 className="font-display text-sm font-bold text-white">Focus on the Hook</h3>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <h3 className="font-display text-sm font-bold text-foreground">Focus on the Hook</h3>
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
               Your subject line or first sentence has one job: get them to open the message. Keep subject lines lower-case and highly specific to their business.
             </p>
           </div>
@@ -165,14 +165,14 @@ Best regards,
         {/* Template 1: Cold Email */}
         <section className="grid gap-8 md:grid-cols-3 items-start">
           <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-2 text-cyan-400 font-semibold text-lg">
+            <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-semibold text-lg">
               <Mail className="h-5 w-5" />
               <h2>1. Cold Email Pitch</h2>
             </div>
-            <p className="text-xs text-slate-350 leading-relaxed">
+            <p className="text-xs text-slate-700 dark:text-slate-350 leading-relaxed">
               <strong>Best for:</strong> Web developers, designers, and copywriters pitching to local service providers.
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               <strong>Why it works:</strong> It uses the "mockup trick." Offering to show them something you already made specifically for them triggers curiosity and reciprocity.
             </p>
           </div>
@@ -196,14 +196,14 @@ Best regards,
         {/* Template 2: LinkedIn DM */}
         <section className="grid gap-8 md:grid-cols-3 items-start">
           <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-2 text-indigo-400 font-semibold text-lg">
+            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold text-lg">
               <Linkedin className="h-5 w-5" />
               <h2>2. LinkedIn DM Pitch</h2>
             </div>
-            <p className="text-xs text-slate-350 leading-relaxed">
+            <p className="text-xs text-slate-700 dark:text-slate-350 leading-relaxed">
               <strong>Best for:</strong> B2B freelancers, SEO consultants, and marketing strategists targeting founders/marketing managers.
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               <strong>Why it works:</strong> Offering a brief "Loom video audit" works wonders on LinkedIn. It is fast to digest and shows you put in real effort.
             </p>
           </div>
@@ -227,14 +227,14 @@ Best regards,
         {/* Template 3: WhatsApp/SMS */}
         <section className="grid gap-8 md:grid-cols-3 items-start">
           <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-2 text-emerald-400 font-semibold text-lg">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold text-lg">
               <MessageSquare className="h-5 w-5" />
               <h2>3. WhatsApp & SMS Pitch</h2>
             </div>
-            <p className="text-xs text-slate-350 leading-relaxed">
+            <p className="text-xs text-slate-700 dark:text-slate-350 leading-relaxed">
               <strong>Best for:</strong> Micro-consulting, quick local optimizations (GMB setup, photo reviews) where business owners respond faster to text.
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               <strong>Why it works:</strong> Short, direct, and conversational. It points out an immediate, verified gap (no photos) and offers a free checklist.
             </p>
           </div>
@@ -258,14 +258,14 @@ Best regards,
         {/* Template 4: Follow-up */}
         <section className="grid gap-8 md:grid-cols-3 items-start">
           <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-2 text-amber-400 font-semibold text-lg">
+            <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-semibold text-lg">
               <Send className="h-5 w-5" />
               <h2>4. The Gentle Follow-Up</h2>
             </div>
-            <p className="text-xs text-slate-350 leading-relaxed">
+            <p className="text-xs text-slate-700 dark:text-slate-350 leading-relaxed">
               <strong>Best for:</strong> Email sequences. Send this 3 to 4 days after your initial email if you get no reply.
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               <strong>Why it works:</strong> Up to 50% of responses come from follow-up emails. Keep it extremely short, highlight the mockup again, and ask a single call-to-action question.
             </p>
           </div>

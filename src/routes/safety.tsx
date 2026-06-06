@@ -16,6 +16,7 @@ import {
   Loader2,
   CheckCircle,
   XCircle,
+  ArrowRight,
 } from "lucide-react";
 
 export const Route = createFileRoute("/safety")({
@@ -110,7 +111,7 @@ function SafetyPage() {
                 "Use trusted payment platforms: PayPal, Paystack, Wise, Flutterwave or bank transfer",
                 "Keep all communication documented",
               ].map((text, i) => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
+                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700 dark:text-slate-300">
                   <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>{text}</span>
                 </div>
@@ -122,7 +123,7 @@ function SafetyPage() {
                 "Never share complete work before receiving payment",
                 "Never share personal banking details upfront",
               ].map((text, i) => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
+                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700 dark:text-slate-300">
                   <XCircle className="h-3.5 w-3.5 text-rose-500 shrink-0 mt-0.5" />
                   <span>{text}</span>
                 </div>
@@ -143,7 +144,7 @@ function SafetyPage() {
                 "Agree on deliverables in writing before paying",
                 "Use milestone payments for large projects",
               ].map((text, i) => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
+                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700 dark:text-slate-300">
                   <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>{text}</span>
                 </div>
@@ -153,7 +154,7 @@ function SafetyPage() {
                 "Never pay 100% upfront to an unknown freelancer",
                 "Never share confidential data before signing an NDA",
               ].map((text, i) => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
+                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700 dark:text-slate-300">
                   <XCircle className="h-3.5 w-3.5 text-rose-500 shrink-0 mt-0.5" />
                   <span>{text}</span>
                 </div>
@@ -175,7 +176,7 @@ function SafetyPage() {
                 "Use trade insurance for high-value shipments",
                 "Confirm delivery address independently",
               ].map((text, i) => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
+                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700 dark:text-slate-300">
                   <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>{text}</span>
                 </div>
@@ -185,7 +186,7 @@ function SafetyPage() {
                 "Never ship goods without confirmed payment",
                 "Never share exclusive agreements without legal review",
               ].map((text, i) => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-300">
+                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-700 dark:text-slate-300">
                   <XCircle className="h-3.5 w-3.5 text-rose-500 shrink-0 mt-0.5" />
                   <span>{text}</span>
                 </div>

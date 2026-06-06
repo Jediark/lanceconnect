@@ -133,46 +133,46 @@ Best regards,
         {/* Intro Section */}
         <section className="grid gap-8 md:grid-cols-2 items-center">
           <div className="space-y-4">
-            <h2 className="font-display text-2xl font-bold text-white">
+            <h2 className="font-display text-2xl font-bold text-foreground">
               Why Pitch Google My Business (GMB) Optimization?
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               For local businesses like restaurants, dentists, plumbers, and retail shops, Google Maps is the single biggest source of new customers. If their profile has gaps, they are actively losing money to competitors.
             </p>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               LanceConnect scans and surfaces these exact business gaps in real-time. Instead of just offering a website, you can pitch a full digital optimization package—doubling your average contract value.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <div className="flex items-center gap-2 rounded-xl bg-card border border-border px-4 py-3 text-xs">
-                <span className="text-xl font-bold text-cyan-400">86%</span>
-                <span className="text-slate-400">of users use Google Maps to find local businesses</span>
+                <span className="text-xl font-bold text-cyan-600 dark:text-cyan-400">86%</span>
+                <span className="text-slate-600 dark:text-slate-400">of users use Google Maps to find local businesses</span>
               </div>
               <div className="flex items-center gap-2 rounded-xl bg-card border border-border px-4 py-3 text-xs">
-                <span className="text-xl font-bold text-cyan-400">2.7x</span>
-                <span className="text-slate-400">more likely to be considered reputable if fully optimized</span>
+                <span className="text-xl font-bold text-cyan-600 dark:text-cyan-400">2.7x</span>
+                <span className="text-slate-600 dark:text-slate-400">more likely to be considered reputable if fully optimized</span>
               </div>
             </div>
           </div>
-          <div className="rounded-3xl border border-border bg-[#0a1128]/40 p-8 space-y-4">
-            <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-cyan-400" />
+          <div className="rounded-3xl border border-border bg-slate-50 dark:bg-[#0a1128]/40 p-8 space-y-4">
+            <h3 className="font-display text-lg font-bold text-foreground flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
               Quick-Start Strategy
             </h3>
-            <ul className="space-y-3.5 text-xs text-slate-300">
+            <ul className="space-y-3.5 text-xs text-slate-700 dark:text-slate-300">
               <li className="flex gap-2">
-                <div className="h-5 w-5 rounded-full bg-cyan-400/10 text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">1</div>
+                <div className="h-5 w-5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">1</div>
                 <span>Search for local businesses in a target city using the <strong>LanceConnect Discover</strong> page.</span>
               </li>
               <li className="flex gap-2">
-                <div className="h-5 w-5 rounded-full bg-cyan-400/10 text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">2</div>
-                <span>Look for lead cards marked with the <span className="text-amber-500 font-semibold">📍 GMB gaps</span> badge.</span>
+                <div className="h-5 w-5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">2</div>
+                <span>Look for lead cards marked with the <span className="text-amber-600 dark:text-amber-500 font-semibold">📍 GMB gaps</span> badge.</span>
               </li>
               <li className="flex gap-2">
-                <div className="h-5 w-5 rounded-full bg-cyan-400/10 text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">3</div>
+                <div className="h-5 w-5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">3</div>
                 <span>Open the lead detail modal to view details on specific gaps and read customized pitch tips.</span>
               </li>
               <li className="flex gap-2">
-                <div className="h-5 w-5 rounded-full bg-cyan-400/10 text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">4</div>
+                <div className="h-5 w-5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-bold shrink-0 text-[10px]">4</div>
                 <span>Use the Outreach Script below via email or click the <strong>WhatsApp</strong> button on the lead card to connect instantly.</span>
               </li>
             </ul>
@@ -182,8 +182,8 @@ Best regards,
         {/* The 5 GMB Gaps */}
         <section className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="font-display text-2xl font-bold text-white">The 5 GMB Gaps You Can Pitch</h2>
-            <p className="text-xs text-slate-400">How to identify opportunities using LanceConnect signals and pitch them to clients.</p>
+            <h2 className="font-display text-2xl font-bold text-foreground">The 5 GMB Gaps You Can Pitch</h2>
+            <p className="text-xs text-slate-650 dark:text-slate-400">How to identify opportunities using LanceConnect signals and pitch them to clients.</p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {gaps.map((gap, i) => (
@@ -193,13 +193,13 @@ Best regards,
                     <gap.icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-display text-sm font-bold text-white mb-1">{gap.title}</h3>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">{gap.description}</p>
+                    <h3 className="font-display text-sm font-bold text-foreground mb-1">{gap.title}</h3>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">{gap.description}</p>
                   </div>
                 </div>
                 <div className="mt-5 pt-4 border-t border-border/60">
-                  <p className="text-[10px] uppercase font-mono text-cyan-400 tracking-wider mb-1">How to Pitch:</p>
-                  <p className="text-[11px] text-slate-300 italic">"{gap.pitch}"</p>
+                  <p className="text-[10px] uppercase font-mono text-cyan-600 dark:text-cyan-400 tracking-wider mb-1">How to Pitch:</p>
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 italic">"{gap.pitch}"</p>
                 </div>
               </div>
             ))}
@@ -209,17 +209,17 @@ Best regards,
         {/* Outreach Template */}
         <section className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-1 space-y-4">
-            <h2 className="font-display text-2xl font-bold text-white">
+            <h2 className="font-display text-2xl font-bold text-foreground">
               Proven Outreach Script
             </h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               This outreach template is designed to focus on helpful suggestions rather than a aggressive sales pitch. 
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               By pointing out specific, actual gaps on their live Google Business Profile listing, you establish immediate authority and trust.
             </p>
-            <div className="rounded-2xl border border-amber-500/10 bg-amber-500/5 p-4 text-[11px] text-slate-300 leading-relaxed">
-              <span className="font-semibold text-amber-500 block mb-1">💡 Pitching tip:</span>
+            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
+              <span className="font-semibold text-amber-600 dark:text-amber-500 block mb-1">💡 Pitching tip:</span>
               Always replace the placeholders inside brackets with real information from the lead card before sending. Sending personalized details boosts replies by 4x.
             </div>
           </div>
@@ -243,49 +243,49 @@ Best regards,
         {/* Step-by-Step Tutorial */}
         <section className="rounded-3xl border border-border bg-card p-8 md:p-12 space-y-8">
           <div className="max-w-3xl space-y-2">
-            <h2 className="font-display text-2xl font-bold text-white">Step-by-Step GMB Setup & Optimization Guide</h2>
-            <p className="text-xs text-slate-400">A checklist you can use to deliver your GMB service once a client hires you.</p>
+            <h2 className="font-display text-2xl font-bold text-foreground">Step-by-Step GMB Setup & Optimization Guide</h2>
+            <p className="text-xs text-slate-650 dark:text-slate-400">A checklist you can use to deliver your GMB service once a client hires you.</p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-4">
-              <h3 className="font-display text-sm font-bold text-white flex items-center gap-2">
+              <h3 className="font-display text-sm font-bold text-foreground flex items-center gap-2">
                 <Check className="h-4.5 w-4.5 text-emerald-500 shrink-0" />
                 Phase 1: Claim & Verify
               </h3>
-              <ul className="space-y-3 text-[11px] text-slate-300 pl-6 list-decimal">
-                <li>Go to <a href="https://business.google.com" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline inline-flex items-center gap-0.5">business.google.com<ExternalLink className="h-2.5 w-2.5" /></a> and search for the business name.</li>
+              <ul className="space-y-3 text-[11px] text-slate-700 dark:text-slate-300 pl-6 list-decimal">
+                <li>Go to <a href="https://business.google.com" target="_blank" rel="noopener noreferrer" className="text-cyan-600 dark:text-cyan-400 hover:underline inline-flex items-center gap-0.5">business.google.com<ExternalLink className="h-2.5 w-2.5" /></a> and search for the business name.</li>
                 <li>If unclaimed, click "Own this business?" to claim. If the client already owns it, request manager access through their dashboard.</li>
                 <li>Complete verification via Phone call, SMS, or Video recording as requested by Google.</li>
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="font-display text-sm font-bold text-white flex items-center gap-2">
+              <h3 className="font-display text-sm font-bold text-foreground flex items-center gap-2">
                 <Check className="h-4.5 w-4.5 text-emerald-500 shrink-0" />
                 Phase 2: Profile Optimization
               </h3>
-              <ul className="space-y-3 text-[11px] text-slate-300 pl-6 list-decimal">
+              <ul className="space-y-3 text-[11px] text-slate-700 dark:text-slate-300 pl-6 list-decimal">
                 <li><strong>Info:</strong> Update business hours, correct services categories, exact address, and direct phone link.</li>
                 <li><strong>Description:</strong> Write a 750-character summary containing target local keywords (e.g. "Dentist in Austin").</li>
                 <li><strong>Photos:</strong> Upload high-quality photos of the business storefront, interior, products, and team.</li>
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="font-display text-sm font-bold text-white flex items-center gap-2">
+              <h3 className="font-display text-sm font-bold text-foreground flex items-center gap-2">
                 <Check className="h-4.5 w-4.5 text-emerald-500 shrink-0" />
                 Phase 3: Review Campaigns
               </h3>
-              <ul className="space-y-3 text-[11px] text-slate-300 pl-6 list-decimal">
+              <ul className="space-y-3 text-[11px] text-slate-700 dark:text-slate-300 pl-6 list-decimal">
                 <li>Generate the custom short Google Review link from the GMB dashboard.</li>
                 <li>Create custom review request cards (using Canva) for the counter, or set up email follow-ups.</li>
                 <li>Set up a policy to respond to all reviews within 24 hours to signal active profile management.</li>
               </ul>
             </div>
             <div className="space-y-4">
-              <h3 className="font-display text-sm font-bold text-white flex items-center gap-2">
+              <h3 className="font-display text-sm font-bold text-foreground flex items-center gap-2">
                 <Check className="h-4.5 w-4.5 text-emerald-500 shrink-0" />
                 Phase 4: Regular Posts & Q&A
               </h3>
-              <ul className="space-y-3 text-[11px] text-slate-300 pl-6 list-decimal">
+              <ul className="space-y-3 text-[11px] text-slate-700 dark:text-slate-300 pl-6 list-decimal">
                 <li>Publish weekly updates/offers directly to GMB posts to signal fresh content.</li>
                 <li>Pre-populate common questions and answers in the Q&A section of the maps listing.</li>
                 <li>Monitor monthly search performance metrics (impressions, calls, directions) and share with the client.</li>
