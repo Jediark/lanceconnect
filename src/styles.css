@@ -312,4 +312,14 @@ html.light {
       background-attachment: scroll;
     }
   }
+
+  /* Global Spacious Layout Optimization (Wide Screens) */
+  .max-w-7xl {
+    max-width: 90rem !important; /* 1440px container */
+  }
+
+  .lg\:px-8 {
+    padding-left: 1.25rem !important; /* 20px padding instead of 32px */
+    padding-right: 1.25rem !important;
+  }
 }
