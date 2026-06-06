@@ -248,7 +248,7 @@ function FreelancerDirectoryPage() {
             className="w-full h-full object-cover opacity-35"
             alt=""
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/40" />
+          <div className="absolute inset-0 bg-[#020b21]/75" />
         </div>
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
           <p className="text-xs font-mono text-slate-400 mb-2 tracking-widest uppercase flex items-center justify-center gap-1.5">
@@ -370,10 +370,8 @@ function FreelancerDirectoryPage() {
             {featuredFreelancers.map((free) => (
               <div
                 key={free.id}
-                className="relative rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card p-6 shadow-[0_0_20px_rgba(6,182,212,0.08)] hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition duration-300 flex flex-col justify-between group hover:border-primary/40 overflow-hidden"
+                className="relative rounded-3xl border border-primary/20 bg-card p-6 shadow-[0_0_20px_rgba(6,182,212,0.08)] hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition duration-300 flex flex-col justify-between group hover:border-primary/40 overflow-hidden"
               >
-                {/* Decorative glowing gradient effect */}
-                <div className="absolute top-0 right-0 -mt-4 -mr-4 h-16 w-16 bg-primary/20 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
                 
                 <div>
                   {/* Bio Info Header */}

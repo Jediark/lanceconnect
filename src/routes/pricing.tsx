@@ -71,9 +71,9 @@ function PricingPage() {
       <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8 bg-background">
         <div className="max-w-4xl mx-auto space-y-12">
           {/* Main Card */}
-          <div className="relative rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card p-8 md:p-12 shadow-[0_0_40px_rgba(6,182,212,0.1)] hover:shadow-[0_0_50px_rgba(6,182,212,0.15)] transition duration-300 overflow-hidden text-center">
-            {/* Glowing top effect */}
-            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-cyan-500 via-primary to-rose-500" />
+          <div className="relative rounded-3xl border border-primary/30 bg-card p-8 md:p-12 shadow-[0_0_40px_rgba(6,182,212,0.1)] hover:shadow-[0_0_50px_rgba(6,182,212,0.15)] transition duration-300 overflow-hidden text-center">
+            {/* Solid top border instead of gradient */}
+            <div className="absolute top-0 inset-x-0 h-1.5 bg-primary" />
             
             <p className="text-xs font-mono text-cyan-400 uppercase tracking-widest">// fully.unlocked.account</p>
             <h2 className="mt-4 font-display text-3xl font-extrabold md:text-4xl text-slate-900 dark:text-white">
