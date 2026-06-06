@@ -86,7 +86,7 @@ function RegisterPage() {
         nav({ to: "/onboarding" });
       } else {
         toast.success("Account created! Please verify your email.");
-        nav({ to: "/verify-email" });
+        nav({ to: "/verify-email", search: { email } });
       }
     }
   };
