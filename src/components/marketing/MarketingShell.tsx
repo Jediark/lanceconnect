@@ -61,6 +61,7 @@ export function MarketingNav() {
     { to: "/", label: t("nav_home") },
     { to: "/about", label: t("nav_about") },
     { to: "/how-it-works", label: t("nav_how") },
+    { to: "/services", label: t("nav_services") },
     { to: "/pricing", label: t("nav_pricing") },
     { to: "/freelancers", label: t("nav_directory") },
     { to: "/blog", label: t("nav_blog") },
