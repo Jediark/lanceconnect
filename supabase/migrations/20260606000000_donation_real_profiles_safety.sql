@@ -370,25 +370,28 @@ BEGIN
       'authenticated',
       'authenticated'
     );
-    UPDATE public.profiles
-    SET 
-      is_public = true,
-      freelancer_category = 'african_food_export',
-      bio = 'Premium African food supplier and human capital development company in the UK. Supplying wholesale palm oil, ethnic food products, bulk catering, and events. Also providing AI training, L&D solutions, and leadership & workforce training led by Margaret Ogunleye. Dedicated to quality food and transformational learning.',
-      website_url = 'https://jemoorel.co.uk',
-      country = 'United Kingdom',
-      city = 'London',
-      is_verified = true,
-      website_verified = true,
-      is_supporter = true,
-      tagline = 'Quality Food. Transformational Learning.',
-      hourly_rate = 50,
-      is_featured = true,
-      onboarding_completed = true,
-      username = 'jemoorel-uk',
-      contact_email = 'info@jemoorel.co.uk'
-    WHERE id = v_user_id;
+  ELSE
+    SELECT id INTO v_user_id FROM auth.users WHERE email = 'info@jemoorel.co.uk';
   END IF;
+
+  UPDATE public.profiles
+  SET 
+    is_public = true,
+    freelancer_category = 'african_food_export',
+    bio = 'Je''moorel UK is a premier wholesale supplier and distributor of authentic African food products and ingredients in the United Kingdom. We specialize in supplying premium bulk Palm Oil (carefully imported and securely packaged), Egusi (melon seeds), Ogbono seeds, Stockfish, Crayfish, and Smoked Fish to ethnic cash-and-carries, supermarkets, restaurants, and catering services across the UK. Partner with us for high-quality, verified ethnic food sourcing and bulk supply.',
+    website_url = 'https://jemoorel.co.uk',
+    country = 'United Kingdom',
+    city = 'London',
+    is_verified = true,
+    website_verified = true,
+    is_supporter = true,
+    tagline = 'Wholesale Supplier of Premium Authentic African Foods & Spices',
+    hourly_rate = NULL,
+    is_featured = true,
+    onboarding_completed = true,
+    username = 'jemoorel-uk',
+    contact_email = 'info@jemoorel.co.uk'
+  WHERE id = v_user_id;
 
   -- Emmanuel Edward — AI Web Dev Trainer
   IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'emmanuel@techfieldsdigital.com.ng') THEN

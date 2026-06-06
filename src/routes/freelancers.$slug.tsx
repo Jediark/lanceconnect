@@ -56,6 +56,8 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "corporate-training": <BookOpen className="h-5 w-5 text-primary" />,
 };
 
+const WHOLESALE_CATEGORIES = ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"];
+
 export const Route = createFileRoute("/freelancers/$slug")({
   loader: async ({ params }) => {
     // 1. Check if slug is a static marketing category landing page
@@ -312,12 +314,16 @@ function FreelancerSlugPage() {
                         {freelancer.country}
                       </span>
                     )}
-                    {freelancer.hourly_rate && (
+                    {WHOLESALE_CATEGORIES.includes(freelancer.freelancer_category) ? (
+                      <span className="flex items-center text-emerald-500 font-semibold">
+                        Wholesale / Custom Quote
+                      </span>
+                    ) : freelancer.hourly_rate ? (
                       <span className="flex items-center text-emerald-500 font-semibold">
                         <DollarSign className="h-4 w-4" />
                         {freelancer.hourly_rate} USD / hr
                       </span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -393,8 +399,9 @@ function FreelancerSlugPage() {
               <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
                 <h2 className="font-display text-lg font-bold text-foreground">// hire.directly</h2>
                 <p className="text-xs text-muted-foreground leading-normal">
-                  All contracts are managed directly between you and the freelancer. LanceConnect
-                  takes 0% commissions or fees.
+                  All contracts are managed directly between you and the{" "}
+                  {WHOLESALE_CATEGORIES.includes(freelancer.freelancer_category) ? "supplier" : "freelancer"}.
+                  LanceConnect takes 0% commissions or fees.
                 </p>
 
                 <div className="space-y-3">
@@ -403,7 +410,10 @@ function FreelancerSlugPage() {
                     href={`mailto:${freelancer.contact_email || freelancer.email}`}
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition shadow-sm cursor-pointer"
                   >
-                    <Mail className="h-4 w-4 shrink-0" /> Email Freelancer
+                    <Mail className="h-4 w-4 shrink-0" />{" "}
+                    {WHOLESALE_CATEGORIES.includes(freelancer.freelancer_category)
+                      ? "Email Supplier"
+                      : "Email Freelancer"}
                   </a>
 
                   {/* WhatsApp/Phone Button */}
@@ -414,7 +424,10 @@ function FreelancerSlugPage() {
                       rel="noreferrer"
                       className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] text-white hover:bg-[#20ba59] px-4 py-3 text-xs font-bold transition shadow-sm cursor-pointer"
                     >
-                      <MessageSquare className="h-4 w-4 shrink-0" /> WhatsApp Message
+                      <MessageSquare className="h-4 w-4 shrink-0" />{" "}
+                      {WHOLESALE_CATEGORIES.includes(freelancer.freelancer_category)
+                        ? "WhatsApp Supplier"
+                        : "WhatsApp Message"}
                     </a>
                   )}
 

@@ -49,6 +49,8 @@ const B2B_IDS = [
   "training_recruitment",
 ];
 
+const WHOLESALE_CATEGORIES = ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"];
+
 export const Route = createFileRoute("/freelancers/")({
   head: () => ({
     meta: [
@@ -423,12 +425,16 @@ function FreelancerDirectoryPage() {
                             {free.country}
                           </span>
                         )}
-                        {free.hourly_rate && (
+                        {WHOLESALE_CATEGORIES.includes(free.freelancer_category) ? (
+                          <span className="flex items-center text-emerald-500 font-semibold">
+                            Wholesale / Custom Quote
+                          </span>
+                        ) : free.hourly_rate ? (
                           <span className="flex items-center text-emerald-500 font-semibold">
                             <DollarSign className="h-3 w-3 shrink-0" />
                             {free.hourly_rate}/hr
                           </span>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -606,12 +612,16 @@ function FreelancerDirectoryPage() {
                             {free.country}
                           </span>
                         )}
-                        {free.hourly_rate && (
+                        {WHOLESALE_CATEGORIES.includes(free.freelancer_category) ? (
+                          <span className="flex items-center text-emerald-500 font-semibold">
+                            Wholesale / Custom Quote
+                          </span>
+                        ) : free.hourly_rate ? (
                           <span className="flex items-center text-emerald-500 font-semibold">
                             <DollarSign className="h-3 w-3 shrink-0" />
                             {free.hourly_rate}/hr
                           </span>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </div>

@@ -153,6 +153,10 @@ export const CATEGORY_TO_PLACES_QUERY: Record<string, string[]> = {
     "african caribbean supermarket",
     "ethnic grocery wholesaler",
     "food import export company",
+    "cash and carry",
+    "world food wholesaler",
+    "ethnic cash and carry",
+    "african food wholesaler",
   ],
   restaurant_supplier: [
     "restaurant",

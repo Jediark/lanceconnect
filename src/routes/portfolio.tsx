@@ -31,6 +31,7 @@ const CATEGORIES = [
   { id: "social-media", label: "Social Media" },
   { id: "videographers", label: "Video & Photo" },
   { id: "virtual-assistants", label: "Virtual Assistants" },
+  { id: "african-food-export", label: "African Food Export" },
 ];
 
 const PORTFOLIO_FREELANCERS = [
@@ -110,17 +111,17 @@ const PORTFOLIO_FREELANCERS = [
   },
   {
     name: "Margaret Ogunleye (Je'moorel UK)",
-    role: "MD & Lead Consultant",
-    category: "virtual-assistants",
+    role: "Managing Director & Sourcing Lead",
+    category: "african-food-export",
     avatar: "/assets/freelancers/freelancer_6.jpg",
     city: "London, UK",
     rating: "4.9",
-    skills: ["L&D Administration", "African Food Export", "Leadership Training"],
+    skills: ["African Food Export", "Wholesale Supply", "Bulk Logistics", "Palm Oil Sourcing", "Ethnic Food Distribution"],
     projects: [
       {
-        title: "Je'moorel UK Portal",
+        title: "Je'moorel UK Wholesale Food Supply",
         image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80",
-        desc: "African food supply, L&D solutions, and corporate training portal at jemoorel.co.uk.",
+        desc: "Wholesale supply portal for authentic African ingredients, bulk palm oil, egusi, and dried proteins.",
       },
     ],
   },
