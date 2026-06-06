@@ -205,17 +205,21 @@ WHERE email LIKE '%example.com'
    OR email LIKE '%seed%'
    OR email LIKE '%@lanceconnect.com'
    OR full_name IN (
-     'Anna Schmidt', 'Sakura Takahashi',
-     'John Smith', 'Sarah Jenkins',
-     'Elena Rostova', 'Marcus Thompson',
-     'Kofi Mensah', 'Chloe Dupont',
-     'Kenji Tanaka', 'Prof. Clara Vance',
-     'Chinedu Okafor', 'Luigi Moretti',
-     'Sophia Martinez', 'Rajesh Patel',
-     'Dr. Amanda Ross', 'Wambui Kamau',
-     'Kofi Osei', 'Paolo Reyes',
-     'Thabo Ndlovu', 'Sofia Garcia',
-     'Yasmine Hassan', 'Adebayo Williams'
+     'Anna Schmidt', 'Sakura Takahashi', 'John Smith', 'Sarah Jenkins',
+     'Elena Rostova', 'Marcus Thompson', 'Kofi Mensah', 'Chloe Dupont',
+     'Kenji Tanaka', 'Prof. Clara Vance', 'Chinedu Okafor', 'Luigi Moretti',
+     'Sophia Martinez', 'Rajesh Patel', 'Dr. Amanda Ross', 'Wambui Kamau',
+     'Kofi Osei', 'Paolo Reyes', 'Thabo Ndlovu', 'Sofia Garcia',
+     'Yasmine Hassan', 'Adebayo Williams', 'Amara Okonkwo', 'Aarav Sharma',
+     'Beatriz Silva', 'David Miller', 'Jane Wanjiku', 'Kwame Appiah',
+     'Lukas Muller', 'Yuki Sato', 'Maria Santos', 'Sipho Dube',
+     'Carlos Gomez', 'Fatima Ali', 'Zayd Mansoor', 'Olumide Balogun',
+     'Chloe Taylor', 'Priya Patel', 'Gabriel Souza', 'Emma Johnson',
+     'Njuguna Kariuki', 'Akosua Agyei', 'Sofia Weber', 'Hiroto Watanabe',
+     'Jose Cruz', 'Lerato Mokoena', 'Alejandro Hernandez', 'Mona Mahmoud',
+     'Tariq Al-Maktoum', 'Tobi Alabi', 'Robert Jones', 'Ananya Rao',
+     'Fernanda Lima', 'Michael Brown', 'Faisal Al-Suwaidi', 'Chioma Eze',
+     'James Wilson', 'Rohan Mehta'
    );
 
 DELETE FROM auth.users
@@ -223,17 +227,21 @@ WHERE email LIKE '%example.com'
    OR email LIKE '%seed%'
    OR email LIKE '%@lanceconnect.com'
    OR raw_user_meta_data->>'full_name' IN (
-     'Anna Schmidt', 'Sakura Takahashi',
-     'John Smith', 'Sarah Jenkins',
-     'Elena Rostova', 'Marcus Thompson',
-     'Kofi Mensah', 'Chloe Dupont',
-     'Kenji Tanaka', 'Prof. Clara Vance',
-     'Chinedu Okafor', 'Luigi Moretti',
-     'Sophia Martinez', 'Rajesh Patel',
-     'Dr. Amanda Ross', 'Wambui Kamau',
-     'Kofi Osei', 'Paolo Reyes',
-     'Thabo Ndlovu', 'Sofia Garcia',
-     'Yasmine Hassan', 'Adebayo Williams'
+     'Anna Schmidt', 'Sakura Takahashi', 'John Smith', 'Sarah Jenkins',
+     'Elena Rostova', 'Marcus Thompson', 'Kofi Mensah', 'Chloe Dupont',
+     'Kenji Tanaka', 'Prof. Clara Vance', 'Chinedu Okafor', 'Luigi Moretti',
+     'Sophia Martinez', 'Rajesh Patel', 'Dr. Amanda Ross', 'Wambui Kamau',
+     'Kofi Osei', 'Paolo Reyes', 'Thabo Ndlovu', 'Sofia Garcia',
+     'Yasmine Hassan', 'Adebayo Williams', 'Amara Okonkwo', 'Aarav Sharma',
+     'Beatriz Silva', 'David Miller', 'Jane Wanjiku', 'Kwame Appiah',
+     'Lukas Muller', 'Yuki Sato', 'Maria Santos', 'Sipho Dube',
+     'Carlos Gomez', 'Fatima Ali', 'Zayd Mansoor', 'Olumide Balogun',
+     'Chloe Taylor', 'Priya Patel', 'Gabriel Souza', 'Emma Johnson',
+     'Njuguna Kariuki', 'Akosua Agyei', 'Sofia Weber', 'Hiroto Watanabe',
+     'Jose Cruz', 'Lerato Mokoena', 'Alejandro Hernandez', 'Mona Mahmoud',
+     'Tariq Al-Maktoum', 'Tobi Alabi', 'Robert Jones', 'Ananya Rao',
+     'Fernanda Lima', 'Michael Brown', 'Faisal Al-Suwaidi', 'Chioma Eze',
+     'James Wilson', 'Rohan Mehta'
    );
 
 -- 11. Seed Real verified profiles
