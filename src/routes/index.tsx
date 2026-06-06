@@ -22,10 +22,6 @@ import {
   BarChart3,
   Zap,
   Search,
-  Terminal,
-  Copy,
-  Check,
-  Loader2,
   Code2,
   Palette,
   PenTool,
@@ -80,7 +76,6 @@ export const Route = createFileRoute("/")({
       <Stats />
       <HowItWorks />
       <Features />
-      <LeadScannerSandbox />
       <GlobalReach />
       <WhoFor />
       <Testimonials />
@@ -1142,108 +1137,6 @@ const AiOutreachFooter = () => {
   );
 };
 
-const getMockLeads = (craft: string, city: string) => {
-  const leads = [
-    {
-      id: 1,
-      name: `${city} Gourmet Kitchen`,
-      type: "Restaurant & Catering",
-      score: 94,
-      issues:
-        craft === "web"
-          ? ["No website", "Only Facebook page link"]
-          : craft === "design"
-            ? ["Outdated 2012 layout", "Cluttered booking form"]
-            : craft === "seo"
-              ? ["Not visible on local search", "Missing Google Business profile reviews"]
-              : ["No video presence", "Outdated food gallery"],
-      phone: "+1 555-832-1920",
-      email: `contact@${city.toLowerCase().replace(" ", "")}gourmet.com`,
-      subject:
-        craft === "web"
-          ? `Website inquiry for ${city} Gourmet Kitchen`
-          : craft === "design"
-            ? `Branding update - ${city} Gourmet Kitchen`
-            : craft === "seo"
-              ? `Google visibility boost for ${city} Gourmet Kitchen`
-              : `Promo video concepts for ${city} Gourmet Kitchen`,
-      draft:
-        craft === "web"
-          ? `Hi Chef,\n\nI love your menu but noticed customers can't order directly online. I'd love to build a quick, high-converting checkout site for you.\n\nBest,\n[Your Name]`
-          : craft === "design"
-            ? `Hello,\n\nI love the dining vibe at Gourmet Kitchen! I noticed your online logo and branding could use a premium refresh to match that feel.\n\nBest,\n[Your Name]`
-            : craft === "seo"
-              ? `Hi Team,\n\nI searched for restaurants in ${city} and couldn't find your kitchen on the first page. Let's optimize your profile to pull in more local customers.\n\nBest,\n[Your Name]`
-              : `Hi Chef,\n\nI saw your gorgeous dishes on Instagram. I can create a professional 30-second promo reel to drive reservations.\n\nBest,\n[Your Name]`,
-    },
-    {
-      id: 2,
-      name: `${city} Dental Care`,
-      type: "Medical Practice",
-      score: 87,
-      issues:
-        craft === "web"
-          ? ["Non-responsive on mobile", "Broken appointment button"]
-          : craft === "design"
-            ? ["Stock-photo heavy landing page", "Hard to read fonts"]
-            : craft === "seo"
-              ? ["High competitor ranking", "No local schema mapping"]
-              : ["Missing patient walkthrough video", "No video introduction"],
-      phone: "+1 555-401-3829",
-      email: `office@${city.toLowerCase().replace(" ", "")}dentalcare.com`,
-      subject:
-        craft === "web"
-          ? `Mobile booking issue on your site`
-          : craft === "design"
-            ? `Modern UI facelift for ${city} Dental`
-            : craft === "seo"
-              ? `Patients can't find you on Google`
-              : `Patient testimonial videos for ${city} Dental`,
-      draft:
-        craft === "web"
-          ? `Hi Dr.,\n\nI tried booking an appointment on my phone and the layout was cut off. I can fix this responsiveness issue so you don't lose patients.\n\nBest,\n[Your Name]`
-          : craft === "design"
-            ? `Dear Practice Manager,\n\nI noticed your website uses standard stock photos. A custom illustrated interface would build much higher trust with patients.\n\nBest,\n[Your Name]`
-            : craft === "seo"
-              ? `Hello Dr.,\n\nYour competitors are ranking above you for 'dentist in ${city}'. I can optimize your site structure to get you to #1.\n\nBest,\n[Your Name]`
-              : `Dear Practice Manager,\n\nWe can film and edit 3 high-impact patient video testimonials to put on your home page to build instant trust.\n\nBest,\n[Your Name]`,
-    },
-    {
-      id: 3,
-      name: `${city} Auto Body`,
-      type: "Car Service",
-      score: 79,
-      issues:
-        craft === "web"
-          ? ["Slow load speed (8.4s)", "Outdated HTML template"]
-          : craft === "design"
-            ? ["Unstructured service pricing table", "Low contrast buttons"]
-            : craft === "seo"
-              ? ["No Google Reviews linkage", "Low speed indexing penalty"]
-              : ["No video gallery showing repairs", "Missing TikTok/Reels presence"],
-      phone: "+1 555-901-7261",
-      email: `info@${city.toLowerCase().replace(" ", "")}autobody.com`,
-      subject:
-        craft === "web"
-          ? `Website loading speeds at ${city} Auto`
-          : craft === "design"
-            ? `UI revamp for your repair list`
-            : craft === "seo"
-              ? `Rankings check for local auto body repairs`
-              : `Reels & Shorts promo for ${city} Auto`,
-      draft:
-        craft === "web"
-          ? `Hi Manager,\n\nYour page takes over 8 seconds to load, which causes visitors to leave. Let's rebuild a lightweight, lightning-fast static site.\n\nBest,\n[Your Name]`
-          : craft === "design"
-            ? `Hello,\n\nYour services page is a bit hard to scan on mobile. I designed a cleaner table that makes it easy for clients to request quotes.\n\nBest,\n[Your Name]`
-            : craft === "seo"
-              ? `Hi Team,\n\nI saw your business lacks backlinks from local directories. I can manage a citation campaign to raise your authority score.\n\nBest,\n[Your Name]`
-              : `Hi Manager,\n\nLet's capture high-quality 'before/after' transformation reels of your paint/dent jobs to build a massive TikTok following.\n\nBest,\n[Your Name]`,
-    },
-  ];
-  return leads;
-};
-
 const FEATURES_LIST = [
   {
     id: 1,
@@ -1522,331 +1415,6 @@ function Features() {
 }
 
 /* ────────────────────────────────────────────────────────────
-   INTERACTIVE LEAD SCANNER PLAYGROUND
-   ──────────────────────────────────────────────────────────── */
-function LeadScannerSandbox() {
-  const [craft, setCraft] = useState<"web" | "design" | "seo" | "video">("web");
-  const [city, setCity] = useState<string>("London");
-  const [isScanning, setIsScanning] = useState<boolean>(false);
-  const [scanProgress, setScanProgress] = useState<number>(0);
-  const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
-  const [scanComplete, setScanComplete] = useState<boolean>(false);
-  const [copiedId, setCopiedId] = useState<number | null>(null);
-  const [leads, setLeads] = useState<any[]>([]);
-  const { t } = usePreferences();
-
-  const handleDraftChange = (id: number, text: string) => {
-    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, draft: text } : l)));
-  };
-
-  const handleCopy = (id: number, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const startScan = () => {
-    setIsScanning(true);
-    setScanComplete(false);
-    setScanProgress(0);
-    setTerminalLogs([]);
-
-    const logSequence = [
-      `[INFO] Initializing LanceConnect engine...`,
-      `[INFO] Target: ${craft.toUpperCase()} opportunities in ${city}...`,
-      `[INFO] Fetching regional business directories...`,
-      `[SCAN] Scraping active website meta tags & schema...`,
-      `[MODEL] Analyzing mobile speed & Core Web Vitals...`,
-      `[AI] Ranking target list by opportunity potential...`,
-      `[SUCCESS] Analysis complete. 3 hot leads found!`,
-    ];
-
-    let currentLogIndex = 0;
-    const interval = setInterval(() => {
-      setScanProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setLeads(getMockLeads(craft, city));
-            setIsScanning(false);
-            setScanComplete(true);
-          }, 300);
-          return 100;
-        }
-
-        const step = Math.floor(prev / 15);
-        if (step > currentLogIndex && currentLogIndex < logSequence.length) {
-          setTerminalLogs((logs) => [...logs, logSequence[currentLogIndex]]);
-          currentLogIndex++;
-        }
-
-        return prev + 10;
-      });
-    }, 150);
-  };
-
-  return (
-    <section
-      id="sandbox"
-      className="hidden md:block border-b border-border bg-background py-24 select-none"
-    >
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center mb-16">
-          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
-            {t("sandbox_eyebrow")}
-          </p>
-          <h2 className="font-display text-4xl font-extrabold text-foreground">
-            {t("sandbox_title")}
-          </h2>
-          <p className="mt-4 text-muted-foreground">{t("sandbox_sub")}</p>
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-12">
-          {/* Controls - Left Column */}
-          <div className="lg:col-span-5 bg-card border border-border rounded-2xl p-6 flex flex-col justify-between">
-            <div className="space-y-6">
-              {/* Craft Selector */}
-              <div>
-                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">
-                  {t("sandbox_step_1")}
-                </label>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {[
-                    { id: "web", label: "Web Developer", icon: Code2 },
-                    { id: "design", label: "Designer", icon: Palette },
-                    { id: "seo", label: "SEO Specialist", icon: LineChart },
-                    { id: "video", label: "Video Producer", icon: Play },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => setCraft(item.id as any)}
-                      className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all ${
-                        craft === item.id
-                          ? "border-primary bg-primary/10 text-primary font-semibold"
-                          : "border-border bg-background text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
-                      }`}
-                    >
-                      <item.icon className="h-4.5 w-4.5 text-primary shrink-0" />
-                      <span className="text-xs">{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* City Selector */}
-              <div>
-                <label className="text-xs font-mono text-[#64748B] uppercase tracking-wider block mb-3">
-                  {t("sandbox_step_2")}
-                </label>
-                <div className="relative">
-                  <select
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-xs text-slate-950 dark:text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
-                  >
-                    {["London", "Lagos", "São Paulo", "Tokyo", "Buenos Aires"].map((c) => (
-                      <option
-                        key={c}
-                        value={c}
-                        className="bg-background text-slate-950 dark:text-white"
-                      >
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-                    <svg
-                      className="fill-current h-4 w-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Run Button */}
-            <div className="mt-8">
-              <button
-                onClick={startScan}
-                disabled={isScanning}
-                className={`w-full relative overflow-hidden flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-sm font-semibold text-white shadow-lg transition-all duration-300 ${
-                  isScanning
-                    ? "opacity-85 cursor-not-allowed"
-                    : "hover:bg-primary/90 hover:scale-[1.01] hover:shadow-primary/25"
-                }`}
-              >
-                {isScanning ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin text-white" />
-                    <span>{t("sandbox_running")}</span>
-                  </>
-                ) : (
-                  <>
-                    <Zap className="h-4 w-4 text-white animate-pulse" />
-                    <span>{t("sandbox_run")}</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Sandbox Screen Output - Right Column */}
-          <div className="lg:col-span-7 bg-card border border-border rounded-2xl min-h-[420px] overflow-hidden flex flex-col">
-            {/* Screen Header */}
-            <div className="bg-card border-b border-border/80 px-4 py-3 flex items-center justify-between text-xs text-slate-400">
-              <div className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-red-500/60" />
-                <span className="h-2 w-2 rounded-full bg-yellow-500/60" />
-                <span className="h-2 w-2 rounded-full bg-emerald-500/60" />
-                <span className="font-mono ml-2 text-[10px] text-slate-500">console_output.sh</span>
-              </div>
-              {scanComplete && (
-                <div className="flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  <span className="h-1 w-1 bg-emerald-500 rounded-full animate-ping" />
-                  Live Leads Generated
-                </div>
-              )}
-            </div>
-
-            {/* Screen Body */}
-            <div className="flex-1 p-6 flex flex-col justify-center">
-              {/* Not scanned yet */}
-              {!isScanning && !scanComplete && (
-                <div className="text-center max-w-sm mx-auto space-y-4 py-8">
-                  <div className="h-12 w-12 rounded-2xl bg-card border border-border flex items-center justify-center mx-auto shadow-md">
-                    <Search className="h-5 w-5 text-slate-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">
-                      {t("sandbox_ready_title")}
-                    </h3>
-                    <p className="text-xs text-slate-700 dark:text-slate-400 mt-1">
-                      {t("sandbox_ready_desc")}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Scanning Simulator */}
-              {isScanning && (
-                <div className="space-y-6 flex-1 flex flex-col justify-between">
-                  {/* High Tech Radar Sweep */}
-                  <div className="relative h-28 flex items-center justify-center overflow-hidden">
-                    <div className="absolute h-24 w-24 rounded-full border border-primary/20 flex items-center justify-center">
-                      <div className="absolute h-16 w-16 rounded-full border border-primary/30" />
-                      <div className="absolute h-8 w-8 rounded-full border border-primary/45" />
-                      <div
-                        className="absolute inset-0 border-t-2 border-primary rounded-full animate-spin"
-                        style={{ animationDuration: "1.2s" }}
-                      />
-                    </div>
-                    <div className="h-2 w-2 rounded-full bg-primary animate-ping" />
-                  </div>
-
-                  {/* Terminal Logs */}
-                  <div className="bg-background rounded-xl border border-border/80 p-4 font-mono text-[10px] text-slate-750 dark:text-slate-400 space-y-1.5 max-h-[140px] overflow-y-auto flex-1 flex flex-col justify-end">
-                    {terminalLogs.map((log, idx) => (
-                      <div key={idx} className="flex gap-2">
-                        <span className="text-primary font-bold">{`>`}</span>
-                        <span
-                          className={
-                            log.includes("[SUCCESS]")
-                              ? "text-emerald-600 dark:text-emerald-400 font-semibold"
-                              : log.includes("[SCAN]")
-                                ? "text-amber-600 dark:text-yellow-400"
-                                : "text-slate-800 dark:text-slate-300"
-                          }
-                        >
-                          {log}
-                        </span>
-                      </div>
-                    ))}
-                    <div className="flex items-center gap-1.5 text-primary mt-1">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      <span>Scraping {scanProgress}%...</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Scan completed successfully */}
-              {scanComplete && (
-                <div className="space-y-4">
-                  {leads.map((l) => (
-                    <div
-                      key={l.id}
-                      className="bg-background border border-border hover:border-primary/45 rounded-xl p-4 transition-all duration-300 flex flex-col gap-3 group"
-                    >
-                      {/* Lead meta */}
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-display text-sm font-bold text-slate-950 dark:text-slate-100 leading-tight">
-                              {l.name}
-                            </h4>
-                            <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-primary">
-                              {l.score} Match
-                            </span>
-                          </div>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-350 font-mono mt-0.5 block">
-                            {l.type} · {city}
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 justify-end">
-                          {l.issues.map((issue: string, idx: number) => (
-                            <span
-                              key={idx}
-                              className="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2 py-0.5 rounded-[4px] text-[8px] font-mono"
-                            >
-                              ⚠ {issue}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* AI Draft section */}
-                      <div className="bg-card border border-border rounded-lg p-2.5 flex flex-col gap-2">
-                        <div className="flex justify-between items-center text-[9px] text-slate-600 dark:text-slate-400 font-mono">
-                          <span>Subject: {l.subject}</span>
-                          <button
-                            onClick={() => handleCopy(l.id, `Subject: ${l.subject}\n\n${l.draft}`)}
-                            className="flex items-center gap-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition duration-200"
-                          >
-                            {copiedId === l.id ? (
-                              <>
-                                <Check className="h-3 w-3 text-emerald-500" />
-                                <span className="text-emerald-500">Copied!</span>
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="h-3 w-3" />
-                                <span>Copy Template</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                        <textarea
-                          value={l.draft}
-                          onChange={(e) => handleDraftChange(l.id, e.target.value)}
-                          className="bg-transparent border-0 font-mono text-[9px] text-slate-900 dark:text-slate-200 resize-none h-16 focus:outline-none focus:ring-0 leading-relaxed scrollbar-thin scrollbar-thumb-border"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ────────────────────────────────────────────────────────────
    GLOBAL REACH
    ──────────────────────────────────────────────────────────── */
 function GlobalReach() {
@@ -1985,7 +1553,7 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
    ──────────────────────────────────────────────────────────── */
 function WhoFor() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 py-24 lg:px-8 bg-background">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
           Built for every freelancer
@@ -1995,7 +1563,7 @@ function WhoFor() {
         </p>
       </div>
       <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {CATEGORIES.map((c) => {
+        {CATEGORIES.slice(0, 5).map((c) => {
           const Icon = CATEGORY_ICONS[c.id] || Sparkles;
           return (
             <Link
@@ -2015,6 +1583,14 @@ function WhoFor() {
             </Link>
           );
         })}
+      </div>
+      <div className="mt-10 text-center">
+        <Link
+          to="/services"
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-xs font-mono font-bold hover:bg-accent text-primary transition shadow-sm"
+        >
+          Explore all 18+ services & niche trade directories <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </section>
   );
