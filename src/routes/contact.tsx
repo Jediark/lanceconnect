@@ -15,6 +15,7 @@ export const Route = createFileRoute("/contact")({
         content: "Reach the LanceConnect team. We reply within 4 hours, 7 days a week.",
       },
       { property: "og:title", content: "Contact LanceConnect" },
+      { name: "keywords", content: "contact lanceconnect, freelancer support, B2B lead help, customer service, get in touch" },
     ],
   }),
   component: ContactPage,

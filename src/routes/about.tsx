@@ -13,6 +13,7 @@ export const Route = createFileRoute("/about")({
           "Bridging the gap between skilled freelancers and the clients looking for their expertise.",
       },
       { property: "og:title", content: "About LanceConnect" },
+      { name: "keywords", content: "about lanceconnect, freelancer platform, B2B lead generation, find clients, freelance marketplace, client discovery tool" },
       {
         property: "og:description",
         content: "Connecting freelancers and clients in a simple, trusted, and human way.",

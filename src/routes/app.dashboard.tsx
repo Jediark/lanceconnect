@@ -30,6 +30,7 @@ import { LiveEventsTicker } from "@/components/dashboard/LiveEventsTicker";
 import { GoalTracker } from "@/components/dashboard/GoalTracker";
 import { GlobalHeatmap } from "@/components/dashboard/GlobalHeatmap";
 import { QuickConnectModal } from "@/components/dashboard/QuickConnectModal";
+import { TrendingSearches } from "@/components/ui/TrendingSearches";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LanceConnect" }] }),
@@ -279,9 +280,26 @@ function Dashboard() {
     }
   };
 
-  const handleSearch = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!quickCity.trim()) {
+  const handleSearch = async (
+    e?: React.FormEvent | { category: string; country: string; city: string; product: string; niche: string }
+  ) => {
+    let isEvent = e && typeof (e as any).preventDefault === "function";
+    if (isEvent) {
+      (e as React.FormEvent).preventDefault();
+    }
+
+    let searchCategory = quickCategory;
+    let searchCity = quickCity;
+    let searchCountry = quickCountry;
+
+    if (e && !isEvent) {
+      const params = e as { category: string; country: string; city: string };
+      searchCategory = params.category;
+      searchCity = params.city;
+      searchCountry = params.country;
+    }
+
+    if (!searchCity.trim()) {
       toast.error("Please enter a city name.");
       return;
     }
@@ -292,7 +310,7 @@ function Dashboard() {
     }
     try {
       const { data, error } = await supabase.functions.invoke("search-leads", {
-        body: { query: quickCategory, city: quickCity, country: quickCountry, limit: 12 },
+        body: { query: searchCategory, city: searchCity, country: searchCountry, limit: 12 },
       });
       if (error) throw error;
       const mapped = (data?.leads || []).map((d: any) => ({
@@ -619,6 +637,17 @@ function Dashboard() {
             </div>
           ))}
         </div>
+
+        {/* ═══ TRENDING SEARCHES ═══ */}
+        <TrendingSearches
+          onSelectSearch={(search) => {
+            setQuickCategory(search.category);
+            setQuickCountry(search.country);
+            setQuickCity(search.city);
+            handleSearch(search);
+          }}
+          className="my-6"
+        />
 
         {/* ═══ ANALYTICS ROW ═══ */}
         <div className="grid gap-6 lg:grid-cols-3">

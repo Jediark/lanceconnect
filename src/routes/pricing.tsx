@@ -14,6 +14,7 @@ export const Route = createFileRoute("/pricing")({
           "Plans from $0 to $20/month. 14-day money-back guarantee. No credit card to start.",
       },
       { property: "og:title", content: "LanceConnect Pricing" },
+      { name: "keywords", content: "lanceconnect pricing, freelancer lead pricing, B2B lead costs, free lead generation, affordable client finder, freelance pricing plans" },
       {
         property: "og:description",
         content: "Free, Individual, Large Company. Simple, transparent.",

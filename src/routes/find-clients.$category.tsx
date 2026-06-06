@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { CATEGORIES } from "@/data/mockData";
 import { FREELANCER_CATEGORIES } from "@/data/content";
@@ -51,9 +51,12 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 // Map route slug to category ID
 const SLUG_TO_ID: Record<string, string> = {
   "web-developers": "web_dev",
+  "web-development": "web_dev",
   "designers": "designer",
   "copywriters": "copywriter",
   "seo-specialists": "seo",
+  "seo-specialist": "seo",
+  "seo": "seo",
   "social-media": "social_media",
   "videographers": "video",
   "photographers": "photography",
@@ -62,15 +65,98 @@ const SLUG_TO_ID: Record<string, string> = {
   "virtual-assistants": "va",
   "online-tutors": "tutor",
   "parent-tutors": "parent_tutor",
+  "parent-tutor": "parent_tutor",
   "african-food-export": "african_food_export",
   "restaurant-suppliers": "restaurant_supplier",
+  "restaurant-supplier": "restaurant_supplier",
   "product-export": "product_export",
+  "product-import-export": "product_export",
   "b2b-trade": "b2b_trade",
   "human-capital": "human_capital",
+  "human-capital-development": "human_capital",
   "training-recruitment": "training_recruitment",
 };
 
+const CATEGORY_SEO: Record<string, { keywords: string }> = {
+  "web-developers": { keywords: "find web development clients, web design leads, hire freelance developers, get web design projects, local business websites, lanceconnect web dev" },
+  "web-development": { keywords: "find web development clients, web design leads, hire freelance developers, get web design projects, local business websites, lanceconnect web dev" },
+  "designers": { keywords: "find graphic design clients, freelance designer leads, brand identity projects, logo design clients, creative portfolio leads, lanceconnect graphic design" },
+  "copywriters": { keywords: "copywriting clients, freelance writer leads, content writing projects, business blog writing, website copywriting, copywriter client finder" },
+  "seo-specialists": { keywords: "find seo clients, seo agency leads, local seo clients, search engine optimization projects, get seo work, seo freelancer helper" },
+  "seo-specialist": { keywords: "find seo clients, seo agency leads, local seo clients, search engine optimization projects, get seo work, seo freelancer helper" },
+  "seo": { keywords: "find seo clients, seo agency leads, local seo clients, search engine optimization projects, get seo work, seo freelancer helper" },
+  "social-media": { keywords: "social media manager clients, instagram marketer leads, facebook ads clients, social media management projects, lanceconnect social media" },
+  "videographers": { keywords: "video production clients, videography leads, commercial video projects, video editing clients, freelance videographer" },
+  "photographers": { keywords: "find photography clients, food photography leads, real estate photography, commercial photographer leads, photography projects" },
+  "marketers": { keywords: "digital marketing clients, B2B marketing leads, marketing consultant projects, run ads clients, marketing client finder" },
+  "app-developers": { keywords: "app development clients, mobile app leads, iOS android developer projects, hire app developers, custom software leads" },
+  "virtual-assistants": { keywords: "virtual assistant clients, freelance VA leads, administrative support projects, outsource admin work, hire virtual assistants" },
+  "online-tutors": { keywords: "online tutoring clients, find tutoring students, online teacher leads, remote tutoring jobs, language tutor clients" },
+  "parent-tutors": { keywords: "tutor matching service, find home tutors, private tutoring for kids, local tutor matching, math tutor parents" },
+  "parent-tutor": { keywords: "tutor matching service, find home tutors, private tutoring for kids, local tutor matching, math tutor parents" },
+  "african-food-export": { keywords: "african food importers, wholesale palm oil buyers, ethnic food distributors UK, export food to London, african food wholesalers" },
+  "restaurant-suppliers": { keywords: "restaurant food suppliers, fresh produce wholesale, local kitchen supply, B2B restaurant supplier, restaurant ingredients wholesale" },
+  "restaurant-supplier": { keywords: "restaurant food suppliers, fresh produce wholesale, local kitchen supply, B2B restaurant supplier, restaurant ingredients wholesale" },
+  "product-export": { keywords: "product importers, global trade distributors, wholesale export buyers, international B2B sales, import export trade leads" },
+  "product-import-export": { keywords: "product importers, global trade distributors, wholesale export buyers, international B2B sales, import export trade leads" },
+  "b2b-trade": { keywords: "B2B trade partners, raw material procurement, manufacturing wholesale suppliers, industrial supply chain leads, factory procurement" },
+  "human-capital": { keywords: "corporate training clients, HR talent development, leadership workshop leads, workforce L&D proposal, corporate upskilling" },
+  "human-capital-development": { keywords: "corporate training clients, HR talent development, leadership workshop leads, workforce L&D proposal, corporate upskilling" },
+  "training-recruitment": { keywords: "staffing agency clients, recruitment partner leads, hire recruitment firm, talent acquisition projects, company staffing needs" },
+};
+
 export const Route = createFileRoute("/find-clients/$category")({
+  beforeLoad: ({ params }) => {
+    if (params.category === "web-development") {
+      throw redirect({
+        to: "/find-clients/$category",
+        params: { category: "web-developers" },
+        replace: true,
+      });
+    }
+    if (params.category === "seo-specialist") {
+      throw redirect({
+        to: "/find-clients/$category",
+        params: { category: "seo-specialists" },
+        replace: true,
+      });
+    }
+    if (params.category === "seo") {
+      throw redirect({
+        to: "/find-clients/$category",
+        params: { category: "seo-specialists" },
+        replace: true,
+      });
+    }
+    if (params.category === "parent-tutor") {
+      throw redirect({
+        to: "/find-clients/$category",
+        params: { category: "parent-tutors" },
+        replace: true,
+      });
+    }
+    if (params.category === "restaurant-supplier") {
+      throw redirect({
+        to: "/find-clients/$category",
+        params: { category: "restaurant-suppliers" },
+        replace: true,
+      });
+    }
+    if (params.category === "product-import-export") {
+      throw redirect({
+        to: "/find-clients/$category",
+        params: { category: "product-export" },
+        replace: true,
+      });
+    }
+    if (params.category === "human-capital-development") {
+      throw redirect({
+        to: "/find-clients/$category",
+        params: { category: "human-capital" },
+        replace: true,
+      });
+    }
+  },
   loader: async ({ params }) => {
     const categoryId = SLUG_TO_ID[params.category] || params.category;
     
@@ -95,7 +181,7 @@ export const Route = createFileRoute("/find-clients/$category")({
         label: mockCat.label,
         emoji: mockCat.emoji || "💼",
         image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80",
-        tagline: `Find verified business leads looking for ${mockCat.label.toLowerCase()} services.`,
+        tagline: `Find verified B2B leads looking for ${mockCat.label.toLowerCase()} services.`,
         description: `Get real-time alerts when local businesses in your city show high opportunity buying signals.`,
         problems: [
           "No active marketing presence online",
@@ -110,15 +196,21 @@ export const Route = createFileRoute("/find-clients/$category")({
       }
     };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     if (!loaderData) return { meta: [] };
     const { label, content } = loaderData;
+    const categoryKey = params.category || "";
+    const seoInfo = CATEGORY_SEO[categoryKey] || { keywords: `find ${label.toLowerCase()} clients, ${label.toLowerCase()} leads, B2B ${label.toLowerCase()}` };
     return {
       meta: [
         { title: `How to Find ${label} Clients in 150+ Countries — LanceConnect` },
         {
           name: "description",
           content: `Discover high-intent B2B leads and clients for ${label.toLowerCase()} services. Browse local business opportunities with real-time scoring.`,
+        },
+        {
+          name: "keywords",
+          content: seoInfo.keywords,
         },
         { property: "og:title", content: `Find ${label} Clients Worldwide | LanceConnect` },
         { property: "og:description", content: content.tagline },

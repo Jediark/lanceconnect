@@ -37,6 +37,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as FreelancersSlugRouteImport } from './routes/freelancers.$slug'
 import { Route as FindClientsCategoryRouteImport } from './routes/find-clients.$category'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as B2bCategoryRouteImport } from './routes/b2b.$category'
 import { Route as AppUpgradeRouteImport } from './routes/app.upgrade'
 import { Route as AppTemplatesRouteImport } from './routes/app.templates'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
@@ -190,6 +191,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const B2bCategoryRoute = B2bCategoryRouteImport.update({
+  id: '/b2b/$category',
+  path: '/b2b/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppUpgradeRoute = AppUpgradeRouteImport.update({
   id: '/upgrade',
   path: '/upgrade',
@@ -282,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRouteWithChildren
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
+  '/b2b/$category': typeof B2bCategoryRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
@@ -322,6 +329,7 @@ export interface FileRoutesByTo {
   '/app/pipeline': typeof AppPipelineRoute
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
+  '/b2b/$category': typeof B2bCategoryRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
@@ -365,6 +373,7 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRouteWithChildren
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
+  '/b2b/$category': typeof B2bCategoryRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
@@ -409,6 +418,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/templates'
     | '/app/upgrade'
+    | '/b2b/$category'
     | '/blog/$slug'
     | '/find-clients/$category'
     | '/freelancers/$slug'
@@ -449,6 +459,7 @@ export interface FileRouteTypes {
     | '/app/pipeline'
     | '/app/templates'
     | '/app/upgrade'
+    | '/b2b/$category'
     | '/blog/$slug'
     | '/find-clients/$category'
     | '/freelancers/$slug'
@@ -491,6 +502,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/templates'
     | '/app/upgrade'
+    | '/b2b/$category'
     | '/blog/$slug'
     | '/find-clients/$category'
     | '/freelancers/$slug'
@@ -527,6 +539,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
+  B2bCategoryRoute: typeof B2bCategoryRoute
   BlogSlugRoute: typeof BlogSlugRoute
   FindClientsCategoryRoute: typeof FindClientsCategoryRoute
   FreelancersSlugRoute: typeof FreelancersSlugRoute
@@ -732,6 +745,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/b2b/$category': {
+      id: '/b2b/$category'
+      path: '/b2b/$category'
+      fullPath: '/b2b/$category'
+      preLoaderRoute: typeof B2bCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/upgrade': {
       id: '/app/upgrade'
       path: '/upgrade'
@@ -886,6 +906,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VerifyEmailRoute: VerifyEmailRoute,
+  B2bCategoryRoute: B2bCategoryRoute,
   BlogSlugRoute: BlogSlugRoute,
   FindClientsCategoryRoute: FindClientsCategoryRoute,
   FreelancersSlugRoute: FreelancersSlugRoute,

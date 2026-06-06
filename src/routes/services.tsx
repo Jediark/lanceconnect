@@ -45,6 +45,7 @@ export const Route = createFileRoute("/services")({
           "Browse specialized lead directories for 18+ freelancing and niche trade categories across 150+ countries.",
       },
       { property: "og:title", content: "LanceConnect Services" },
+      { name: "keywords", content: "freelancer services, lead directories, web development clients, SEO leads, African food export, B2B trade, tutoring leads, freelance categories" },
     ],
   }),
   component: ServicesPage,

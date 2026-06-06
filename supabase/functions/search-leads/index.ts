@@ -14,12 +14,15 @@ import { sendEmail, getWelcomeEmailHtml, getQuotaWarningEmailHtml } from "../_sh
 import { z } from "https://esm.sh/zod@3.22.0";
 
 const requestSchema = z.object({
-  query: z.string().min(1),
+  query: z.string().optional(),
+  category: z.string().optional(),
   city: z.string().min(1),
   country: z.string().min(1),
   limit: z.number().optional().default(10),
   product: z.string().optional(),
   niche: z.string().optional(),
+}).refine((data) => data.query || data.category, {
+  message: "Either query or category is required",
 });
 
 Deno.serve(async (req) => {
@@ -42,7 +45,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { query, city, country, limit, product, niche } = parsed.data;
+    const { city, country, limit, product, niche } = parsed.data;
+    const query = parsed.data.query || parsed.data.category || "";
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");

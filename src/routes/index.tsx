@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
+import { TrendingSearches } from "@/components/ui/TrendingSearches";
 import {
   ArrowRight,
   Bookmark,
@@ -58,14 +59,56 @@ export const Route = createFileRoute("/")({
         content:
           "LanceConnect finds businesses that need your skills anywhere in the world, and hands you their contact details.",
       },
+      {
+        name: "keywords",
+        content:
+          "find freelance clients, freelancer leads, get clients as freelancer, find web design clients, SEO clients, find businesses without websites, African food export leads, B2B trade leads, find tutoring students, freelance client finder, business leads Nigeria, business leads UK, business leads globally, lanceconnect, meeting point freelancers clients",
+      },
       { property: "og:title", content: "LanceConnect" },
       { property: "og:description", content: "The Meeting Point for Freelancers and Clients" },
       { property: "og:image", content: IMG.heroFreelancer },
     ],
   }),
-  component: () => (
+  component: HomepageComponent,
+});
+
+function HomepageComponent() {
+  const navigate = useNavigate();
+
+  const handleSelectSearch = (search: any) => {
+    const ID_TO_SLUG: Record<string, string> = {
+      web_dev: "web-developers",
+      designer: "designers",
+      copywriter: "copywriters",
+      seo: "seo-specialists",
+      social_media: "social-media",
+      video: "videographers",
+      photography: "photographers",
+      marketing: "marketers",
+      app_dev: "app-developers",
+      va: "virtual-assistants",
+      tutor: "online-tutors",
+      parent_tutor: "parent-tutors",
+      african_food_export: "african-food-export",
+      restaurant_supplier: "restaurant-suppliers",
+      product_export: "product-export",
+      b2b_trade: "b2b-trade",
+      human_capital: "human-capital",
+      training_recruitment: "training-recruitment",
+    };
+    const slug = ID_TO_SLUG[search.category] || search.category;
+    navigate({
+      to: "/find-clients/$category",
+      params: { category: slug },
+    });
+  };
+
+  return (
     <MarketingShell>
       <HeroWithMosaic />
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 -mt-6 mb-12 relative z-10 animate-in fade-in slide-in-from-bottom-3 duration-500">
+        <TrendingSearches onSelectSearch={handleSelectSearch} />
+      </div>
       <StatsBar />
       <ValuePropositionCards />
       <LogoStrip />
@@ -84,8 +127,8 @@ export const Route = createFileRoute("/")({
       <FAQ />
       <CTA />
     </MarketingShell>
-  ),
-});
+  );
+}
 const SLIDES_DATA = [
   {
     bgImg: IMG.workspace,
