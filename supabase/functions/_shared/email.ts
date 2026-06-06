@@ -64,7 +64,27 @@ export function getWelcomeEmailHtml(fullName: string): string {
         <li>Scan for active business leads in your target market.</li>
         <li>Generate customized, AI-optimized outreach templates.</li>
       </ul>
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 13px; color: #64748b; line-height: 1.5;">
+        ❤️ <strong>Keep LanceConnect Free</strong><br/>
+        We are built by freelancers, for freelancers, and will stay free forever. If LanceConnect ever helps you land a client, come back and <a href="${Deno.env.get("APP_URL") || "https://lanceconnect.vercel.app"}/support-us" style="color: #3b82f6; text-decoration: underline;">support us</a> — any amount keeps us running 🙏
+      </div>
       <p style="color: #475569; margin-top: 24px;">Best regards,<br/>The LanceConnect Team</p>
+    </div>
+  `;
+}
+
+/**
+ * Thank You Email Template (Donation)
+ */
+export function getDonationThankYouEmailHtml(fullName: string, amount: number, currency: string): string {
+  const currencySymbol = currency === "NGN" ? "₦" : currency === "USD" ? "$" : currency + " ";
+  return `
+    <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+      <h2 style="color: #0f172a;">Thank you so much, ${fullName}! 🙏</h2>
+      <p style="color: #475569; line-height: 1.5;">We have successfully received your generous support donation of <strong>${currencySymbol}${amount.toLocaleString()}</strong>.</p>
+      <p style="color: #475569; line-height: 1.5;">Building and maintaining LanceConnect costs real money every month (servers, APIs, development, support). Your contribution goes directly into keeping this platform 100% free and accessible for the thousands of freelancers and small businesses who depend on it worldwide.</p>
+      <p style="color: #475569; line-height: 1.5;">You are a vital part of the LanceConnect community, and we are incredibly grateful for your goodwill. You have also been awarded a <strong>❤️ Supporter</strong> badge on your public freelancer directory profile card.</p>
+      <p style="color: #475569; margin-top: 24px;">With heartfelt gratitude,<br/>The LanceConnect Team 🌍</p>
     </div>
   `;
 }

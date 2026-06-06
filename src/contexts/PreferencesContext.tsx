@@ -13,6 +13,8 @@ interface PreferencesContextType {
   t: (key: string) => string;
   formatPrice: (usdAmount: number) => string;
   getCurrencySymbol: () => string;
+  safetyPopupDismissed: boolean;
+  setSafetyPopupDismissed: (dismissed: boolean) => void;
 }
 
 const translations: Record<Language, Record<string, string>> = {
@@ -304,9 +306,12 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [language, setLanguageState] = useState<Language>("en");
   const [currency, setCurrencyState] = useState<Currency>("USD");
   const [theme, setThemeState] = useState<"dark" | "light">("dark");
+  const [safetyPopupDismissed, setSafetyPopupDismissedState] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
+    const dismissed = localStorage.getItem("lc_safety_popup_dismissed") === "true";
+    setSafetyPopupDismissedState(dismissed);
     const savedLang = localStorage.getItem("lanceconnect_lang") as Language;
     const savedCurr = localStorage.getItem("lanceconnect_curr") as Currency;
     const savedTheme = localStorage.getItem("lanceconnect_theme") as "dark" | "light";
@@ -357,6 +362,13 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
           root.classList.remove("light");
         }
       }
+    }
+  };
+
+  const setSafetyPopupDismissed = (val: boolean) => {
+    setSafetyPopupDismissedState(val);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("lc_safety_popup_dismissed", val ? "true" : "false");
     }
   };
 
@@ -414,6 +426,8 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         t,
         formatPrice,
         getCurrencySymbol,
+        safetyPopupDismissed,
+        setSafetyPopupDismissed,
       }}
     >
       {children}

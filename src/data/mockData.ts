@@ -26,6 +26,11 @@ export type Lead = {
   instagramUrl?: string | null;
   hasLinkedin?: boolean;
   linkedinUrl?: string | null;
+  phoneVerified?: boolean;
+  emailVerified?: boolean;
+  websiteLive?: boolean;
+  isFlagged?: boolean;
+  suspiciousCount?: number;
 };
 
 export type PipelineStatus = "new" | "contacted" | "interested" | "proposal_sent" | "won" | "lost";
@@ -445,6 +450,12 @@ export const CATEGORIES = [
     emoji: "🎯",
     label: "Training & Recruitment",
     example: "Find companies hiring or needing staffing partners",
+  },
+  {
+    id: "mc_events",
+    emoji: "🎤",
+    label: "MC & Events Host",
+    example: "Find corporate events, weddings and conferences needing a professional MC",
   },
 ];
 

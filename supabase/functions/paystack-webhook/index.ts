@@ -8,7 +8,7 @@ Sentry.init({
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { handleError, AppError } from "../_shared/errors.ts";
-import { sendEmail, getUpgradeEmailHtml, getPaymentFailedEmailHtml } from "../_shared/email.ts";
+import { sendEmail, getUpgradeEmailHtml, getPaymentFailedEmailHtml, getDonationThankYouEmailHtml } from "../_shared/email.ts";
 
 async function verifyPaystackSignature(
   body: string,
@@ -67,9 +67,60 @@ Deno.serve(async (req) => {
       case "charge.success": {
         const data = event.data;
         const metadata = data.metadata || {};
-        const userId = metadata.supabase_user_id;
+        const userId = metadata.supabase_user_id || metadata.user_id;
         const checkoutType = metadata.checkout_type;
         const reference = data.reference;
+
+        if (metadata.payment_type === "donation" || checkoutType === "donation") {
+          const { donor_name, show_on_wall, message } = metadata;
+          const targetUserId = userId || metadata.user_id;
+          const amount = data.amount / 100; // Paystack sends in kobo
+
+          // Record donation
+          await supabase.from("donations").insert({
+            user_id: targetUserId || null,
+            amount,
+            currency: data.currency || "NGN",
+            payment_provider: "paystack",
+            payment_reference: reference,
+            donor_name: donor_name || null,
+            show_on_wall: !!show_on_wall,
+            message: message || null,
+          });
+
+          if (targetUserId) {
+            // Fetch profile to get current donation amount and email
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("total_donated, email, full_name")
+              .eq("id", targetUserId)
+              .single();
+
+            const newTotal = (Number(profile?.total_donated) || 0) + amount;
+
+            // Mark as supporter
+            await supabase
+              .from("profiles")
+              .update({
+                is_supporter: true,
+                total_donated: newTotal,
+              })
+              .eq("id", targetUserId);
+
+            if (profile?.email) {
+              await sendEmail({
+                to: profile.email,
+                subject: "Thank you for supporting LanceConnect! ❤️",
+                html: getDonationThankYouEmailHtml(
+                  profile.full_name || "Supporter",
+                  amount,
+                  data.currency || "NGN"
+                ),
+              });
+            }
+          }
+          break;
+        }
 
         if (!userId) {
           console.warn("charge.success without supabase_user_id in metadata");

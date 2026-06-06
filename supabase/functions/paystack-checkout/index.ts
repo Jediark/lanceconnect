@@ -14,10 +14,14 @@ import { z } from "https://esm.sh/zod@3.22.0";
 
 const requestSchema = z.object({
   planName: z.string().optional(),
-  checkoutType: z.enum(["subscription", "credits"]).optional().default("subscription"),
+  checkoutType: z.enum(["subscription", "credits", "donation"]).optional().default("subscription"),
   creditsAmount: z.number().optional().default(0),
+  donationAmount: z.number().optional(),
   currency: z.string().optional().default("NGN"),
   callbackUrl: z.string(),
+  donorName: z.string().optional(),
+  showOnWall: z.boolean().optional().default(false),
+  message: z.string().optional(),
 });
 
 /**
@@ -141,9 +145,17 @@ Deno.serve(async (req) => {
       txCurrency = currencyKey in CREDIT_RATES ? currencyKey : "USD";
       amountInSubunit = creditsAmount * rate;
       description = `${creditsAmount} LanceConnect Lead Credits`;
+    } else if (checkoutType === "donation") {
+      const donationAmt = body.donationAmount;
+      if (!donationAmt || donationAmt <= 0) {
+        throw new AppError("donationAmount must be greater than 0", 400, "BAD_REQUEST");
+      }
+      txCurrency = currency.toUpperCase() === "NGN" ? "NGN" : "USD";
+      amountInSubunit = Math.round(donationAmt * 100); // in cents/kobo
+      description = "Support LanceConnect — Keep It Free";
     } else {
       throw new AppError(
-        "Invalid checkoutType. Supported: subscription, credits",
+        "Invalid checkoutType. Supported: subscription, credits, donation",
         400,
         "BAD_REQUEST",
       );
@@ -164,11 +176,17 @@ Deno.serve(async (req) => {
             variable_name: "credits_amount",
             value: String(creditsAmount),
           },
+          { display_name: "Donor Name", variable_name: "donor_name", value: body.donorName || "Anonymous" },
         ],
         supabase_user_id: user.id,
+        user_id: user.id,
         checkout_type: checkoutType,
+        payment_type: checkoutType === "donation" ? "donation" : undefined,
         plan_name: planName || "",
         credits_amount: creditsAmount,
+        donor_name: body.donorName || "Anonymous",
+        show_on_wall: !!body.showOnWall,
+        message: body.message || "",
       },
     };
 

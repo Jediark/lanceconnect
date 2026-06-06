@@ -17,6 +17,7 @@ import {
   ChevronDown,
   LogOut,
   Briefcase,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -99,6 +100,13 @@ export function TopNav() {
               </div>
             )}
           </div>
+
+          <NavLink
+            to="/safety"
+            icon={Shield}
+            label="Safety"
+            active={pathname === "/safety"}
+          />
         </nav>
 
         {/* Right Side Actions */}
@@ -272,6 +280,13 @@ export function TopNav() {
               />
             </div>
             <div className="pt-4 border-t border-border">
+              <MobileNavLink
+                to="/safety"
+                icon={Shield}
+                label="Safety Guidelines"
+                active={pathname === "/safety"}
+                onClick={() => setMobileMenuOpen(false)}
+              />
               <MobileNavLink
                 to="/app/settings"
                 icon={SettingsIcon}

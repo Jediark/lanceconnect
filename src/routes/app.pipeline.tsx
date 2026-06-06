@@ -22,6 +22,7 @@ import { usePipeline } from "@/contexts/PipelineContext";
 import { STATUS_META, type PipelineStatus } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/app/pipeline")({
   head: () => ({ meta: [{ title: "My Pipeline — LanceConnect" }] }),
@@ -45,6 +46,32 @@ function PipelinePage() {
   const [selectedStatus, setSelectedStatus] = useState<PipelineStatus | "all">("all");
   const [view, setView] = useState<"grid" | "table">("grid");
   const [showLost, setShowLost] = useState(false);
+
+  const handleRateLead = async (leadId: string, rating: "genuine" | "suspicious") => {
+    if (!user) {
+      toast.error("You must be logged in to rate a business.");
+      return;
+    }
+    try {
+      const { error } = await supabase.from("lead_ratings").upsert({
+        user_id: user.id,
+        lead_id: leadId,
+        rating: rating,
+      });
+
+      if (error) {
+        if (error.code === "23505") {
+          toast.warning("You have already rated this lead.");
+          return;
+        }
+        throw error;
+      }
+      toast.success(rating === "genuine" ? "Thank you! Business marked as genuine." : "Thank you. Rating submitted.");
+    } catch (err: any) {
+      console.error("Error rating lead:", err);
+      toast.error(err.message || "Failed to submit rating.");
+    }
+  };
 
   const PIPELINE_STAGES: Record<string, Record<PipelineStatus | "lost", string>> = {
     supplier: { new: 'Identified', contacted: 'Contacted', interested: 'Catalogue Sent', proposal_sent: 'Negotiating', won: 'Contract Signed', lost: 'Lost' },
@@ -295,6 +322,26 @@ function PipelinePage() {
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5 pt-2 border-t border-border/30">
+                          <p className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+                            Community Verification
+                          </p>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleRateLead(l.id, "genuine")}
+                              className="flex-1 rounded-md border border-border bg-card py-1 px-1.5 text-[10px] font-medium hover:bg-primary/5 hover:border-primary/30 flex items-center justify-center gap-1 transition text-foreground"
+                            >
+                              👍 Yes
+                            </button>
+                            <button
+                              onClick={() => handleRateLead(l.id, "suspicious")}
+                              className="flex-1 rounded-md border border-border bg-card py-1 px-1.5 text-[10px] font-medium hover:bg-red-500/5 hover:border-red-500/30 flex items-center justify-center gap-1 transition text-red-500/80 hover:text-red-500"
+                            >
+                              👎 Suspicious
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

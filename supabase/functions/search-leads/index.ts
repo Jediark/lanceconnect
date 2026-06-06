@@ -97,6 +97,20 @@ Deno.serve(async (req) => {
         "university",
         "college",
       ],
+      mc_events: [
+        "corporate event organizer",
+        "wedding planner",
+        "conference organizer",
+        "award ceremony organizer",
+        "event management company",
+        "hotel events department",
+        "university events office",
+        "church events coordinator",
+        "NGO fundraiser event",
+        "product launch organizer",
+        "gala dinner organizer",
+        "concert promoter",
+      ],
     };
 
     const GLOBAL_CATEGORY_TERMS: Record<string, Record<string, string[]>> = {

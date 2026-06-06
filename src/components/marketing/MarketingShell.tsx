@@ -358,6 +358,7 @@ export function MarketingFooter() {
         ["About", "/about"],
         ["Blog", "/blog"],
         ["Contact", "/contact"],
+        ["❤️ Support LanceConnect", "/support-us"],
       ] as const,
     },
     {
@@ -374,6 +375,7 @@ export function MarketingFooter() {
       links: [
         ["Privacy Policy", "/privacy"],
         ["Terms of Service", "/terms"],
+        ["Safety Guidelines", "/safety"],
       ] as const,
     },
   ];

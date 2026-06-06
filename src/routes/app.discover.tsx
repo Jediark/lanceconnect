@@ -27,11 +27,13 @@ import { TrendingSearches } from "@/components/ui/TrendingSearches";
 import { CATEGORIES, COUNTRIES, type Lead } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
 import { CATEGORY_TO_PLACES_QUERY } from "@/types";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Shield } from "lucide-react";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
@@ -127,6 +129,11 @@ function Discover() {
               instagramUrl: dbLead.instagram_url || null,
               hasLinkedin: dbLead.has_linkedin || false,
               linkedinUrl: dbLead.linkedin_url || null,
+              phoneVerified: dbLead.phone_verified || false,
+              emailVerified: dbLead.email_verified || false,
+              websiteLive: dbLead.website_live || false,
+              isFlagged: dbLead.is_flagged || false,
+              suspiciousCount: dbLead.suspicious_count || 0,
             }));
             setResults(mapped);
           }
@@ -253,6 +260,11 @@ function Discover() {
         instagramUrl: dbLead.instagram_url || null,
         hasLinkedin: dbLead.has_linkedin || false,
         linkedinUrl: dbLead.linkedin_url || null,
+        phoneVerified: dbLead.phone_verified || false,
+        emailVerified: dbLead.email_verified || false,
+        websiteLive: dbLead.website_live || false,
+        isFlagged: dbLead.is_flagged || false,
+        suspiciousCount: dbLead.suspicious_count || 0,
       }));
 
       setResults(mapped);
@@ -745,6 +757,7 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
 function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
   const { user } = useAuth();
   const { saveLead, savedIds } = usePipeline();
+  const { safetyPopupDismissed, setSafetyPopupDismissed } = usePreferences();
 
   const [currentLead, setCurrentLead] = useState<Lead>(lead);
   const [enriching, setEnriching] = useState(false);
@@ -761,6 +774,63 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   const [activeTab, setActiveTab] = useState<"overview" | "seo">("overview");
   const [seoLoading, setSeoLoading] = useState(false);
   const [seoData, setSeoData] = useState<{ keywords: any[]; hook: string } | null>(null);
+
+  // Safety & Report States
+  const [safetyReminderOpen, setSafetyReminderOpen] = useState(false);
+  const [leadReportModalOpen, setLeadReportModalOpen] = useState(false);
+  const [leadReportReason, setLeadReportReason] = useState<string>("fake_business");
+  const [leadReportDescription, setLeadReportDescription] = useState("");
+  const [submittingLeadReport, setSubmittingLeadReport] = useState(false);
+
+  const maskPhone = (phone: string) => {
+    if (!phone) return "";
+    const clean = phone.trim();
+    if (clean.length <= 6) return "••••••••";
+    return clean.slice(0, 6) + " ••• ••••";
+  };
+
+  const maskEmail = (email: string) => {
+    if (!email) return "";
+    const parts = email.split("@");
+    if (parts.length < 2) return "••••@••••";
+    const name = parts[0];
+    const domain = parts[1];
+    return name.slice(0, Math.min(3, name.length)) + "•••@" + domain;
+  };
+
+  const handleContactAction = (action: () => void) => {
+    if (!safetyPopupDismissed) {
+      setSafetyReminderOpen(true);
+    } else {
+      action();
+    }
+  };
+
+  const handleSubmitLeadReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      toast.error("You must be logged in to report a lead.");
+      return;
+    }
+    setSubmittingLeadReport(true);
+    try {
+      const { error } = await supabase.from("reports").insert({
+        reporter_id: user.id,
+        reported_lead_id: currentLead.id,
+        reason: leadReportReason,
+        description: leadReportDescription,
+      });
+
+      if (error) throw error;
+      toast.success("Thank you. The report has been submitted for review.");
+      setLeadReportModalOpen(false);
+    } catch (err: any) {
+      console.error("Error submitting lead report:", err);
+      toast.error(err.message || "Failed to submit report. Please try again.");
+    } finally {
+      setSubmittingLeadReport(false);
+    }
+  };
 
   const handleLoadSeo = async () => {
     if (seoData) return;
@@ -917,13 +987,30 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
               </p>
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-2 font-mono text-xs">
-                  <Phone className="h-3.5 w-3.5 text-slate-500" /> {currentLead.phone}
+                  <Phone className="h-3.5 w-3.5 text-slate-500" />
+                  {currentLead.phone ? (
+                    safetyPopupDismissed ? (
+                      currentLead.phone
+                    ) : (
+                      <span
+                        onClick={() => handleContactAction(() => {})}
+                        className="cursor-pointer text-slate-400 hover:text-white"
+                        title="Click to reveal details"
+                      >
+                        {maskPhone(currentLead.phone)}
+                      </span>
+                    )
+                  ) : (
+                    <span className="italic text-slate-500">Not listed</span>
+                  )}
                 </span>
                 {currentLead.phone && (
                   <button
                     onClick={() => {
-                      navigator.clipboard?.writeText(currentLead.phone);
-                      toast.success("Copied!");
+                      handleContactAction(() => {
+                        navigator.clipboard?.writeText(currentLead.phone);
+                        toast.success("Copied phone number!");
+                      });
                     }}
                     className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer"
                   >
@@ -932,12 +1019,42 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                 )}
               </div>
               <div className="flex items-center justify-between gap-2">
-                <p className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-slate-500 shrink-0" />{" "}
-                  {currentLead.email ?? (
+                  {currentLead.email ? (
+                    safetyPopupDismissed ? (
+                      <a
+                        href={`mailto:${currentLead.email}`}
+                        className="text-primary hover:underline font-mono text-xs"
+                      >
+                        {currentLead.email}
+                      </a>
+                    ) : (
+                      <span
+                        onClick={() => handleContactAction(() => {})}
+                        className="cursor-pointer text-slate-400 hover:text-white font-mono text-xs"
+                        title="Click to reveal details"
+                      >
+                        {maskEmail(currentLead.email)}
+                      </span>
+                    )
+                  ) : (
                     <span className="italic text-slate-500">Not publicly listed</span>
                   )}
-                </p>
+                </div>
+                {currentLead.email && (
+                  <button
+                    onClick={() => {
+                      handleContactAction(() => {
+                        navigator.clipboard?.writeText(currentLead.email || "");
+                        toast.success("Copied email address!");
+                      });
+                    }}
+                    className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer"
+                  >
+                    <Copy className="h-2.5 w-2.5" /> Copy
+                  </button>
+                )}
                 {!currentLead.email && currentLead.websiteUrl && (
                   <button
                     onClick={handleEnrich}
@@ -1101,6 +1218,13 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
               >
                 {savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
               </button>
+              <button
+                type="button"
+                onClick={() => setLeadReportModalOpen(true)}
+                className="rounded-lg border border-red-500/30 text-red-500 bg-red-500/5 px-4 py-2.5 text-sm font-semibold hover:bg-red-500/10 cursor-pointer"
+              >
+                Report ⚑
+              </button>
             </div>
           </div>
         ) : (
@@ -1228,6 +1352,116 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
           </div>
         )}
       </div>
+
+      {/* Safety Reminder Modal */}
+      {safetyReminderOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
+            <div className="flex items-center gap-2 text-amber-500 mb-4">
+              <Shield className="h-6 w-6" />
+              <h3 className="text-lg font-bold text-foreground">First-Contact Safety Guidelines</h3>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Please review our safety checklists before reaching out to this contact:
+            </p>
+            <ul className="space-y-2.5 text-xs text-slate-300 mb-6">
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500 mt-0.5">⚠️</span>
+                <span><strong>No Upfront Payments:</strong> Never pay fees to secure a job or project. Authentic clients will not charge you.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500 mt-0.5">🔍</span>
+                <span><strong>Verify Legitimacy:</strong> Check the business registry or official website before agreeing to terms.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500 mt-0.5">💳</span>
+                <span><strong>Secure Transactions:</strong> Use verified payment channels or contract escrow systems to protect your earnings.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500 mt-0.5">💬</span>
+                <span><strong>Watch for Scams:</strong> Be cautious if a client immediately redirects you to private communication apps to bypass platform logs.</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => {
+                setSafetyPopupDismissed(true);
+                setSafetyReminderOpen(false);
+                toast.success("Contact revealed!");
+              }}
+              className="w-full rounded-xl bg-primary hover:bg-primary/95 text-white py-3 text-xs font-bold shadow-md transition text-center cursor-pointer"
+            >
+              Reveal Contact Details
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Lead Report Modal */}
+      {leadReportModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
+            <button
+              onClick={() => setLeadReportModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-500 hover:text-slate-300"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2 text-amber-500 mb-4">
+              <Shield className="h-6 w-6" />
+              <h3 className="text-lg font-bold text-foreground">Report Lead</h3>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              You are reporting the lead <strong>{currentLead.businessName}</strong>. Please provide details to help our moderation team review this business.
+            </p>
+            <form onSubmit={handleSubmitLeadReport} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">
+                  Reason for Report
+                </label>
+                <select
+                  value={leadReportReason}
+                  onChange={(e) => setLeadReportReason(e.target.value)}
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer animate-none"
+                >
+                  <option value="fake_business">Fake Business / Listing</option>
+                  <option value="scam">Scam / Fraudulent Lead</option>
+                  <option value="spam">Spam / Duplicate</option>
+                  <option value="other">Other Reason</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">
+                  Additional Details
+                </label>
+                <textarea
+                  value={leadReportDescription}
+                  onChange={(e) => setLeadReportDescription(e.target.value)}
+                  placeholder="Describe the issue in detail..."
+                  rows={4}
+                  className="w-full rounded-xl border border-border bg-background p-3 text-xs font-mono text-slate-300 placeholder-slate-500 focus:border-primary focus:outline-none"
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setLeadReportModalOpen(false)}
+                  className="rounded-xl border border-border px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingLeadReport}
+                  className="rounded-xl bg-red-500 hover:bg-red-600 text-white px-4 py-2 text-xs font-semibold shadow-md transition flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                >
+                  {submittingLeadReport ? "Submitting..." : "Submit Report"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

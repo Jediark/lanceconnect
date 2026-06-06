@@ -22,6 +22,7 @@ import {
   BookOpen,
   Brain,
   Target,
+  Mic,
 } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
@@ -47,6 +48,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   b2b_trade: <Factory className="h-5 w-5 text-primary" />,
   human_capital: <Brain className="h-5 w-5 text-primary" />,
   training_recruitment: <Target className="h-5 w-5 text-primary" />,
+  mc_events: <Mic className="h-5 w-5 text-primary" />,
 };
 
 export const Route = createFileRoute("/onboarding")({
@@ -592,6 +594,16 @@ function Onboarding() {
                 </>
               )}
             </div>
+
+            {/* Quick Safety Tip Panel */}
+            <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-amber-500 flex items-start gap-2.5 select-none">
+              <span className="text-base leading-none">⚠️</span>
+              <div>
+                <strong className="font-semibold block mb-0.5">Quick Safety Reminder</strong>
+                Always use a written contract, request a 30-50% deposit before starting work, and keep all communications on record. Learn more in our Safety Guide in the footer.
+              </div>
+            </div>
+
             <button
               onClick={handleComplete}
               className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"

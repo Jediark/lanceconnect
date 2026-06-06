@@ -16,9 +16,13 @@ import {
   DollarSign,
   Filter,
   RefreshCw,
+  X,
+  Shield,
 } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { IMG } from "@/data/content";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const FREELANCE_IDS = [
   "web_dev",
@@ -31,6 +35,7 @@ const FREELANCE_IDS = [
   "marketing",
   "app_dev",
   "va",
+  "mc_events",
 ];
 
 const B2B_IDS = [
@@ -84,9 +89,16 @@ type DirectoryFreelancer = {
   dribbble_url: string | null;
   twitter_url: string | null;
   created_at: string;
+  is_verified?: boolean;
+  website_verified?: boolean;
+  is_supporter?: boolean;
+  is_featured?: boolean;
+  tagline?: string | null;
+  is_flagged?: boolean;
 };
 
 function FreelancerDirectoryPage() {
+  const { user } = useAuth();
   const [freelancers, setFreelancers] = useState<DirectoryFreelancer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,6 +108,48 @@ function FreelancerDirectoryPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [maxRate, setMaxRate] = useState<string>("all");
+
+  // Report Modal States
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportedFreelancer, setReportedFreelancer] = useState<{ id: string; name: string } | null>(null);
+  const [reportReason, setReportReason] = useState<string>("fake_profile");
+  const [reportDescription, setReportDescription] = useState("");
+  const [submittingReport, setSubmittingReport] = useState(false);
+
+  const handleOpenReportModal = (id: string, name: string) => {
+    if (!user) {
+      toast.error("You must be logged in to report a profile.");
+      return;
+    }
+    setReportedFreelancer({ id, name });
+    setReportReason("fake_profile");
+    setReportDescription("");
+    setReportModalOpen(true);
+  };
+
+  const handleSubmitReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !reportedFreelancer) return;
+
+    setSubmittingReport(true);
+    try {
+      const { error } = await supabase.from("reports").insert({
+        reporter_id: user.id,
+        reported_user_id: reportedFreelancer.id,
+        reason: reportReason,
+        description: reportDescription,
+      });
+
+      if (error) throw error;
+      toast.success("Thank you. The report has been submitted for review.");
+      setReportModalOpen(false);
+    } catch (err: any) {
+      console.error("Error submitting report:", err);
+      toast.error(err.message || "Failed to submit report. Please try again.");
+    } finally {
+      setSubmittingReport(false);
+    }
+  };
 
   const handleFindFreelancers = () => {
     const el = document.getElementById("freelancer-results");
@@ -132,7 +186,11 @@ function FreelancerDirectoryPage() {
     fetchFreelancers();
   }, []);
 
-  const filteredFreelancers = freelancers.filter((f) => {
+  // Filter out profiles where is_featured is true from regular directory list
+  const featuredFreelancers = freelancers.filter((f) => f.is_featured && !f.is_flagged);
+  const regularFreelancers = freelancers.filter((f) => !f.is_featured);
+
+  const filteredFreelancers = regularFreelancers.filter((f) => {
     // 1. Search Query
     const query = searchQuery.toLowerCase().trim();
     const matchesSearch =
@@ -282,6 +340,158 @@ function FreelancerDirectoryPage() {
         </div>
       </section>
 
+      {/* Featured Members Section */}
+      {!loading && featuredFreelancers.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pt-12 pb-6 lg:px-8 bg-background">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
+                <span className="text-amber-500 animate-pulse">⭐</span> Featured Members
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Top-tier verified professionals with outstanding track records
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {featuredFreelancers.map((free) => (
+              <div
+                key={free.id}
+                className="relative rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card p-6 shadow-[0_0_20px_rgba(6,182,212,0.08)] hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition duration-300 flex flex-col justify-between group hover:border-primary/40 overflow-hidden"
+              >
+                {/* Decorative glowing gradient effect */}
+                <div className="absolute top-0 right-0 -mt-4 -mr-4 h-16 w-16 bg-primary/20 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
+                
+                <div>
+                  {/* Bio Info Header */}
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary/40 shrink-0 bg-primary/15 flex items-center justify-center font-bold text-primary text-sm relative">
+                      {free.avatar_url ? (
+                        <img
+                          src={free.avatar_url}
+                          alt={free.full_name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        free.full_name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                          .slice(0, 2)
+                      )}
+                      {/* Small crown or star badge */}
+                      <span className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-0.5 shadow-sm text-[8px] leading-none">
+                        ⭐
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-display font-bold text-foreground text-sm leading-snug truncate group-hover:text-primary transition-colors flex items-center gap-1.5 flex-wrap">
+                        {free.full_name}
+                        {free.is_verified && (
+                          <span className="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500" title="Verified Member">
+                            ✅ Verified
+                          </span>
+                        )}
+                        {free.is_supporter && (
+                          <span className="inline-flex items-center gap-0.5 rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-rose-500" title="LanceConnect Supporter">
+                            ❤️ Supporter
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-primary font-medium mt-0.5 leading-none">
+                        {getCategoryLabel(free.freelancer_category)}
+                      </p>
+
+                      {/* Location & Rate Row */}
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[10px] font-mono text-muted-foreground">
+                        {(free.city || free.country) && (
+                          <span className="flex items-center gap-0.5">
+                            <MapPin className="h-3 w-3 shrink-0 text-slate-500" />
+                            {free.city ? `${free.city}, ` : ""}
+                            {free.country}
+                          </span>
+                        )}
+                        {free.hourly_rate && (
+                          <span className="flex items-center text-emerald-500 font-semibold">
+                            <DollarSign className="h-3 w-3 shrink-0" />
+                            {free.hourly_rate}/hr
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tagline */}
+                  {free.tagline && (
+                    <p className="mt-3 text-xs font-semibold text-foreground italic leading-tight">
+                      "{free.tagline}"
+                    </p>
+                  )}
+
+                  {/* Bio Description */}
+                  <p className="mt-2 text-xs text-muted-foreground leading-normal line-clamp-3">
+                    {free.bio || "No bio description provided."}
+                  </p>
+                </div>
+
+                {/* Card Action Link */}
+                <div className="mt-6 pt-4 border-t border-border/40 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    {free.github_url && (
+                      <a
+                        href={free.github_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-500 hover:text-white transition"
+                      >
+                        <Github className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    {free.linkedin_url && (
+                      <a
+                        href={free.linkedin_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-500 hover:text-white transition"
+                      >
+                        <Linkedin className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    {free.twitter_url && (
+                      <a
+                        href={free.twitter_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-500 hover:text-white transition"
+                      >
+                        <Twitter className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleOpenReportModal(free.id, free.full_name)}
+                      className="text-[10px] font-medium text-slate-500 hover:text-red-400 transition flex items-center gap-0.5"
+                    >
+                      Report ⚑
+                    </button>
+                    <Link
+                      to="/freelancers/$slug"
+                      params={{ slug: free.username || free.id }}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                    >
+                      View profile <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Directory Grid */}
       <section id="freelancer-results" className="mx-auto max-w-7xl px-4 py-12 lg:px-8 bg-background min-h-[400px] scroll-mt-24">
         {loading ? (
@@ -354,8 +564,23 @@ function FreelancerDirectoryPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-display font-bold text-foreground text-sm leading-snug truncate group-hover:text-primary transition-colors">
+                      <h3 className="font-display font-bold text-foreground text-sm leading-snug truncate group-hover:text-primary transition-colors flex items-center gap-1.5 flex-wrap">
                         {free.full_name}
+                        {free.is_verified && (
+                          <span className="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500" title="Verified Member">
+                            ✅ Verified
+                          </span>
+                        )}
+                        {free.is_supporter && (
+                          <span className="inline-flex items-center gap-0.5 rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-rose-500" title="LanceConnect Supporter">
+                            ❤️ Supporter
+                          </span>
+                        )}
+                        {free.is_flagged && (
+                          <span className="inline-flex items-center gap-0.5 rounded bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-500" title="Profile Under Review">
+                            ⚠️ Under Review
+                          </span>
+                        )}
                       </h3>
                       <p className="text-[11px] text-primary font-medium mt-0.5 leading-none">
                         {getCategoryLabel(free.freelancer_category)}
@@ -430,13 +655,21 @@ function FreelancerDirectoryPage() {
                     )}
                   </div>
 
-                  <Link
-                    to="/freelancers/$slug"
-                    params={{ slug: free.username || free.id }}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
-                  >
-                    View profile <ArrowRight className="h-3 w-3" />
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleOpenReportModal(free.id, free.full_name)}
+                      className="text-[10px] font-medium text-slate-500 hover:text-red-400 transition flex items-center gap-0.5"
+                    >
+                      Report ⚑
+                    </button>
+                    <Link
+                      to="/freelancers/$slug"
+                      params={{ slug: free.username || free.id }}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                    >
+                      View profile <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
@@ -465,6 +698,74 @@ function FreelancerDirectoryPage() {
           </div>
         </div>
       </section>
+
+      {/* Report Modal */}
+      {reportModalOpen && reportedFreelancer && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setReportModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-500 hover:text-slate-300"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2 text-amber-500 mb-4">
+              <Shield className="h-6 w-6" />
+              <h3 className="text-lg font-bold text-foreground">Report Profile</h3>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              You are reporting the profile of <strong>{reportedFreelancer.name}</strong>. Please provide details to help our moderation team review this account.
+            </p>
+            <form onSubmit={handleSubmitReport} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">
+                  Reason for Report
+                </label>
+                <select
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none cursor-pointer"
+                >
+                  <option value="fake_profile">Fake/Inaccurate Profile</option>
+                  <option value="scam">Scam / Fraudulent Activity</option>
+                  <option value="harassment">Harassment / Abuse</option>
+                  <option value="impersonation">Impersonation</option>
+                  <option value="other">Other Reason</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">
+                  Additional Details
+                </label>
+                <textarea
+                  value={reportDescription}
+                  onChange={(e) => setReportDescription(e.target.value)}
+                  placeholder="Describe the issue in detail..."
+                  rows={4}
+                  className="w-full rounded-xl border border-border bg-background p-3 text-xs font-mono text-foreground placeholder-slate-500 focus:border-primary focus:outline-none"
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setReportModalOpen(false)}
+                  className="rounded-xl border border-border px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingReport}
+                  className="rounded-xl bg-red-500 hover:bg-red-600 text-white px-4 py-2 text-xs font-semibold shadow-md transition flex items-center gap-1 disabled:opacity-50"
+                >
+                  {submittingReport ? "Submitting..." : "Submit Report"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </MarketingShell>
   );
 }

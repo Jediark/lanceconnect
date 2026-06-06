@@ -89,6 +89,28 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
           <p className="mt-0.5 text-xs text-muted-foreground">
             {lead.businessType} · {lead.city}, {lead.country}
           </p>
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
+            {!lead.phoneVerified && (
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-semibold text-amber-500 border border-amber-500/20">
+                ⚠️ Unverified phone
+              </span>
+            )}
+            {!lead.emailVerified && lead.email && (
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-semibold text-amber-500 border border-amber-500/20">
+                ⚠️ Unverified email
+              </span>
+            )}
+            {lead.hasWebsite && !lead.websiteLive && (
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-red-500/10 px-2 py-0.5 text-[9px] font-semibold text-red-400 border border-red-500/20">
+                ⚠️ Website unreachable
+              </span>
+            )}
+            {lead.isFlagged && (
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-500/10 px-2 py-0.5 text-[9px] font-semibold text-rose-400 border border-rose-500/20 animate-pulse">
+                ⚠️ Under Review
+              </span>
+            )}
+          </div>
         </div>
         <OpportunityScore score={lead.opportunityScore} />
       </div>
