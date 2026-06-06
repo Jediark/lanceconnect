@@ -409,10 +409,10 @@ function FreelancerSlugPage() {
                         "Bulk Sourcing & Supply",
                         "Cooked Food Delivery",
                         "Catering & Events Anchor",
-                        "AI & Tech Development",
-                        "Web & Software Development",
+                        "AI Training & Development",
                         "Leadership & Workforce Training",
                         "Learning & L&D Solutions",
+                        "Business Growth Support",
                       ].map((item, idx) => (
                         <div key={idx} className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
                           <CheckCircle className="h-4.5 w-4.5 text-emerald-500 shrink-0" />

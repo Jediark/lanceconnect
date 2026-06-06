@@ -116,12 +116,12 @@ const PORTFOLIO_FREELANCERS = [
   },
   {
     name: "Margaret Ogunleye (Je'moorel UK)",
-    role: "Managing Director & Tech Development Lead",
+    role: "Managing Director & HR/Workforce Development Lead",
     category: "african-food-export",
     avatar: "/assets/freelancers/freelancer_6.jpg",
     city: "London, UK",
     rating: "4.9",
-    skills: ["African Food Export", "Web & Software Development", "AI Solutions", "Wholesale Supply", "Bulk Logistics"],
+    skills: ["African Food Export", "HR & Workforce Development", "Leadership Training", "Wholesale Supply", "Bulk Logistics"],
     projects: [
       {
         title: "Je'moorel UK Wholesale Food Supply",

@@ -383,14 +383,14 @@ BEGIN
   SET 
     is_public = true,
     freelancer_category = 'african_food_export',
-    bio = 'Je''moorel UK is a premier wholesale supplier and distributor of authentic African food products and ingredients in the United Kingdom, alongside professional web design, software development, and AI solutions. We specialize in supplying premium bulk Palm Oil, Egusi seeds, Stockfish, Crayfish, and Smoked Fish to ethnic cash-and-carries, supermarkets, and restaurants across the UK, as well as building high-performance tech systems.',
+    bio = 'Je''moorel UK is a premier wholesale supplier and distributor of authentic African food products and ingredients in the United Kingdom, alongside leadership training, workforce development, and HR learning solutions. We specialize in supplying premium bulk Palm Oil, Egusi seeds, Stockfish, Crayfish, and Smoked Fish to ethnic cash-and-carries, supermarkets, and restaurants across the UK.',
     website_url = 'https://jemoorel.co.uk',
     country = 'United Kingdom',
     city = 'London',
     is_verified = true,
     website_verified = true,
     is_supporter = true,
-    tagline = 'Premium African Foods Wholesale & Web/Software Development Services',
+    tagline = 'Premium African Foods Wholesale & Workforce Development Services',
     hourly_rate = NULL,
     is_featured = true,
     onboarding_completed = true,
@@ -468,5 +468,16 @@ BEGIN
     freelancer_category = 'mc_events',
     bio = 'Premium Event Host, Master of Ceremonies, and Strategic Anchor delivering elite stage presence, high energy, and eloquence for corporate galas, high-stakes summits, conferences, and high-profile social gatherings globally. Leverages professional training in communication to deliver your story clearly.'
   WHERE contact_email IN ('akinola.mc@akinolaolujobi.com', 'connect@akinolaolujobi.com') OR username IN ('akinola-mc', 'akinola-olujobi');
+
+  UPDATE public.profiles
+  SET 
+    full_name = 'Je''moorel UK Ltd',
+    username = 'jemoorel-uk',
+    tagline = 'Premium African Foods Wholesale & Workforce Development Services',
+    contact_email = 'info@jemoorel.co.uk',
+    website_url = 'https://jemoorel.co.uk',
+    freelancer_category = 'african_food_export',
+    bio = 'Je''moorel UK is a premier wholesale supplier and distributor of authentic African food products and ingredients in the United Kingdom, alongside leadership training, workforce development, and HR learning solutions. We specialize in supplying premium bulk Palm Oil, Egusi seeds, Stockfish, Crayfish, and Smoked Fish to ethnic cash-and-carries, supermarkets, and restaurants across the UK.'
+  WHERE contact_email = 'info@jemoorel.co.uk' OR username = 'jemoorel-uk';
 
 END $$;
