@@ -75,6 +75,7 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
           userLeadId: ul.id,
           googlePlaceId: lead.google_place_id || null,
           googleMapsUrl: lead.google_maps_url || null,
+          score_breakdown: lead.score_breakdown || null,
         };
       });
 
@@ -130,6 +131,10 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
                       updatedLead.opportunity_score !== undefined
                         ? Number(updatedLead.opportunity_score)
                         : l.opportunityScore,
+                    score_breakdown:
+                      updatedLead.score_breakdown !== undefined
+                        ? updatedLead.score_breakdown
+                        : l.score_breakdown,
                   }
                 : l,
             ),

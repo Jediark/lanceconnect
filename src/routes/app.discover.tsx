@@ -252,6 +252,7 @@ function Discover() {
         googleRating: Number(dbLead.google_rating || 0),
         googleReviewCount: Number(dbLead.google_review_count || 0),
         opportunityScore: Number(dbLead.opportunity_score || 0),
+        score_breakdown: dbLead.score_breakdown || null,
         createdAt: dbLead.created_at,
         source: dbLead.source || "google_maps",
         savedAt: null,
@@ -1095,6 +1096,60 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                 ))}
               </ul>
             </div>
+
+            {/* GMB Opportunity Signals */}
+            {currentLead.score_breakdown?.gmb_gaps?.length > 0 && (
+              <div className="border-t border-border pt-4 animate-in fade-in duration-200">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2 flex items-center gap-1.5">
+                  <span>📍 Google My Business Gaps</span>
+                  <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-bold text-amber-500 border border-amber-500/25">
+                    {currentLead.score_breakdown.gmb_gaps.length} detected
+                  </span>
+                </p>
+                <div className="space-y-2">
+                  {currentLead.score_breakdown.gmb_gaps.map((gap: string, index: number) => {
+                    let pitchTip = "Highlight this gap as a quick-win optimization you can handle for them.";
+                    if (gap.includes("photos")) {
+                      pitchTip = "Pitch a photographic styling session or stock collection package to increase GMB visibility.";
+                    } else if (gap.includes("description")) {
+                      pitchTip = "Suggest writing an SEO-optimized business biography to rank higher in local search.";
+                    } else if (gap.includes("reviews")) {
+                      pitchTip = "Offer a review generation campaign to boost local reputation and rankings.";
+                    } else if (gap.includes("website")) {
+                      pitchTip = "No website linked means lost traffic. Pitch a landing page or professional site design.";
+                    } else if (gap.includes("rating")) {
+                      pitchTip = "Low rating hurts trust. Pitch reputation management and automated feedback forms.";
+                    }
+                    
+                    return (
+                      <div
+                        key={index}
+                        className="rounded-xl border border-amber-500/15 bg-amber-500/5 p-3 text-xs"
+                      >
+                        <div className="flex items-center gap-1.5 font-semibold text-amber-500 mb-1">
+                          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                          {gap}
+                        </div>
+                        <p className="text-slate-400 leading-relaxed pl-3">
+                          <span className="font-semibold text-slate-300">Pitch Tip: </span>
+                          {pitchTip}
+                        </p>
+                      </div>
+                    );
+                  })}
+                  <div className="pt-1 text-right">
+                    <a
+                      href="/resources/google-my-business"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-500 hover:text-amber-400 hover:underline"
+                    >
+                      View GMB Optimization Guide & Outreach Script &rarr;
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* AI Outreach Sandbox inside Detail Modal */}
             <div className="border-t border-border pt-4">

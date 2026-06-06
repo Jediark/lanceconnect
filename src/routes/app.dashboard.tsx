@@ -249,6 +249,7 @@ function Dashboard() {
             googleRating: Number(d.google_rating || 0),
             googleReviewCount: Number(d.google_review_count || 0),
             opportunityScore: Number(d.opportunity_score || 0),
+            score_breakdown: d.score_breakdown || null,
             createdAt: d.created_at,
             source: d.source || "google_maps",
             savedAt: null,
@@ -393,6 +394,7 @@ function Dashboard() {
         googleRating: Number(d.google_rating || 0),
         googleReviewCount: Number(d.google_review_count || 0),
         opportunityScore: Number(d.opportunity_score || 0),
+        score_breakdown: d.score_breakdown || null,
         createdAt: d.created_at,
         source: d.source || "google_maps",
         savedAt: null,
@@ -1160,6 +1162,60 @@ function Dashboard() {
                         <span className="font-bold">+{r.pts}</span>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* GMB Opportunity Signals */}
+              {detail.score_breakdown?.gmb_gaps?.length > 0 && (
+                <div className="border-t border-border pt-4">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span>📍 Google My Business Gaps</span>
+                    <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-bold text-amber-500 border border-amber-500/25">
+                      {detail.score_breakdown.gmb_gaps.length} detected
+                    </span>
+                  </p>
+                  <div className="space-y-2">
+                    {detail.score_breakdown.gmb_gaps.map((gap: string, index: number) => {
+                      let pitchTip = "Highlight this gap as a quick-win optimization you can handle for them.";
+                      if (gap.includes("photos")) {
+                        pitchTip = "Pitch a photographic styling session or stock collection package to increase GMB visibility.";
+                      } else if (gap.includes("description")) {
+                        pitchTip = "Suggest writing an SEO-optimized business biography to rank higher in local search.";
+                      } else if (gap.includes("reviews")) {
+                        pitchTip = "Offer a review generation campaign to boost local reputation and rankings.";
+                      } else if (gap.includes("website")) {
+                        pitchTip = "No website linked means lost traffic. Pitch a landing page or professional site design.";
+                      } else if (gap.includes("rating")) {
+                        pitchTip = "Low rating hurts trust. Pitch reputation management and automated feedback forms.";
+                      }
+                      
+                      return (
+                        <div
+                          key={index}
+                          className="rounded-xl border border-amber-500/15 bg-amber-500/5 p-3 text-xs"
+                        >
+                          <div className="flex items-center gap-1.5 font-semibold text-amber-500 mb-1">
+                            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                            {gap}
+                          </div>
+                          <p className="text-muted-foreground leading-relaxed pl-3">
+                            <span className="font-semibold text-slate-300">Pitch Tip: </span>
+                            {pitchTip}
+                          </p>
+                        </div>
+                      );
+                    })}
+                    <div className="pt-1 text-right">
+                      <a
+                        href="/resources/google-my-business"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-500 hover:text-amber-400 hover:underline"
+                      >
+                        View GMB Optimization Guide & Outreach Script &rarr;
+                      </a>
+                    </div>
                   </div>
                 </div>
               )}

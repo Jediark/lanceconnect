@@ -461,3 +461,26 @@ Deno.serve(async (req) => {
     return handleError(error);
   }
 });
+
+// ================================================================
+// PHASE 2 TODO: Google Business Profile API Integration
+// ================================================================
+// Apply at: https://developers.google.com/my-business/content/prereqs
+//
+// Requirements before applying:
+// 1. LanceConnect must have verified GBP active for 60+ days
+//    → Create at: business.google.com
+// 2. Valid business website (lanceconnect.com)
+// 3. Clear use case description for Google's review team
+//
+// Once approved, this unlocks:
+// → Search impressions per business (how many people found them)
+// → Direction requests (how many navigated to them)
+// → Phone calls tracked through GMB
+// → Photo view counts
+// → Popular times data
+//
+// These are GOLD for freelancer pitches:
+// "Your business gets 50 searches/month but only 3 calls —
+//  a better website and GMB profile would convert more"
+// ================================================================

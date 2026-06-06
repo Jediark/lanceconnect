@@ -38,6 +38,7 @@ export type Lead = {
   userLeadId?: string | null;
   googlePlaceId?: string | null;
   googleMapsUrl?: string | null;
+  score_breakdown?: any;
 };
 
 export type PipelineStatus = "new" | "contacted" | "interested" | "proposal_sent" | "won" | "lost";

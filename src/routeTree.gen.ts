@@ -36,6 +36,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as FreelancersIndexRouteImport } from './routes/freelancers.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as ResourcesOutreachTemplatesRouteImport } from './routes/resources.outreach-templates'
+import { Route as ResourcesGoogleMyBusinessRouteImport } from './routes/resources.google-my-business'
+import { Route as ResourcesExportGuideRouteImport } from './routes/resources.export-guide'
 import { Route as FreelancersSlugRouteImport } from './routes/freelancers.$slug'
 import { Route as FindClientsCategoryRouteImport } from './routes/find-clients.$category'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -188,6 +191,23 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const ResourcesOutreachTemplatesRoute =
+  ResourcesOutreachTemplatesRouteImport.update({
+    id: '/resources/outreach-templates',
+    path: '/resources/outreach-templates',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ResourcesGoogleMyBusinessRoute =
+  ResourcesGoogleMyBusinessRouteImport.update({
+    id: '/resources/google-my-business',
+    path: '/resources/google-my-business',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ResourcesExportGuideRoute = ResourcesExportGuideRouteImport.update({
+  id: '/resources/export-guide',
+  path: '/resources/export-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FreelancersSlugRoute = FreelancersSlugRouteImport.update({
   id: '/freelancers/$slug',
   path: '/freelancers/$slug',
@@ -306,6 +326,9 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
+  '/resources/export-guide': typeof ResourcesExportGuideRoute
+  '/resources/google-my-business': typeof ResourcesGoogleMyBusinessRoute
+  '/resources/outreach-templates': typeof ResourcesOutreachTemplatesRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/freelancers/': typeof FreelancersIndexRoute
@@ -349,6 +372,9 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
+  '/resources/export-guide': typeof ResourcesExportGuideRoute
+  '/resources/google-my-business': typeof ResourcesGoogleMyBusinessRoute
+  '/resources/outreach-templates': typeof ResourcesOutreachTemplatesRoute
   '/app': typeof AppIndexRoute
   '/blog': typeof BlogIndexRoute
   '/freelancers': typeof FreelancersIndexRoute
@@ -395,6 +421,9 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
+  '/resources/export-guide': typeof ResourcesExportGuideRoute
+  '/resources/google-my-business': typeof ResourcesGoogleMyBusinessRoute
+  '/resources/outreach-templates': typeof ResourcesOutreachTemplatesRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/freelancers/': typeof FreelancersIndexRoute
@@ -442,6 +471,9 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/find-clients/$category'
     | '/freelancers/$slug'
+    | '/resources/export-guide'
+    | '/resources/google-my-business'
+    | '/resources/outreach-templates'
     | '/app/'
     | '/blog/'
     | '/freelancers/'
@@ -485,6 +517,9 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/find-clients/$category'
     | '/freelancers/$slug'
+    | '/resources/export-guide'
+    | '/resources/google-my-business'
+    | '/resources/outreach-templates'
     | '/app'
     | '/blog'
     | '/freelancers'
@@ -530,6 +565,9 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/find-clients/$category'
     | '/freelancers/$slug'
+    | '/resources/export-guide'
+    | '/resources/google-my-business'
+    | '/resources/outreach-templates'
     | '/app/'
     | '/blog/'
     | '/freelancers/'
@@ -569,6 +607,9 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   FindClientsCategoryRoute: typeof FindClientsCategoryRoute
   FreelancersSlugRoute: typeof FreelancersSlugRoute
+  ResourcesExportGuideRoute: typeof ResourcesExportGuideRoute
+  ResourcesGoogleMyBusinessRoute: typeof ResourcesGoogleMyBusinessRoute
+  ResourcesOutreachTemplatesRoute: typeof ResourcesOutreachTemplatesRoute
   BlogIndexRoute: typeof BlogIndexRoute
   FreelancersIndexRoute: typeof FreelancersIndexRoute
 }
@@ -764,6 +805,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/resources/outreach-templates': {
+      id: '/resources/outreach-templates'
+      path: '/resources/outreach-templates'
+      fullPath: '/resources/outreach-templates'
+      preLoaderRoute: typeof ResourcesOutreachTemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources/google-my-business': {
+      id: '/resources/google-my-business'
+      path: '/resources/google-my-business'
+      fullPath: '/resources/google-my-business'
+      preLoaderRoute: typeof ResourcesGoogleMyBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources/export-guide': {
+      id: '/resources/export-guide'
+      path: '/resources/export-guide'
+      fullPath: '/resources/export-guide'
+      preLoaderRoute: typeof ResourcesExportGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/freelancers/$slug': {
       id: '/freelancers/$slug'
       path: '/freelancers/$slug'
@@ -952,6 +1014,9 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   FindClientsCategoryRoute: FindClientsCategoryRoute,
   FreelancersSlugRoute: FreelancersSlugRoute,
+  ResourcesExportGuideRoute: ResourcesExportGuideRoute,
+  ResourcesGoogleMyBusinessRoute: ResourcesGoogleMyBusinessRoute,
+  ResourcesOutreachTemplatesRoute: ResourcesOutreachTemplatesRoute,
   BlogIndexRoute: BlogIndexRoute,
   FreelancersIndexRoute: FreelancersIndexRoute,
 }

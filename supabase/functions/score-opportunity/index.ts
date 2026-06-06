@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     }
 
     let score = 0;
-    const breakdown: Record<string, number> = {};
+    const breakdown: any = {};
 
     const category = lead.industry || "web_dev";
     const isB2B = [
@@ -233,6 +233,52 @@ Deno.serve(async (req) => {
         breakdown["no_phone_listed"] = 5;
       }
     }
+
+    // GMB Gap Signals — add to ALL categories
+    const gmbGaps: string[] = [];
+    let gmbBonus = 0;
+
+    // No photos on GMB listing
+    if (!lead.google_photo_url) {
+      gmbGaps.push("No GMB photos uploaded");
+      gmbBonus += 8;
+    }
+
+    // No business description
+    if (!lead.description || lead.description.length < 20) {
+      gmbGaps.push("No business description on GMB");
+      gmbBonus += 7;
+    }
+
+    // Very few reviews — hard to be found
+    const reviewCount = lead.google_review_count || 0;
+    if (reviewCount < 5) {
+      gmbGaps.push("Fewer than 5 Google reviews");
+      gmbBonus += 10;
+    } else if (reviewCount < 10) {
+      gmbGaps.push("Fewer than 10 Google reviews");
+      gmbBonus += 5;
+    }
+
+    // No website on GMB listing
+    if (!lead.has_website) {
+      gmbGaps.push("No website linked on GMB");
+      // already scored in main algorithm
+    }
+
+    // Low rating — reputation opportunity
+    const ratingValue = parseFloat(lead.google_rating || "0");
+    if (ratingValue > 0 && ratingValue < 3.5) {
+      gmbGaps.push("Low Google rating — needs reputation management");
+      gmbBonus += 8;
+    }
+
+    // Add GMB bonus to total score
+    score += gmbBonus;
+
+    // Save GMB gaps to score breakdown
+    breakdown.gmb_gaps = gmbGaps;
+    breakdown.gmb_bonus = gmbBonus;
 
     // Clamp score to 100 max, 0 min
     const finalScore = Math.min(Math.max(score, 0), 100);

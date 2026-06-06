@@ -12,6 +12,7 @@ import {
   Globe,
   Sun,
   Moon,
+  ChevronDown,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { usePreferences, Language, Currency } from "@/contexts/PreferencesContext";
@@ -67,6 +68,13 @@ export function MarketingNav() {
     { to: "/blog", label: t("nav_blog") },
     { to: "/portfolio", label: t("nav_portfolio") },
     { to: "/contact", label: t("nav_contact") },
+  ];
+
+  const resourcesLinks = [
+    { to: "/resources/google-my-business", label: "Google My Business Guide" },
+    { to: "/safety", label: "Safety Guidelines" },
+    { to: "/resources/outreach-templates", label: "Outreach Templates" },
+    { to: "/resources/export-guide", label: "Export Guide" },
   ];
 
   const desktopLinks = links;
@@ -217,6 +225,25 @@ export function MarketingNav() {
                   {l.label}
                 </Link>
               ))}
+
+              {/* Resources Dropdown */}
+              <div className="relative group py-1">
+                <button className="flex items-center gap-1 hover:text-foreground transition-colors text-foreground/80 font-medium cursor-pointer bg-transparent border-none outline-none">
+                  <span>Resources</span>
+                  <ChevronDown className="h-3 w-3 transition-transform duration-250 group-hover:rotate-180" />
+                </button>
+                <div className="absolute left-0 mt-1.5 w-52 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-1 duration-150 font-sans">
+                  {resourcesLinks.map((r) => (
+                    <Link
+                      key={r.to}
+                      to={r.to}
+                      className="block rounded-lg px-3 py-2 text-xs text-foreground/85 hover:bg-accent hover:text-foreground transition-colors font-medium"
+                    >
+                      {r.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </nav>
 
             <div className="h-4 w-px bg-border/40" />
@@ -271,6 +298,22 @@ export function MarketingNav() {
                   {l.label}
                 </Link>
               ))}
+
+              <div className="border-t border-border/40 my-2 pt-2 animate-in fade-in duration-200">
+                <p className="px-3 text-[10px] uppercase font-mono tracking-wider text-slate-500 mb-1">
+                  Resources
+                </p>
+                {resourcesLinks.map((r) => (
+                  <Link
+                    key={r.to}
+                    to={r.to}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-md px-5 py-1.5 text-xs text-foreground/80 hover:bg-accent hover:text-foreground"
+                  >
+                    {r.label}
+                  </Link>
+                ))}
+              </div>
               <button
                 onClick={() => {
                   setOpen(false);

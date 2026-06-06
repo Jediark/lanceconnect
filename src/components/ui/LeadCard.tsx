@@ -144,6 +144,11 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
                 ⚠️ Under Review
               </span>
             )}
+            {lead.score_breakdown?.gmb_gaps?.length > 0 && (
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/15 px-2 py-0.5 text-[9px] font-semibold text-amber-500 border border-amber-500/25">
+                📍 GMB gaps ({lead.score_breakdown.gmb_gaps.length})
+              </span>
+            )}
           </div>
         </div>
         <OpportunityScore score={lead.opportunityScore} />

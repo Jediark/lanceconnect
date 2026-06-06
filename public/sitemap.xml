@@ -99,4 +99,18 @@
     <loc>https://lanceconnect.vercel.app/find-clients/training-recruitment</loc>
     <priority>0.85</priority>
   </url>
+
+  <!-- Resources Guides -->
+  <url>
+    <loc>https://lanceconnect.vercel.app/resources/google-my-business</loc>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://lanceconnect.vercel.app/resources/outreach-templates</loc>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://lanceconnect.vercel.app/resources/export-guide</loc>
+    <priority>0.70</priority>
+  </url>
 </urlset>
