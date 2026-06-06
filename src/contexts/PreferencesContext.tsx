@@ -305,7 +305,7 @@ const PreferencesContext = createContext<PreferencesContextType | undefined>(und
 export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>("en");
   const [currency, setCurrencyState] = useState<Currency>("USD");
-  const [theme, setThemeState] = useState<"dark" | "light">("dark");
+  const [theme, setThemeState] = useState<"dark" | "light">("light");
   const [safetyPopupDismissed, setSafetyPopupDismissedState] = useState(false);
 
   // Load from localStorage on mount
@@ -321,10 +321,13 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (savedCurr && ["USD", "EUR", "GBP", "NGN", "BRL"].includes(savedCurr)) {
       setCurrencyState(savedCurr);
     }
-    if (savedTheme && ["dark", "light"].includes(savedTheme)) {
-      setThemeState(savedTheme);
-      const root = document.documentElement;
-      if (savedTheme === "light") {
+    
+    // Default to light theme if no theme is saved
+    const activeTheme = (savedTheme && ["dark", "light"].includes(savedTheme)) ? savedTheme : "light";
+    setThemeState(activeTheme);
+    const root = document.documentElement;
+    if (root) {
+      if (activeTheme === "light") {
         root.classList.add("light");
         root.classList.remove("dark");
       } else {

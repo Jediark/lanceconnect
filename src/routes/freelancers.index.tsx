@@ -186,8 +186,21 @@ function FreelancerDirectoryPage() {
     fetchFreelancers();
   }, []);
 
-  // Filter out profiles where is_featured is true from regular directory list
-  const featuredFreelancers = freelancers.filter((f) => f.is_featured && !f.is_flagged);
+  // Filter out profiles where is_featured is true from regular directory list and sort them specifically
+  const getFeaturedOrderWeight = (f: DirectoryFreelancer) => {
+    const name = f.full_name.toLowerCase();
+    const cat = f.freelancer_category;
+    if (name.includes("akinola") && cat === "web_dev") return 1;
+    if (name.includes("akinola") && cat === "mc_events") return 2;
+    if (name.includes("akinola") && cat === "tutor") return 3;
+    if (name.includes("moorel") || name.includes("jemoorel")) return 4;
+    if (name.includes("emmanuel") && name.includes("edward")) return 5;
+    return 6;
+  };
+
+  const featuredFreelancers = freelancers
+    .filter((f) => f.is_featured && !f.is_flagged)
+    .sort((a, b) => getFeaturedOrderWeight(a) - getFeaturedOrderWeight(b));
   const regularFreelancers = freelancers.filter((f) => !f.is_featured);
 
   const filteredFreelancers = regularFreelancers.filter((f) => {
