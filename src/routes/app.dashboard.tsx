@@ -857,36 +857,6 @@ function Dashboard() {
 
           {/* ── Right sidebar ── */}
           <div className="space-y-5">
-            {/* Quota */}
-            <div className="rounded-2xl border border-border bg-card p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-sm font-bold text-foreground">Monthly Quota</h4>
-                <span className="rounded-full border border-primary/25 bg-primary/8 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
-                  {user?.plan || "Free"}
-                </span>
-              </div>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-2xl font-extrabold text-foreground">{leadsUsed}</span>
-                <span className="text-sm text-muted-foreground">/ {leadsLimit}</span>
-              </div>
-              <div className="h-1.5 w-full rounded-full bg-accent overflow-hidden mb-2">
-                <div
-                  className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
-                  style={{ width: `${usagePct}%` }}
-                />
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                {Math.max(0, leadsLimit - leadsUsed)} searches remaining
-              </p>
-              {user?.plan === "free" && (
-                <Link
-                  to="/app/upgrade"
-                  className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer"
-                >
-                  Upgrade Plan
-                </Link>
-              )}
-            </div>
 
             {/* Goal Tracker */}
             <GoalTracker current={contactedCount} target={user?.plan === "free" ? 10 : 50} />

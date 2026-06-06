@@ -87,7 +87,7 @@ function PricingPage() {
                   { symbol: "$", val: "0", name: "USD" },
                   { symbol: "€", val: "0", name: "EUR" },
                   { symbol: "£", val: "0", name: "GBP" },
-                  { symbol: "R$", val: "0", name: "BRL" },
+                  { symbol: "R", val: "0", name: "BRL" },
                 ].map((cur) => (
                   <div key={cur.name} className="flex flex-col items-center shrink-0 border border-border bg-background/50 rounded-xl px-4 py-2 min-w-[75px] shadow-sm">
                     <span className="text-[10px] font-mono text-slate-500 font-bold uppercase">{cur.name}</span>
