@@ -192,9 +192,9 @@ function FreelancerDirectoryPage() {
   const getFeaturedOrderWeight = (f: DirectoryFreelancer) => {
     const name = f.full_name.toLowerCase();
     const cat = f.freelancer_category;
-    if (name.includes("akinola") && cat === "web_dev") return 1;
+    if (name.includes("trendtactics") && cat === "web_dev") return 1;
     if (name.includes("akinola") && cat === "mc_events") return 2;
-    if (name.includes("akinola") && cat === "tutor") return 3;
+    if (name.includes("edvoura") && cat === "tutor") return 3;
     if (name.includes("moorel") || name.includes("jemoorel")) return 4;
     if (name.includes("emmanuel") && name.includes("edward")) return 5;
     return 6;

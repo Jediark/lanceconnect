@@ -250,7 +250,7 @@ DECLARE
   v_user_id UUID;
 BEGIN
 
-  -- Akinola Olujobi — Web Designer
+  -- Akinola Olujobi — Web Designer (Trendtactics Digital)
   IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'akinola.web@trendtacticsdigital.com') THEN
     v_user_id := uuid_generate_v4();
     INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data, created_at, updated_at, role, aud)
@@ -259,7 +259,7 @@ BEGIN
       'akinola.web@trendtacticsdigital.com',
       crypt('password123', gen_salt('bf')),
       now(),
-      jsonb_build_object('full_name', 'Akinola Olujobi'),
+      jsonb_build_object('full_name', 'Trendtactics Digital'),
       now(),
       now(),
       'authenticated',
@@ -268,24 +268,25 @@ BEGIN
     UPDATE public.profiles
     SET 
       is_public = true,
+      full_name = 'Trendtactics Digital',
       freelancer_category = 'web_dev',
-      bio = 'Founder of Trendtactics Digital — a digital growth agency specializing in engineering high-performing digital ecosystems for brands globally. Offering modern web development, UI/UX design, custom app solutions, and AI-powered marketing strategies that help businesses scale. Passionate about turning visions into digital realities.',
+      bio = 'Trendtactics Digital builds clean, fast, and well-optimised websites for any business. We design and deliver custom web solutions, e-commerce stores, landing pages, and portfolios that attract customers, build trust, and drive growth. Let us 10x your business with a website that grabs attention.',
       website_url = 'https://trendtacticsdigital.com',
       country = 'Nigeria',
       city = 'Lagos',
       is_verified = true,
       website_verified = true,
       is_supporter = true,
-      tagline = 'Digital Growth Engineer & Founder of Trendtactics Digital',
+      tagline = 'Transforming Brands, Crafting Legacies',
       hourly_rate = 45,
       is_featured = true,
       onboarding_completed = true,
-      username = 'akinola-web',
-      contact_email = 'akinola.web@trendtacticsdigital.com'
+      username = 'trendtactics-digital',
+      contact_email = 'info@trendtacticsdigital.com'
     WHERE id = v_user_id;
   END IF;
 
-  -- Akinola Olujobi — MC & Events
+  -- Akinola Olujobi — MC & Events (Akinola Olujobi MC Services)
   IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'akinola.mc@akinolaolujobi.com') THEN
     v_user_id := uuid_generate_v4();
     INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data, created_at, updated_at, role, aud)
@@ -303,24 +304,26 @@ BEGIN
     UPDATE public.profiles
     SET 
       is_public = true,
+      full_name = 'Akinola Olujobi',
       freelancer_category = 'mc_events',
-      bio = 'Premium Event Host, Master of Ceremonies, and Strategic Anchor based in Lagos, Nigeria. Delivering elite stage presence, high energy, and eloquence for corporate galas, high-stakes summits, conferences, and high-profile social gatherings globally. Leverages a background in communication to keep audiences engaged.',
+      bio = 'Premium Event Host, Master of Ceremonies, and Strategic Anchor delivering elite stage presence, high energy, and eloquence for corporate galas, high-stakes summits, conferences, and high-profile social gatherings globally. Leverages professional training in communication to deliver your story clearly.',
       website_url = 'https://akinolaolujobi.com',
       country = 'Nigeria',
       city = 'Lagos',
       is_verified = true,
       website_verified = true,
       is_supporter = true,
-      tagline = 'Premium Event Host, MC & Strategic Anchor',
+      tagline = 'Your Story. Clearly Delivered.',
       hourly_rate = 60,
       is_featured = true,
       onboarding_completed = true,
-      username = 'akinola-mc',
-      contact_email = 'akinola.mc@akinolaolujobi.com'
+      username = 'akinola-olujobi',
+      contact_email = 'connect@akinolaolujobi.com',
+      contact_phone = '07056265108'
     WHERE id = v_user_id;
   END IF;
 
-  -- Akinola Olujobi — Online Tutor
+  -- Akinola Olujobi — Online Tutor (Edvoura Learning Hub)
   IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'akinola.tutor@edvouralearninghub.com') THEN
     v_user_id := uuid_generate_v4();
     INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data, created_at, updated_at, role, aud)
@@ -329,7 +332,7 @@ BEGIN
       'akinola.tutor@edvouralearninghub.com',
       crypt('password123', gen_salt('bf')),
       now(),
-      jsonb_build_object('full_name', 'Akinola Olujobi'),
+      jsonb_build_object('full_name', 'Edvoura Learning Hub'),
       now(),
       now(),
       'authenticated',
@@ -338,20 +341,22 @@ BEGIN
     UPDATE public.profiles
     SET 
       is_public = true,
+      full_name = 'Edvoura Learning Hub',
       freelancer_category = 'tutor',
-      bio = 'Founder of Edvoura Learning Hub — a premium global learning ecosystem dedicated to bridging educational gaps. Providing curated online tutoring, personalized dashboards, digital courses, and academic resources for students of all ages globally. Dedicated to empowering the next generation of leaders.',
+      bio = 'Edvoura Learning Hub is a premium global learning ecosystem dedicated to bridging educational gaps. We connect K-12 students with expert tutors for private 1-on-1 sessions, interactive quizzes, assignments, and parent dashboards. Providing grades 1-12 preparation (Explorer, Builder, and Achiever bands) across multiple learning areas like Numeracy, Literacy, Science, and Thinking Skills.',
       website_url = 'https://edvouralearninghub.com',
       country = 'Nigeria',
       city = 'Lagos',
       is_verified = true,
       website_verified = true,
       is_supporter = true,
-      tagline = 'Founder of Edvoura Learning Hub — Where Learners'' Dreams Come True',
+      tagline = 'Where Learners'' Dreams Come True',
       hourly_rate = 30,
       is_featured = true,
       onboarding_completed = true,
-      username = 'akinola-tutor',
-      contact_email = 'akinola.tutor@edvouralearninghub.com'
+      username = 'edvoura-learning-hub',
+      contact_email = 'edvouralearninghub@gmail.com',
+      contact_phone = '+2347010158258'
     WHERE id = v_user_id;
   END IF;
 
@@ -427,5 +432,41 @@ BEGIN
       contact_email = 'emmanuel@techfieldsdigital.com.ng'
     WHERE id = v_user_id;
   END IF;
+
+  -- Direct updates for existing seeded profiles to ensure they are updated correctly
+  UPDATE public.profiles
+  SET 
+    full_name = 'Trendtactics Digital',
+    username = 'trendtactics-digital',
+    tagline = 'Transforming Brands, Crafting Legacies',
+    contact_email = 'info@trendtacticsdigital.com',
+    website_url = 'https://trendtacticsdigital.com',
+    freelancer_category = 'web_dev',
+    bio = 'Trendtactics Digital builds clean, fast, and well-optimised websites for any business. We design and deliver custom web solutions, e-commerce stores, landing pages, and portfolios that attract customers, build trust, and drive growth. Let us 10x your business with a website that grabs attention.'
+  WHERE contact_email = 'akinola.web@trendtacticsdigital.com' OR username IN ('akinola-web', 'trendtactics-digital');
+
+  UPDATE public.profiles
+  SET 
+    full_name = 'Edvoura Learning Hub',
+    username = 'edvoura-learning-hub',
+    tagline = 'Where Learners'' Dreams Come True',
+    contact_email = 'edvouralearninghub@gmail.com',
+    contact_phone = '+2347010158258',
+    website_url = 'https://edvouralearninghub.com',
+    freelancer_category = 'tutor',
+    bio = 'Edvoura Learning Hub is a premium global learning ecosystem dedicated to bridging educational gaps. We connect K-12 students with expert tutors for private 1-on-1 sessions, interactive quizzes, assignments, and parent dashboards. Providing grades 1-12 preparation (Explorer, Builder, and Achiever bands) across multiple learning areas like Numeracy, Literacy, Science, and Thinking Skills.'
+  WHERE contact_email IN ('akinola.tutor@edvouralearninghub.com', 'edvouralearninghub@gmail.com') OR username IN ('akinola-tutor', 'edvoura-learning-hub');
+
+  UPDATE public.profiles
+  SET 
+    full_name = 'Akinola Olujobi',
+    username = 'akinola-olujobi',
+    tagline = 'Your Story. Clearly Delivered.',
+    contact_email = 'connect@akinolaolujobi.com',
+    contact_phone = '07056265108',
+    website_url = 'https://akinolaolujobi.com',
+    freelancer_category = 'mc_events',
+    bio = 'Premium Event Host, Master of Ceremonies, and Strategic Anchor delivering elite stage presence, high energy, and eloquence for corporate galas, high-stakes summits, conferences, and high-profile social gatherings globally. Leverages professional training in communication to deliver your story clearly.'
+  WHERE contact_email IN ('akinola.mc@akinolaolujobi.com', 'connect@akinolaolujobi.com') OR username IN ('akinola-mc', 'akinola-olujobi');
 
 END $$;

@@ -39,6 +39,14 @@ import {
   Heart,
   Award,
   CheckCircle,
+  Lightbulb,
+  Trophy,
+  Hammer,
+  Sparkles,
+  Clock,
+  Mic,
+  Volume2,
+  Play,
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -247,8 +255,12 @@ function FreelancerSlugPage() {
   // Otherwise, render the public Freelancer profile detail page!
   const { freelancer } = data;
   const [flyerExpanded, setFlyerExpanded] = useState(false);
+  const [bannerExpanded, setBannerExpanded] = useState(false);
 
   const isJemoorel = freelancer.username === "jemoorel-uk" || freelancer.contact_email === "info@jemoorel.co.uk";
+  const isTrendtactics = freelancer.username === "trendtactics-digital" || freelancer.username === "akinola-web" || freelancer.contact_email === "info@trendtacticsdigital.com" || freelancer.contact_email === "akinola.web@trendtacticsdigital.com";
+  const isEdvoura = freelancer.username === "edvoura-learning-hub" || freelancer.username === "akinola-tutor" || freelancer.contact_email === "edvouralearninghub@gmail.com" || freelancer.contact_email === "akinola.tutor@edvouralearninghub.com";
+  const isAkinolaMC = freelancer.username === "akinola-olujobi" || freelancer.username === "akinola-mc" || freelancer.contact_email === "connect@akinolaolujobi.com" || freelancer.contact_email === "akinola.mc@akinolaolujobi.com";
 
   const getCategoryLabel = (id: string) => {
     const cat = CATEGORIES.find((c) => c.id === id);
@@ -357,7 +369,7 @@ function FreelancerSlugPage() {
                         Quality Food. Transformational Learning.
                       </p>
                       <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-                        Jemoorel UK Ltd is a purpose-driven B2B agency committed to improving lives through quality food supply and transformational learning. We bridge premium African food distribution with workforce development & leadership training to deliver lasting value and strengthen global communities.
+                        Jemoorel UK Ltd is a B2B B2B agency committed to improving lives through quality food supply and transformational learning. We bridge premium African food distribution with workforce development & leadership training to deliver lasting value and strengthen global communities.
                       </p>
                     </div>
                   </div>
@@ -522,6 +534,512 @@ function FreelancerSlugPage() {
                         <img
                           src="/assets/freelancers/jemoorel_about_flyer.jpg"
                           alt="Je'moorel Corporate Flyer"
+                          className="max-w-full h-auto rounded-xl shadow-lg border border-border/20"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : isTrendtactics ? (
+                <div className="space-y-8 animate-fade-in">
+                  {/* Core Corporate Banner */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card flex flex-col md:flex-row gap-8 items-center md:items-start">
+                    <div className="w-32 h-32 rounded-2xl border border-border bg-[#061226] shrink-0 flex items-center justify-center p-2 shadow-sm font-black text-cyan-400 text-3xl font-display uppercase tracking-wider relative overflow-hidden">
+                      <span>TD</span>
+                    </div>
+                    <div className="space-y-4 text-center md:text-left">
+                      <h2 className="font-display text-xl font-bold text-foreground">
+                        Trendtactics Digital
+                      </h2>
+                      <p className="text-xs font-mono font-bold text-cyan-500 uppercase tracking-widest leading-none">
+                        Transforming Brands. Crafting Legacies.
+                      </p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                        Trendtactics Digital is a global digital growth agency specializing in high-performing web engineering, branding, UI/UX designs, and bespoke web solutions that attract customers, build trust, and drive growth. We engineer modern digital ecosystems to scale businesses and help them stand out online.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Story & Mission Grid */}
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Story Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        📖 Our Story
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        What started as a digital growth mission by <strong>Akinola Olujobi</strong> has evolved into a global powerhouse. At Trendtactics Digital, we combine strategic marketing, creative excellence, and cutting-edge technology to engineer digital ecosystems that turn ambitious ideas into measurable market success.
+                      </p>
+                    </div>
+
+                    {/* Mission Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        🎯 Our Mission
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        To help businesses grow by building high-performing, fast, and secure digital assets. We don't just write code — we design conversion-focused platforms that capture audience attention and deliver massive return on investment.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Services Checklist */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      💼 Our Core Web Services
+                    </h3>
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      {[
+                        "Business Websites",
+                        "E-Commerce Stores",
+                        "Custom Web Applications",
+                        "UI/UX Design Systems",
+                        "SEO Optimization",
+                        "AI Tool Integrations",
+                        "Landing Pages",
+                        "Portfolios & Blogs",
+                        "Performance Audits",
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                          <CheckCircle className="h-4.5 w-4.5 text-cyan-500 shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Values Grid */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      🤝 Our Core Values
+                    </h3>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {[
+                        {
+                          title: "Innovation",
+                          desc: "We build using the latest frontend frameworks, animations, and AI systems.",
+                          icon: <Lightbulb className="h-5 w-5 text-cyan-400" />,
+                        },
+                        {
+                          title: "Results-Driven",
+                          desc: "Every design choice is made to maximize user conversion and business growth.",
+                          icon: <TrendingUp className="h-5 w-5 text-emerald-400" />,
+                        },
+                        {
+                          title: "Client-Focused",
+                          desc: "We prioritize clean communication, quick delivery, and dedicated support.",
+                          icon: <Users className="h-5 w-5 text-purple-400" />,
+                        },
+                      ].map((value, idx) => (
+                        <div key={idx} className="space-y-2 text-center sm:text-left">
+                          <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-slate-500/5 border border-border">
+                            {value.icon}
+                          </div>
+                          <h4 className="font-display font-semibold text-xs text-foreground leading-tight">{value.title}</h4>
+                          <p className="text-[10px] text-muted-foreground leading-normal">{value.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Portfolio Gallery */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      🚀 Featured Web Portfolio
+                    </h3>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {[
+                        {
+                          title: "Midway Health Inc.",
+                          url: "https://midwayhealthinc.com",
+                          desc: "Premium healthcare services portal designed for secure scheduling, patient inquiries, and resources.",
+                        },
+                        {
+                          title: "AllenGreen Transportation",
+                          url: "https://allengreentransportation.com",
+                          desc: "Professional logistics platform featuring detailed fleet directories, freight listings, and booking channels.",
+                        },
+                        {
+                          title: "Edvoura Learning Hub",
+                          url: "https://edvouralearninghub.com",
+                          desc: "Modern global tutoring portal featuring parent dashboards and academic progress indicators.",
+                        },
+                        {
+                          title: "VocalEdge AI Assistant",
+                          url: "https://vocaledge.vercel.app",
+                          desc: "AI assistant featuring vocal separations, choir stem exports, and transcript tools.",
+                        },
+                        {
+                          title: "Christ The Haven School",
+                          url: "https://christthehavenschool.com",
+                          desc: "Premium school website linking parents and students with assignments and notices.",
+                        },
+                        {
+                          title: "Maingrace Global Limited",
+                          url: "https://www.maingracegloballimited.com/",
+                          desc: "Consultancy website outlining international trade resources and advisory services.",
+                        },
+                      ].map((project, idx) => (
+                        <div key={idx} className="rounded-2xl border border-border bg-background p-4 flex flex-col justify-between hover:border-cyan-500 transition">
+                          <div>
+                            <h4 className="font-display font-bold text-xs text-foreground">{project.title}</h4>
+                            <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">{project.desc}</p>
+                          </div>
+                          <a href={project.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-cyan-400 font-mono mt-4 hover:underline">
+                            Explore website <ExternalLink className="h-2.5 w-2.5" />
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Collapsible Flyer */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-display text-base font-bold text-foreground">
+                        📄 Service Flyer & Business Card
+                      </h3>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setFlyerExpanded(!flyerExpanded);
+                            setBannerExpanded(false);
+                          }}
+                          className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-primary font-semibold hover:bg-accent transition cursor-pointer"
+                        >
+                          {flyerExpanded ? "Hide Flyer" : "View Flyer"}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setBannerExpanded(!bannerExpanded);
+                            setFlyerExpanded(false);
+                          }}
+                          className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-primary font-semibold hover:bg-accent transition cursor-pointer"
+                        >
+                          {bannerExpanded ? "Hide Banner" : "View Banner"}
+                        </button>
+                      </div>
+                    </div>
+                    {flyerExpanded && (
+                      <div className="rounded-2xl overflow-hidden border border-border bg-[#0A1E3F] p-4 flex justify-center animate-fade-in">
+                        <img
+                          src="/assets/freelancers/trendtactics_flyer.jpg"
+                          alt="Trendtactics Flyer"
+                          className="max-w-full h-auto rounded-xl shadow-lg border border-border/20"
+                        />
+                      </div>
+                    )}
+                    {bannerExpanded && (
+                      <div className="rounded-2xl overflow-hidden border border-border bg-[#0A1E3F] p-4 flex justify-center animate-fade-in">
+                        <img
+                          src="/assets/freelancers/trendtactics_banner.png"
+                          alt="Trendtactics Banner"
+                          className="max-w-full h-auto rounded-xl shadow-lg border border-border/20"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : isEdvoura ? (
+                <div className="space-y-8 animate-fade-in">
+                  {/* Core Corporate Banner */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card flex flex-col md:flex-row gap-8 items-center md:items-start">
+                    <div className="w-32 h-32 rounded-2xl border border-border bg-[#0A1E3F] shrink-0 flex items-center justify-center p-2 shadow-sm font-black text-yellow-400 text-3xl font-display uppercase tracking-wider relative overflow-hidden">
+                      <GraduationCap className="h-16 w-16 text-yellow-400" />
+                    </div>
+                    <div className="space-y-4 text-center md:text-left">
+                      <h2 className="font-display text-xl font-bold text-foreground">
+                        Edvoura Learning Hub
+                      </h2>
+                      <p className="text-xs font-mono font-bold text-yellow-500 uppercase tracking-widest leading-none">
+                        Where Learners' Dreams Come True.
+                      </p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                        Edvoura is a premium global learning ecosystem bridging educational gaps with expert online tutoring, personalized homework tracking, interactive gamified dashboards, and curriculum prep (SAT, WAEC, JAMB) for international success.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Story & Mission Grid */}
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Story Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        📖 Our Story
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Founded by <strong>Akinola Olujobi</strong> to deliver quality 1-on-1 tutoring, Edvoura replaces rigid classroom lists with personalized dashboards. We help K-12 students around the world build confidence, master concepts, and prepare for international academic qualifications.
+                      </p>
+                    </div>
+
+                    {/* Mission Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        🎯 Our Mission
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        To unlock every child's potential. We connect students with the world's finest tutors to deliver highly interactive sessions, ensuring academic excellence and an organic love for learning.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Learning Areas Grid */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      ✏️ Curated Learning Areas
+                    </h3>
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      {[
+                        "Numeracy & Mathematics",
+                        "Literacy & English",
+                        "General Science",
+                        "General Knowledge",
+                        "Core Life Skills",
+                        "Critical Thinking Skills",
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                          <CheckCircle className="h-4.5 w-4.5 text-yellow-500 shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* K-12 Program Bands */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      🎓 Age-Based Learning Programs
+                    </h3>
+                    <div className="grid gap-6 md:grid-cols-3">
+                      {[
+                        {
+                          band: "Explorer Band (Grades 1-3)",
+                          desc: "Learning feels like playtime. Gamified sticker books, interactive subject games, and visual reward gardens.",
+                          icon: <Sparkles className="h-6 w-6 text-yellow-500" />,
+                        },
+                        {
+                          band: "Builder Band (Grades 4-6)",
+                          desc: "Building mastery and consistency. Subject-level badge walls, milestone checklists, homework and quiz hubs.",
+                          icon: <Hammer className="h-6 w-6 text-emerald-500" />,
+                        },
+                        {
+                          band: "Achiever Band (Grades 7-12)",
+                          desc: "College prep command center. High-performance study dashboard tailored for WAEC, JAMB, SAT, and NECO exams.",
+                          icon: <Trophy className="h-6 w-6 text-rose-500" />,
+                        },
+                      ].map((prog, idx) => (
+                        <div key={idx} className="rounded-2xl border border-border bg-background p-5 space-y-3">
+                          <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-slate-500/5 border border-border">
+                            {prog.icon}
+                          </div>
+                          <h4 className="font-display font-semibold text-xs text-foreground leading-tight">{prog.band}</h4>
+                          <p className="text-[10px] text-muted-foreground leading-normal">{prog.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Testimonials */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      🌟 What Parents Say
+                    </h3>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {[
+                        {
+                          quote: "Edvoura matched me with a specialist for my AP Calculus prep. The sessions are world-class, and the dashboard tools are better than anything I've seen in Canada.",
+                          author: "Sarah Jenkins",
+                          location: "Toronto, Canada",
+                        },
+                        {
+                          quote: "My daughter loves the Explorer Band. The stickers and games keep her engaged for hours while she masters Mandarin and English simultaneously.",
+                          author: "Wei Zhang",
+                          location: "Shanghai, China",
+                        },
+                        {
+                          quote: "We use the platform for weekend intensive sessions. The quality of tutors available at any time is incredible. High-performance learning at its best.",
+                          author: "David Miller",
+                          location: "Houston, USA",
+                        },
+                      ].map((item, idx) => (
+                        <div key={idx} className="rounded-xl border border-border bg-background p-4 flex flex-col justify-between">
+                          <p className="text-[10px] text-slate-700 dark:text-slate-300 italic leading-relaxed">"{item.quote}"</p>
+                          <div className="mt-4 pt-3 border-t border-border/40">
+                            <p className="text-[10px] font-bold text-foreground leading-none">{item.author}</p>
+                            <p className="text-[8px] text-muted-foreground mt-0.5">{item.location}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Collapsible Flyer */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-display text-base font-bold text-foreground">
+                        📄 Service Flyer
+                      </h3>
+                      <button
+                        onClick={() => setFlyerExpanded(!flyerExpanded)}
+                        className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-primary font-semibold hover:bg-accent transition cursor-pointer"
+                      >
+                        {flyerExpanded ? "Hide Flyer" : "View Flyer"}
+                      </button>
+                    </div>
+                    {flyerExpanded && (
+                      <div className="rounded-2xl overflow-hidden border border-border bg-[#0A1E3F] p-4 flex justify-center animate-fade-in">
+                        <img
+                          src="/assets/freelancers/edvoura_flyer.jpg"
+                          alt="Edvoura Flyer"
+                          className="max-w-full h-auto rounded-xl shadow-lg border border-border/20"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : isAkinolaMC ? (
+                <div className="space-y-8 animate-fade-in">
+                  {/* Core Corporate Banner */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card flex flex-col md:flex-row gap-8 items-center md:items-start">
+                    <div className="w-32 h-32 rounded-2xl border border-border bg-[#111] shrink-0 flex items-center justify-center p-2 shadow-sm font-black text-amber-500 text-3xl font-display uppercase tracking-wider relative overflow-hidden">
+                      <Mic className="h-16 w-16 text-amber-500" />
+                    </div>
+                    <div className="space-y-4 text-center md:text-left">
+                      <h2 className="font-display text-xl font-bold text-foreground">
+                        Akinola Olujobi
+                      </h2>
+                      <p className="text-xs font-mono font-bold text-amber-500 uppercase tracking-widest leading-none">
+                        Your Story. Clearly Delivered.
+                      </p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                        Akinola Olujobi is a premium Master of Ceremonies, event host, and strategic anchor providing elite stage presence and eloquent delivery for corporate galas, high-stakes summits, conferences, and high-profile social events globally.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Story & Mission Grid */}
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Story Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        🎙️ Professional Speaker & MC
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        With an articulate command of English, dynamic stage presence, and a deep understanding of corporate event flows, <strong>Akinola Olujobi</strong> ensures that every event is anchored with elite prestige and absolute clarity.
+                      </p>
+                    </div>
+
+                    {/* Mission Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        🎯 Event Philosophy
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        "Your story. My signature." Every audience engagement is crafted to deliver key brand messages clearly, maintaining high energy, decorum, and seamless transitions from start to finish.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Services Checklist */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      🎤 MC & Speaking Event Formats
+                    </h3>
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      {[
+                        "Corporate Galas & Awards",
+                        "High-Stakes Summits",
+                        "Press Conferences",
+                        "Strategic Event Anchoring",
+                        "Panel Moderation",
+                        "Keynote Speaking",
+                        "High-Profile Social events",
+                        "B2B Product Launches",
+                        "Global Conferences",
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                          <CheckCircle className="h-4.5 w-4.5 text-amber-500 shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* MC Quality Grids */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      ✨ Signature Hosting Traits
+                    </h3>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {[
+                        {
+                          title: "Elite Stage Presence",
+                          desc: "Commanding attention and steering focus to the hosts, speakers, and awardees.",
+                          icon: <Award className="h-5 w-5 text-amber-500" />,
+                        },
+                        {
+                          title: "Eloquent & Articulate",
+                          desc: "Delivering words with clarity, precise pronunciation, and absolute professional poise.",
+                          icon: <Volume2 className="h-5 w-5 text-yellow-500" />,
+                        },
+                        {
+                          title: "Timing & Adaptability",
+                          desc: "Keeping event timelines strictly on-track while managing unexpected stage changes smoothly.",
+                          icon: <Clock className="h-5 w-5 text-cyan-500" />,
+                        },
+                      ].map((value, idx) => (
+                        <div key={idx} className="space-y-2 text-center sm:text-left">
+                          <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-slate-500/5 border border-border">
+                            {value.icon}
+                          </div>
+                          <h4 className="font-display font-semibold text-xs text-foreground leading-tight">{value.title}</h4>
+                          <p className="text-[10px] text-muted-foreground leading-normal">{value.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Collapsible Card */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-display text-base font-bold text-foreground">
+                        📄 Business Card & Event Banner
+                      </h3>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setFlyerExpanded(!flyerExpanded);
+                            setBannerExpanded(false);
+                          }}
+                          className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-primary font-semibold hover:bg-accent transition cursor-pointer"
+                        >
+                          {flyerExpanded ? "Hide Card" : "View Business Card"}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setBannerExpanded(!bannerExpanded);
+                            setFlyerExpanded(false);
+                          }}
+                          className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-primary font-semibold hover:bg-accent transition cursor-pointer"
+                        >
+                          {bannerExpanded ? "Hide Banner" : "View Event Banner"}
+                        </button>
+                      </div>
+                    </div>
+                    {flyerExpanded && (
+                      <div className="rounded-2xl overflow-hidden border border-border bg-[#111] p-4 flex justify-center animate-fade-in">
+                        <img
+                          src="/assets/freelancers/akinola_mc_card.jpg"
+                          alt="Akinola MC Card"
+                          className="max-w-full h-auto rounded-xl shadow-lg border border-border/20"
+                        />
+                      </div>
+                    )}
+                    {bannerExpanded && (
+                      <div className="rounded-2xl overflow-hidden border border-border bg-[#111] p-4 flex justify-center animate-fade-in">
+                        <img
+                          src="/assets/freelancers/akinola_mc_banner.jpg"
+                          alt="Akinola MC Banner"
                           className="max-w-full h-auto rounded-xl shadow-lg border border-border/20"
                         />
                       </div>

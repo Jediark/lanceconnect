@@ -36,13 +36,13 @@ const CATEGORIES = [
 
 const PORTFOLIO_FREELANCERS = [
   {
-    name: "Akinola Olujobi (Trendtactics Digital)",
-    role: "Founder & Lead Digital Growth Architect",
+    name: "Trendtactics Digital",
+    role: "Premium Web Design & Digital Growth Agency",
     category: "web-developers",
     avatar: "/assets/freelancers/freelancer_11.jpg",
     city: "Lagos, Nigeria",
     rating: "5.0",
-    skills: ["Web Development", "UI/UX Design", "Next.js", "AI-powered Marketing"],
+    skills: ["Web Development", "UI/UX Design", "Custom App Solutions", "Digital Growth Strategies"],
     projects: [
       {
         title: "Midway Health Inc.",
@@ -51,13 +51,18 @@ const PORTFOLIO_FREELANCERS = [
       },
       {
         title: "Edvoura Learning Hub",
-        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&q=80",
+        image: "/assets/freelancers/edvoura_flyer.jpg",
         desc: "Education ecosystem and tutoring portal built at edvouralearninghub.com.",
       },
       {
         title: "Allen Green Transportation",
         image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80",
         desc: "Logistics and transportation service platform built at allengreentransportation.com.",
+      },
+      {
+        title: "VocalEdge AI Assistant",
+        image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80",
+        desc: "AI-powered singing assistant and vocal training platform at vocaledge.vercel.app.",
       },
     ],
   },
@@ -78,8 +83,8 @@ const PORTFOLIO_FREELANCERS = [
     ],
   },
   {
-    name: "Akinola Olujobi (Event Host)",
-    role: "Premium Event Host & Strategic Anchor",
+    name: "Akinola Olujobi",
+    role: "Premium Event Host, MC & Strategic Anchor",
     category: "videographers",
     avatar: "/assets/freelancers/freelancer_8.jpg",
     city: "Lagos, Nigeria",
@@ -88,23 +93,23 @@ const PORTFOLIO_FREELANCERS = [
     projects: [
       {
         title: "Akinola Olujobi MC Services",
-        image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&q=80",
+        image: "/assets/freelancers/akinola_mc_card.jpg",
         desc: "Premium Event Host, Master of Ceremonies, and Strategic Anchor portfolio at akinolaolujobi.com.",
       },
     ],
   },
   {
-    name: "Akinola Olujobi (Edvoura)",
-    role: "Founder of Edvoura Learning Hub",
+    name: "Edvoura Learning Hub",
+    role: "Premium K-12 Global Online Tutoring Hub",
     category: "seo-specialists",
     avatar: "/assets/freelancers/freelancer_4.jpg",
     city: "Lagos, Nigeria",
     rating: "5.0",
-    skills: ["Academic Mentoring", "Content Strategy", "Digital Learning Systems"],
+    skills: ["Online Tutoring", "K-12 Education", "WAEC/JAMB Prep", "Interactive Dashboards"],
     projects: [
       {
         title: "Edvoura Tutoring System",
-        image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80",
+        image: "/assets/freelancers/edvoura_flyer.jpg",
         desc: "Premium global learning ecosystem dedicated to bridging educational gaps at edvouralearninghub.com.",
       },
     ],
