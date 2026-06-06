@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Logo } from "@/components/Logo";
+import { Logo, LanceConnectLogo } from "@/components/Logo";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Login — LanceConnect" }] }),
@@ -19,9 +19,8 @@ export function AuthSplit({ children, title }: { children: React.ReactNode; titl
           className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
         <div className="absolute inset-0 bg-sidebar/70" />
-        <Link to="/" className="relative flex items-center gap-2">
-          <Logo size={36} />
-          <span className="font-display text-lg font-bold">LanceConnect</span>
+        <Link to="/" className="relative flex items-center">
+          <LanceConnectLogo className="h-12 w-auto" />
         </Link>
         <div className="relative">
           <h2 className="font-display text-3xl font-bold leading-tight">
@@ -45,6 +44,13 @@ export function AuthSplit({ children, title }: { children: React.ReactNode; titl
       </div>
       <div className="flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-sm">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition duration-200 mb-6 font-medium group"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+            Back to main website
+          </Link>
           <h1 className="font-display text-2xl font-bold">{title}</h1>
           {children}
         </div>
