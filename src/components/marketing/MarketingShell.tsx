@@ -198,13 +198,13 @@ export function MarketingNav() {
         </div>
       </div>
       <header className="border-b border-border bg-background w-full py-4">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-8">
+        <div className="w-full flex items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center group">
             <LanceConnectLogo className="transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98]" />
           </Link>
 
-          <div className="hidden lg:flex items-center gap-6">
-            <nav className="flex items-center gap-5 text-sm text-foreground/80">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-6">
+            <nav className="flex items-center gap-3 xl:gap-5 text-xs xl:text-sm text-foreground/80 font-medium">
               {desktopLinks.map((l) => (
                 <Link
                   key={l.to}
