@@ -40,10 +40,7 @@ export function LanceConnectLogo({ className }: { className?: string }) {
       alt="LanceConnect Logo"
       style={{ imageRendering: "crisp-edges" }}
       className={cn(
-        "h-13 md:h-18 w-auto object-contain transition-all duration-300",
-        theme === "light"
-          ? "filter drop-shadow-[0_0_12px_rgba(255,255,255,0.15)] hover:drop-shadow-[0_0_18px_rgba(16,185,129,0.3)] hover:scale-[1.02]"
-          : "filter drop-shadow-[0_0_12px_rgba(37,99,235,0.1)] hover:drop-shadow-[0_0_18px_rgba(99,102,241,0.3)] hover:scale-[1.02]",
+        "h-8 md:h-10 w-auto object-contain transition-all duration-300 hover:scale-[1.02]",
         className,
       )}
     />

@@ -58,26 +58,24 @@ export function MarketingNav() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const links = [
-    { to: "/", label: t("nav_home") },
-    { to: "/about", label: t("nav_about") },
-    { to: "/how-it-works", label: t("nav_how") },
-    { to: "/services", label: t("nav_services") },
-    { to: "/pricing", label: t("nav_pricing") },
-    { to: "/freelancers", label: t("nav_directory") },
-    { to: "/blog", label: t("nav_blog") },
-    { to: "/portfolio", label: t("nav_portfolio") },
-    { to: "/contact", label: t("nav_contact") },
-  ];
-
   const resourcesLinks = [
+    { to: "/about", label: "About Us" },
+    { to: "/how-it-works", label: "How It Works" },
+    { to: "/portfolio", label: "Portfolio Showcase" },
     { to: "/resources/google-my-business", label: "Google My Business Guide" },
     { to: "/safety", label: "Safety Guidelines" },
     { to: "/resources/outreach-templates", label: "Outreach Templates" },
     { to: "/resources/export-guide", label: "Export Guide" },
   ];
 
-  const desktopLinks = links;
+  const navLinks = [
+    { to: "/", label: t("nav_home") },
+    { to: "/services", label: t("nav_services") },
+    { to: "/pricing", label: t("nav_pricing") },
+    { to: "/freelancers", label: t("nav_directory") },
+    { to: "/blog", label: t("nav_blog") },
+    { to: "/contact", label: t("nav_contact") },
+  ];
 
   return (
     <div className="w-full shrink-0 sticky top-0 z-50">
@@ -101,20 +99,21 @@ export function MarketingNav() {
           </button>
         </div>
       )}
-      <div className="relative bg-card py-1.5 px-4 lg:px-8 border-b border-border/40 select-none flex items-center justify-center lg:justify-between gap-3 text-xs font-mono text-foreground transition-colors duration-300">
-        {/* Active Lead Scanning Stats */}
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-          </span>
-          <span className="text-slate-700 dark:text-muted-foreground">
-            Active Lead Scanning: {citiesToday !== null ? citiesToday.toLocaleString() : "0"} cities checked today · {totalLeads !== null ? totalLeads.toLocaleString() : "0"} leads indexed today
-          </span>
-        </div>
+      <div className="relative bg-card py-1.5 border-b border-border/40 select-none transition-colors duration-300">
+        <div className="max-w-7xl mx-auto w-full px-4 lg:px-8 flex items-center justify-between gap-3 text-xs font-mono text-foreground">
+          {/* Active Lead Scanning Stats */}
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+            </span>
+            <span className="text-slate-700 dark:text-muted-foreground">
+              Active Lead Scanning: {citiesToday !== null ? citiesToday.toLocaleString() : "0"} cities checked today · {totalLeads !== null ? totalLeads.toLocaleString() : "0"} leads indexed today
+            </span>
+          </div>
 
-        {/* Search, Language & Currency preferences (Desktop only) */}
-        <div className="hidden lg:flex items-center gap-3">
+          {/* Search, Language & Currency preferences (Desktop only) */}
+          <div className="hidden lg:flex items-center gap-3">
           {/* CMD+K Search Icon Button */}
           <button
             onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
@@ -205,15 +204,16 @@ export function MarketingNav() {
           </div>
         </div>
       </div>
-      <header className="border-b border-border bg-background w-full py-4">
-        <div className="w-full flex items-center justify-between px-4 lg:px-8">
+      </div>
+      <header className="border-b border-border bg-background w-full py-3">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center group">
             <LanceConnectLogo className="transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98]" />
           </Link>
 
           <div className="hidden lg:flex items-center gap-4 xl:gap-6">
             <nav className="flex items-center gap-3 xl:gap-5 text-xs xl:text-sm text-foreground/80 font-medium">
-              {desktopLinks.map((l) => (
+              {navLinks.map((l) => (
                 <Link
                   key={l.to}
                   to={l.to}
@@ -232,7 +232,7 @@ export function MarketingNav() {
                   <span>Resources</span>
                   <ChevronDown className="h-3 w-3 transition-transform duration-250 group-hover:rotate-180" />
                 </button>
-                <div className="absolute left-0 mt-1.5 w-52 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-1 duration-150 font-sans">
+                <div className="absolute left-0 mt-1.5 w-52 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-1 duration-150 font-sans before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 before:content-['']">
                   {resourcesLinks.map((r) => (
                     <Link
                       key={r.to}
@@ -288,7 +288,7 @@ export function MarketingNav() {
         {open && (
           <div className="border-t border-border bg-background lg:hidden">
             <div className="flex flex-col px-4 py-3 gap-1">
-              {links.map((l) => (
+              {navLinks.map((l) => (
                 <Link
                   key={l.to}
                   to={l.to}
@@ -432,7 +432,7 @@ export function MarketingFooter() {
               <img
                 src="/logo-navy.png"
                 alt="LanceConnect"
-                className="h-13 md:h-18 w-auto object-contain transition-all duration-300 group-hover:scale-[1.03] group-hover:-translate-y-0.5 active:scale-[0.98] drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)] group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.12)]"
+                className="h-8 md:h-10 w-auto object-contain transition-all duration-300 group-hover:scale-[1.02] group-hover:-translate-y-0.5 active:scale-[0.98]"
               />
             </Link>
             <p className="mt-4 text-xs leading-relaxed text-slate-400">
