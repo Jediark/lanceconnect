@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { FREELANCER_CATEGORIES } from "@/data/content";
@@ -35,6 +36,9 @@ import {
   Package,
   Factory,
   BookOpen,
+  Heart,
+  Award,
+  CheckCircle,
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -242,6 +246,9 @@ function FreelancerSlugPage() {
 
   // Otherwise, render the public Freelancer profile detail page!
   const { freelancer } = data;
+  const [flyerExpanded, setFlyerExpanded] = useState(false);
+
+  const isJemoorel = freelancer.username === "jemoorel-uk" || freelancer.contact_email === "info@jemoorel.co.uk";
 
   const getCategoryLabel = (id: string) => {
     const cat = CATEGORIES.find((c) => c.id === id);
@@ -294,7 +301,7 @@ function FreelancerSlugPage() {
                 </div>
                 <div className="flex-1 space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h1 className="font-display font-extrabold text-2xl tracking-tight text-white">
+                    <h1 className="font-display font-extrabold text-2xl tracking-tight text-foreground">
                       {freelancer.full_name}
                     </h1>
                     <span className="inline-flex items-center gap-1 rounded bg-primary/10 border border-primary/20 px-2 py-0.5 text-[9px] font-mono text-primary font-bold">
@@ -304,6 +311,11 @@ function FreelancerSlugPage() {
                   <p className="text-xs font-mono text-primary font-semibold uppercase tracking-wider leading-none">
                     {getCategoryLabel(freelancer.freelancer_category)}
                   </p>
+                  {freelancer.tagline && (
+                    <p className="text-xs text-slate-700 dark:text-slate-300 font-medium italic mt-1.5">
+                      "{freelancer.tagline}"
+                    </p>
+                  )}
 
                   {/* Meta Details */}
                   <div className="flex flex-wrap gap-4 text-xs font-mono text-muted-foreground">
@@ -328,69 +340,261 @@ function FreelancerSlugPage() {
                 </div>
               </div>
 
-              {/* Bio Summary */}
-              <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-4">
-                <h2 className="font-display text-lg font-bold text-foreground">
-                  // about.freelancer
-                </h2>
-                <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
-                  {freelancer.bio || "No detailed bio has been uploaded by the freelancer."}
-                </p>
-              </div>
+              {isJemoorel ? (
+                <div className="space-y-8 animate-fade-in">
+                  {/* Core Corporate Banner */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card flex flex-col md:flex-row gap-8 items-center md:items-start">
+                    <img
+                      src="/assets/freelancers/jemoorel_logo.jpg"
+                      alt="Je'moorel Logo"
+                      className="w-32 h-32 rounded-2xl border border-border bg-[#fff9f2] shrink-0 object-contain p-2 shadow-sm"
+                    />
+                    <div className="space-y-4 text-center md:text-left">
+                      <h2 className="font-display text-xl font-bold text-foreground">
+                        Je'moorel UK Ltd
+                      </h2>
+                      <p className="text-xs font-mono font-bold text-emerald-500 uppercase tracking-widest leading-none">
+                        Quality Food. Transformational Learning.
+                      </p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                        Jemoorel UK Ltd is a purpose-driven B2B agency committed to improving lives through quality food supply and transformational learning. We bridge premium African food distribution with workforce development & leadership training to deliver lasting value and strengthen global communities.
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Case Studies Grid */}
-              <div className="space-y-4">
-                <h2 className="font-display text-lg font-bold text-foreground px-1">
-                  // work.showcase
-                </h2>
+                  {/* Story & Mission Grid */}
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Story Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        📖 Our Story
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Founded with a vision to create impact that lasts, Jemoorel UK Ltd was built on the belief that everyone deserves access to quality resources, practical skills, and real opportunities. Led by <strong>Margaret Ogunleye</strong>, a leadership and workforce development professional, the company combines expertise, passion, and purpose to deliver solutions that make a real difference.
+                      </p>
+                    </div>
 
-                {!freelancer.portfolio_projects || freelancer.portfolio_projects.length === 0 ? (
-                  <div className="rounded-3xl border border-dashed border-border bg-card/40 p-10 text-center select-none">
-                    <p className="text-xs text-muted-foreground font-mono">
-                      No case studies uploaded for this profile yet.
+                    {/* Mission Card */}
+                    <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        🎯 Our Mission
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        To empower individuals, families, and organisations through quality food supply and transformational learning that promote growth, self-reliance, and a better future. We don't just deliver products or training — we deliver transformation, opportunity, and lasting impact.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Deliverables Checklist */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      📦 We Deliver (Bulk & Wholesale Services)
+                    </h3>
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      {[
+                        "Wholesale Palm Oil",
+                        "African Food Products",
+                        "Bulk Sourcing & Supply",
+                        "Cooked Food Delivery",
+                        "Catering & Events Anchor",
+                        "AI Training & Development",
+                        "Leadership & Workforce Training",
+                        "Learning & L&D Solutions",
+                        "Business Growth Support",
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                          <CheckCircle className="h-4.5 w-4.5 text-emerald-500 shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Values Grid */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      🤝 Our Core Values
+                    </h3>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+                      {[
+                        {
+                          title: "People First",
+                          desc: "We put people at the heart of everything we do.",
+                          icon: <Users className="h-5 w-5 text-emerald-500" />,
+                        },
+                        {
+                          title: "Quality",
+                          desc: "Excellence in our products, training, and services.",
+                          icon: <Award className="h-5 w-5 text-amber-500" />,
+                        },
+                        {
+                          title: "Growth",
+                          desc: "Continuous learning, development, and improvement.",
+                          icon: <TrendingUp className="h-5 w-5 text-cyan-500" />,
+                        },
+                        {
+                          title: "Integrity",
+                          desc: "We operate with honesty, transparency, and accountability.",
+                          icon: <ShieldCheck className="h-5 w-5 text-rose-500" />,
+                        },
+                        {
+                          title: "Community Impact",
+                          desc: "We are passionate about building stronger communities.",
+                          icon: <Heart className="h-5 w-5 text-pink-500" />,
+                        },
+                      ].map((value, idx) => (
+                        <div key={idx} className="space-y-2 text-center sm:text-left">
+                          <div className="inline-grid h-10 w-10 place-items-center rounded-xl bg-slate-500/5 border border-border">
+                            {value.icon}
+                          </div>
+                          <h4 className="font-display font-semibold text-xs text-foreground leading-tight">{value.title}</h4>
+                          <p className="text-[10px] text-muted-foreground leading-normal">{value.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Product Catalogue Gallery */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-6">
+                    <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2 border-b border-border/40 pb-3">
+                      🌍 Wholesale Sourcing Catalogue
+                    </h3>
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {[
+                        {
+                          title: "Jerry Cans of Premium Palm Oil",
+                          image: "/assets/freelancers/jemoorel_food_1.jpg",
+                          desc: "Premium grade red palm oil, imported directly and securely sealed in containers for bulk distribution.",
+                        },
+                        {
+                          title: "Egusi (Melon Seeds)",
+                          image: "/assets/freelancers/jemoorel_food_2.jpg",
+                          desc: "Hand-peeled, clean, high-grade egusi seeds packaged in bulk for UK wholesale markets.",
+                        },
+                        {
+                          title: "Smoked Fish & Meat",
+                          image: "/assets/freelancers/jemoorel_food_3.jpg",
+                          desc: "Traditional flavor wood-smoked dry fish and protein sources, packaged under high hygiene standards.",
+                        },
+                        {
+                          title: "Stockfish Heads & Pieces",
+                          image: "/assets/freelancers/jemoorel_food_4.jpg",
+                          desc: "Dry stockfish parts sourced directly for authentic African seasonings and traditional soup recipes.",
+                        },
+                        {
+                          title: "Dried Crayfish",
+                          image: "/assets/freelancers/jemoorel_food_5.jpg",
+                          desc: "Whole dry crayfish/shrimps, clean and securely packed in bulk quantities.",
+                        },
+                      ].map((product, idx) => (
+                        <div key={idx} className="rounded-2xl border border-border bg-background p-3 flex flex-col justify-between hover:border-slate-700 transition">
+                          <div className="aspect-[4/3] w-full rounded-xl overflow-hidden mb-3 border border-border/40 relative">
+                            <img
+                              src={product.image}
+                              alt={product.title}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h4 className="font-display font-semibold text-xs text-foreground truncate">{product.title}</h4>
+                            <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{product.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Collapsible Official About Flyer */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-display text-base font-bold text-foreground">
+                        📄 Official Corporate Flyer
+                      </h3>
+                      <button
+                        onClick={() => setFlyerExpanded(!flyerExpanded)}
+                        className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-primary font-semibold hover:bg-accent transition cursor-pointer"
+                      >
+                        {flyerExpanded ? "Hide Flyer" : "View Full Flyer"}
+                      </button>
+                    </div>
+                    {flyerExpanded && (
+                      <div className="rounded-2xl overflow-hidden border border-border bg-[#fff9f2] p-4 flex justify-center animate-fade-in">
+                        <img
+                          src="/assets/freelancers/jemoorel_about_flyer.jpg"
+                          alt="Je'moorel Corporate Flyer"
+                          className="max-w-full h-auto rounded-xl shadow-lg border border-border/20"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Bio Summary */}
+                  <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-card space-y-4">
+                    <h2 className="font-display text-lg font-bold text-foreground">
+                      // about.freelancer
+                    </h2>
+                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                      {freelancer.bio || "No detailed bio has been uploaded by the freelancer."}
                     </p>
                   </div>
-                ) : (
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    {freelancer.portfolio_projects.map((proj: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="rounded-3xl border border-border bg-card p-4 shadow-card flex flex-col justify-between hover:border-slate-700 transition"
-                      >
-                        <div>
-                          {proj.image && (
-                            <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden mb-3.5 border border-border/40 relative group">
-                              <img
-                                src={proj.image}
-                                alt={proj.title}
-                                className="h-full w-full object-cover transition duration-300 group-hover:scale-103"
-                              />
-                            </div>
-                          )}
-                          <h3 className="font-display font-bold text-foreground text-sm truncate leading-snug">
-                            {proj.title}
-                          </h3>
-                          <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-3">
-                            {proj.desc}
-                          </p>
-                        </div>
-                        {proj.link && (
-                          <div className="mt-4 pt-3 border-t border-border/40 flex justify-end">
-                            <a
-                              href={proj.link}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
-                            >
-                              Explore project <ExternalLink className="h-3 w-3" />
-                            </a>
-                          </div>
-                        )}
+
+                  {/* Case Studies Grid */}
+                  <div className="space-y-4">
+                    <h2 className="font-display text-lg font-bold text-foreground px-1">
+                      // work.showcase
+                    </h2>
+
+                    {!freelancer.portfolio_projects || freelancer.portfolio_projects.length === 0 ? (
+                      <div className="rounded-3xl border border-dashed border-border bg-card/40 p-10 text-center select-none">
+                        <p className="text-xs text-muted-foreground font-mono">
+                          No case studies uploaded for this profile yet.
+                        </p>
                       </div>
-                    ))}
+                    ) : (
+                      <div className="grid gap-6 sm:grid-cols-2">
+                        {freelancer.portfolio_projects.map((proj: any, idx: number) => (
+                          <div
+                            key={idx}
+                            className="rounded-3xl border border-border bg-card p-4 shadow-card flex flex-col justify-between hover:border-slate-700 transition"
+                          >
+                            <div>
+                              {proj.image && (
+                                <div className="aspect-[16/9] w-full rounded-2xl overflow-hidden mb-3.5 border border-border/40 relative group">
+                                  <img
+                                    src={proj.image}
+                                    alt={proj.title}
+                                    className="h-full w-full object-cover transition duration-300 group-hover:scale-103"
+                                  />
+                                </div>
+                              )}
+                              <h3 className="font-display font-bold text-foreground text-sm truncate leading-snug">
+                                {proj.title}
+                              </h3>
+                              <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-3">
+                                {proj.desc}
+                              </p>
+                            </div>
+                            {proj.link && (
+                              <div className="mt-4 pt-3 border-t border-border/40 flex justify-end">
+                                <a
+                                  href={proj.link}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                                >
+                                  Explore project <ExternalLink className="h-3 w-3" />
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </div>
 
             {/* Right Side Column (Contact Details Panel) */}
