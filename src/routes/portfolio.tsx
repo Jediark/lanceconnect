@@ -35,134 +35,92 @@ const CATEGORIES = [
 
 const PORTFOLIO_FREELANCERS = [
   {
-    name: "Taiwo Adeyemi",
-    role: "Full-stack Developer",
+    name: "Akinola Olujobi (Trendtactics Digital)",
+    role: "Founder & Lead Digital Growth Architect",
     category: "web-developers",
-    avatar:
-      "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&q=80&fit=crop&crop=face",
+    avatar: "/assets/freelancers/freelancer_11.jpg",
+    city: "Lagos, Nigeria",
+    rating: "5.0",
+    skills: ["Web Development", "UI/UX Design", "Next.js", "AI-powered Marketing"],
+    projects: [
+      {
+        title: "Midway Health Inc.",
+        image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&q=80",
+        desc: "Premium healthcare services portal built at midwayhealthinc.com.",
+      },
+      {
+        title: "Edvoura Learning Hub",
+        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&q=80",
+        desc: "Education ecosystem and tutoring portal built at edvouralearninghub.com.",
+      },
+      {
+        title: "Allen Green Transportation",
+        image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80",
+        desc: "Logistics and transportation service platform built at allengreentransportation.com.",
+      },
+    ],
+  },
+  {
+    name: "Emmanuel Edward",
+    role: "AI Web Dev Trainer & Founder of Techfields Digital",
+    category: "web-developers",
+    avatar: "/assets/freelancers/freelancer_5.jpg",
     city: "Lagos, Nigeria",
     rating: "4.9",
-    skills: ["React", "Node.js", "Tailwind CSS", "Next.js"],
+    skills: ["WordPress", "AI Sourcing", "Front-end Dev", "UI Design"],
     projects: [
       {
-        title: "SaaS Dashboard Interface",
-        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80",
-        desc: "A modern analytics app built with React & Tailwind.",
-      },
-      {
-        title: "Bespoke Hotel Portal",
-        image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80",
-        desc: "Online booking engine and CMS for a boutique hotel.",
+        title: "Techfields Digital Portfolio",
+        image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&q=80",
+        desc: "Pioneer AI-powered web development training portal at techfieldsdigital.com.ng.",
       },
     ],
   },
   {
-    name: "Maria Silva",
-    role: "Brand Designer & UI Expert",
-    category: "designers",
-    avatar:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&q=80&fit=crop&crop=face",
-    city: "São Paulo, Brazil",
-    rating: "5.0",
-    skills: ["Figma", "Branding", "UI/UX", "Illustrator"],
-    projects: [
-      {
-        title: "Neobank Visual System",
-        image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&q=80",
-        desc: "Full rebranding, mobile interfaces and guidelines.",
-      },
-      {
-        title: "Organic Cosmetics Pack",
-        image: "/assets/freelancers/organic_cosmetics_pack.png",
-        desc: "Eco-friendly retail box and bottle design.",
-      },
-    ],
-  },
-  {
-    name: "James Kariuki",
-    role: "SEO Consultant & Copywriter",
-    category: "seo-specialists",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80&fit=crop&crop=face",
-    city: "Nairobi, Kenya",
-    rating: "4.8",
-    skills: ["SEO Auditing", "Technical Writing", "Keyword Research"],
-    projects: [
-      {
-        title: "Fintech Content Funnel",
-        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80",
-        desc: "Scale traffic from 10k to 150k monthly visits.",
-      },
-      {
-        title: "SaaS Launch Ebook",
-        image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=400&q=80",
-        desc: "Complete copy strategy and PDF lead magnet.",
-      },
-    ],
-  },
-  {
-    name: "Priya Patel",
-    role: "Social Media Strategist",
-    category: "social-media",
-    avatar:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&q=80&fit=crop&crop=face",
-    city: "Mumbai, India",
-    rating: "4.9",
-    skills: ["Copywriting", "Campaign Ads", "Content Calendars"],
-    projects: [
-      {
-        title: "Fitness App Launch Campaign",
-        image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80",
-        desc: "Drove 12k app signups via Instagram Reels strategy.",
-      },
-      {
-        title: "B2B SaaS LinkedIn Growth",
-        image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&q=80",
-        desc: "Organically grew CEO profile to 25k followers.",
-      },
-    ],
-  },
-  {
-    name: "Sofia Romano",
-    role: "Videographer & Motion Artist",
+    name: "Akinola Olujobi (Event Host)",
+    role: "Premium Event Host & Strategic Anchor",
     category: "videographers",
-    avatar:
-      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=300&q=80&fit=crop&crop=face",
-    city: "Naples, Italy",
+    avatar: "/assets/freelancers/freelancer_8.jpg",
+    city: "Lagos, Nigeria",
     rating: "5.0",
-    skills: ["Premiere", "After Effects", "Color Grading"],
+    skills: ["Event Anchoring", "Corporate MC", "Public Speaking", "Communications"],
     projects: [
       {
-        title: "Commercial Coffee Ad",
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80",
-        desc: "Social campaign commercial video.",
-      },
-      {
-        title: "Real Estate Cinematic Tour",
-        image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&q=80",
-        desc: "Luxury video tour booked on YouTube.",
+        title: "Akinola Olujobi MC Services",
+        image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&q=80",
+        desc: "Premium Event Host, Master of Ceremonies, and Strategic Anchor portfolio at akinolaolujobi.com.",
       },
     ],
   },
   {
-    name: "Lucas Fernández",
-    role: "Virtual Assistant & Operations",
-    category: "virtual-assistants",
-    avatar:
-      "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=300&q=80&fit=crop&crop=face",
-    city: "Buenos Aires, Argentina",
-    rating: "4.9",
-    skills: ["Calendar Sync", "Invoicing", "Customer Support"],
+    name: "Akinola Olujobi (Edvoura)",
+    role: "Founder of Edvoura Learning Hub",
+    category: "seo-specialists",
+    avatar: "/assets/freelancers/freelancer_4.jpg",
+    city: "Lagos, Nigeria",
+    rating: "5.0",
+    skills: ["Academic Mentoring", "Content Strategy", "Digital Learning Systems"],
     projects: [
       {
-        title: "Inbox & Ops Architecture",
-        image: "https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=400&q=80",
-        desc: "Automated standard workflows and scheduling.",
-      },
-      {
-        title: "Shopify Store Customer System",
+        title: "Edvoura Tutoring System",
         image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80",
-        desc: "Intercom integration and customer support scaling.",
+        desc: "Premium global learning ecosystem dedicated to bridging educational gaps at edvouralearninghub.com.",
+      },
+    ],
+  },
+  {
+    name: "Margaret Ogunleye (Je'moorel UK)",
+    role: "MD & Lead Consultant",
+    category: "virtual-assistants",
+    avatar: "/assets/freelancers/freelancer_6.jpg",
+    city: "London, UK",
+    rating: "4.9",
+    skills: ["L&D Administration", "African Food Export", "Leadership Training"],
+    projects: [
+      {
+        title: "Je'moorel UK Portal",
+        image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80",
+        desc: "African food supply, L&D solutions, and corporate training portal at jemoorel.co.uk.",
       },
     ],
   },

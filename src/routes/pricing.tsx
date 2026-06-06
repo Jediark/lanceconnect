@@ -80,9 +80,26 @@ function PricingPage() {
               All Features. Zero Cost.
             </h2>
             
-            <div className="mt-6 flex justify-center items-baseline gap-1 text-slate-900 dark:text-white">
-              <span className="font-display text-6xl font-extrabold">₦0</span>
-              <span className="text-sm text-slate-500 dark:text-slate-400">/ forever</span>
+            <div className="mt-6 space-y-4 select-none">
+              <div className="flex justify-center items-center gap-6 overflow-x-auto py-2 px-4 scrollbar-thin scrollbar-thumb-border">
+                {[
+                  { symbol: "₦", val: "0", name: "NGN" },
+                  { symbol: "$", val: "0", name: "USD" },
+                  { symbol: "€", val: "0", name: "EUR" },
+                  { symbol: "£", val: "0", name: "GBP" },
+                  { symbol: "R$", val: "0", name: "BRL" },
+                ].map((cur) => (
+                  <div key={cur.name} className="flex flex-col items-center shrink-0 border border-border bg-background/50 rounded-xl px-4 py-2 min-w-[75px] shadow-sm">
+                    <span className="text-[10px] font-mono text-slate-500 font-bold uppercase">{cur.name}</span>
+                    <span className="font-display text-2xl font-black text-slate-900 dark:text-white mt-0.5">
+                      {cur.symbol}{cur.val}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold tracking-wide">
+                Free Forever · No Gated Features
+              </p>
             </div>
 
             <p className="mt-6 text-sm text-slate-700 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">

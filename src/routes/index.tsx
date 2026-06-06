@@ -41,6 +41,7 @@ import {
   Factory,
   BookOpen,
   Brain,
+  Heart,
 } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
@@ -647,32 +648,23 @@ function HeroWithMosaic() {
 
 function StatsBar() {
   const stats = [
-    { k: "2.4M+", v: "Leads Found" },
-    { k: "150+", v: "Countries" },
-    { k: "89%", v: "Accuracy" },
-    { k: "$0", v: "Commission" },
+    { k: "18+", v: "Specialized Industries", d: "Digital creators to physical B2B trade" },
+    { k: "150+", v: "Countries Covered", d: "Local scanners active on 6 continents" },
+    { k: "45K+", v: "Verified Client Leads", d: "Scraped, checked, and updated daily" },
+    { k: "98.4%", v: "Contact Accuracy", d: "Double-checked to eliminate bounces" },
   ];
 
-  const [counts, setCounts] = useState({ leads: 0, countries: 0, accuracy: 0, commission: 0 });
-
-  useEffect(() => {
-    const duration = 2000;
-    const timer = setTimeout(() => {
-      setCounts({ leads: 240, countries: 150, accuracy: 89, commission: 0 });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div className="bg-sidebar border-b border-sidebar-border">
-      <div className="mx-auto max-w-7xl px-4 py-4 lg:px-8">
-        <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
-          {stats.map((s, i) => (
-            <div key={s.v} className="text-center">
-              <p className="font-mono-data text-2xl font-bold text-primary">
-                {counts.leads || s.k}
+    <div className="bg-sidebar border-b border-sidebar-border select-none">
+      <div className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {stats.map((s) => (
+            <div key={s.v} className="space-y-1">
+              <p className="font-mono-data text-2xl md:text-3xl font-extrabold text-primary">
+                {s.k}
               </p>
-              <p className="text-[10px] text-sidebar-foreground uppercase tracking-wider">{s.v}</p>
+              <p className="text-[10px] text-sidebar-foreground uppercase font-bold tracking-wider">{s.v}</p>
+              <p className="text-[11px] text-muted-foreground leading-normal max-w-[200px] mx-auto">{s.d}</p>
             </div>
           ))}
         </div>
@@ -1740,99 +1732,41 @@ function Testimonials() {
 }
 
 /* ────────────────────────────────────────────────────────────
-   PRICING — Intercom-clean
+   SUPPORT LANCECONNECT (BUY ME A COFFEE / DONATE)
    ──────────────────────────────────────────────────────────── */
 function Pricing() {
-  const { t, formatPrice, getCurrencySymbol } = usePreferences();
-  const plans = [
-    {
-      name: t("plan_free"),
-      price: 0,
-      leads: "10",
-      popular: false,
-      cta: t("plan_cta_free"),
-      features: [t("plan_free_feature_1"), t("plan_free_feature_2"), t("plan_free_feature_3")],
-    },
-    {
-      name: t("plan_individual"),
-      price: 7,
-      leads: "200",
-      popular: true,
-      cta: t("plan_cta_ind"),
-      features: [
-        t("plan_ind_feature_1"),
-        t("plan_ind_feature_2"),
-        t("plan_ind_feature_3"),
-        t("plan_ind_feature_4"),
-        t("plan_ind_feature_5"),
-      ],
-    },
-    {
-      name: t("plan_company"),
-      price: 20,
-      leads: "Unlimited",
-      popular: false,
-      cta: t("plan_cta_comp"),
-      features: [
-        t("plan_comp_feature_1"),
-        t("plan_comp_feature_2"),
-        t("plan_comp_feature_3"),
-        t("plan_comp_feature_4"),
-        t("plan_comp_feature_5"),
-      ],
-    },
-  ];
   return (
-    <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
-          // simple.pricing
+    <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8 border-t border-border bg-card/30 rounded-3xl select-none">
+      <div className="mx-auto max-w-3xl text-center space-y-6">
+        <p className="text-xs font-mono text-primary mb-2 tracking-widest uppercase flex items-center justify-center gap-1.5">
+          <Heart className="h-4.5 w-4.5 text-rose-500 fill-current animate-pulse" /> // support.our.mission
         </p>
         <h2 className="font-display text-4xl font-extrabold text-foreground tracking-tight">
-          {t("pricing_title")}
+          Keep LanceConnect Free for Everyone
         </h2>
-        <p className="mt-4 text-muted-foreground">{t("pricing_sub")}</p>
-      </div>
-      <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-        {plans.map((p) => (
-          <div
-            key={p.name}
-            className={`relative rounded-2xl border bg-card/85 p-7 transition hover:shadow-card-hover ${p.popular ? "border-primary shadow-[0_0_25px_rgba(99,102,241,0.15)] lg:-translate-y-3" : "border-border"}`}
+        <p className="text-sm text-slate-700 dark:text-slate-350 leading-relaxed max-w-xl mx-auto">
+          We built LanceConnect to help freelancers grow their businesses. No paywalls, no limits on leads, and no monthly fees. You get the complete AI lead generation suite for free.
+        </p>
+        <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          Building and maintaining this platform costs real money every month — servers, APIs, and data. If LanceConnect has helped you find clients, please consider supporting our mission.
+        </p>
+        
+        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+          <Link
+            to="/support-us"
+            className="rounded-xl bg-primary px-8 py-3.5 text-sm font-bold text-white hover:brightness-110 transition cursor-pointer shadow-lg shadow-primary/20 flex items-center gap-2"
           >
-            {p.popular && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                Most Popular
-              </span>
-            )}
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              {p.name}
-            </p>
-            <div className="mt-3 flex items-baseline gap-1">
-              <span className="font-display text-4xl font-extrabold text-foreground">
-                {getCurrencySymbol()}
-                {formatPrice(p.price)}
-              </span>
-              <span className="text-xs text-muted-foreground">{t("plan_mo")}</span>
-            </div>
-            <p className="mt-2 font-mono-data text-xs text-primary font-semibold">
-              {p.leads === "Unlimited" ? "Unlimited" : p.leads} {t("plan_leads_mo")}
-            </p>
-            <ul className="mt-6 space-y-2.5 text-xs text-muted-foreground">
-              {p.features.map((f) => (
-                <li key={f} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/register"
-              className={`mt-7 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${p.popular ? "bg-primary text-white hover:bg-primary/95" : "border border-border bg-background text-foreground hover:bg-accent"}`}
-            >
-              {p.cta}
-            </Link>
-          </div>
-        ))}
+            Support Our Mission <Heart className="h-4 w-4 fill-current text-white animate-pulse" />
+          </Link>
+          <a
+            href="https://buymeacoffee.com/lanceconnect"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl border border-border bg-card px-8 py-3 text-sm font-bold text-slate-355 hover:text-white hover:bg-accent transition cursor-pointer flex items-center gap-2"
+          >
+            Buy Me a Coffee ☕
+          </a>
+        </div>
       </div>
     </div>
   );

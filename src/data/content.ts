@@ -186,46 +186,25 @@ export const CHANGELOG: {
 
 export const TEAM = [
   {
-    name: "Taiwo Adeyemi",
-    role: "Co-founder, Engineering",
+    name: "Trendtactics Digital",
+    role: "Digital Sourcing Agency & Strategic Partner",
     city: "Lagos, Nigeria",
     avatar: IMG.face1,
-    bio: "Ex-freelance web dev. Built the first version on weekends.",
+    bio: "Founding partner. Engineering high-performing digital ecosystems, verified datasets, and client acquisition channels for freelancers.",
   },
   {
-    name: "Maria Silva",
-    role: "Co-founder, Design",
-    city: "São Paulo, Brazil",
-    avatar: IMG.face2,
-    bio: "Designed the product after years of cold-emailing her own clients.",
+    name: "Gravity",
+    role: "Lead AI Architect",
+    city: "DeepMind",
+    avatar: IMG.face7,
+    bio: "AI pair programming engineer. Writing code, verifying database schemas, scoring opportunity signals, and optimizing workflows in a minute.",
   },
   {
-    name: "James Kariuki",
-    role: "Growth & Sales",
-    city: "Nairobi, Kenya",
-    avatar: IMG.face3,
-    bio: "Helps freelancers close their first 10 clients.",
-  },
-  {
-    name: "Priya Patel",
-    role: "Engineering",
-    city: "Mumbai, India",
-    avatar: IMG.face4,
-    bio: "Lead-discovery pipelines, opportunity scoring.",
-  },
-  {
-    name: "Sofia Romano",
-    role: "Content",
-    city: "Naples, Italy",
+    name: "Love",
+    role: "Community Growth & Trust Operations",
+    city: "Lagos, Nigeria",
     avatar: IMG.face6,
-    bio: "Writes the playbooks freelancers actually use.",
-  },
-  {
-    name: "Lucas Fernández",
-    role: "Support",
-    city: "Buenos Aires, Argentina",
-    avatar: IMG.face5,
-    bio: "Replies within 4 hours, every day, in 3 languages.",
+    bio: "Managing safety guidelines, community support, and helping freelancers globally connect with high-paying client contracts.",
   },
 ];
 
