@@ -64,10 +64,17 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
           notes: ul.notes || "",
           followUpDate: ul.follow_up_date,
           dealValue: ul.deal_value ? Number(ul.deal_value) : null,
+          hasFacebook: lead.has_facebook || false,
           facebookUrl: lead.facebook_url || null,
+          hasInstagram: lead.has_instagram || false,
           instagramUrl: lead.instagram_url || null,
+          hasTwitter: lead.has_twitter || false,
+          twitterUrl: lead.twitter_url || null,
           hasLinkedin: lead.has_linkedin || false,
           linkedinUrl: lead.linkedin_url || null,
+          userLeadId: ul.id,
+          googlePlaceId: lead.google_place_id || null,
+          googleMapsUrl: lead.google_maps_url || null,
         };
       });
 
@@ -140,7 +147,7 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
     if (!user) return;
 
     try {
-      const { error } = await supabase.functions.invoke("pipeline-ops", {
+      const { data: responseData, error } = await supabase.functions.invoke("pipeline-ops", {
         body: {
           action: "save",
           leadId: lead.id,
@@ -156,6 +163,7 @@ export function PipelineProvider({ children }: { children: ReactNode }) {
           status: "new" as PipelineStatus,
           notes: "",
           followUpDate: null,
+          userLeadId: responseData?.data?.id || null,
         },
         ...prev,
       ]);

@@ -81,9 +81,11 @@ Deno.serve(async (req) => {
 
       // Automatically trigger contact enrichment after saving to pipeline
       try {
+        console.log(`[pipeline-ops] Lead saved: ${savedLead.id} - invoking enrich-contact`);
         await supabase.functions.invoke("enrich-contact", {
           body: { leadId: savedLead.id },
         });
+        console.log(`[pipeline-ops] enrich-contact invoked successfully`);
       } catch (enrichErr) {
         console.error("Failed to trigger enrich-contact after pipeline save:", enrichErr);
       }

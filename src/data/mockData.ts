@@ -22,8 +22,12 @@ export type Lead = {
   followUpDate?: string | null;
   dealValue?: number | null;
   createdAt?: string;
+  hasFacebook?: boolean;
   facebookUrl?: string | null;
+  hasInstagram?: boolean;
   instagramUrl?: string | null;
+  hasTwitter?: boolean;
+  twitterUrl?: string | null;
   hasLinkedin?: boolean;
   linkedinUrl?: string | null;
   phoneVerified?: boolean;
@@ -31,6 +35,9 @@ export type Lead = {
   websiteLive?: boolean;
   isFlagged?: boolean;
   suspiciousCount?: number;
+  userLeadId?: string | null;
+  googlePlaceId?: string | null;
+  googleMapsUrl?: string | null;
 };
 
 export type PipelineStatus = "new" | "contacted" | "interested" | "proposal_sent" | "won" | "lost";

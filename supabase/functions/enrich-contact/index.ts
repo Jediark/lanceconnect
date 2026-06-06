@@ -77,6 +77,18 @@ Deno.serve(async (req) => {
       throw new AppError("Lead not found", 404, "NOT_FOUND");
     }
 
+    console.log(`[enrich-contact] Starting for lead: ${lead.business_name}`);
+    console.log(`[enrich-contact] Website URL: ${lead.website_url}`);
+    console.log(`[enrich-contact] Has website: ${lead.has_website}`);
+
+    // Check if EMAIL_SCRAPER_URL is set
+    const scraperUrl = Deno.env.get("EMAIL_SCRAPER_URL");
+    console.log(`[enrich-contact] Scraper URL: ${scraperUrl}`);
+
+    if (!scraperUrl) {
+      console.error("[enrich-contact] EMAIL_SCRAPER_URL not set!");
+    }
+
     const updateData: any = {
       updated_at: new Date().toISOString(),
     };
@@ -162,6 +174,47 @@ Deno.serve(async (req) => {
         }
       } catch (err) {
         console.error("Email discovery failed:", err);
+      }
+    }
+
+    // Layer 3: Instagram bio scraping
+    if (!emailFound && lead.has_instagram && lead.instagram_url) {
+      try {
+        console.log(`[enrich-contact] Fetching Instagram URL for bio scraping: ${lead.instagram_url}`);
+        const igRes = await fetch(lead.instagram_url, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (compatible; LanceConnect/1.0)",
+          },
+          signal: AbortSignal.timeout(8000),
+        });
+        const igHtml = await igRes.text();
+
+        // Extract emails from Instagram page HTML
+        const emailPattern = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+        const igEmails = igHtml.match(emailPattern) || [];
+
+        // Also look for WhatsApp numbers in bio
+        const waPattern = /wa\.me\/(\d+)/g;
+        const waMatches = igHtml.match(waPattern) || [];
+
+        if (igEmails.length > 0) {
+          emailFound = igEmails[0];
+          updateData.email = emailFound;
+          updateData.email_confidence = "likely";
+          console.log(`[enrich-contact] Found email in Instagram bio: ${emailFound}`);
+        }
+
+        if (waMatches.length > 0 && !lead.phone) {
+          // Extract WhatsApp number if no phone was found
+          const waNumber = waMatches[0].replace("wa.me/", "+");
+          console.log(`[enrich-contact] Found WhatsApp number in Instagram bio: ${waNumber}`);
+          await supabase
+            .from("leads")
+            .update({ phone: waNumber })
+            .eq("id", lead.id);
+        }
+      } catch (e: any) {
+        console.warn(`[enrich-contact] Instagram scrape failed: ${e.message}`);
       }
     }
 
