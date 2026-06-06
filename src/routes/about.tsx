@@ -216,7 +216,7 @@ export const Route = createFileRoute("/about")({
         className="bg-parallax relative h-[320px] w-full flex items-center justify-center"
         style={{ backgroundImage: "url('/assets/freelancers/freelancer_14.jpg')" }}
       >
-        <div className="absolute inset-0 bg-[#020b21]/75 z-0" />
+        <div className="absolute inset-0 bg-[#020b21] opacity-80 mix-blend-multiply z-0" />
         <div className="relative z-10 text-center max-w-xl px-4 text-white">
           <p className="text-xs font-mono text-primary uppercase tracking-widest">
             // human.centered.connection

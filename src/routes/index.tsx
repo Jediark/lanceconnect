@@ -324,7 +324,7 @@ function HeroWithMosaic() {
   }, [embla]);
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-slate-200 dark:bg-[#020b21] transition-colors duration-300">
+    <section className="relative overflow-hidden border-b border-border bg-[#020b21] transition-colors duration-300">
       <div ref={emblaRef} className="overflow-hidden w-full">
         <div className="flex">
           {SLIDES_DATA.map((slide, idx) => {
@@ -334,14 +334,13 @@ function HeroWithMosaic() {
                 key={idx}
                 className="min-w-0 shrink-0 grow-0 basis-full relative min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden"
               >
-                <div className="absolute inset-0 z-0 select-none pointer-events-none">
+                <div className="absolute inset-0 z-0 select-none pointer-events-none bg-[#020b21]">
+                  <div className="absolute inset-0 bg-[#020b21] opacity-80 mix-blend-multiply" />
                   <img
                     src={slide.bgImg}
                     className={`w-full h-full object-cover opacity-35 transition-transform duration-1000 ${isActive ? "scale-100" : "scale-105"}`}
                     alt=""
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#020b21]/95 via-[#020b21]/80 to-[#020b21]/45 dark:block hidden transition-all duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-slate-300/95 via-slate-300/85 to-slate-200/50 dark:hidden block transition-all duration-500" />
                 </div>
 
                 <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 pt-8 pb-12 lg:pt-10 lg:pb-16 z-10">
@@ -351,7 +350,7 @@ function HeroWithMosaic() {
                         initial={{ opacity: 0, y: 15 }}
                         animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        className="text-xs font-mono font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400 mb-3"
+                        className="text-xs font-mono font-bold tracking-widest uppercase text-slate-400 mb-3"
                       >
                         {slide.eyebrow}
                       </motion.p>
@@ -360,7 +359,7 @@ function HeroWithMosaic() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="font-display text-4xl font-black text-slate-900 dark:text-white sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight"
+                        className="font-display text-4xl font-black text-white sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight"
                       >
                         {slide.title}
                       </motion.h1>
@@ -369,7 +368,7 @@ function HeroWithMosaic() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                         transition={{ duration: 0.6, delay: 0.3 }}
-                        className="mt-6 text-base text-slate-600 dark:text-slate-200 max-w-lg leading-relaxed font-medium"
+                        className="mt-6 text-base text-slate-200 max-w-lg leading-relaxed font-medium"
                       >
                         {slide.sub}
                       </motion.p>
@@ -388,9 +387,9 @@ function HeroWithMosaic() {
                         </Link>
                         <Link
                           to="/how-it-works"
-                          className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-900 dark:text-white hover:scale-[1.02]"
+                          className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-800 transition text-white hover:scale-[1.02]"
                         >
-                          <Play className="h-4 w-4 text-slate-500 dark:text-slate-400" />{" "}
+                          <Play className="h-4 w-4 text-slate-400" />{" "}
                           {t("hero_cta_demo")}
                         </Link>
                       </motion.div>
@@ -399,7 +398,7 @@ function HeroWithMosaic() {
                         initial={{ opacity: 0 }}
                         animate={isActive ? { opacity: 1 } : { opacity: 0 }}
                         transition={{ duration: 0.6, delay: 0.5 }}
-                        className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-500 dark:text-slate-400"
+                        className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-400"
                       >
                         <span className="flex items-center gap-1.5">
                           <CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card
@@ -1058,7 +1057,7 @@ function HowItWorks() {
           top: "-15%",
         }}
       />
-      <div className="absolute inset-0 bg-[#020b21]/65 dark:bg-[#020b21]/55 z-10" />
+      <div className="absolute inset-0 bg-[#020b21] opacity-80 mix-blend-multiply z-10" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
@@ -2336,7 +2335,7 @@ function FAQ() {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300"
+      className="relative overflow-hidden border-y border-border py-24 bg-[#020b21] transition-colors duration-300"
     >
       <motion.div
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
@@ -2347,19 +2346,19 @@ function FAQ() {
           top: "-15%",
         }}
       />
-      <div className="absolute inset-0 bg-slate-300/75 dark:bg-[#020b21]/55 z-10" />
+      <div className="absolute inset-0 bg-[#020b21] opacity-80 mix-blend-multiply z-10" />
 
       <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
             // questions.answered
           </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">
             Questions, answered honestly
           </h2>
-          <p className="mt-3 text-muted-foreground">
+          <p className="mt-3 text-slate-300">
             Still curious?{" "}
-            <Link to="/contact" className="text-primary underline-offset-4 hover:underline">
+            <Link to="/contact" className="text-blue-400 hover:text-blue-300 underline-offset-4 hover:underline">
               Talk to a human
             </Link>
             .

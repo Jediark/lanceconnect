@@ -98,7 +98,7 @@ function BlogIndex() {
           className="bg-parallax relative h-[280px] w-full flex items-center justify-center my-16 rounded-3xl"
           style={{ backgroundImage: "url('/assets/freelancers/freelancer_18.jpg')" }}
         >
-          <div className="absolute inset-0 bg-[#020b21]/85 z-0" />
+          <div className="absolute inset-0 bg-[#020b21] opacity-80 mix-blend-multiply z-0" />
           <div className="relative z-10 text-center max-w-xl px-4 text-white">
             <p className="text-xs font-mono text-primary uppercase tracking-widest">
               // proven.strategies.shared
