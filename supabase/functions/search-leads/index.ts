@@ -235,23 +235,8 @@ Deno.serve(async (req) => {
     }
 
 
-    // 2. Check user lead limits
-    const { data: limitCheck, error: limitErr } = await supabase.rpc("check_lead_limit", {
-      p_user_id: user.id,
-      p_count: 1,
-    });
-
-    if (limitErr) {
-      throw new Error(`Quota check failed: ${limitErr.message}`);
-    }
-
-    if (!limitCheck) {
-      throw new AppError(
-        "Monthly lead limit or credits exhausted. Please upgrade your plan.",
-        402,
-        "QUOTA_EXHAUSTED",
-      );
-    }
+    // 2. Check user lead limits (Bypassed since platform is free and unlimited)
+    const limitCheck = true;
 
     // 3. Query cached database first
     const { data: cachedLeads, error: cacheError } = await supabase
@@ -395,11 +380,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 6. Deduct quota and log search
-    await supabase.rpc("consume_leads", {
-      p_user_id: user.id,
-      p_count: 1,
-    });
+    // 6. Deduct quota and log search (Bypassed consumption since platform is free)
 
     await supabase.from("search_history").insert({
       user_id: user.id,
