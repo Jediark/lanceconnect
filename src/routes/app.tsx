@@ -22,8 +22,12 @@ function AppLayout() {
   const nav = useNavigate();
 
   useEffect(() => {
-    if (!loading && user && !user.onboardingCompleted) {
-      nav({ to: "/onboarding" });
+    if (!loading) {
+      if (!user) {
+        nav({ to: "/login" });
+      } else if (!user.onboardingCompleted) {
+        nav({ to: "/onboarding" });
+      }
     }
   }, [user, loading, nav]);
 

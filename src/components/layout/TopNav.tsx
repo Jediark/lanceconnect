@@ -27,7 +27,7 @@ import { PlanUsageBar } from "@/components/ui/PlanUsageBar";
 
 export function TopNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const { theme, setTheme } = usePreferences();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -192,7 +192,13 @@ export function TopNav() {
                           </>
                         )}
                       </button>
-                      <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg text-red-500 hover:bg-red-500/10 transition">
+                      <button
+                        onClick={async () => {
+                          setProfileDropdownOpen(false);
+                          await logout();
+                        }}
+                        className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg text-red-500 hover:bg-red-500/10 transition cursor-pointer"
+                      >
                         <LogOut className="h-3.5 w-3.5" /> Logout
                       </button>
                     </div>
