@@ -191,8 +191,12 @@ function Discover() {
       }).then(async (res) => {
         const data = await res.json();
         if (!res.ok || data.error) {
-          if (data.error === "LIMIT_REACHED") {
-            toast.error("Search limit reached! Please upgrade your plan to get more leads.", {
+          const errObj = data.error || {};
+          const errCode = typeof errObj === "string" ? errObj : errObj.code;
+          const errMsg = typeof errObj === "string" ? errObj : errObj.message;
+
+          if (errCode === "LIMIT_REACHED" || errCode === "QUOTA_EXHAUSTED" || res.status === 402) {
+            toast.error(errMsg || "Search limit reached! Please upgrade your plan to get more leads.", {
               action: {
                 label: "Upgrade Plan",
                 onClick: () => {
@@ -200,9 +204,19 @@ function Discover() {
                 },
               },
             });
-            return [];
+            const limitError = new Error(errMsg || "Search limit reached");
+            (limitError as any).isHandled = true;
+            throw limitError;
           }
-          throw new Error(data.error || "Failed to search leads");
+
+          if (errCode === "RATE_LIMIT_EXCEEDED" || res.status === 429) {
+            toast.error(errMsg || "Too many requests. Please try again later.");
+            const rateLimitError = new Error(errMsg || "Too many requests");
+            (rateLimitError as any).isHandled = true;
+            throw rateLimitError;
+          }
+
+          throw new Error(errMsg || "Failed to search leads");
         }
         return data?.leads || [];
       });
@@ -279,7 +293,9 @@ function Discover() {
       }
     } catch (err: any) {
       console.error(err);
-      toast.error("Search temporarily unavailable — please try again in a moment.");
+      if (!err.isHandled) {
+        toast.error("Search temporarily unavailable — please try again in a moment.");
+      }
     } finally {
       setLoading(false);
       setLoadingOnline(false);

@@ -378,7 +378,45 @@ function Dashboard() {
       const { data, error } = await supabase.functions.invoke("search-leads", {
         body: { query: searchCategory, city: searchCity, country: searchCountry, limit: 12 },
       });
-      if (error) throw error;
+      if (error) {
+        let errMsg = error.message || "Failed to search leads";
+        let errCode = "";
+        
+        try {
+          if (error.context) {
+            const errJson = await error.context.json();
+            if (errJson && errJson.error) {
+              errCode = errJson.error.code || "";
+              errMsg = errJson.error.message || errMsg;
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse error context:", e);
+        }
+
+        if (errCode === "LIMIT_REACHED" || errCode === "QUOTA_EXHAUSTED" || error.status === 402) {
+          toast.error(errMsg, {
+            action: {
+              label: "Upgrade Plan",
+              onClick: () => {
+                window.location.href = "/app/upgrade";
+              },
+            },
+          });
+          const limitError = new Error(errMsg);
+          (limitError as any).isHandled = true;
+          throw limitError;
+        }
+
+        if (errCode === "RATE_LIMIT_EXCEEDED" || error.status === 429) {
+          toast.error(errMsg);
+          const rateLimitError = new Error(errMsg);
+          (rateLimitError as any).isHandled = true;
+          throw rateLimitError;
+        }
+
+        throw new Error(errMsg);
+      }
       const mapped = (data?.leads || []).map((d: any) => ({
         id: d.id,
         businessName: d.business_name,
@@ -426,7 +464,9 @@ function Dashboard() {
       toast.success(`Found ${mapped.length} prospects in ${quickCity}!`);
     } catch (err: any) {
       console.error(err);
-      toast.error("Search temporarily unavailable — please try again in a moment.");
+      if (!err.isHandled) {
+        toast.error("Search temporarily unavailable — please try again in a moment.");
+      }
     } finally {
       setSearchLoading(false);
     }
