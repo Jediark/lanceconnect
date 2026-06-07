@@ -214,7 +214,10 @@ function Onboarding() {
                 </label>
                 <select
                   value={country}
-                  onChange={(e) => setCountry(e.target.value)}
+                  onChange={(e) => {
+                    setCountry(e.target.value);
+                    setCity("");
+                  }}
                   disabled={worldwide}
                   className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm disabled:opacity-50"
                 >
@@ -234,6 +237,8 @@ function Onboarding() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   disabled={worldwide}
+                  id="onboarding-city-input"
+                  autoComplete="off"
                   list="onboarding-cities-list"
                   placeholder="e.g. Lagos, London, São Paulo, New York"
                   className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm disabled:opacity-50"

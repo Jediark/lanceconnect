@@ -410,7 +410,10 @@ function Discover() {
           )}
           <select
             value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={(e) => {
+              setCountry(e.target.value);
+              setCity("");
+            }}
             className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
           >
             <option value="">All Countries</option>
@@ -423,6 +426,8 @@ function Discover() {
           <input
             value={city}
             onChange={(e) => setCity(e.target.value)}
+            id="discover-city-input"
+            autoComplete="off"
             list="discover-cities-list"
             placeholder="Enter city..."
             className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"

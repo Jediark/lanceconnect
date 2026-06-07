@@ -226,7 +226,10 @@ function ProfilePage() {
               <SettingsField label="Country">
                 <select
                   value={country}
-                  onChange={(e) => setCountry(e.target.value)}
+                  onChange={(e) => {
+                    setCountry(e.target.value);
+                    setCity("");
+                  }}
                   className="input text-foreground bg-background cursor-pointer"
                 >
                   {COUNTRIES.map((c) => (
@@ -243,6 +246,8 @@ function ProfilePage() {
                 <input
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
+                  id="profile-city-input"
+                  autoComplete="off"
                   list="profile-cities-list"
                   placeholder="e.g. Lagos or London"
                   className="input text-foreground bg-background"

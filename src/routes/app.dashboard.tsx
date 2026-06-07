@@ -183,7 +183,16 @@ function Dashboard() {
 
     // Prefill search parameters from user profile
     if (user.freelancerCategory) setQuickCategory(user.freelancerCategory);
-    if (user.country) setQuickCountry(user.country);
+    if (user.country) {
+      const countryObj = COUNTRIES.find(
+        (c) => c.code.toLowerCase() === user.country.toLowerCase() || c.name.toLowerCase() === user.country.toLowerCase()
+      );
+      if (countryObj) {
+        setQuickCountry(countryObj.name);
+      } else {
+        setQuickCountry(user.country);
+      }
+    }
     if (user.city) setQuickCity(user.city);
 
     // Total leads discovered in system
@@ -642,7 +651,10 @@ function Dashboard() {
                 </label>
                 <select
                   value={quickCountry}
-                  onChange={(e) => setQuickCountry(e.target.value)}
+                  onChange={(e) => {
+                    setQuickCountry(e.target.value);
+                    setQuickCity("");
+                  }}
                   className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition"
                 >
                   {COUNTRIES.map((c) => (
@@ -659,6 +671,8 @@ function Dashboard() {
                 <input
                   type="text"
                   required
+                  id="dashboard-city-input"
+                  autoComplete="off"
                   list="dashboard-cities-list"
                   placeholder="e.g. Lagos, London..."
                   value={quickCity}
