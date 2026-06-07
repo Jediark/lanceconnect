@@ -699,7 +699,18 @@ function Discover() {
         )}
       </div>
 
-      {detail && <LeadDetailModal lead={detail} onClose={() => setDetail(null)} />}
+      {detail && (
+        <LeadDetailModal
+          lead={detail}
+          onClose={() => setDetail(null)}
+          onUpdateLead={(updated) => {
+            setResults((prev) =>
+              prev.map((l) => (l.id === updated.id ? updated : l))
+            );
+            setDetail(updated);
+          }}
+        />
+      )}
     </>
   );
 }
@@ -771,13 +782,27 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
   );
 }
 
-function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void }) {
+function LeadDetailModal({
+  lead,
+  onClose,
+  onUpdateLead,
+}: {
+  lead: Lead;
+  onClose: () => void;
+  onUpdateLead?: (updated: Lead) => void;
+}) {
   const { user } = useAuth();
   const { saveLead, savedIds } = usePipeline();
   const { safetyPopupDismissed, setSafetyPopupDismissed } = usePreferences();
 
   const [currentLead, setCurrentLead] = useState<Lead>(lead);
   const [enriching, setEnriching] = useState(false);
+
+  useEffect(() => {
+    if (currentLead.websiteUrl && !currentLead.email && !enriching) {
+      handleEnrich();
+    }
+  }, [currentLead.id]);
   const [generating, setGenerating] = useState(false);
   const [outreachDraft, setOutreachDraft] = useState("");
   const [selectedChannel, setSelectedChannel] = useState<
@@ -867,23 +892,25 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
   };
 
   const handleEnrich = async () => {
-    if (!currentLead.websiteUrl) return;
+    if (!currentLead.websiteUrl || enriching) return;
     setEnriching(true);
-    toast.info("Scraping website for verified contact email...");
     try {
       const { data, error } = await supabase.functions.invoke("enrich-contact", {
         body: { leadId: currentLead.id },
       });
       if (error) throw error;
       if (data?.lead?.email) {
-        setCurrentLead((prev) => ({ ...prev, email: data.lead.email }));
+        const updated = { ...currentLead, email: data.lead.email };
+        setCurrentLead(updated);
+        if (onUpdateLead) {
+          onUpdateLead(updated);
+        }
         toast.success(`Scrape complete! Found: ${data.lead.email}`);
       } else {
-        toast.warning("No public email address found on the website.");
+        console.log("No public email address found on the website.");
       }
     } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Failed to search website");
+      console.error("Auto-enrich failed:", err);
     } finally {
       setEnriching(false);
     }
@@ -1055,6 +1082,11 @@ function LeadDetailModal({ lead, onClose }: { lead: Lead; onClose: () => void })
                         {maskEmail(currentLead.email)}
                       </span>
                     )
+                  ) : enriching ? (
+                    <span className="text-primary animate-pulse flex items-center gap-1.5 font-mono text-xs">
+                      <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                      Auto-crawling website for email...
+                    </span>
                   ) : (
                     <span className="italic text-slate-500">Not publicly listed</span>
                   )}

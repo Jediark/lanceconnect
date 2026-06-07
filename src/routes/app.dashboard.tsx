@@ -316,9 +316,8 @@ function Dashboard() {
   }, [user]);
 
   const handleEnrich = async () => {
-    if (!detail || !detail.websiteUrl) return;
+    if (!detail || !detail.websiteUrl || enriching) return;
     setEnriching(true);
-    toast.info("Scraping website for verified contact email...");
     try {
       if (!user) {
         setEnriching(false);
@@ -336,15 +335,20 @@ function Dashboard() {
         );
         toast.success(`Scrape complete! Found: ${data.lead.email}`);
       } else {
-        toast.warning("No public email address found on the website.");
+        console.log("No public email address found on the website.");
       }
     } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Failed to search website");
+      console.error("Auto-enrich failed:", err);
     } finally {
       setEnriching(false);
     }
   };
+
+  useEffect(() => {
+    if (detail && detail.websiteUrl && !detail.email && !enriching) {
+      handleEnrich();
+    }
+  }, [detail?.id]);
 
   const handleSearch = async (
     e?: React.FormEvent | { category: string; country: string; city: string; product: string; niche: string }
@@ -1100,6 +1104,11 @@ function Dashboard() {
                           {maskEmail(detail.email)}
                         </span>
                       )
+                    ) : enriching ? (
+                      <span className="text-primary animate-pulse flex items-center gap-1.5 font-mono text-xs">
+                        <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                        Auto-crawling website for email...
+                      </span>
                     ) : (
                       "Not publicly listed"
                     )}
@@ -1451,6 +1460,14 @@ function Dashboard() {
         open={quickConnectOpen}
         onOpenChange={setQuickConnectOpen}
         lead={quickConnectLead}
+        onLeadUpdated={(updated) => {
+          setResults((prev) =>
+            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email } : l))
+          );
+          if (detail && detail.id === updated.id) {
+            setDetail((prev) => (prev ? { ...prev, email: updated.email } : null));
+          }
+        }}
       />
     </>
   );
