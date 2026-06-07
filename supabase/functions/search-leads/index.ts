@@ -389,24 +389,7 @@ Deno.serve(async (req) => {
       leads_consumed: 1,
     });
 
-    // 7. Check 80% usage threshold for quota warnings
-    if (profile) {
-      const updatedUsed = (profile.leads_used_this_month || 0) + 1;
-      const limitVal = profile.leads_limit || 10;
-      const usagePercent = (updatedUsed / limitVal) * 100;
-
-      if (usagePercent >= 80 && !profile.quota_warning_sent) {
-        console.log(
-          `User ${profile.email} has hit 80% quota threshold (${updatedUsed}/${limitVal}). Sending warning email...`,
-        );
-        await sendEmail({
-          to: profile.email,
-          subject: "Action Required: 80% of Monthly Leads Used ⚠️",
-          html: getQuotaWarningEmailHtml(profile.full_name || "Freelancer", updatedUsed, limitVal),
-        });
-        await supabase.from("profiles").update({ quota_warning_sent: true }).eq("id", user.id);
-      }
-    }
+    // 7. Check 80% usage threshold for quota warnings (Bypassed since platform is free)
 
     // 8. Insert Action to Audit Log
     try {

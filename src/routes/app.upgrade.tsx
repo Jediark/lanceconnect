@@ -87,10 +87,8 @@ function UpgradePage() {
       <Header title="Upgrade" />
       <div className="space-y-6 px-4 py-6 lg:px-8">
         {user && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            You're on the <strong className="capitalize">{user.plan}</strong> plan ·{" "}
-            {user.leadsUsedThisMonth}/{user.leadsLimit} leads used this month. Upgrade to unlock
-            unlimited leads, AI outreach, and more.
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-foreground">
+            LanceConnect is now <strong className="text-primary font-bold">100% Free and Unlimited</strong> for everyone! There are no billing limits, search quotas, or paid plans.
           </div>
         )}
 
