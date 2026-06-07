@@ -153,6 +153,9 @@ Deno.serve(async (req) => {
               },
               body: JSON.stringify({
                 url: lead.website_url,
+                businessName: lead.business_name,
+                city: lead.city,
+                country: lead.country,
                 deduplicate: true,
                 filter_noreply: true,
                 lowercase: true,
