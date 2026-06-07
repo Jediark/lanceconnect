@@ -143,12 +143,17 @@ function Discover() {
     }
   }, [user]);
 
-  const handleSearch = async (searchParams?: { category: string; country: string; city: string; product: string; niche: string }) => {
-    const queryTerm = searchParams ? searchParams.category : (category || "local business");
-    const countryName = searchParams ? searchParams.country : (country || "Nigeria");
-    const cityName = searchParams ? searchParams.city : city;
-    const productTerm = searchParams ? searchParams.product : product;
-    const nicheTerm = searchParams ? searchParams.niche : selectedNiche;
+  const handleSearch = async (
+    searchParams?: { category: string; country: string; city: string; product: string; niche: string } | React.MouseEvent
+  ) => {
+    const isEvent = searchParams && ("preventDefault" in searchParams || "target" in searchParams);
+    const params = searchParams && !isEvent ? (searchParams as any) : null;
+
+    const queryTerm = params ? params.category : (category || "local business");
+    const countryName = params ? params.country : (country || "Nigeria");
+    const cityName = params ? params.city : city;
+    const productTerm = params ? params.product : product;
+    const nicheTerm = params ? params.niche : selectedNiche;
 
     if (!cityName) {
       toast.error("Please enter a city (e.g. Lagos, London).");
@@ -457,7 +462,7 @@ function Discover() {
             <option value={85}>85+</option>
           </select>
           <button
-            onClick={handleSearch}
+            onClick={() => handleSearch()}
             disabled={loading}
             className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
           >
