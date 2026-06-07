@@ -21,7 +21,7 @@ function VerifyPage() {
   const navigate = useNavigate();
   const [activeEmail, setActiveEmail] = useState(email || "");
   const [isEditingEmail, setIsEditingEmail] = useState(!email);
-  const [code, setCode] = useState<string[]>(Array(8).fill(""));
+  const [code, setCode] = useState<string[]>(Array(6).fill(""));
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
 
@@ -41,7 +41,7 @@ function VerifyPage() {
     setCode(newCode);
 
     // Auto-focus next input
-    if (val !== "" && index < 7) {
+    if (val !== "" && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
     }
@@ -58,15 +58,8 @@ function VerifyPage() {
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").trim();
-    if (pastedData.length === 8 && !isNaN(Number(pastedData))) {
+    if (pastedData.length === 6 && !isNaN(Number(pastedData))) {
       setCode(pastedData.split(""));
-      document.getElementById("otp-7")?.focus();
-    } else if (pastedData.length === 6 && !isNaN(Number(pastedData))) {
-      const newCode = [...Array(8).fill("")];
-      for (let i = 0; i < 6; i++) {
-        newCode[i] = pastedData[i];
-      }
-      setCode(newCode);
       document.getElementById("otp-5")?.focus();
     }
   };
@@ -78,8 +71,8 @@ function VerifyPage() {
       toast.error("Please enter your email address.");
       return;
     }
-    if (enteredToken.length !== 8 && enteredToken.length !== 6) {
-      toast.error("Please enter the verification code.");
+    if (enteredToken.length < 6) {
+      toast.error("Please enter the 6-digit code.");
       return;
     }
     setVerifying(true);
@@ -136,7 +129,7 @@ function VerifyPage() {
   return (
     <AuthSplit title="Confirm your email">
       <p className="mt-1 text-sm text-muted-foreground">
-        We sent a confirmation code to your email.
+        We sent a 6-digit confirmation code to your email.
       </p>
 
       {/* Target Email Info / Toggle Input */}
@@ -169,10 +162,10 @@ function VerifyPage() {
       <form onSubmit={submit} className="mt-6 space-y-6">
         <div className="space-y-2">
           <label className="block text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
-            Verification Code
+            6-Digit Verification Code
           </label>
           {/* OTP Input Grid */}
-          <div className="grid grid-cols-8 gap-1.5 md:gap-2">
+          <div className="grid grid-cols-6 gap-2">
             {code.map((digit, idx) => (
               <input
                 key={idx}
@@ -184,7 +177,7 @@ function VerifyPage() {
                 onKeyDown={(e) => handleKeyDown(e, idx)}
                 onPaste={idx === 0 ? handlePaste : undefined}
                 onChange={(e) => handleChange(e.target.value, idx)}
-                className="w-full text-center aspect-square font-mono text-lg md:text-xl font-bold rounded-lg md:rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/30 outline-none transition"
+                className="w-full text-center aspect-square font-mono text-xl font-bold rounded-xl border border-input bg-background focus:ring-2 focus:ring-primary/30 outline-none transition"
               />
             ))}
           </div>
