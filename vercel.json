@@ -4,6 +4,12 @@
       "maxDuration": 30
     }
   },
+  "crons": [
+    {
+      "path": "/api/scrape",
+      "schedule": "0 12 * * *"
+    }
+  ],
   "redirects": [
     { "source": "/b2b/human-capital-development", "destination": "/find-clients/human-capital", "permanent": false },
     { "source": "/b2b/parent-tutor-matching", "destination": "/find-clients/parent-tutor", "permanent": false },

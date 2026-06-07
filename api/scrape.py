@@ -147,8 +147,27 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(result).encode())
 
     def do_GET(self):
+        # Ping Supabase health-check to prevent the database from going to sleep
+        try:
+            import urllib.request
+            supabase_url = os.environ.get('VITE_SUPABASE_URL', 'https://rpaodsmwhmzyhopvkwjt.supabase.co')
+            import ssl
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            req = urllib.request.Request(
+                f"{supabase_url.rstrip('/')}/functions/v1/health-check",
+                headers={'User-Agent': 'Mozilla/5.0 (compatible; LanceConnectKeepAlive/1.0)'}
+            )
+            with urllib.request.urlopen(req, timeout=8, context=ctx) as response:
+                response.read()
+            print("Successfully pinged Supabase health-check to keep database awake.")
+        except Exception as e:
+            print("Keep alive ping failed:", e)
+
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         self.wfile.write(json.dumps({
             'service': 'LanceConnect Email Scraper',
