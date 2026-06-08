@@ -187,9 +187,9 @@ export function QuickConnectModal({
       // 4. Fire client outreach redirection
       if (channel === "whatsapp") {
         const cleanPhone = recipientPhone.replace(/\D/g, "");
-        const waUrl = `https://web.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+        const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
         window.open(waUrl, "_blank", "width=1000,height=750,status=no,toolbar=no,menubar=no");
-        toast.success("Opening WhatsApp Web in a clean popup!");
+        toast.success("Opening WhatsApp chat!");
       } else if (channel === "email") {
         const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
         window.location.href = mailtoUrl;
