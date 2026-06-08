@@ -83,10 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setLoading(true);
+    let active = true;
+
     // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!active) return;
       if (session?.user) {
-        fetchProfile(session.user.id, session.user.email!);
+        await fetchProfile(session.user.id, session.user.email!);
       } else {
         setUser(null);
       }
@@ -96,17 +99,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 2. Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!active) return;
       setLoading(true);
       if (session?.user) {
-        fetchProfile(session.user.id, session.user.email!);
+        await fetchProfile(session.user.id, session.user.email!);
       } else {
         setUser(null);
       }
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email?: string, password?: string) => {
