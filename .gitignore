@@ -52,3 +52,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .vercel
+
+# Scratch folder
+scratch/
