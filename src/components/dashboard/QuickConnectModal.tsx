@@ -360,6 +360,33 @@ export function QuickConnectModal({
                 }
                 className="w-full h-48 bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
               />
+              {channel === "whatsapp" && (
+                <div className="flex gap-2 justify-end mt-2 select-none">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard?.writeText(message);
+                      toast.success("Message text copied!");
+                    }}
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:underline transition cursor-pointer"
+                  >
+                    <Copy className="h-3 w-3" /> Copy Message
+                  </button>
+                  <span className="text-muted-foreground/40 text-xs">|</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cleanPhone = recipientPhone.replace(/\D/g, "");
+                      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+                      navigator.clipboard?.writeText(waUrl);
+                      toast.success("WhatsApp link copied!");
+                    }}
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:underline transition cursor-pointer"
+                  >
+                    <Copy className="h-3 w-3" /> Copy Direct Link
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Outreach Logs Timeline */}
