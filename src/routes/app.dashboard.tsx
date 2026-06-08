@@ -153,6 +153,8 @@ function Dashboard() {
 
   const [quickConnectOpen, setQuickConnectOpen] = useState(false);
   const [quickConnectLead, setQuickConnectLead] = useState<Lead | undefined>();
+  const [quickConnectChannel, setQuickConnectChannel] = useState<"email" | "linkedin" | "whatsapp">("email");
+  const [quickConnectMessage, setQuickConnectMessage] = useState("");
   const [leadsChartData, setLeadsChartData] = useState<{ name: string; leads: number }[]>([]);
 
   const hour = new Date().getHours();
@@ -1069,7 +1071,19 @@ function Dashboard() {
                     <Phone className="h-4 w-4 shrink-0 text-muted-foreground/60" />
                     {detail.phone ? (
                       safetyPopupDismissed ? (
-                        detail.phone
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setQuickConnectLead(detail);
+                            setQuickConnectChannel("whatsapp");
+                            setQuickConnectMessage("");
+                            setQuickConnectOpen(true);
+                            setDetail(null);
+                          }}
+                          className="text-green-500 hover:text-green-400 font-semibold cursor-pointer text-left"
+                        >
+                          {detail.phone}
+                        </button>
                       ) : (
                         <span
                           onClick={() => handleContactAction(() => {})}
@@ -1280,15 +1294,25 @@ function Dashboard() {
                         >
                           Copy
                         </button>
-                        {selectedChannel === "whatsapp" && detail.phone && (
-                          <a
-                            href={`https://wa.me/${detail.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="rounded-lg bg-emerald-600 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-700 cursor-pointer transition"
+                        {(selectedChannel === "whatsapp" || selectedChannel === "email" || selectedChannel === "linkedin") && (
+                          <button
+                            onClick={() => {
+                              setQuickConnectLead(detail);
+                              setQuickConnectChannel(selectedChannel);
+                              setQuickConnectMessage(outreachDraft);
+                              setQuickConnectOpen(true);
+                              setDetail(null);
+                            }}
+                            className={`rounded-lg px-3 py-1.5 text-[11px] font-bold text-white cursor-pointer transition flex items-center gap-1 ${
+                              selectedChannel === "whatsapp"
+                                ? "bg-emerald-600 hover:bg-emerald-700"
+                                : selectedChannel === "linkedin"
+                                  ? "bg-[#0A66C2] hover:bg-[#084e96]"
+                                  : "bg-primary hover:brightness-110"
+                            }`}
                           >
-                            WhatsApp
-                          </a>
+                            Send via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "linkedin" ? "LinkedIn" : "Email"}
+                          </button>
                         )}
                       </div>
                     </div>
@@ -1474,12 +1498,14 @@ function Dashboard() {
         open={quickConnectOpen}
         onOpenChange={setQuickConnectOpen}
         lead={quickConnectLead}
+        initialChannel={quickConnectChannel}
+        initialMessage={quickConnectMessage}
         onLeadUpdated={(updated) => {
           setResults((prev) =>
-            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email } : l))
+            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email, notes: updated.notes } : l))
           );
           if (detail && detail.id === updated.id) {
-            setDetail((prev) => (prev ? { ...prev, email: updated.email } : null));
+            setDetail((prev) => (prev ? { ...prev, email: updated.email, notes: updated.notes } : null));
           }
         }}
       />

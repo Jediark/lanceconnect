@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { QuickConnectModal } from "@/components/dashboard/QuickConnectModal";
 
 export const Route = createFileRoute("/app/pipeline")({
   head: () => ({ meta: [{ title: "My Pipeline — LanceConnect" }] }),
@@ -75,6 +76,11 @@ function PipelinePage() {
   const [showLost, setShowLost] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [manualEmail, setManualEmail] = useState("");
+
+  const [quickConnectOpen, setQuickConnectOpen] = useState(false);
+  const [quickConnectLead, setQuickConnectLead] = useState<Lead | null>(null);
+  const [quickConnectChannel, setQuickConnectChannel] = useState<"email" | "linkedin" | "whatsapp">("email");
+  const [quickConnectMessage, setQuickConnectMessage] = useState("");
 
   const handleOpenLead = (lead: Lead) => {
     setSelectedLead(lead);
@@ -535,15 +541,20 @@ function PipelinePage() {
                 
                 {selectedLead.phone ? (
                   <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/10">
-                    <a
-                      href={formatWhatsApp(selectedLead.phone)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-green-500 hover:text-green-400 font-mono text-sm font-medium"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuickConnectLead(selectedLead);
+                        setQuickConnectChannel("whatsapp");
+                        setQuickConnectMessage("");
+                        setQuickConnectOpen(true);
+                        setSelectedLead(null);
+                      }}
+                      className="flex items-center gap-2 text-green-500 hover:text-green-400 font-mono text-sm font-medium cursor-pointer"
                     >
                       <WhatsAppIcon size={16} />
                       {selectedLead.phone}
-                    </a>
+                    </button>
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(selectedLead.phone);
@@ -590,14 +601,19 @@ function PipelinePage() {
                       </span>
                       <div className="flex flex-wrap gap-2 mt-1">
                         {selectedLead.phone && (
-                          <a
-                            href={formatWhatsApp(selectedLead.phone)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-green-500 hover:underline"
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setQuickConnectLead(selectedLead);
+                              setQuickConnectChannel("whatsapp");
+                              setQuickConnectMessage("");
+                              setQuickConnectOpen(true);
+                              setSelectedLead(null);
+                            }}
+                            className="text-xs text-green-500 hover:underline cursor-pointer"
                           >
                             💬 Try WhatsApp instead
-                          </a>
+                          </button>
                         )}
                         {selectedLead.googlePlaceId && (
                           <a
@@ -705,6 +721,19 @@ function PipelinePage() {
           )}
         </SheetContent>
       </Sheet>
+
+      <QuickConnectModal
+        open={quickConnectOpen}
+        onOpenChange={setQuickConnectOpen}
+        lead={quickConnectLead || undefined}
+        initialChannel={quickConnectChannel}
+        initialMessage={quickConnectMessage}
+        onLeadUpdated={(updated) => {
+          if (selectedLead && selectedLead.id === updated.id) {
+            setSelectedLead((prev) => prev ? { ...prev, email: updated.email, notes: updated.notes } : null);
+          }
+        }}
+      />
     </>
   );
 }

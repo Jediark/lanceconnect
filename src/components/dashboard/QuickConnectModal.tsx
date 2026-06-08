@@ -59,11 +59,15 @@ export function QuickConnectModal({
   open,
   onOpenChange,
   lead,
+  initialChannel = "email",
+  initialMessage = "",
   onLeadUpdated,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   lead?: Lead;
+  initialChannel?: "email" | "linkedin" | "whatsapp";
+  initialMessage?: string;
   onLeadUpdated?: (updated: Lead) => void;
 }) {
   const [channel, setChannel] = useState<"email" | "linkedin" | "whatsapp">("email");
@@ -107,10 +111,11 @@ export function QuickConnectModal({
       setRecipientEmail(lead.email || "");
       setRecipientPhone(lead.phone || "");
       setSubject("");
-      setMessage("");
-
-      // Default message templates
-      if (channel === "whatsapp") {
+      setChannel(initialChannel);
+      
+      if (initialMessage) {
+        setMessage(initialMessage);
+      } else if (initialChannel === "whatsapp") {
         setMessage(`Hi ${lead.businessName} team! I came across your business and wanted to reach out regarding potential collaborations. Do you guys use chat here?`);
       } else {
         setMessage("");
@@ -121,17 +126,17 @@ export function QuickConnectModal({
         handleEnrich();
       }
     }
-  }, [open, lead?.id]);
+  }, [open, lead?.id, initialChannel, initialMessage]);
 
   useEffect(() => {
-    if (lead) {
+    if (lead && !initialMessage) {
       if (channel === "whatsapp") {
         setMessage(`Hi ${lead.businessName} team! I came across your business and wanted to reach out regarding potential collaborations. Do you guys use chat here?`);
       } else {
         setMessage("");
       }
     }
-  }, [channel]);
+  }, [channel, lead?.id, initialMessage]);
 
   // Read current logs
   const pipelineLead = pipeline.find((l) => l.id === lead?.id);

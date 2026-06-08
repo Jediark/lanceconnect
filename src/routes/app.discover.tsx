@@ -24,6 +24,7 @@ import { OnlineJobCard } from "@/components/ui/OnlineJobCard";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { TrendingSearches } from "@/components/ui/TrendingSearches";
+import { QuickConnectModal } from "@/components/dashboard/QuickConnectModal";
 import { CATEGORIES, COUNTRIES, type Lead } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
 import { CATEGORY_TO_PLACES_QUERY } from "@/types";
@@ -70,6 +71,10 @@ function Discover() {
   const [onlineJobs, setOnlineJobs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"local" | "online">("local");
   const [loadingOnline, setLoadingOnline] = useState(false);
+  const [quickConnectOpen, setQuickConnectOpen] = useState(false);
+  const [quickConnectLead, setQuickConnectLead] = useState<Lead | undefined>();
+  const [quickConnectChannel, setQuickConnectChannel] = useState<"email" | "linkedin" | "whatsapp">("email");
+  const [quickConnectMessage, setQuickConnectMessage] = useState("");
 
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
@@ -655,12 +660,30 @@ function Discover() {
                   style={{ animationDelay: `${i * 50}ms` }}
                   className="animate-in fade-in-50 slide-in-from-bottom-2"
                 >
-                  <LeadCard lead={l} onOpenDetail={setDetail} />
+                  <LeadCard
+                    lead={l}
+                    onOpenDetail={setDetail}
+                    onQuickConnect={(lead, channel) => {
+                      setQuickConnectLead(lead);
+                      setQuickConnectChannel(channel || "email");
+                      setQuickConnectMessage("");
+                      setQuickConnectOpen(true);
+                    }}
+                  />
                 </div>
               ))}
             </div>
           ) : (
-            <LeadTable leads={filteredResults} onOpenDetail={setDetail} />
+            <LeadTable
+              leads={filteredResults}
+              onOpenDetail={setDetail}
+              onQuickConnect={(lead, channel) => {
+                setQuickConnectLead(lead);
+                setQuickConnectChannel(channel || "email");
+                setQuickConnectMessage("");
+                setQuickConnectOpen(true);
+              }}
+            />
           )
         ) : (
           loadingOnline ? (
@@ -719,13 +742,27 @@ function Discover() {
             );
             setDetail(updated);
           }}
+          onQuickConnect={(lead, channel, msg) => {
+            setQuickConnectLead(lead);
+            setQuickConnectChannel(channel || "email");
+            setQuickConnectMessage(msg || "");
+            setQuickConnectOpen(true);
+          }}
         />
       )}
     </>
   );
 }
 
-function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: Lead) => void }) {
+function LeadTable({
+  leads,
+  onOpenDetail,
+  onQuickConnect,
+}: {
+  leads: Lead[];
+  onOpenDetail: (l: Lead) => void;
+  onQuickConnect?: (lead: Lead, initialChannel?: "email" | "linkedin" | "whatsapp") => void;
+}) {
   const { saveLead, savedIds } = usePipeline();
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-card">
@@ -765,7 +802,26 @@ function LeadTable({ leads, onOpenDetail }: { leads: Lead[]; onOpenDetail: (l: L
                   <span className="text-red-600">✗ No</span>
                 )}
               </td>
-              <td className="px-4 py-3 font-mono-data text-xs">{l.phone}</td>
+              <td className="px-4 py-3 font-mono-data text-xs">
+                {l.phone ? (
+                  onQuickConnect ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onQuickConnect(l, "whatsapp");
+                      }}
+                      className="text-green-500 hover:text-green-400 font-semibold cursor-pointer"
+                    >
+                      {l.phone}
+                    </button>
+                  ) : (
+                    l.phone
+                  )
+                ) : (
+                  <span className="italic text-slate-500">-</span>
+                )}
+              </td>
               <td className="px-4 py-3 text-amber-600">
                 <span className="inline-flex items-center gap-1">
                   <Star className="h-3 w-3 fill-current" /> {l.googleRating}
@@ -796,10 +852,12 @@ function LeadDetailModal({
   lead,
   onClose,
   onUpdateLead,
+  onQuickConnect,
 }: {
   lead: Lead;
   onClose: () => void;
   onUpdateLead?: (updated: Lead) => void;
+  onQuickConnect?: (lead: Lead, initialChannel?: "email" | "linkedin" | "whatsapp", initialMessage?: string) => void;
 }) {
   const { user } = useAuth();
   const { saveLead, savedIds } = usePipeline();
@@ -1044,7 +1102,20 @@ function LeadDetailModal({
                   <Phone className="h-3.5 w-3.5 text-slate-500" />
                   {currentLead.phone ? (
                     safetyPopupDismissed ? (
-                      currentLead.phone
+                      onQuickConnect ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onQuickConnect(currentLead, "whatsapp");
+                            onClose();
+                          }}
+                          className="text-green-500 hover:text-green-400 font-semibold cursor-pointer text-left"
+                        >
+                          {currentLead.phone}
+                        </button>
+                      ) : (
+                        currentLead.phone
+                      )
                     ) : (
                       <span
                         onClick={() => handleContactAction(() => {})}
@@ -1237,15 +1308,25 @@ function LeadDetailModal({
                       >
                         Copy Pitch
                       </button>
-                      {selectedChannel === "whatsapp" && currentLead.phone && (
-                        <a
-                          href={`https://wa.me/${currentLead.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(outreachDraft)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition"
+                      {(selectedChannel === "whatsapp" || selectedChannel === "email" || selectedChannel === "linkedin") && (
+                        <button
+                          onClick={() => {
+                            if (onQuickConnect) {
+                              onQuickConnect(currentLead, selectedChannel as any, outreachDraft);
+                              onClose();
+                            }
+                          }}
+                          className={cn(
+                            "rounded-lg px-3 py-1 text-xs font-semibold text-white flex items-center gap-1 cursor-pointer transition",
+                            selectedChannel === "whatsapp"
+                              ? "bg-emerald-600 hover:bg-emerald-700"
+                              : selectedChannel === "linkedin"
+                                ? "bg-[#0A66C2] hover:bg-[#084e96]"
+                                : "bg-primary hover:brightness-110"
+                          )}
                         >
-                          Send via WhatsApp
-                        </a>
+                          Send via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "linkedin" ? "LinkedIn" : "Email"}
+                        </button>
                       )}
                     </div>
                   </div>
@@ -1575,6 +1656,21 @@ function LeadDetailModal({
           </div>
         </div>
       )}
+      <QuickConnectModal
+        open={quickConnectOpen}
+        onOpenChange={setQuickConnectOpen}
+        lead={quickConnectLead}
+        initialChannel={quickConnectChannel}
+        initialMessage={quickConnectMessage}
+        onLeadUpdated={(updated) => {
+          setResults((prev) =>
+            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email, notes: updated.notes } : l))
+          );
+          if (detail && detail.id === updated.id) {
+            setDetail((prev) => ({ ...prev, email: updated.email, notes: updated.notes }));
+          }
+        }}
+      />
     </div>
   );
 }

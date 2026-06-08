@@ -24,7 +24,15 @@ const formatWhatsApp = (phone: string): string => {
   return `https://wa.me/${digits}`;
 };
 
-export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l: Lead) => void }) {
+export function LeadCard({
+  lead,
+  onOpenDetail,
+  onQuickConnect,
+}: {
+  lead: Lead;
+  onOpenDetail?: (l: Lead) => void;
+  onQuickConnect?: (lead: Lead, initialChannel?: "email" | "linkedin" | "whatsapp") => void;
+}) {
   const { saveLead, savedIds } = usePipeline();
   const isSaved = savedIds.has(lead.id);
   const [saving, setSaving] = useState(false);
@@ -190,16 +198,28 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
       <div className="mb-4 space-y-2 text-sm">
         {lead.phone && (
           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-            <a
-              href={formatWhatsApp(lead.phone)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-green-500 hover:text-green-400 font-mono text-sm"
-              title="Message on WhatsApp"
-            >
-              <WhatsAppIcon size={14} />
-              {lead.phone}
-            </a>
+            {onQuickConnect ? (
+              <button
+                type="button"
+                onClick={() => onQuickConnect(lead, "whatsapp")}
+                className="flex items-center gap-1 text-green-500 hover:text-green-400 font-mono text-sm cursor-pointer"
+                title="Message on WhatsApp"
+              >
+                <WhatsAppIcon size={14} />
+                {lead.phone}
+              </button>
+            ) : (
+              <a
+                href={formatWhatsApp(lead.phone)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-green-500 hover:text-green-400 font-mono text-sm"
+                title="Message on WhatsApp"
+              >
+                <WhatsAppIcon size={14} />
+                {lead.phone}
+              </a>
+            )}
             <button
               type="button"
               onClick={copyPhone}
@@ -222,14 +242,24 @@ export function LeadCard({ lead, onOpenDetail }: { lead: Lead; onOpenDetail?: (l
             </span>
             <div className="flex flex-wrap gap-2 mt-1">
               {lead.phone && (
-                <a
-                  href={formatWhatsApp(lead.phone)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-green-500 hover:underline"
-                >
-                  💬 Try WhatsApp instead
-                </a>
+                onQuickConnect ? (
+                  <button
+                    type="button"
+                    onClick={() => onQuickConnect(lead, "whatsapp")}
+                    className="text-xs text-green-500 hover:underline cursor-pointer"
+                  >
+                    💬 Try WhatsApp instead
+                  </button>
+                ) : (
+                  <a
+                    href={formatWhatsApp(lead.phone)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-green-500 hover:underline"
+                  >
+                    💬 Try WhatsApp instead
+                  </a>
+                )
               )}
               {lead.googlePlaceId && (
                 <a

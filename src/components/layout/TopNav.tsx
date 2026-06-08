@@ -102,10 +102,10 @@ export function TopNav() {
           </div>
 
           <NavLink
-            to="/safety"
+            to="/app/safety"
             icon={Shield}
             label="Safety"
-            active={pathname === "/safety"}
+            active={pathname === "/app/safety"}
           />
         </nav>
 
@@ -287,10 +287,10 @@ export function TopNav() {
             </div>
             <div className="pt-4 border-t border-border">
               <MobileNavLink
-                to="/safety"
+                to="/app/safety"
                 icon={Shield}
                 label="Safety Guidelines"
-                active={pathname === "/safety"}
+                active={pathname === "/app/safety"}
                 onClick={() => setMobileMenuOpen(false)}
               />
               <MobileNavLink

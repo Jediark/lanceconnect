@@ -46,6 +46,7 @@ import { Route as B2bCategoryRouteImport } from './routes/b2b.$category'
 import { Route as AppUpgradeRouteImport } from './routes/app.upgrade'
 import { Route as AppTemplatesRouteImport } from './routes/app.templates'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppSafetyRouteImport } from './routes/app.safety'
 import { Route as AppPipelineRouteImport } from './routes/app.pipeline'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
@@ -243,6 +244,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSafetyRoute = AppSafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPipelineRoute = AppPipelineRouteImport.update({
   id: '/pipeline',
   path: '/pipeline',
@@ -319,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/pipeline': typeof AppPipelineRoute
+  '/app/safety': typeof AppSafetyRoute
   '/app/settings': typeof AppSettingsRouteWithChildren
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
@@ -366,6 +373,7 @@ export interface FileRoutesByTo {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/pipeline': typeof AppPipelineRoute
+  '/app/safety': typeof AppSafetyRoute
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
   '/b2b/$category': typeof B2bCategoryRoute
@@ -414,6 +422,7 @@ export interface FileRoutesById {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/pipeline': typeof AppPipelineRoute
+  '/app/safety': typeof AppSafetyRoute
   '/app/settings': typeof AppSettingsRouteWithChildren
   '/app/templates': typeof AppTemplatesRoute
   '/app/upgrade': typeof AppUpgradeRoute
@@ -464,6 +473,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/discover'
     | '/app/pipeline'
+    | '/app/safety'
     | '/app/settings'
     | '/app/templates'
     | '/app/upgrade'
@@ -511,6 +521,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/discover'
     | '/app/pipeline'
+    | '/app/safety'
     | '/app/templates'
     | '/app/upgrade'
     | '/b2b/$category'
@@ -558,6 +569,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/discover'
     | '/app/pipeline'
+    | '/app/safety'
     | '/app/settings'
     | '/app/templates'
     | '/app/upgrade'
@@ -875,6 +887,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/safety': {
+      id: '/app/safety'
+      path: '/safety'
+      fullPath: '/app/safety'
+      preLoaderRoute: typeof AppSafetyRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/pipeline': {
       id: '/app/pipeline'
       path: '/pipeline'
@@ -966,6 +985,7 @@ interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
   AppPipelineRoute: typeof AppPipelineRoute
+  AppSafetyRoute: typeof AppSafetyRoute
   AppSettingsRoute: typeof AppSettingsRouteWithChildren
   AppTemplatesRoute: typeof AppTemplatesRoute
   AppUpgradeRoute: typeof AppUpgradeRoute
@@ -977,6 +997,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppDiscoverRoute: AppDiscoverRoute,
   AppPipelineRoute: AppPipelineRoute,
+  AppSafetyRoute: AppSafetyRoute,
   AppSettingsRoute: AppSettingsRouteWithChildren,
   AppTemplatesRoute: AppTemplatesRoute,
   AppUpgradeRoute: AppUpgradeRoute,
