@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { type Lead } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
 import { usePipeline } from "@/contexts/PipelineContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 // WhatsApp Brand Icon SVG
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -79,6 +80,122 @@ export function QuickConnectModal({
   const [enriching, setEnriching] = useState(false);
 
   const { saveLead, updateStatus, pipeline } = usePipeline();
+  const { user } = useAuth();
+
+  const generateDefaultMessage = (chan: "email" | "linkedin" | "whatsapp", targetLead: Lead) => {
+    const role = (() => {
+      switch (user?.freelancerCategory) {
+        case "web_dev": return "Web Developer & Designer";
+        case "seo": return "SEO & Local Search Specialist";
+        case "designer": return "Brand Designer & Visual Artist";
+        case "social_media": return "Social Media Manager";
+        case "marketing": return "Digital Marketing Consultant";
+        case "training_recruitment": return "Recruitment & Talent Specialist";
+        case "human_capital": return "HR & Personnel Consultant";
+        default: return "Digital Growth Specialist";
+      }
+    })();
+
+    const specialties = (() => {
+      switch (user?.freelancerCategory) {
+        case "web_dev":
+          return [
+            "Building fast, mobile-responsive custom websites",
+            "Improving web layout UX to convert visitors into clients"
+          ];
+        case "seo":
+          return [
+            "Optimizing Google My Business profiles to rank higher in local search",
+            "Conducting keyword analysis to drive high-intent organic traffic"
+          ];
+        case "designer":
+          return [
+            "Crafting premium brand identities and modern logos",
+            "Designing engaging marketing materials and social graphics"
+          ];
+        case "social_media":
+          return [
+            "Creating high-impact organic content strategies",
+            "Managing communities and growing local audience engagement"
+          ];
+        case "marketing":
+          return [
+            "Setting up high-conversion paid ads and sales funnels",
+            "Running email outreach and newsletter campaigns"
+          ];
+        case "training_recruitment":
+          return [
+            "Sourcing, vetting, and matching top-tier talent for teams",
+            "Designing structured onboarding and employee training programs"
+          ];
+        case "human_capital":
+          return [
+            "Optimizing HR workflows, policies, and structures",
+            "Building retention plans and organizational development tools"
+          ];
+        default:
+          return [
+            "Optimizing online marketing channels to increase visibility",
+            "Improving local customer acquisition strategies"
+          ];
+      }
+    })();
+
+    const userName = user?.fullName || "a Digital Growth Specialist";
+
+    if (chan === "whatsapp") {
+      return `Hi ${targetLead.businessName} team! 👋
+
+My name is ${userName}, and I'm a local ${role}. I recently came across ${targetLead.businessName} and wanted to reach out. I help businesses like yours grow their digital presence and attract more customers.
+
+I specialize in:
+• ${specialties[0]}
+• ${specialties[1]}
+
+I've put together a few quick, free recommendations for your business. Are you the right person to speak with about this, or is there someone else I should connect with?
+
+Best,
+${userName}`;
+    }
+
+    if (chan === "linkedin") {
+      return `Hi ${targetLead.businessName} team,
+
+My name is ${userName}, and I'm a ${role}. I came across your profile and love the work you are doing at ${targetLead.businessName}.
+
+I specialize in helping businesses in your space with:
+- ${specialties[0]}
+- ${specialties[1]}
+
+I'd love to connect to share a few free growth ideas I put together for you. Let me know if you are open to a quick chat.
+
+Best regards,
+${userName}`;
+    }
+
+    // Email template
+    return `Hi ${targetLead.businessName} team,
+
+My name is ${userName}, and I am a local ${role}. I recently came across ${targetLead.businessName} and wanted to reach out to introduce myself.
+
+I help companies optimize their online footprint and acquire new customers. Specifically, I specialize in:
+1. ${specialties[0]}
+2. ${specialties[1]}
+
+I put together a brief, free evaluation of your current digital presence with 3 quick recommendations that you can implement right away to improve visibility.
+
+Are you the right person to speak with regarding this, or is there a better person I should contact? I'd be happy to forward the recommendations over.
+
+Best regards,
+
+${userName}
+${user?.email ? `Email: ${user.email}` : ""}
+${user?.contactPhone ? `Phone: ${user.contactPhone}` : ""}`;
+  };
+
+  const generateDefaultSubject = (targetLead: Lead) => {
+    return `Collaboration inquiry for ${targetLead.businessName}`;
+  };
 
   const handleEnrich = async () => {
     if (!lead || !lead.websiteUrl || enriching) return;
@@ -110,15 +227,18 @@ export function QuickConnectModal({
     if (open && lead) {
       setRecipientEmail(lead.email || "");
       setRecipientPhone(lead.phone || "");
-      setSubject("");
       setChannel(initialChannel);
       
       if (initialMessage) {
         setMessage(initialMessage);
-      } else if (initialChannel === "whatsapp") {
-        setMessage(`Hi ${lead.businessName} team! I came across your business and wanted to reach out regarding potential collaborations. Do you guys use chat here?`);
       } else {
-        setMessage("");
+        setMessage(generateDefaultMessage(initialChannel, lead));
+      }
+
+      if (initialChannel === "email") {
+        setSubject(generateDefaultSubject(lead));
+      } else {
+        setSubject("");
       }
 
       // Automatically trigger email finder in background if missing but website is present
@@ -130,10 +250,11 @@ export function QuickConnectModal({
 
   useEffect(() => {
     if (lead && !initialMessage) {
-      if (channel === "whatsapp") {
-        setMessage(`Hi ${lead.businessName} team! I came across your business and wanted to reach out regarding potential collaborations. Do you guys use chat here?`);
+      setMessage(generateDefaultMessage(channel, lead));
+      if (channel === "email") {
+        setSubject(generateDefaultSubject(lead));
       } else {
-        setMessage("");
+        setSubject("");
       }
     }
   }, [channel, lead?.id, initialMessage]);
