@@ -118,25 +118,45 @@ Deno.serve(async (req) => {
     let emailFound = lead.email;
     if (!lead.email && lead.website_url) {
       try {
-        const domain = new URL(lead.website_url).hostname.replace("www.", "");
+        const extractDomain = (websiteUrl: string): string => {
+          try {
+            const url = new URL(websiteUrl);
+            return url.hostname.replace("www.", "");
+          } catch {
+            return websiteUrl.replace(/^https?:\/\/(www\.)?/, "").split("/")[0];
+          }
+        };
+        const domain = extractDomain(lead.website_url);
 
-        // Layer 1 — Prospeo
+        // Layer 1 — Prospeo (Bypassed because Prospeo removed the /domain-search endpoint)
+        /*
         if (prospeoApiKey) {
+          console.log(`[Prospeo] Querying domain: ${domain} for lead: ${lead.business_name}`);
           const prospeoRes = await fetch("https://api.prospeo.io/domain-search", {
             method: "POST",
             headers: { "X-KEY": prospeoApiKey, "Content-Type": "application/json" },
             body: JSON.stringify({ domain }),
             signal: AbortSignal.timeout(8000),
           });
+          const prospeoBody = await prospeoRes.text();
+          console.log(`[Prospeo] Status: ${prospeoRes.status}`);
+          console.log(`[Prospeo] Response: ${prospeoBody}`);
+          console.log(`[Prospeo] Domain searched: ${domain}`);
+
           if (prospeoRes.ok) {
-            const prospeoData = await prospeoRes.json();
-            if (prospeoData.response?.email_list && prospeoData.response.email_list.length > 0) {
-              emailFound = prospeoData.response.email_list[0].email;
-              updateData.email = emailFound;
-              updateData.email_confidence = "verified";
+            try {
+              const prospeoData = JSON.parse(prospeoBody);
+              if (prospeoData.response?.email_list && prospeoData.response.email_list.length > 0) {
+                emailFound = prospeoData.response.email_list[0].email;
+                updateData.email = emailFound;
+                updateData.email_confidence = "verified";
+              }
+            } catch (err) {
+              console.error("[Prospeo] Failed to parse JSON response:", err);
             }
           }
         }
+        */
 
         // Layer 2 — Our Vercel Email Scraper
         if (!emailFound) {

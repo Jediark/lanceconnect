@@ -129,55 +129,98 @@ Deno.serve(async (req) => {
       }
     } else {
       // FREELANCE SCORING — existing code stays
-      // 1. Website signal (up to 40 pts)
-      if (!lead.has_website || !lead.website_url) {
-        score += 40;
-        breakdown["no_website"] = 40;
-
-        // Digital gap bonus — businesses in emerging markets with no website score HIGHER
-        const DIGITAL_GAP_BONUS: Record<string, number> = {
-          // Africa
-          Nigeria: 15,
-          Ghana: 15,
-          Kenya: 12,
-          Ethiopia: 15,
-          Tanzania: 15,
-          Uganda: 12,
-          Cameroon: 12,
-          // Asia
-          Bangladesh: 12,
-          Pakistan: 10,
-          Myanmar: 12,
-          Cambodia: 12,
-          Nepal: 12,
-          // Latin America
-          Haiti: 15,
-          Bolivia: 10,
-          Honduras: 10,
-        };
-        const bonus = DIGITAL_GAP_BONUS[lead.country || ""] || 0;
-        if (bonus > 0) {
-          score += bonus;
-          breakdown[`digital_gap_bonus_${(lead.country || "").toLowerCase()}`] = bonus;
+      // 1. Website signal (up to 40 pts, unless web_dev)
+      if (category === "web_dev") {
+        if (!lead.has_website || !lead.website_url) {
+          score += 50;
+          breakdown["no_website"] = 50;
+          
+          // Digital gap bonus — businesses in emerging markets with no website score HIGHER
+          const DIGITAL_GAP_BONUS: Record<string, number> = {
+            Nigeria: 15,
+            Ghana: 15,
+            Kenya: 12,
+            Ethiopia: 15,
+            Tanzania: 15,
+            Uganda: 12,
+            Cameroon: 12,
+            Bangladesh: 12,
+            Pakistan: 10,
+            Myanmar: 12,
+            Cambodia: 12,
+            Nepal: 12,
+            Haiti: 15,
+            Bolivia: 10,
+            Honduras: 10,
+          };
+          const bonus = DIGITAL_GAP_BONUS[lead.country || ""] || 0;
+          if (bonus > 0) {
+            score += bonus;
+            breakdown[`digital_gap_bonus_${(lead.country || "").toLowerCase()}`] = bonus;
+          }
+        } else {
+          // Has website, check quality
+          const websiteScore = lead.website_score || 100;
+          if (websiteScore < 50) {
+            score += 25;
+            breakdown["slow_website"] = 25;
+          }
+          if (lead.website_has_ssl === false) {
+            score += 10;
+            breakdown["no_https"] = 10;
+          }
+          if (lead.website_mobile_ok === false) {
+            score += 10;
+            breakdown["mobile_unfriendly"] = 10;
+          }
         }
       } else {
-        const websiteScore = lead.website_score || 100;
-        if (websiteScore < 50) {
-          score += 25;
-          breakdown["slow_website"] = 25;
-        } else if (websiteScore < 80) {
-          score += 15;
-          breakdown["average_website_speed"] = 15;
-        }
+        // Non-web_dev freelance scoring (existing logic)
+        if (!lead.has_website || !lead.website_url) {
+          score += 40;
+          breakdown["no_website"] = 40;
 
-        if (lead.website_mobile_ok === false) {
-          score += 10;
-          breakdown["mobile_unfriendly"] = 10;
-        }
+          const DIGITAL_GAP_BONUS: Record<string, number> = {
+            Nigeria: 15,
+            Ghana: 15,
+            Kenya: 12,
+            Ethiopia: 15,
+            Tanzania: 15,
+            Uganda: 12,
+            Cameroon: 12,
+            Bangladesh: 12,
+            Pakistan: 10,
+            Myanmar: 12,
+            Cambodia: 12,
+            Nepal: 12,
+            Haiti: 15,
+            Bolivia: 10,
+            Honduras: 10,
+          };
+          const bonus = DIGITAL_GAP_BONUS[lead.country || ""] || 0;
+          if (bonus > 0) {
+            score += bonus;
+            breakdown[`digital_gap_bonus_${(lead.country || "").toLowerCase()}`] = bonus;
+          }
+        } else {
+          const websiteScore = lead.website_score || 100;
+          if (websiteScore < 50) {
+            score += 25;
+            breakdown["slow_website"] = 25;
+          } else if (websiteScore < 80) {
+            score += 15;
+            breakdown["average_website_speed"] = 15;
+          }
 
-        if (lead.website_has_ssl === false) {
-          score += 5;
-          breakdown["no_https"] = 5;
+          if (lead.website_mobile_ok === false) {
+            score += 10;
+            breakdown["mobile_unfriendly"] = 10;
+          }
+
+          if (lead.website_has_ssl === false) {
+            score += 5;
+            breakdown["no_https"] = 5;
+          }
         }
       }
 

@@ -62,6 +62,7 @@ Deno.serve(async (req) => {
 
     // Enforce Rate Limit: 10 requests/hour for search-leads
     const ipAddress = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || null;
+    const ipCountry = req.headers.get("cf-ipcountry") || null;
     const rateLimit = await checkRateLimit(supabase, user.id, ipAddress, "search-leads", 10, 3600);
     if (!rateLimit.allowed) {
       throw new AppError("Too many requests. Please try again later.", 429, "RATE_LIMIT_EXCEEDED");
@@ -380,6 +381,23 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Trigger scoring for any unscored leads in final results (Fix null scores)
+    for (const lead of finalLeads) {
+      if (lead.opportunity_score === null || lead.opportunity_score === undefined) {
+        console.log(`[search-leads] Triggering scoring for unscored lead: ${lead.business_name} (${lead.id})`);
+        fetch(`${supabaseUrl}/functions/v1/score-opportunity`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: req.headers.get("Authorization") || "",
+          },
+          body: JSON.stringify({ leadId: lead.id }),
+        }).catch((err) =>
+          console.error(`Failed to trigger score-opportunity for lead ${lead.id}:`, err),
+        );
+      }
+    }
+
     // 6. Deduct quota and log search (Bypassed consumption since platform is free)
 
     await supabase.from("search_history").insert({
@@ -415,7 +433,7 @@ Deno.serve(async (req) => {
         city: city || null,
         product: searchProduct || null,
         results_count: finalLeads.length,
-        ip_country: ipAddress,
+        ip_country: ipCountry,
       });
     } catch (siErr) {
       console.warn("Failed to save search intelligence:", siErr);

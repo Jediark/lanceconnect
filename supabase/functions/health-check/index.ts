@@ -58,18 +58,7 @@ Deno.serve(async (req) => {
       checks.apify = { status: "error", message: e.message };
     }
 
-    // 3. Maigret Service (Railway)
-    try {
-      const maigretUrl = Deno.env.get("MAIGRET_SERVICE_URL");
-      if (maigretUrl) {
-        const res = await fetch(`${maigretUrl}/health`, { signal: AbortSignal.timeout(5000) });
-        checks.maigret = { status: res.ok ? "ok" : "error", httpStatus: res.status };
-      } else {
-        checks.maigret = { status: "skipped", message: "MAIGRET_SERVICE_URL not configured" };
-      }
-    } catch (e: any) {
-      checks.maigret = { status: "error", message: e.message };
-    }
+
 
     // 4. Vercel Email Scraper
     try {
@@ -102,13 +91,17 @@ Deno.serve(async (req) => {
     try {
       const prospeoKey = Deno.env.get("PROSPEO_LANCECONNECT_API_KEY");
       if (prospeoKey) {
-        const res = await fetch("https://api.prospeo.io/domain-search", {
-          method: "POST",
-          headers: { "X-KEY": prospeoKey, "Content-Type": "application/json" },
-          body: JSON.stringify({ domain: "google.com" }),
+        const res = await fetch("https://api.prospeo.io/account-information", {
+          method: "GET",
+          headers: { "X-KEY": prospeoKey },
           signal: AbortSignal.timeout(5000),
         });
-        checks.prospeo = { status: res.ok ? "ok" : "error", httpStatus: res.status };
+        const bodyText = await res.text();
+        checks.prospeo = { 
+          status: res.ok ? "ok" : "error", 
+          httpStatus: res.status,
+          response: bodyText.substring(0, 200)
+        };
       } else {
         checks.prospeo = { status: "skipped", message: "PROSPEO_LANCECONNECT_API_KEY not configured" };
       }
@@ -164,24 +157,7 @@ Deno.serve(async (req) => {
       checks.gemini = { status: "error", message: e.message };
     }
 
-    // 10. Anthropic Claude
-    try {
-      const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
-      if (anthropicKey) {
-        const res = await fetch("https://api.anthropic.com/v1/models", {
-          headers: {
-            "x-api-key": anthropicKey,
-            "anthropic-version": "2023-06-01",
-          },
-          signal: AbortSignal.timeout(5000),
-        });
-        checks.claude = { status: res.ok ? "ok" : "error", httpStatus: res.status };
-      } else {
-        checks.claude = { status: "skipped", message: "ANTHROPIC_API_KEY not configured" };
-      }
-    } catch (e: any) {
-      checks.claude = { status: "error", message: e.message };
-    }
+
 
     // 11. Resend Email
     try {
@@ -215,21 +191,7 @@ Deno.serve(async (req) => {
       checks.screenshotlayer = { status: "error", message: e.message };
     }
 
-    // 13. Stripe
-    try {
-      const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-      if (stripeKey) {
-        const res = await fetch("https://api.stripe.com/v1/balance", {
-          headers: { Authorization: `Bearer ${stripeKey}` },
-          signal: AbortSignal.timeout(5000),
-        });
-        checks.stripe = { status: res.ok ? "ok" : "error", httpStatus: res.status };
-      } else {
-        checks.stripe = { status: "skipped", message: "STRIPE_SECRET_KEY not configured" };
-      }
-    } catch (e: any) {
-      checks.stripe = { status: "error", message: e.message };
-    }
+
 
     // 14. Paystack
     try {
@@ -256,6 +218,24 @@ Deno.serve(async (req) => {
       JSON.stringify({
         status: allHealthy ? "healthy" : "degraded",
         checks,
+        keyCheck: {
+          apify: !!Deno.env.get('APIFY_API_KEY_LANCECONNECT'),
+          gemini: !!Deno.env.get('Google_Gemini_API_KEY') || !!Deno.env.get('GEMINI_API_KEY'),
+          mailboxlayer: !!Deno.env.get('MAILBOXLAYER_API_KEY'),
+          numverify: !!Deno.env.get('NUMVERIFY_API_KEY'),
+          opencage: !!Deno.env.get('OPENCAGE_API_KEY'),
+          paystack: !!Deno.env.get('PAYSTACK_SECRET_KEY'),
+          prospeo: !!Deno.env.get('PROSPEO_LANCECONNECT_API_KEY'),
+          resend: !!Deno.env.get('RESEND_API_KEY_LANCECONNECT') || !!Deno.env.get('RESEND_API_KEY'),
+          screenshotlayer: !!Deno.env.get('SCREENSHOTLAYER_API_KEY'),
+          stripe: !!Deno.env.get('STRIPE_SECRET_KEY'),
+          anthropic: !!Deno.env.get('ANTHROPIC_API_KEY'),
+          internalKey: !!Deno.env.get('INTERNAL_API_KEY'),
+          emailScraper: !!Deno.env.get('EMAIL_SCRAPER_URL'),
+          appUrl: !!Deno.env.get('APP_URL'),
+          maigret: !!Deno.env.get('MAIGRET_SERVICE_URL'),
+          sentryDsn: !!Deno.env.get('SENTRY_DSN_BACKEND'),
+        },
         response_time_ms: responseTime,
         timestamp: new Date().toISOString(),
         version: "2.0.0",
