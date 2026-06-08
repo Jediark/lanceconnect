@@ -750,6 +750,22 @@ function Discover() {
           }}
         />
       )}
+
+      <QuickConnectModal
+        open={quickConnectOpen}
+        onOpenChange={setQuickConnectOpen}
+        lead={quickConnectLead}
+        initialChannel={quickConnectChannel}
+        initialMessage={quickConnectMessage}
+        onLeadUpdated={(updated) => {
+          setResults((prev) =>
+            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email, notes: updated.notes } : l))
+          );
+          if (detail && detail.id === updated.id) {
+            setDetail((prev) => ({ ...prev, email: updated.email, notes: updated.notes }));
+          }
+        }}
+      />
     </>
   );
 }
@@ -1656,21 +1672,6 @@ function LeadDetailModal({
           </div>
         </div>
       )}
-      <QuickConnectModal
-        open={quickConnectOpen}
-        onOpenChange={setQuickConnectOpen}
-        lead={quickConnectLead}
-        initialChannel={quickConnectChannel}
-        initialMessage={quickConnectMessage}
-        onLeadUpdated={(updated) => {
-          setResults((prev) =>
-            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email, notes: updated.notes } : l))
-          );
-          if (detail && detail.id === updated.id) {
-            setDetail((prev) => ({ ...prev, email: updated.email, notes: updated.notes }));
-          }
-        }}
-      />
     </div>
   );
 }

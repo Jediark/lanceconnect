@@ -37,9 +37,9 @@ export function TopNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-20 items-center gap-4 border-b border-border bg-card px-4 lg:px-8 shadow-sm">
+      <header className="sticky top-0 z-50 flex h-20 items-center gap-2 sm:gap-4 border-b border-border bg-card px-3 sm:px-4 lg:px-8 shadow-sm">
         {/* Logo */}
-        <Link to="/app/dashboard" className="flex items-center gap-2 shrink-0 mr-4">
+        <Link to="/app/dashboard" className="flex items-center gap-2 shrink-0 mr-2 sm:mr-4">
           <LanceConnectLogo className="h-10 w-auto" />
         </Link>
 
@@ -110,7 +110,7 @@ export function TopNav() {
         </nav>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-3 ml-auto">
+        <div className="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
           <Link
             to="/app/upgrade"
             className="hidden lg:flex items-center gap-2 rounded-lg bg-primary px-4.5 py-2.5 text-sm font-bold text-primary-foreground hover:brightness-110 transition shadow-sm glow-primary"
@@ -118,26 +118,26 @@ export function TopNav() {
             <Crown className="h-4.5 w-4.5" /> Upgrade
           </Link>
 
-          <button className="relative grid h-11 w-11 place-items-center rounded-lg border border-border bg-background hover:bg-accent transition">
-            <Bell className="h-5 w-5 text-foreground" />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
+          <button className="relative grid h-9 w-9 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-lg border border-border bg-background hover:bg-accent transition">
+            <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-foreground" />
+            <span className="absolute right-1.5 top-1.5 sm:right-2 sm:top-2 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-red-500" />
           </button>
 
           {loading ? (
-            <div className="h-11 w-11 rounded-full bg-accent animate-pulse" />
+            <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-accent animate-pulse shrink-0" />
           ) : user ? (
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2 rounded-full border border-border bg-background p-1 pr-3 hover:bg-accent transition"
+                className="flex items-center rounded-full border border-border bg-background p-0.5 hover:bg-accent transition sm:p-1 sm:pr-3"
               >
-                <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-brand text-sm font-bold text-white shadow-sm">
+                <div className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-gradient-brand text-xs sm:text-sm font-bold text-white shadow-sm shrink-0">
                   {(user.fullName || "User")
                     .split(" ")
                     .map((n) => n[0])
                     .join("")}
                 </div>
-                <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                <ChevronDown className="hidden sm:block h-3 w-3 text-muted-foreground ml-1 shrink-0" />
               </button>
 
               {profileDropdownOpen && (
@@ -211,9 +211,9 @@ export function TopNav() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="lg:hidden grid h-11 w-11 place-items-center rounded-lg border border-border bg-background"
+            className="lg:hidden grid h-9 w-9 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-lg border border-border bg-background"
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         </div>
       </header>
