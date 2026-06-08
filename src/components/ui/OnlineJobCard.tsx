@@ -1,6 +1,8 @@
-import { Briefcase, Globe, ExternalLink, Calendar } from "lucide-react";
+import { useState } from "react";
+import { Briefcase, Globe, ExternalLink, Calendar, Languages, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface UnifiedJob {
   id: string;
@@ -16,6 +18,10 @@ interface UnifiedJob {
 }
 
 export function OnlineJobCard({ job }: { job: UnifiedJob }) {
+  const [isTranslated, setIsTranslated] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translatedText, setTranslatedText] = useState<{ title: string; description: string } | null>(null);
+
   // Simple helper to clean up HTML descriptions if needed, or truncate text
   const cleanDescription = (htmlStr: string) => {
     if (!htmlStr) return "";
@@ -32,12 +38,57 @@ export function OnlineJobCard({ job }: { job: UnifiedJob }) {
     }
   };
 
+  const handleTranslate = async () => {
+    if (isTranslated) {
+      setIsTranslated(false);
+      return;
+    }
+
+    if (translatedText) {
+      setIsTranslated(true);
+      return;
+    }
+
+    setIsTranslating(true);
+    try {
+      // Translate Title
+      const titleRes = await fetch(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(
+          job.title
+        )}`
+      );
+      if (!titleRes.ok) throw new Error();
+      const titleData = await titleRes.json();
+      const translatedTitle = titleData?.[0]?.map((s: any) => s[0]).join("") || job.title;
+
+      // Translate Description
+      const descRes = await fetch(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(
+          job.description
+        )}`
+      );
+      if (!descRes.ok) throw new Error();
+      const descData = await descRes.json();
+      const translatedDesc = descData?.[0]?.map((s: any) => s[0]).join("") || job.description;
+
+      setTranslatedText({
+        title: translatedTitle,
+        description: translatedDesc,
+      });
+      setIsTranslated(true);
+    } catch (error) {
+      toast.error("Failed to translate job content. Please try again.");
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   return (
     <div className="group relative flex w-full flex-col rounded-2xl border border-border/90 bg-card p-5 text-left transition-all duration-300 hover:border-primary/50 hover:bg-card/80">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-display text-lg font-semibold leading-tight group-hover:text-primary transition-colors truncate">
-            {job.title}
+            {isTranslated && translatedText ? translatedText.title : job.title}
           </h3>
           <p className="mt-1 text-sm font-medium text-muted-foreground flex items-center gap-1.5">
             {job.company}
@@ -59,8 +110,23 @@ export function OnlineJobCard({ job }: { job: UnifiedJob }) {
       </div>
 
       <p className="my-2.5 text-xs leading-relaxed text-muted-foreground line-clamp-3">
-        {cleanDescription(job.description)}
+        {cleanDescription(isTranslated && translatedText ? translatedText.description : job.description)}
       </p>
+
+      <div className="mb-3">
+        <button
+          onClick={handleTranslate}
+          disabled={isTranslating}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          {isTranslating ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Languages className="h-3.5 w-3.5" />
+          )}
+          {isTranslated ? "Show Original" : "Translate to English"}
+        </button>
+      </div>
 
       {job.tags && job.tags.length > 0 && (
         <div className="mt-1 mb-4 flex flex-wrap gap-1">
@@ -89,3 +155,4 @@ export function OnlineJobCard({ job }: { job: UnifiedJob }) {
     </div>
   );
 }
+
