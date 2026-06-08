@@ -92,11 +92,10 @@ export function LeadCard({
   };
 
   return (
-    <button
-      type="button"
+    <div
       onClick={() => onOpenDetail?.(lead)}
       className={cn(
-        "group relative flex w-full flex-col rounded-2xl border bg-card p-5 text-left transition-all duration-300",
+        "group relative flex w-full flex-col rounded-2xl border bg-card p-5 text-left transition-all duration-300 cursor-pointer",
         "hover:border-primary/50 hover:bg-card/80",
         isSaved
           ? "border-emerald-500/70 ring-1 ring-emerald-500/10 bg-emerald-500/[0.01]"
@@ -387,6 +386,6 @@ export function LeadCard({
           <MapPin className="h-3.5 w-3.5" />
         </button>
       </div>
-    </button>
+    </div>
   );
 }
