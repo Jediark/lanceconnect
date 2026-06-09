@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  "local_business": <Building2 className="h-6 w-6 text-primary" />,
   "web_dev": <Code className="h-6 w-6 text-primary" />,
   "designer": <Palette className="h-6 w-6 text-primary" />,
   "copywriter": <PenTool className="h-6 w-6 text-primary" />,
@@ -50,6 +51,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 // Map route slug to category ID
 const SLUG_TO_ID: Record<string, string> = {
+  "local-business": "local_business",
   "web-developers": "web_dev",
   "web-development": "web_dev",
   "designers": "designer",
@@ -166,17 +168,47 @@ export const Route = createFileRoute("/find-clients/$category")({
     );
 
     // Find category info in mockData categories
-    const mockCat = CATEGORIES.find((c) => c.id === categoryId);
+    let mockCat = CATEGORIES.find((c) => c.id === categoryId);
 
     if (!mockCat) {
-      throw notFound();
+      // Create a default category object dynamically from the slug
+      const formattedLabel = params.category
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      
+      mockCat = {
+        id: categoryId,
+        emoji: "💼",
+        label: formattedLabel,
+        example: `Find businesses needing ${formattedLabel.toLowerCase()} services`,
+      };
     }
+
+    const isLocalBusiness = categoryId === "local_business" || params.category === "local-business";
 
     return {
       categoryId,
       label: mockCat.label,
       emoji: mockCat.emoji || "💼",
-      content: catContent || {
+      content: catContent || (isLocalBusiness ? {
+        slug: params.category,
+        label: mockCat.label,
+        emoji: mockCat.emoji || "🏪",
+        image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80",
+        tagline: "Find verified B2B leads looking for local services, storefront upgrades, and custom SEO.",
+        description: "Get real-time alerts when dry cleaners, bakeries, salons, and restaurants in your city show high opportunity buying signals.",
+        problems: [
+          "Lacking modern online appointment scheduling",
+          "Missing or broken local search optimization (Google My Business)",
+          "No social media presence to engage local community",
+          "Website not optimized for mobile customers",
+        ],
+        sampleBusinesses: [
+          { name: "Lagos Premium Dry Cleaners", reason: "No local map listing and outdated contact info" },
+          { name: "Seattle Daily Bakery", reason: "Missing online pre-order system for morning rush" }
+        ]
+      } : {
         slug: params.category,
         label: mockCat.label,
         emoji: mockCat.emoji || "💼",
@@ -193,7 +225,7 @@ export const Route = createFileRoute("/find-clients/$category")({
           { name: "Global Commerce Group", reason: "Zero organic search visibility in target markets" },
           { name: "Metropolitan Services", reason: "Outdated contact channels and no scheduling portal" }
         ]
-      }
+      })
     };
   },
   head: ({ loaderData, params }) => {

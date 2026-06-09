@@ -96,8 +96,10 @@ function HomepageComponent() {
       b2b_trade: "b2b-trade",
       human_capital: "human-capital",
       training_recruitment: "training-recruitment",
+      "local business": "local-business",
+      local_business: "local-business",
     };
-    const slug = ID_TO_SLUG[search.category] || search.category;
+    const slug = ID_TO_SLUG[search.category] || String(search.category).toLowerCase().replace(/\s+/g, "-");
     navigate({
       to: "/find-clients/$category",
       params: { category: slug },
@@ -384,14 +386,14 @@ function HeroWithMosaic() {
 
   return (
     <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28 transition-colors duration-300">
-      {/* Background — crossfade between slides */}
+      {/* Background — crossfade with horizontal parallax motion */}
       <AnimatePresence mode="popLayout">
         <motion.div
           key={activeSlide}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, x: 60 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -60 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
           className="absolute inset-0 z-0 select-none pointer-events-none"
         >
           <div className="absolute inset-0 bg-[#020b21] opacity-90 mix-blend-multiply" />
@@ -406,19 +408,19 @@ function HeroWithMosaic() {
       <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 items-center">
           <div className="text-left space-y-6">
-            {/* Animated headline */}
+            {/* Animated headline — horizontal scrolling effect */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSlide}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
+                initial={{ opacity: 0, x: 80 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -80 }}
+                transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
               >
                 <h1 className="font-display text-5xl font-black text-white sm:text-6xl lg:text-7xl leading-[1.1] tracking-tight">
                   {slide.headline}
                 </h1>
-                <p className="mt-4 text-base text-slate-400 leading-relaxed max-w-lg">
+                <p className="mt-4 text-base text-slate-350 leading-relaxed max-w-lg">
                   {slide.subtitle}
                 </p>
               </motion.div>
@@ -439,7 +441,7 @@ function HeroWithMosaic() {
               </Link>
             </div>
 
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-450 pt-2">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-300 pt-2">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card
               </span>
@@ -465,29 +467,13 @@ function HeroWithMosaic() {
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}
-              <span className="text-[10px] text-slate-500 font-mono ml-2">
+              <span className="text-[10px] text-slate-300 font-mono ml-2">
                 {activeSlide + 1}/{HERO_SLIDES.length}
               </span>
             </div>
           </div>
 
           <div className="relative w-full flex items-center justify-center select-none overflow-visible lg:mt-0 mt-8">
-            {/* Prev/Next arrows */}
-            <button
-              onClick={goPrev}
-              className="absolute left-0 lg:-left-4 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full border border-slate-700 bg-slate-900/80 flex items-center justify-center text-slate-400 hover:text-white hover:border-primary hover:bg-primary/20 transition cursor-pointer backdrop-blur-sm"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={goNext}
-              className="absolute right-0 lg:-right-4 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full border border-slate-700 bg-slate-900/80 flex items-center justify-center text-slate-400 hover:text-white hover:border-primary hover:bg-primary/20 transition cursor-pointer backdrop-blur-sm"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-
             <div
               className="absolute bottom-4 w-[340px] h-[340px] rounded-full bg-gradient-to-b from-primary/30 to-transparent border border-primary/20 opacity-70 shadow-2xl transition-all duration-500"
               style={{ transform: "rotateX(72deg) translateY(60px)" }}
@@ -920,6 +906,67 @@ function HowItWorks() {
   const skills = ["Web Developer", "Designer", "SEO Specialist", "Copywriter", "Photographer", "App Developer"];
   const cities = ["Lagos, NG", "London, UK", "Seattle, US", "Lyon, FR", "Naples, IT", "Toronto, CA"];
 
+  // Helper to get a dynamic mock lead based on dropdown selections
+  const getMockLeadForStep3 = (skill: string, city: string) => {
+    const cityName = city.split(",")[0].trim();
+    
+    const leadsDb: Record<string, Record<string, { name: string; emoji: string; score: number }>> = {
+      "Web Developer": {
+        "Lagos": { name: "Lagos Tech Hub", emoji: "💻", score: 95 },
+        "London": { name: "Soho Cafe", emoji: "☕", score: 88 },
+        "Seattle": { name: "Emerald Books", emoji: "📚", score: 92 },
+        "Lyon": { name: "Petit Bistro", emoji: "🍽️", score: 89 },
+        "Naples": { name: "Mario's Ristorante", emoji: "🍕", score: 94 },
+        "Toronto": { name: "Yonge Garage", emoji: "🚗", score: 90 },
+      },
+      "Designer": {
+        "Lagos": { name: "Lagos Hair Studio", emoji: "💇", score: 78 },
+        "London": { name: "Covent Flowers", emoji: "💐", score: 85 },
+        "Seattle": { name: "Rainy Day Apparel", emoji: "👕", score: 83 },
+        "Lyon": { name: "Galerie d'Art", emoji: "🎨", score: 86 },
+        "Naples": { name: "Vesuvio Fashion", emoji: "👗", score: 81 },
+        "Toronto": { name: "CN Design Agency", emoji: "📐", score: 87 },
+      },
+      "SEO Specialist": {
+        "Lagos": { name: "Eko Logistics", emoji: "📦", score: 91 },
+        "London": { name: "West End Dental", emoji: "🦷", score: 93 },
+        "Seattle": { name: "Pike Place Bakery", emoji: "🍞", score: 94 },
+        "Lyon": { name: "Lyon Auto Repair", emoji: "🔧", score: 88 },
+        "Naples": { name: "Napoli Hotel", emoji: "🏨", score: 90 },
+        "Toronto": { name: "Bay St Law Firm", emoji: "⚖️", score: 92 },
+      },
+      "Copywriter": {
+        "Lagos": { name: "Gidi Real Estate", emoji: "🏠", score: 86 },
+        "London": { name: "Thames Marketing", emoji: "📣", score: 89 },
+        "Seattle": { name: "Cascadia Travel", emoji: "✈️", score: 87 },
+        "Lyon": { name: "Chateau Wine", emoji: "🍷", score: 92 },
+        "Naples": { name: "Pompeii Tours", emoji: "🗺️", score: 85 },
+        "Toronto": { name: "Ontario Consulting", emoji: "💼", score: 88 },
+      },
+      "Photographer": {
+        "Lagos": { name: "Naija Weddings", emoji: "👰", score: 93 },
+        "London": { name: "Soho Eats", emoji: "🍔", score: 91 },
+        "Seattle": { name: "Seattle Real Estate", emoji: "🏡", score: 90 },
+        "Lyon": { name: "Boulangerie Dupont", emoji: "🥖", score: 96 },
+        "Naples": { name: "Amalfi Weddings", emoji: "💍", score: 94 },
+        "Toronto": { name: "Drake Events", emoji: "🎉", score: 89 },
+      },
+      "App Developer": {
+        "Lagos": { name: "Gidi Pay", emoji: "💳", score: 97 },
+        "London": { name: "London Transit Co", emoji: "🚌", score: 94 },
+        "Seattle": { name: "Sound Delivery", emoji: "🛵", score: 93 },
+        "Lyon": { name: "Velo Rentals", emoji: "🚲", score: 89 },
+        "Naples": { name: "Capri Ferry App", emoji: "🚢", score: 91 },
+        "Toronto": { name: "TO Fitness App", emoji: "💪", score: 95 },
+      }
+    };
+
+    const skillLeads = leadsDb[skill] || leadsDb["Web Developer"];
+    return skillLeads[cityName] || { name: `${cityName} Business`, emoji: "🏢", score: 90 };
+  };
+
+  const currentLead = getMockLeadForStep3(selectedSkill, selectedCity);
+
   return (
     <section id="how" className="relative overflow-hidden border-y border-border py-24 bg-[#020b21] text-white">
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
@@ -1047,9 +1094,9 @@ function HowItWorks() {
               transition={{ duration: 0.3 }}
               className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between text-[10px]"
             >
-              <span className="font-bold truncate max-w-[80px]">🏪 Mario's</span>
-              <span className="bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 text-[8px] font-bold px-1 py-0.5 rounded font-mono">
-                94 🔥
+              <span className="font-bold truncate max-w-[105px]">{currentLead.emoji} {currentLead.name}</span>
+              <span className="bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 text-[8px] font-bold px-1 py-0.5 rounded font-mono shrink-0">
+                {currentLead.score} 🔥
               </span>
             </motion.div>
             

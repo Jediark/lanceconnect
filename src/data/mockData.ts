@@ -360,6 +360,12 @@ export const MOCK_TEMPLATES = [
 
 export const CATEGORIES = [
   {
+    id: "local_business",
+    emoji: "🏪",
+    label: "Local Business",
+    example: "Find local shops, cleaners, bakeries",
+  },
+  {
     id: "web_dev",
     emoji: "💻",
     label: "Web Development",
