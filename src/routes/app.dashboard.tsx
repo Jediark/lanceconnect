@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Search,
   Mail,
@@ -66,6 +66,7 @@ function ScoreBadge({ score }: { score: number }) {
 function Dashboard() {
   const { user } = useAuth();
   const { pipeline, savedIds, saveLead } = usePipeline();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [scansCount, setScansCount] = useState(0);
@@ -727,8 +728,8 @@ function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
-              label: "Total Discovered",
-              value: totalLeadsCount,
+              label: "Searches Performed",
+              value: scansCount,
               icon: Search,
               bg: "bg-primary",
               fg: "text-white",

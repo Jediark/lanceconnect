@@ -28,29 +28,19 @@ interface TrendItem {
 
 const DEFAULT_TRENDS: TrendItem[] = [
   {
-    label: "Web Developers in Lagos",
-    query: { category: "web_dev", country: "Nigeria", city: "Lagos", product: "", niche: "" },
+    label: "Dry cleaner in Lagos",
+    query: { category: "local business", country: "Nigeria", city: "Lagos", product: "", niche: "dry cleaner" },
     count: 34,
   },
   {
-    label: "African Palm Oil Supplier UK",
-    query: { category: "african_food_export", country: "United Kingdom", city: "London", product: "palm oil", niche: "importer" },
+    label: "Restaurant in London",
+    query: { category: "restaurant_supplier", country: "United Kingdom", city: "London", product: "", niche: "restaurant" },
     count: 28,
   },
   {
-    label: "SEO Specialists in New York",
-    query: { category: "seo", country: "United States", city: "New York", product: "", niche: "" },
+    label: "Bakery in Seattle",
+    query: { category: "local business", country: "United States", city: "Seattle", product: "", niche: "bakery" },
     count: 19,
-  },
-  {
-    label: "Math Tutors in Toronto",
-    query: { category: "tutor", country: "Canada", city: "Toronto", product: "", niche: "" },
-    count: 15,
-  },
-  {
-    label: "B2B Trade Suppliers in Mumbai",
-    query: { category: "b2b_trade", country: "India", city: "Mumbai", product: "", niche: "" },
-    count: 12,
   },
 ];
 
@@ -59,69 +49,8 @@ export function TrendingSearches({ onSelectSearch, className }: TrendingSearches
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTrends() {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from("search_intelligence")
-          .select("category, country, city, product, search_query")
-          .order("created_at", { ascending: false })
-          .limit(100);
-
-        if (error) throw error;
-
-        if (data && data.length > 5) {
-          // Group and count occurrences
-          const counts: Record<string, { count: number; raw: typeof data[0] }> = {};
-          
-          data.forEach((item) => {
-            if (!item.search_query) return;
-            const key = `${item.category || ""}-${item.country || ""}-${item.city || ""}-${item.product || ""}`;
-            if (!counts[key]) {
-              counts[key] = { count: 0, raw: item };
-            }
-            counts[key].count += 1;
-          });
-
-          // Convert to TrendItem array and sort
-          const sortedTrends = Object.entries(counts)
-            .map(([_, val]) => {
-              const r = val.raw;
-              // Build a user friendly label
-              let label = r.search_query;
-              if (r.city && r.country) {
-                label = `${r.search_query} in ${r.city}, ${r.country}`;
-              } else if (r.country) {
-                label = `${r.search_query} in ${r.country}`;
-              }
-              
-              return {
-                label: label.charAt(0).toUpperCase() + label.slice(1),
-                query: {
-                  category: r.category || "",
-                  country: r.country || "",
-                  city: r.city || "",
-                  product: r.product || "",
-                  niche: r.search_query || "",
-                },
-                count: val.count,
-              };
-            })
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 5);
-
-          if (sortedTrends.length > 2) {
-            setTrends(sortedTrends);
-          }
-        }
-      } catch (err) {
-        console.warn("Failed to fetch search intelligence trends, using defaults:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchTrends();
+    // Keeping this static for now to showcase the 3 specific interactive examples
+    setLoading(false);
   }, []);
 
   return (

@@ -399,8 +399,8 @@ function HeroWithMosaic() {
 
 function StatsBar() {
   const stats = [
-    { number: "228", label: "leads found" },
-    { number: "18", label: "with email" },
+    { number: "1,000+", label: "searches performed" },
+    { number: "228+", label: "leads found" },
     { number: "150+", label: "countries" },
     { number: "0%", label: "commission" },
   ];
