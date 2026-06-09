@@ -96,6 +96,64 @@ function Discover() {
     }
   }, [user]);
 
+  const attachClaimsToLeads = async (leads: Lead[]) => {
+    if (leads.length === 0) return leads;
+    const leadIds = leads.map((l) => l.id);
+    try {
+      const { data, error } = await supabase.rpc("get_lead_claims", { lead_ids: leadIds });
+      if (error) {
+        console.error("Error fetching lead claims:", error);
+        return leads;
+      }
+
+      const claimsMap = new Map<string, { status: string; updated_at: string; user_id: string }>();
+      (data || []).forEach((claim: any) => {
+        let evaluatedStatus: 'pitched' | 'won' | null = null;
+        if (claim.status === "won") {
+          evaluatedStatus = "won";
+        } else if (["contacted", "interested", "proposal_sent"].includes(claim.status)) {
+          const updatedAt = new Date(claim.updated_at);
+          const diffTime = Math.abs(new Date().getTime() - updatedAt.getTime());
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays < 30) {
+            evaluatedStatus = "pitched";
+          }
+        }
+        
+        if (evaluatedStatus) {
+          const existing = claimsMap.get(claim.lead_id);
+          if (!existing || evaluatedStatus === "won") {
+            claimsMap.set(claim.lead_id, {
+              status: evaluatedStatus,
+              updated_at: claim.updated_at,
+              user_id: claim.user_id
+            });
+          }
+        }
+      });
+
+      return leads.map((l) => {
+        const claim = claimsMap.get(l.id);
+        if (claim) {
+          return {
+            ...l,
+            claimStatus: claim.status as 'pitched' | 'won',
+            claimUserId: claim.user_id,
+            claimUpdatedAt: claim.updated_at,
+          };
+        }
+        return {
+          ...l,
+          claimStatus: null,
+          claimUserId: null,
+          claimUpdatedAt: null,
+        };
+      });
+    } catch (err) {
+      console.error("Failed to attach claims:", err);
+      return leads;
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -140,7 +198,9 @@ function Discover() {
               isFlagged: dbLead.is_flagged || false,
               suspiciousCount: dbLead.suspicious_count || 0,
             }));
-            setResults(mapped);
+            attachClaimsToLeads(mapped).then((enriched) => {
+              setResults(enriched);
+            });
           }
         });
     } else {
@@ -292,7 +352,8 @@ function Discover() {
         suspiciousCount: dbLead.suspicious_count || 0,
       }));
 
-      setResults(mapped);
+      const enriched = await attachClaimsToLeads(mapped);
+      setResults(enriched);
       setOnlineJobs(rawJobs);
 
       if (mapped.length > 0) {
@@ -759,10 +820,35 @@ function Discover() {
         initialMessage={quickConnectMessage}
         onLeadUpdated={(updated) => {
           setResults((prev) =>
-            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email, notes: updated.notes } : l))
+            prev.map((l) => {
+              if (l.id === updated.id) {
+                return {
+                  ...l,
+                  email: updated.email,
+                  notes: updated.notes,
+                  status: updated.status || "contacted",
+                  claimStatus: "pitched",
+                  claimUserId: user?.id || null,
+                  claimUpdatedAt: new Date().toISOString(),
+                };
+              }
+              return l;
+            })
           );
           if (detail && detail.id === updated.id) {
-            setDetail((prev) => ({ ...prev, email: updated.email, notes: updated.notes }));
+            setDetail((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    email: updated.email,
+                    notes: updated.notes,
+                    status: updated.status || "contacted",
+                    claimStatus: "pitched",
+                    claimUserId: user?.id || null,
+                    claimUpdatedAt: new Date().toISOString(),
+                  }
+                : null
+            );
           }
         }}
       />
@@ -780,6 +866,8 @@ function LeadTable({
   onQuickConnect?: (lead: Lead, initialChannel?: "email" | "linkedin" | "whatsapp") => void;
 }) {
   const { saveLead, savedIds } = usePipeline();
+  const { user } = useAuth();
+
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-card">
       <table className="w-full min-w-[800px] text-sm">
@@ -795,74 +883,106 @@ function LeadTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
-          {leads.map((l) => (
-            <tr
-              key={l.id}
-              className="cursor-pointer hover:bg-primary/5"
-              onClick={() => onOpenDetail(l)}
-            >
-              <td className="px-4 py-3 font-medium">
-                {l.businessName}
-                <div className="text-xs text-muted-foreground">{l.businessType}</div>
-              </td>
-              <td className="px-4 py-3 text-muted-foreground">
-                {l.city}, {l.country}
-              </td>
-              <td className="px-4 py-3">
-                <OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} />
-              </td>
-              <td className="px-4 py-3">
-                {l.hasWebsite ? (
-                  <span className="text-emerald-600 font-semibold">✓ Yes</span>
-                ) : (
-                  <span className="text-red-600">✗ No</span>
-                )}
-              </td>
-              <td className="px-4 py-3 font-mono-data text-xs">
-                {l.phone ? (
-                  onQuickConnect ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onQuickConnect(l, "whatsapp");
-                      }}
-                      className="text-green-500 hover:text-green-400 font-semibold cursor-pointer"
-                    >
-                      {l.phone}
-                    </button>
+          {leads.map((l) => {
+            const isLocked = l.claimStatus && l.claimUserId !== user?.id;
+            return (
+              <tr
+                key={l.id}
+                className="cursor-pointer hover:bg-primary/5"
+                onClick={() => onOpenDetail(l)}
+              >
+                <td className="px-4 py-3 font-medium">
+                  <div className="flex items-center gap-2">
+                    {l.businessName}
+                    {l.claimStatus && (
+                      <span className={cn(
+                        "inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold border",
+                        l.claimStatus === 'won'
+                          ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                          : l.claimUserId === user?.id
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                      )}>
+                        {l.claimStatus === 'won' 
+                          ? l.claimUserId === user?.id ? "🎉 Client" : "🔒 Active Client"
+                          : l.claimUserId === user?.id ? "✓ Contacted" : "⏳ Pitched"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{l.businessType}</div>
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {l.city}, {l.country}
+                </td>
+                <td className="px-4 py-3">
+                  <OpportunityScore score={l.opportunityScore} size="sm" showLabel={false} />
+                </td>
+                <td className="px-4 py-3">
+                  {l.hasWebsite ? (
+                    <span className="text-emerald-600 font-semibold">✓ Yes</span>
                   ) : (
-                    l.phone
-                  )
-                ) : (
-                  <span className="italic text-slate-500">-</span>
-                )}
-              </td>
-              <td className="px-4 py-3 text-amber-600">
-                <span className="inline-flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-current" /> {l.googleRating}
-                </span>
-              </td>
-              <td className="px-4 py-3 text-right">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    saveLead(l);
-                    toast.success("Saved to pipeline");
-                  }}
-                  disabled={savedIds.has(l.id)}
-                  className="rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer"
-                >
-                  {savedIds.has(l.id) ? "Saved" : "Save"}
-                </button>
-              </td>
-            </tr>
-          ))}
+                    <span className="text-red-600">✗ No</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 font-mono-data text-xs">
+                  {l.phone ? (
+                    onQuickConnect && !isLocked ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onQuickConnect(l, "whatsapp");
+                        }}
+                        className="text-green-500 hover:text-green-400 font-semibold cursor-pointer"
+                      >
+                        {l.phone}
+                      </button>
+                    ) : (
+                      <span className={cn(isLocked && "text-slate-500 line-through")}>
+                        {l.phone}
+                      </span>
+                    )
+                  ) : (
+                    <span className="italic text-slate-500">-</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-amber-600">
+                  <span className="inline-flex items-center gap-1">
+                    <Star className="h-3 w-3 fill-current" /> {l.googleRating}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isLocked) return;
+                      saveLead(l);
+                      toast.success("Saved to pipeline");
+                    }}
+                    disabled={savedIds.has(l.id) || isLocked}
+                    className="rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer"
+                  >
+                    {isLocked ? "🔒 Locked" : savedIds.has(l.id) ? "Saved" : "Save"}
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
   );
 }
+
+const getClaimTimeAgo = (updatedAtStr?: string | null) => {
+  if (!updatedAtStr) return "recently";
+  const updatedAt = new Date(updatedAtStr);
+  const diffTime = Math.abs(new Date().getTime() - updatedAt.getTime());
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "today";
+  if (diffDays === 1) return "yesterday";
+  return `${diffDays} days ago`;
+};
 
 function LeadDetailModal({
   lead,
@@ -881,6 +1001,7 @@ function LeadDetailModal({
 
   const [currentLead, setCurrentLead] = useState<Lead>(lead);
   const [enriching, setEnriching] = useState(false);
+  const isLocked = currentLead.claimStatus && currentLead.claimUserId !== user?.id;
 
   useEffect(() => {
     if (currentLead.websiteUrl && !currentLead.email && !enriching) {
@@ -1093,6 +1214,40 @@ function LeadDetailModal({
 
         {activeTab === "overview" ? (
           <div className="space-y-5 p-6">
+            {currentLead.claimStatus && (
+              <div className={cn(
+                "rounded-xl border p-4 flex items-start gap-3 text-sm",
+                currentLead.claimStatus === 'won'
+                  ? "bg-purple-500/10 border-purple-500/20 text-purple-200"
+                  : currentLead.claimUserId === user?.id
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-200"
+                    : "bg-amber-500/10 border-amber-500/20 text-amber-200"
+              )}>
+                <Shield className="h-5 w-5 shrink-0 mt-0.5 text-current" />
+                <div>
+                  <p className="font-semibold">
+                    {currentLead.claimStatus === 'won'
+                      ? currentLead.claimUserId === user?.id
+                        ? "🎉 Your Active Client"
+                        : "🔒 Active Client"
+                      : currentLead.claimUserId === user?.id
+                        ? "✓ Contacted by you recently"
+                        : "⏳ Pitched Recently (Claimed)"
+                    }
+                  </p>
+                  <p className="text-xs mt-0.5 opacity-90">
+                    {currentLead.claimStatus === 'won'
+                      ? currentLead.claimUserId === user?.id
+                        ? "You marked this lead as a closed/won deal. Other specialists cannot pitch them."
+                        : "Another freelancer has successfully closed a deal with this client. Outreach is disabled."
+                      : currentLead.claimUserId === user?.id
+                        ? `You initiated outreach to this lead ${getClaimTimeAgo(currentLead.claimUpdatedAt)}.`
+                        : `Another freelancer initiated outreach to this lead ${getClaimTimeAgo(currentLead.claimUpdatedAt)}. Contact options are disabled for 30 days to avoid spam.`
+                    }
+                  </p>
+                </div>
+              </div>
+            )}
             <div>
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold uppercase tracking-wide text-slate-400">
@@ -1117,7 +1272,11 @@ function LeadDetailModal({
                 <span className="inline-flex items-center gap-2 font-mono text-xs">
                   <Phone className="h-3.5 w-3.5 text-slate-500" />
                   {currentLead.phone ? (
-                    safetyPopupDismissed ? (
+                    isLocked ? (
+                      <span className="text-slate-500 line-through font-mono text-xs" title="Outreach locked">
+                        {maskPhone(currentLead.phone)}
+                      </span>
+                    ) : safetyPopupDismissed ? (
                       onQuickConnect ? (
                         <button
                           type="button"
@@ -1147,13 +1306,18 @@ function LeadDetailModal({
                 </span>
                 {currentLead.phone && (
                   <button
+                    disabled={isLocked}
                     onClick={() => {
+                      if (isLocked) return;
                       handleContactAction(() => {
                         navigator.clipboard?.writeText(currentLead.phone);
                         toast.success("Copied phone number!");
                       });
                     }}
-                    className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer"
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white transition",
+                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
+                    )}
                   >
                     <Copy className="h-2.5 w-2.5" /> Copy
                   </button>
@@ -1163,7 +1327,11 @@ function LeadDetailModal({
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-slate-500 shrink-0" />{" "}
                   {currentLead.email ? (
-                    safetyPopupDismissed ? (
+                    isLocked ? (
+                      <span className="text-slate-500 line-through font-mono text-xs" title="Outreach locked">
+                        {maskEmail(currentLead.email)}
+                      </span>
+                    ) : safetyPopupDismissed ? (
                       <a
                         href={`mailto:${currentLead.email}`}
                         className="text-primary hover:underline font-mono text-xs"
@@ -1190,13 +1358,18 @@ function LeadDetailModal({
                 </div>
                 {currentLead.email && (
                   <button
+                    disabled={isLocked}
                     onClick={() => {
+                      if (isLocked) return;
                       handleContactAction(() => {
                         navigator.clipboard?.writeText(currentLead.email || "");
                         toast.success("Copied email address!");
                       });
                     }}
-                    className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white hover:bg-accent cursor-pointer"
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white transition",
+                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
+                    )}
                   >
                     <Copy className="h-2.5 w-2.5" /> Copy
                   </button>
@@ -1204,7 +1377,7 @@ function LeadDetailModal({
                 {!currentLead.email && currentLead.websiteUrl && (
                   <button
                     onClick={handleEnrich}
-                    disabled={enriching}
+                    disabled={enriching || isLocked}
                     className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-50 transition cursor-pointer"
                   >
                     {enriching ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : "⚡ Find Email"}
@@ -1326,22 +1499,25 @@ function LeadDetailModal({
                       </button>
                       {(selectedChannel === "whatsapp" || selectedChannel === "email" || selectedChannel === "linkedin") && (
                         <button
+                          disabled={isLocked}
                           onClick={() => {
+                            if (isLocked) return;
                             if (onQuickConnect) {
                               onQuickConnect(currentLead, selectedChannel as any, outreachDraft);
                               onClose();
                             }
                           }}
                           className={cn(
-                            "rounded-lg px-3 py-1 text-xs font-semibold text-white flex items-center gap-1 cursor-pointer transition",
-                            selectedChannel === "whatsapp"
+                            "rounded-lg px-3 py-1 text-xs font-semibold text-white flex items-center gap-1 transition",
+                            isLocked ? "bg-slate-700 text-slate-400 cursor-not-allowed" : "cursor-pointer",
+                            !isLocked && (selectedChannel === "whatsapp"
                               ? "bg-emerald-600 hover:bg-emerald-700"
                               : selectedChannel === "linkedin"
                                 ? "bg-[#0A66C2] hover:bg-[#084e96]"
-                                : "bg-primary hover:brightness-110"
+                                : "bg-primary hover:brightness-110")
                           )}
                         >
-                          Send via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "linkedin" ? "LinkedIn" : "Email"}
+                          {isLocked ? "🔒 Closed" : `Send via ${selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "linkedin" ? "LinkedIn" : "Email"}`}
                         </button>
                       )}
                     </div>
@@ -1398,8 +1574,8 @@ function LeadDetailModal({
                   </div>
                   <button
                     onClick={handleGenerate}
-                    disabled={generating}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/45 py-2 text-xs font-semibold text-primary-foreground cursor-pointer transition"
+                    disabled={generating || isLocked}
+                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/45 py-2 text-xs font-semibold text-primary-foreground cursor-pointer transition disabled:opacity-40"
                   >
                     {generating ? (
                       <>
@@ -1420,13 +1596,14 @@ function LeadDetailModal({
             <div className="flex gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => {
+                  if (isLocked) return;
                   saveLead(currentLead);
                   toast.success("Saved to pipeline");
                 }}
-                disabled={savedIds.has(currentLead.id)}
+                disabled={savedIds.has(currentLead.id) || isLocked}
                 className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
               >
-                {savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
+                {isLocked ? "🔒 Locked" : savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
               </button>
               <button
                 type="button"

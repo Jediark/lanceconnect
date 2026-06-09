@@ -26,6 +26,9 @@ export type Lead = {
   status?: PipelineStatus | null;
   notes?: string;
   followUpDate?: string | null;
+  claimStatus?: 'pitched' | 'won' | null;
+  claimUserId?: string | null;
+  claimUpdatedAt?: string | null;
 };
 
 export type PipelineStatus = "new" | "contacted" | "interested" | "proposal_sent" | "won" | "lost";

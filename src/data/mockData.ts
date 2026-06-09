@@ -21,6 +21,9 @@ export type Lead = {
   notes?: string;
   followUpDate?: string | null;
   dealValue?: number | null;
+  claimStatus?: 'pitched' | 'won' | null;
+  claimUserId?: string | null;
+  claimUpdatedAt?: string | null;
   createdAt?: string;
   hasFacebook?: boolean;
   facebookUrl?: string | null;

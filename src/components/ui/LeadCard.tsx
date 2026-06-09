@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Bookmark, BookmarkCheck, Check, Copy, Globe, Linkedin, MapPin, Star, XCircle, Facebook, Instagram, Twitter } from "lucide-react";
+import { Bookmark, BookmarkCheck, Check, Copy, Globe, Linkedin, MapPin, Star, XCircle, Facebook, Instagram, Twitter, Lock, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { OpportunityScore } from "./OpportunityScore";
 import { usePipeline } from "@/contexts/PipelineContext";
+import { useAuth } from "@/contexts/AuthContext";
 import type { Lead } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -34,8 +35,11 @@ export function LeadCard({
   onQuickConnect?: (lead: Lead, initialChannel?: "email" | "linkedin" | "whatsapp") => void;
 }) {
   const { saveLead, savedIds } = usePipeline();
+  const { user } = useAuth();
   const isSaved = savedIds.has(lead.id);
   const [saving, setSaving] = useState(false);
+  const isLocked = !!(lead.claimStatus && lead.claimUserId !== user?.id);
+  const isMyClaim = !!(lead.claimStatus && lead.claimUserId === user?.id);
 
   const isB2B = [
     "african_food_export",
@@ -102,9 +106,25 @@ export function LeadCard({
           : "border-border/90",
       )}
     >
-      {isSaved && (
+      {isSaved && !lead.claimStatus && (
         <span className="absolute -top-2 right-4 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-0.5 text-[11px] font-bold text-white border border-emerald-400/30">
           <Check className="h-3 w-3" /> Saved
+        </span>
+      )}
+      {lead.claimStatus && (
+        <span className={cn(
+          "absolute -top-2 right-4 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold border",
+          lead.claimStatus === 'won'
+            ? isLocked
+              ? "bg-purple-600 text-white border-purple-400/30"
+              : "bg-emerald-600 text-white border-emerald-400/30"
+            : isLocked
+              ? "bg-amber-600 text-white border-amber-400/30"
+              : "bg-sky-600 text-white border-sky-400/30"
+        )}>
+          {lead.claimStatus === 'won'
+            ? isLocked ? <><Lock className="h-3 w-3" /> Active Client</> : <><Check className="h-3 w-3" /> Your Client</>
+            : isLocked ? <><Clock className="h-3 w-3" /> Pitched</> : <><Check className="h-3 w-3" /> Contacted</>}
         </span>
       )}
 
@@ -197,7 +217,12 @@ export function LeadCard({
       <div className="mb-4 space-y-2 text-sm">
         {lead.phone && (
           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-            {onQuickConnect ? (
+            {isLocked ? (
+              <span className="flex items-center gap-1 text-slate-500 font-mono text-sm line-through" title="Outreach locked">
+                <WhatsAppIcon size={14} />
+                {lead.phone.slice(0, 6) + " ••• ••••"}
+              </span>
+            ) : onQuickConnect ? (
               <button
                 type="button"
                 onClick={() => onQuickConnect(lead, "whatsapp")}
@@ -222,7 +247,11 @@ export function LeadCard({
             <button
               type="button"
               onClick={copyPhone}
-              className="rounded p-1 text-slate-400 hover:bg-accent hover:text-foreground transition"
+              disabled={isLocked}
+              className={cn(
+                "rounded p-1 transition",
+                isLocked ? "text-slate-600 cursor-not-allowed" : "text-slate-400 hover:bg-accent hover:text-foreground"
+              )}
               title="Copy Phone Number"
             >
               <Copy className="h-3.5 w-3.5" />
@@ -349,15 +378,21 @@ export function LeadCard({
         <button
           type="button"
           onClick={handleSave}
-          disabled={isSaved || saving}
+          disabled={isSaved || saving || isLocked}
           className={cn(
             "inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition",
-            isSaved
-              ? "bg-emerald-100 text-emerald-700"
-              : "bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60",
+            isLocked
+              ? "bg-slate-800 text-slate-500 cursor-not-allowed"
+              : isSaved
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60",
           )}
         >
-          {saving ? (
+          {isLocked ? (
+            <>
+              <Lock className="h-3.5 w-3.5" /> Locked
+            </>
+          ) : saving ? (
             <span className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
           ) : isSaved ? (
             <>
@@ -372,7 +407,11 @@ export function LeadCard({
         <button
           type="button"
           onClick={copyPhone}
-          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium hover:bg-accent"
+          disabled={isLocked}
+          className={cn(
+            "inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium",
+            isLocked ? "opacity-40 cursor-not-allowed" : "hover:bg-accent"
+          )}
           title="Copy phone"
         >
           <Copy className="h-3.5 w-3.5" />
