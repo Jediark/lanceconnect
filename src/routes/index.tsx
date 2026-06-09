@@ -420,7 +420,7 @@ function HeroWithMosaic() {
                 <h1 className="font-display text-5xl font-black text-white sm:text-6xl lg:text-7xl leading-[1.1] tracking-tight">
                   {slide.headline}
                 </h1>
-                <p className="mt-4 text-base text-slate-350 leading-relaxed max-w-lg">
+                <p className="mt-4 text-base text-slate-300 leading-relaxed max-w-lg">
                   {slide.subtitle}
                 </p>
               </motion.div>
@@ -1608,40 +1608,111 @@ function Testimonials() {
    SUPPORT LANCECONNECT (BUY ME A COFFEE / DONATE)
    ──────────────────────────────────────────────────────────── */
 function Pricing() {
+  const plans = [
+    {
+      name: "Free",
+      price: "$0",
+      description: "Perfect for testing the waters and getting started.",
+      features: [
+        "10 lead searches / mo",
+        "Opportunity scoring",
+        "Masked contact details"
+      ],
+      cta: "Start Free",
+      ctaLink: "/register",
+      popular: false,
+      color: "border-slate-850 bg-[#0d1527]/50"
+    },
+    {
+      name: "Grow",
+      price: "$10",
+      description: "Great for active freelancers looking for client projects.",
+      features: [
+        "150 lead searches / mo",
+        "Unmasked contact lines",
+        "AI outreach script writer"
+      ],
+      cta: "Get Started",
+      ctaLink: "/register?plan=grow",
+      popular: true,
+      color: "border-primary/50 bg-[#13233a]/60 shadow-[0_0_30px_rgba(6,182,212,0.15)]"
+    },
+    {
+      name: "Scale",
+      price: "$50",
+      description: "For agencies and power users seeking maximum reach.",
+      features: [
+        "Unlimited lead searches",
+        "Priority lead processing",
+        "Advanced CSV export"
+      ],
+      cta: "Scale Now",
+      ctaLink: "/register?plan=scale",
+      popular: false,
+      color: "border-slate-850 bg-[#0d1527]/50"
+    }
+  ];
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8 border-t border-border bg-card/30 rounded-3xl select-none">
-      <div className="mx-auto max-w-3xl text-center space-y-6">
-        <p className="text-xs font-mono text-primary mb-2 tracking-widest uppercase flex items-center justify-center gap-1.5">
-          <Heart className="h-4.5 w-4.5 text-rose-500 fill-current animate-pulse" /> // support.our.mission
+    <section id="pricing" className="mx-auto max-w-7xl px-4 py-24 lg:px-8 border-t border-border select-none bg-card/20 rounded-3xl">
+      <div className="mx-auto max-w-3xl text-center mb-16 space-y-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+          // pricing.plans
         </p>
-        <h2 className="font-display text-4xl font-extrabold text-foreground tracking-tight">
-          Keep LanceConnect Free for Everyone
+        <h2 className="font-display text-4xl font-extrabold text-white tracking-tight">
+          Simple, Flexible Pricing.
         </h2>
-        <p className="text-sm text-slate-700 dark:text-slate-350 leading-relaxed max-w-xl mx-auto">
-          We built LanceConnect to help freelancers grow their businesses. No paywalls, no limits on leads, and no monthly fees. You get the complete AI lead generation suite for free.
+        <p className="text-sm text-slate-350 leading-relaxed max-w-xl mx-auto">
+          Start for free to test our leads, and upgrade when you are ready to scale your outreach.
         </p>
-        <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
-          Building and maintaining this platform costs real money every month — servers, APIs, and data. If LanceConnect has helped you find clients, please consider supporting our mission.
-        </p>
-        
-        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
-          <Link
-            to="/support-us"
-            className="rounded-xl bg-primary px-8 py-3.5 text-sm font-bold text-white hover:brightness-110 transition cursor-pointer shadow-lg shadow-primary/20 flex items-center gap-2"
-          >
-            Support Our Mission <Heart className="h-4 w-4 fill-current text-white animate-pulse" />
-          </Link>
-          <a
-            href="https://buymeacoffee.com/lanceconnect"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-xl border border-border bg-card px-8 py-3 text-sm font-bold text-slate-355 hover:text-white hover:bg-accent transition cursor-pointer flex items-center gap-2"
-          >
-            Buy Me a Coffee ☕
-          </a>
-        </div>
       </div>
-    </div>
+
+      <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto items-stretch">
+        {plans.map((plan, idx) => (
+          <div
+            key={idx}
+            className={`relative flex flex-col justify-between rounded-3xl border p-8 transition duration-300 hover:scale-[1.02] ${plan.color}`}
+          >
+            {plan.popular && (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider shadow">
+                Most Popular
+              </div>
+            )}
+            
+            <div>
+              <p className="text-xs font-mono text-primary uppercase tracking-widest">{plan.name}</p>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-extrabold text-white">{plan.price}</span>
+                <span className="text-xs text-muted-foreground font-medium">/month</span>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground leading-relaxed">{plan.description}</p>
+
+              <ul className="mt-6 space-y-3">
+                {plan.features.map((feature, fIdx) => (
+                  <li key={fIdx} className="flex items-start gap-2 text-slate-300">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <span className="text-xs leading-normal">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-8">
+              <Link
+                to={plan.ctaLink}
+                className={`w-full inline-flex justify-center items-center rounded-xl py-3 text-xs font-bold transition shadow ${
+                  plan.popular
+                    ? "bg-primary text-white hover:brightness-110 shadow-primary/20"
+                    : "border border-slate-700 bg-slate-900/60 text-white hover:bg-slate-800"
+                }`}
+              >
+                {plan.cta}
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
