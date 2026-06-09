@@ -321,26 +321,108 @@ const LiveLeadCard = () => {
 };
 
 function HeroWithMosaic() {
+  const HERO_SLIDES = [
+    {
+      headline: (
+        <>
+          Find <span className="text-primary font-black">clients.</span>
+        </>
+      ),
+      subtitle:
+        "LanceConnect scans the internet for businesses that need your skills — then hands you their phone numbers, emails, and opportunity scores.",
+      bgImg: IMG.workspace,
+    },
+    {
+      headline: (
+        <>
+          GET <span className="text-[#3B82F6] dark:text-[#60A5FA] font-black">HIRED.</span>
+        </>
+      ),
+      subtitle:
+        "Local businesses are already searching for what you do. We surface them with verified contacts so you can reach out directly.",
+      bgImg: IMG.marketStall,
+    },
+    {
+      headline: (
+        <>
+          Own your{" "}
+          <span className="text-[#F59E0B] dark:text-[#FBBF24] font-black">income.</span>
+        </>
+      ),
+      subtitle:
+        "Zero commissions. Zero bidding wars. Every lead comes with a scored opportunity and a verified contact — ready for your outreach.",
+      bgImg: IMG.coffeeShop,
+    },
+  ];
+
+  const [activeSlide, setActiveSlide] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startAutoPlay = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+  };
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const goTo = (idx: number) => {
+    setActiveSlide(idx);
+    startAutoPlay();
+  };
+
+  const goPrev = () => goTo((activeSlide - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  const goNext = () => goTo((activeSlide + 1) % HERO_SLIDES.length);
+
+  const slide = HERO_SLIDES[activeSlide];
+
   return (
     <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28 transition-colors duration-300">
-      {/* Background decoration */}
-      <div className="absolute inset-0 z-0 select-none pointer-events-none bg-[#020b21]">
-        <div className="absolute inset-0 bg-[#020b21] opacity-90 mix-blend-multiply" />
-        <img
-          src={IMG.workspace}
-          className="w-full h-full object-cover opacity-20"
-          alt=""
-        />
-      </div>
+      {/* Background — crossfade between slides */}
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={activeSlide}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className="absolute inset-0 z-0 select-none pointer-events-none"
+        >
+          <div className="absolute inset-0 bg-[#020b21] opacity-90 mix-blend-multiply" />
+          <img
+            src={slide.bgImg}
+            className="w-full h-full object-cover opacity-20"
+            alt=""
+          />
+        </motion.div>
+      </AnimatePresence>
 
       <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 items-center">
           <div className="text-left space-y-6">
-            <h1 className="font-display text-5xl font-black text-white sm:text-6xl lg:text-7xl leading-[1.1] tracking-tight">
-              Find clients.<br />
-              <span className="text-primary font-black">Win work.</span><br />
-              Own your income.
-            </h1>
+            {/* Animated headline */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSlide}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h1 className="font-display text-5xl font-black text-white sm:text-6xl lg:text-7xl leading-[1.1] tracking-tight">
+                  {slide.headline}
+                </h1>
+                <p className="mt-4 text-base text-slate-400 leading-relaxed max-w-lg">
+                  {slide.subtitle}
+                </p>
+              </motion.div>
+            </AnimatePresence>
 
             <div className="flex flex-wrap gap-4 pt-4">
               <Link
@@ -368,9 +450,44 @@ function HeroWithMosaic() {
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Cancel anytime
               </span>
             </div>
+
+            {/* Slide navigation dots */}
+            <div className="flex items-center gap-3 pt-2">
+              {HERO_SLIDES.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => goTo(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                    idx === activeSlide
+                      ? "w-8 bg-primary shadow-lg shadow-primary/30"
+                      : "w-2 bg-slate-600 hover:bg-slate-500"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+              <span className="text-[10px] text-slate-500 font-mono ml-2">
+                {activeSlide + 1}/{HERO_SLIDES.length}
+              </span>
+            </div>
           </div>
 
           <div className="relative w-full flex items-center justify-center select-none overflow-visible lg:mt-0 mt-8">
+            {/* Prev/Next arrows */}
+            <button
+              onClick={goPrev}
+              className="absolute left-0 lg:-left-4 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full border border-slate-700 bg-slate-900/80 flex items-center justify-center text-slate-400 hover:text-white hover:border-primary hover:bg-primary/20 transition cursor-pointer backdrop-blur-sm"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={goNext}
+              className="absolute right-0 lg:-right-4 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full border border-slate-700 bg-slate-900/80 flex items-center justify-center text-slate-400 hover:text-white hover:border-primary hover:bg-primary/20 transition cursor-pointer backdrop-blur-sm"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+
             <div
               className="absolute bottom-4 w-[340px] h-[340px] rounded-full bg-gradient-to-b from-primary/30 to-transparent border border-primary/20 opacity-70 shadow-2xl transition-all duration-500"
               style={{ transform: "rotateX(72deg) translateY(60px)" }}
@@ -795,6 +912,14 @@ function ProductShowcase() {
    HOW IT WORKS
    ──────────────────────────────────────────────────────────── */
 function HowItWorks() {
+  const [selectedSkill, setSelectedSkill] = useState("Web Developer");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("Lagos, NG");
+  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+
+  const skills = ["Web Developer", "Designer", "SEO Specialist", "Copywriter", "Photographer", "App Developer"];
+  const cities = ["Lagos, NG", "London, UK", "Seattle, US", "Lyon, FR", "Naples, IT", "Toronto, CA"];
+
   return (
     <section id="how" className="relative overflow-hidden border-y border-border py-24 bg-[#020b21] text-white">
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
@@ -808,14 +933,49 @@ function HowItWorks() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Step 1 */}
+          {/* Step 1 — Interactive Dropdown */}
           <div className="rounded-2xl border border-blue-900/30 bg-[#131c31] p-6 flex flex-col items-center text-center space-y-4 shadow-xl">
             <span className="text-xs font-mono font-bold text-blue-405">STEP 01</span>
             
-            {/* Visual: Dropdown Mockup */}
-            <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 select-none flex items-center justify-between text-xs text-white">
-              <span>Web Developer</span>
-              <span className="text-slate-450">▼</span>
+            <div className="w-full relative">
+              <button
+                onClick={() => { setDropdownOpen(!dropdownOpen); setCityDropdownOpen(false); }}
+                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 flex items-center justify-between text-xs text-white cursor-pointer hover:border-primary/50 hover:bg-slate-800 transition-all duration-200"
+              >
+                <span>{selectedSkill}</span>
+                <motion.span
+                  animate={{ rotate: dropdownOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-slate-450"
+                >
+                  ▼
+                </motion.span>
+              </button>
+              <AnimatePresence>
+                {dropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full left-0 right-0 mt-1.5 z-30 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl shadow-black/40"
+                  >
+                    {skills.map((skill) => (
+                      <button
+                        key={skill}
+                        onClick={() => { setSelectedSkill(skill); setDropdownOpen(false); }}
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors cursor-pointer ${
+                          skill === selectedSkill
+                            ? "bg-primary/20 text-primary font-semibold"
+                            : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                        }`}
+                      >
+                        {skill}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             <p className="text-sm font-semibold text-slate-100">
@@ -823,17 +983,51 @@ function HowItWorks() {
             </p>
           </div>
 
-          {/* Step 2 */}
+          {/* Step 2 — Interactive City Selector */}
           <div className="rounded-2xl border border-blue-900/30 bg-[#131c31] p-6 flex flex-col items-center text-center space-y-4 shadow-xl">
             <span className="text-xs font-mono font-bold text-blue-405">STEP 02</span>
             
-            {/* Visual: Map Pin */}
-            <div className="relative h-12 w-full flex items-center justify-center">
-              <span className="absolute animate-ping h-8 w-8 rounded-full bg-red-500/20" />
-              <MapPin className="h-8 w-8 text-red-500 fill-red-500/20" />
-              <span className="absolute -bottom-1 bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-[8px] font-mono">
-                Lagos, NG
-              </span>
+            <div className="w-full relative">
+              <button
+                onClick={() => { setCityDropdownOpen(!cityDropdownOpen); setDropdownOpen(false); }}
+                className="w-full relative h-12 flex items-center justify-center cursor-pointer group"
+              >
+                <span className="absolute animate-ping h-8 w-8 rounded-full bg-red-500/20" />
+                <MapPin className="h-8 w-8 text-red-500 fill-red-500/20 group-hover:scale-110 transition-transform" />
+                <motion.span
+                  key={selectedCity}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute -bottom-1 bg-slate-900 border border-slate-700 px-2 py-0.5 rounded text-[8px] font-mono"
+                >
+                  {selectedCity}
+                </motion.span>
+              </button>
+              <AnimatePresence>
+                {cityDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full left-0 right-0 mt-3 z-30 bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl shadow-black/40"
+                  >
+                    {cities.map((city) => (
+                      <button
+                        key={city}
+                        onClick={() => { setSelectedCity(city); setCityDropdownOpen(false); }}
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors cursor-pointer ${
+                          city === selectedCity
+                            ? "bg-red-500/20 text-red-400 font-semibold"
+                            : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                        }`}
+                      >
+                        <MapPin className="h-3 w-3 inline mr-1.5" />{city}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             <p className="text-sm font-semibold text-slate-100">
@@ -846,30 +1040,44 @@ function HowItWorks() {
             <span className="text-xs font-mono font-bold text-blue-405">STEP 03</span>
             
             {/* Visual: Scored Lead Card */}
-            <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between text-[10px]">
+            <motion.div
+              key={selectedSkill + selectedCity}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between text-[10px]"
+            >
               <span className="font-bold truncate max-w-[80px]">🏪 Mario's</span>
-              <span className="bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 text-[8px] font-bold px-1 py-0.2 rounded font-mono">
+              <span className="bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 text-[8px] font-bold px-1 py-0.5 rounded font-mono">
                 94 🔥
               </span>
-            </div>
+            </motion.div>
             
             <p className="text-sm font-semibold text-slate-100">
               Get scored leads
             </p>
           </div>
 
-          {/* Step 4 */}
+          {/* Step 4 — Interactive Outreach Links */}
           <div className="rounded-2xl border border-blue-900/30 bg-[#131c31] p-6 flex flex-col items-center text-center space-y-4 shadow-xl">
             <span className="text-xs font-mono font-bold text-blue-405">STEP 04</span>
             
-            {/* Visual: Outreach Icons */}
+            {/* Visual: Outreach Icons — now clickable */}
             <div className="flex gap-4">
-              <div className="h-10 w-10 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+              <Link
+                to="/register"
+                className="h-10 w-10 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 hover:bg-blue-500/25 hover:border-blue-400/60 hover:scale-110 transition-all duration-200 cursor-pointer"
+                title="Send Email"
+              >
                 <Mail className="h-4 w-4" />
-              </div>
-              <div className="h-10 w-10 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs">
+              </Link>
+              <Link
+                to="/register"
+                className="h-10 w-10 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs hover:bg-emerald-500/25 hover:border-emerald-400/60 hover:scale-110 transition-all duration-200 cursor-pointer"
+                title="WhatsApp"
+              >
                 WA
-              </div>
+              </Link>
             </div>
             
             <p className="text-sm font-semibold text-slate-100">

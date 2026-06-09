@@ -42,6 +42,11 @@ const DEFAULT_TRENDS: TrendItem[] = [
     query: { category: "local business", country: "United States", city: "Seattle", product: "", niche: "bakery" },
     count: 19,
   },
+  {
+    label: "Find clients in England",
+    query: { category: "web_dev", country: "United Kingdom", city: "London", product: "", niche: "clients" },
+    count: 22,
+  },
 ];
 
 export function TrendingSearches({ onSelectSearch, className }: TrendingSearchesProps) {
