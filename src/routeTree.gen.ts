@@ -40,6 +40,12 @@ import { Route as ResourcesOutreachTemplatesRouteImport } from './routes/resourc
 import { Route as ResourcesGoogleMyBusinessRouteImport } from './routes/resources.google-my-business'
 import { Route as ResourcesExportGuideRouteImport } from './routes/resources.export-guide'
 import { Route as FreelancersSlugRouteImport } from './routes/freelancers.$slug'
+import { Route as FindClientsWebDeveloperRouteImport } from './routes/find-clients.web-developer'
+import { Route as FindClientsLondonRouteImport } from './routes/find-clients.london'
+import { Route as FindClientsLagosRouteImport } from './routes/find-clients.lagos'
+import { Route as FindClientsGraphicDesignerRouteImport } from './routes/find-clients.graphic-designer'
+import { Route as FindClientsDubaiRouteImport } from './routes/find-clients.dubai'
+import { Route as FindClientsCopywriterRouteImport } from './routes/find-clients.copywriter'
 import { Route as FindClientsCategoryRouteImport } from './routes/find-clients.$category'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as B2bCategoryRouteImport } from './routes/b2b.$category'
@@ -214,6 +220,37 @@ const FreelancersSlugRoute = FreelancersSlugRouteImport.update({
   path: '/freelancers/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FindClientsWebDeveloperRoute = FindClientsWebDeveloperRouteImport.update({
+  id: '/find-clients/web-developer',
+  path: '/find-clients/web-developer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindClientsLondonRoute = FindClientsLondonRouteImport.update({
+  id: '/find-clients/london',
+  path: '/find-clients/london',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindClientsLagosRoute = FindClientsLagosRouteImport.update({
+  id: '/find-clients/lagos',
+  path: '/find-clients/lagos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindClientsGraphicDesignerRoute =
+  FindClientsGraphicDesignerRouteImport.update({
+    id: '/find-clients/graphic-designer',
+    path: '/find-clients/graphic-designer',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FindClientsDubaiRoute = FindClientsDubaiRouteImport.update({
+  id: '/find-clients/dubai',
+  path: '/find-clients/dubai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindClientsCopywriterRoute = FindClientsCopywriterRouteImport.update({
+  id: '/find-clients/copywriter',
+  path: '/find-clients/copywriter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FindClientsCategoryRoute = FindClientsCategoryRouteImport.update({
   id: '/find-clients/$category',
   path: '/find-clients/$category',
@@ -332,6 +369,12 @@ export interface FileRoutesByFullPath {
   '/b2b/$category': typeof B2bCategoryRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
+  '/find-clients/copywriter': typeof FindClientsCopywriterRoute
+  '/find-clients/dubai': typeof FindClientsDubaiRoute
+  '/find-clients/graphic-designer': typeof FindClientsGraphicDesignerRoute
+  '/find-clients/lagos': typeof FindClientsLagosRoute
+  '/find-clients/london': typeof FindClientsLondonRoute
+  '/find-clients/web-developer': typeof FindClientsWebDeveloperRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/resources/export-guide': typeof ResourcesExportGuideRoute
   '/resources/google-my-business': typeof ResourcesGoogleMyBusinessRoute
@@ -379,6 +422,12 @@ export interface FileRoutesByTo {
   '/b2b/$category': typeof B2bCategoryRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
+  '/find-clients/copywriter': typeof FindClientsCopywriterRoute
+  '/find-clients/dubai': typeof FindClientsDubaiRoute
+  '/find-clients/graphic-designer': typeof FindClientsGraphicDesignerRoute
+  '/find-clients/lagos': typeof FindClientsLagosRoute
+  '/find-clients/london': typeof FindClientsLondonRoute
+  '/find-clients/web-developer': typeof FindClientsWebDeveloperRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/resources/export-guide': typeof ResourcesExportGuideRoute
   '/resources/google-my-business': typeof ResourcesGoogleMyBusinessRoute
@@ -429,6 +478,12 @@ export interface FileRoutesById {
   '/b2b/$category': typeof B2bCategoryRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/find-clients/$category': typeof FindClientsCategoryRoute
+  '/find-clients/copywriter': typeof FindClientsCopywriterRoute
+  '/find-clients/dubai': typeof FindClientsDubaiRoute
+  '/find-clients/graphic-designer': typeof FindClientsGraphicDesignerRoute
+  '/find-clients/lagos': typeof FindClientsLagosRoute
+  '/find-clients/london': typeof FindClientsLondonRoute
+  '/find-clients/web-developer': typeof FindClientsWebDeveloperRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/resources/export-guide': typeof ResourcesExportGuideRoute
   '/resources/google-my-business': typeof ResourcesGoogleMyBusinessRoute
@@ -480,6 +535,12 @@ export interface FileRouteTypes {
     | '/b2b/$category'
     | '/blog/$slug'
     | '/find-clients/$category'
+    | '/find-clients/copywriter'
+    | '/find-clients/dubai'
+    | '/find-clients/graphic-designer'
+    | '/find-clients/lagos'
+    | '/find-clients/london'
+    | '/find-clients/web-developer'
     | '/freelancers/$slug'
     | '/resources/export-guide'
     | '/resources/google-my-business'
@@ -527,6 +588,12 @@ export interface FileRouteTypes {
     | '/b2b/$category'
     | '/blog/$slug'
     | '/find-clients/$category'
+    | '/find-clients/copywriter'
+    | '/find-clients/dubai'
+    | '/find-clients/graphic-designer'
+    | '/find-clients/lagos'
+    | '/find-clients/london'
+    | '/find-clients/web-developer'
     | '/freelancers/$slug'
     | '/resources/export-guide'
     | '/resources/google-my-business'
@@ -576,6 +643,12 @@ export interface FileRouteTypes {
     | '/b2b/$category'
     | '/blog/$slug'
     | '/find-clients/$category'
+    | '/find-clients/copywriter'
+    | '/find-clients/dubai'
+    | '/find-clients/graphic-designer'
+    | '/find-clients/lagos'
+    | '/find-clients/london'
+    | '/find-clients/web-developer'
     | '/freelancers/$slug'
     | '/resources/export-guide'
     | '/resources/google-my-business'
@@ -618,6 +691,12 @@ export interface RootRouteChildren {
   B2bCategoryRoute: typeof B2bCategoryRoute
   BlogSlugRoute: typeof BlogSlugRoute
   FindClientsCategoryRoute: typeof FindClientsCategoryRoute
+  FindClientsCopywriterRoute: typeof FindClientsCopywriterRoute
+  FindClientsDubaiRoute: typeof FindClientsDubaiRoute
+  FindClientsGraphicDesignerRoute: typeof FindClientsGraphicDesignerRoute
+  FindClientsLagosRoute: typeof FindClientsLagosRoute
+  FindClientsLondonRoute: typeof FindClientsLondonRoute
+  FindClientsWebDeveloperRoute: typeof FindClientsWebDeveloperRoute
   FreelancersSlugRoute: typeof FreelancersSlugRoute
   ResourcesExportGuideRoute: typeof ResourcesExportGuideRoute
   ResourcesGoogleMyBusinessRoute: typeof ResourcesGoogleMyBusinessRoute
@@ -845,6 +924,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FreelancersSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/find-clients/web-developer': {
+      id: '/find-clients/web-developer'
+      path: '/find-clients/web-developer'
+      fullPath: '/find-clients/web-developer'
+      preLoaderRoute: typeof FindClientsWebDeveloperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-clients/london': {
+      id: '/find-clients/london'
+      path: '/find-clients/london'
+      fullPath: '/find-clients/london'
+      preLoaderRoute: typeof FindClientsLondonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-clients/lagos': {
+      id: '/find-clients/lagos'
+      path: '/find-clients/lagos'
+      fullPath: '/find-clients/lagos'
+      preLoaderRoute: typeof FindClientsLagosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-clients/graphic-designer': {
+      id: '/find-clients/graphic-designer'
+      path: '/find-clients/graphic-designer'
+      fullPath: '/find-clients/graphic-designer'
+      preLoaderRoute: typeof FindClientsGraphicDesignerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-clients/dubai': {
+      id: '/find-clients/dubai'
+      path: '/find-clients/dubai'
+      fullPath: '/find-clients/dubai'
+      preLoaderRoute: typeof FindClientsDubaiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-clients/copywriter': {
+      id: '/find-clients/copywriter'
+      path: '/find-clients/copywriter'
+      fullPath: '/find-clients/copywriter'
+      preLoaderRoute: typeof FindClientsCopywriterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/find-clients/$category': {
       id: '/find-clients/$category'
       path: '/find-clients/$category'
@@ -1034,6 +1155,12 @@ const rootRouteChildren: RootRouteChildren = {
   B2bCategoryRoute: B2bCategoryRoute,
   BlogSlugRoute: BlogSlugRoute,
   FindClientsCategoryRoute: FindClientsCategoryRoute,
+  FindClientsCopywriterRoute: FindClientsCopywriterRoute,
+  FindClientsDubaiRoute: FindClientsDubaiRoute,
+  FindClientsGraphicDesignerRoute: FindClientsGraphicDesignerRoute,
+  FindClientsLagosRoute: FindClientsLagosRoute,
+  FindClientsLondonRoute: FindClientsLondonRoute,
+  FindClientsWebDeveloperRoute: FindClientsWebDeveloperRoute,
   FreelancersSlugRoute: FreelancersSlugRoute,
   ResourcesExportGuideRoute: ResourcesExportGuideRoute,
   ResourcesGoogleMyBusinessRoute: ResourcesGoogleMyBusinessRoute,

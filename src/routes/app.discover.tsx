@@ -157,6 +157,27 @@ function Discover() {
 
   useEffect(() => {
     if (user) {
+      const params = new URLSearchParams(window.location.search);
+      const autoSearch = params.get("autoSearch");
+      if (autoSearch === "true") {
+        const categoryParam = params.get("category") || "";
+        const cityParam = params.get("city") || "";
+        const countryParam = params.get("country") || "";
+        if (categoryParam && cityParam) {
+          setCategory(categoryParam);
+          setCity(cityParam);
+          setCountry(countryParam);
+          handleSearch({
+            category: categoryParam,
+            country: countryParam,
+            city: cityParam,
+            product: "",
+            niche: "",
+          });
+          return;
+        }
+      }
+
       setLoading(true);
       let queryBuilder = supabase.from("leads").select("*");
       if (user.freelancerCategory) {

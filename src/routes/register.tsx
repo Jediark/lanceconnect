@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -62,6 +62,17 @@ function RegisterPage() {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const prefilledCategory = params.get("category");
+    const prefilledCity = params.get("city");
+    const prefilledCountry = params.get("country");
+
+    if (prefilledCategory) sessionStorage.setItem("lc_category", prefilledCategory);
+    if (prefilledCity) sessionStorage.setItem("lc_city", prefilledCity);
+    if (prefilledCountry) sessionStorage.setItem("lc_country", prefilledCountry);
+  }, []);
 
   const s = strength(pwd);
   const strengthLabel = ["", "Weak", "Fair", "Good", "Strong"][s];

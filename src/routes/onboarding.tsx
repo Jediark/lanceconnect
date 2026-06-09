@@ -98,9 +98,45 @@ function Onboarding() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const savedCategory = sessionStorage.getItem("lc_category");
+    const savedCity = sessionStorage.getItem("lc_city");
+    const savedCountry = sessionStorage.getItem("lc_country");
+
+    if (savedCategory) {
+      setCategory(savedCategory);
+    }
+    if (savedCity) {
+      setCity(savedCity);
+    }
+    if (savedCountry) {
+      const foundCountry = COUNTRIES.find(
+        (c) =>
+          c.code.toLowerCase() === savedCountry.toLowerCase() ||
+          c.name.toLowerCase() === savedCountry.toLowerCase()
+      );
+      if (foundCountry) {
+        setCountry(foundCountry.code);
+      } else {
+        setCountry(savedCountry);
+      }
+    }
+  }, []);
+
   const next = () => setStep((s) => s + 1);
 
   const handleComplete = () => {
+    const finalCategory = sessionStorage.getItem("lc_category") || category || user?.freelancerCategory || "web_dev";
+    const finalCity = sessionStorage.getItem("lc_city") || city || user?.city || "";
+    const savedCountry = sessionStorage.getItem("lc_country") || country || user?.country || "";
+    
+    // Resolve country code to name if possible, otherwise use name
+    const foundCountryName = COUNTRIES.find(
+      (c) =>
+        c.code.toLowerCase() === savedCountry.toLowerCase() ||
+        c.name.toLowerCase() === savedCountry.toLowerCase()
+    )?.name || savedCountry;
+
     if (user) {
       const supplierProfile: any = {};
       if (
@@ -138,7 +174,16 @@ function Onboarding() {
         supplierProfile: Object.keys(supplierProfile).length > 0 ? supplierProfile : null,
       });
     }
-    nav({ to: "/app/discover" });
+
+    // Clear sessionStorage
+    sessionStorage.removeItem("lc_category");
+    sessionStorage.removeItem("lc_city");
+    sessionStorage.removeItem("lc_country");
+
+    // Redirect to discover with search params
+    nav({
+      to: `/app/discover?category=${finalCategory}&city=${finalCity}&country=${foundCountryName}&autoSearch=true`
+    });
   };
 
   return (

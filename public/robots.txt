@@ -1,5 +1,11 @@
 User-agent: *
 Allow: /
+Allow: /find-clients/lagos
+Allow: /find-clients/london
+Allow: /find-clients/dubai
+Allow: /find-clients/web-developer
+Allow: /find-clients/graphic-designer
+Allow: /find-clients/copywriter
 Disallow: /app/
 Disallow: /api/
 Sitemap: https://lanceconnect.vercel.app/sitemap.xml

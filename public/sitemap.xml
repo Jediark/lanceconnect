@@ -100,6 +100,34 @@
     <priority>0.85</priority>
   </url>
 
+  <!-- SEO Landing Pages — Cities -->
+  <url>
+    <loc>https://lanceconnect.vercel.app/find-clients/lagos</loc>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://lanceconnect.vercel.app/find-clients/london</loc>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://lanceconnect.vercel.app/find-clients/dubai</loc>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- SEO Landing Pages — By Skill -->
+  <url>
+    <loc>https://lanceconnect.vercel.app/find-clients/web-developer</loc>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://lanceconnect.vercel.app/find-clients/graphic-designer</loc>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://lanceconnect.vercel.app/find-clients/copywriter</loc>
+    <priority>0.90</priority>
+  </url>
+
   <!-- Resources Guides -->
   <url>
     <loc>https://lanceconnect.vercel.app/resources/google-my-business</loc>

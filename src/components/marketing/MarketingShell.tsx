@@ -68,6 +68,18 @@ export function MarketingNav() {
     { to: "/resources/export-guide", label: "Export Guide" },
   ];
 
+  const cityLinks = [
+    { to: "/find-clients/lagos", label: "Lagos" },
+    { to: "/find-clients/london", label: "London" },
+    { to: "/find-clients/dubai", label: "Dubai" },
+  ];
+
+  const skillLinks = [
+    { to: "/find-clients/web-developer", label: "Web Developer" },
+    { to: "/find-clients/graphic-designer", label: "Graphic Designer" },
+    { to: "/find-clients/copywriter", label: "Copywriter" },
+  ];
+
   const navLinks = [
     { to: "/", label: t("nav_home") },
     { to: "/services", label: t("nav_services") },
@@ -232,7 +244,7 @@ export function MarketingNav() {
                   <span>Resources</span>
                   <ChevronDown className="h-3 w-3 transition-transform duration-250 group-hover:rotate-180" />
                 </button>
-                <div className="absolute left-0 mt-1.5 w-52 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-1 duration-150 font-sans before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 before:content-['']">
+                <div className="absolute left-0 mt-1.5 w-64 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-1 duration-150 font-sans before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 before:content-['']">
                   {resourcesLinks.map((r) => (
                     <Link
                       key={r.to}
@@ -242,6 +254,22 @@ export function MarketingNav() {
                       {r.label}
                     </Link>
                   ))}
+                  <div className="border-t border-border/40 my-1.5 pt-1.5">
+                    <p className="px-3 py-1 text-[9px] uppercase font-mono tracking-wider text-muted-foreground">Cities</p>
+                    {cityLinks.map((c) => (
+                      <Link key={c.to} to={c.to} className="block rounded-lg px-3 py-1.5 text-xs text-foreground/85 hover:bg-accent hover:text-foreground transition-colors font-medium">
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="border-t border-border/40 my-1.5 pt-1.5">
+                    <p className="px-3 py-1 text-[9px] uppercase font-mono tracking-wider text-muted-foreground">By Skill</p>
+                    {skillLinks.map((s) => (
+                      <Link key={s.to} to={s.to} className="block rounded-lg px-3 py-1.5 text-xs text-foreground/85 hover:bg-accent hover:text-foreground transition-colors font-medium">
+                        {s.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
             </nav>
@@ -414,6 +442,22 @@ export function MarketingFooter() {
       ] as const,
     },
     {
+      title: "Popular Cities",
+      links: [
+        ["Lagos", "/find-clients/lagos"],
+        ["London", "/find-clients/london"],
+        ["Dubai", "/find-clients/dubai"],
+      ] as const,
+    },
+    {
+      title: "By Skill",
+      links: [
+        ["Web Developer", "/find-clients/web-developer"],
+        ["Graphic Designer", "/find-clients/graphic-designer"],
+        ["Copywriter", "/find-clients/copywriter"],
+      ] as const,
+    },
+    {
       title: "Legal",
       links: [
         ["Privacy Policy", "/privacy"],
@@ -426,7 +470,7 @@ export function MarketingFooter() {
   return (
     <footer className="border-t border-[#1e293b]/40 bg-[#020b21] text-white">
       <div className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-5">
+        <div className="grid gap-10 md:grid-cols-7">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center mb-4 group">
               <img
