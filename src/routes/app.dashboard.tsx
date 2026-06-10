@@ -75,11 +75,53 @@ function Dashboard() {
   const [savedThisMonth, setSavedThisMonth] = useState(0);
   const [contactedCountFromDb, setContactedCountFromDb] = useState(0);
 
-  const [quickCity, setQuickCity] = useState("");
-  const [quickCategory, setQuickCategory] = useState("web_dev");
-  const [quickCountry, setQuickCountry] = useState("Nigeria");
-  const [results, setResults] = useState<Lead[]>([]);
+  const [quickCity, setQuickCity] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("lc_db_city") || "";
+    }
+    return "";
+  });
+  const [quickCategory, setQuickCategory] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("lc_db_category") || "web_dev";
+    }
+    return "web_dev";
+  });
+  const [quickCountry, setQuickCountry] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("lc_db_country") || "Nigeria";
+    }
+    return "Nigeria";
+  });
+  const [results, setResults] = useState<Lead[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("lc_db_results");
+      try {
+        return saved ? JSON.parse(saved) : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const [searchLoading, setSearchLoading] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("lc_db_city", quickCity);
+      sessionStorage.setItem("lc_db_category", quickCategory);
+      sessionStorage.setItem("lc_db_country", quickCountry);
+    }
+  }, [quickCity, quickCategory, quickCountry]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("lc_db_results", JSON.stringify(results));
+      if (results.length > 0) {
+        sessionStorage.setItem("lc_db_has_session", "true");
+      }
+    }
+  }, [results]);
 
   const [detail, setDetail] = useState<Lead | null>(null);
   const [enriching, setEnriching] = useState(false);
@@ -184,19 +226,22 @@ function Dashboard() {
     if (!user) return;
     setLoading(true);
 
-    // Prefill search parameters from user profile
-    if (user.freelancerCategory) setQuickCategory(user.freelancerCategory);
-    if (user.country) {
-      const countryObj = COUNTRIES.find(
-        (c) => c.code.toLowerCase() === user.country.toLowerCase() || c.name.toLowerCase() === user.country.toLowerCase()
-      );
-      if (countryObj) {
-        setQuickCountry(countryObj.name);
-      } else {
-        setQuickCountry(user.country);
+    // Prefill search parameters from user profile only if there is no session-saved search
+    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_db_has_session") === "true";
+    if (!hasSavedSession) {
+      if (user.freelancerCategory) setQuickCategory(user.freelancerCategory);
+      if (user.country) {
+        const countryObj = COUNTRIES.find(
+          (c) => c.code.toLowerCase() === user.country.toLowerCase() || c.name.toLowerCase() === user.country.toLowerCase()
+        );
+        if (countryObj) {
+          setQuickCountry(countryObj.name);
+        } else {
+          setQuickCountry(user.country);
+        }
       }
+      if (user.city) setQuickCity(user.city);
     }
-    if (user.city) setQuickCity(user.city);
 
     // Total leads discovered in system
     supabase

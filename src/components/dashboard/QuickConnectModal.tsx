@@ -78,6 +78,7 @@ export function QuickConnectModal({
   const [recipientEmail, setRecipientEmail] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
   const [enriching, setEnriching] = useState(false);
+  const [whatsAppAction, setWhatsAppAction] = useState<"open" | "copy">("open");
 
   const { saveLead, updateStatus, pipeline } = usePipeline();
   const { user } = useAuth();
@@ -309,8 +310,13 @@ ${user?.contactPhone ? `Phone: ${user.contactPhone}` : ""}`;
       if (channel === "whatsapp") {
         const cleanPhone = recipientPhone.replace(/\D/g, "");
         const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
-        window.open(waUrl, "_blank", "width=1000,height=750,status=no,toolbar=no,menubar=no");
-        toast.success("Opening WhatsApp chat!");
+        if (whatsAppAction === "open") {
+          window.open(waUrl, "_blank", "width=1000,height=750,status=no,toolbar=no,menubar=no");
+          toast.success("Opening WhatsApp chat!");
+        } else {
+          navigator.clipboard?.writeText(waUrl);
+          toast.success("WhatsApp link copied to clipboard! Paste it in your other browser (e.g. Firefox) to send.");
+        }
       } else if (channel === "email") {
         const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
         window.location.href = mailtoUrl;
@@ -430,23 +436,60 @@ ${user?.contactPhone ? `Phone: ${user.contactPhone}` : ""}`;
             )}
 
             {channel === "whatsapp" && (
-              <div>
-                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
-                  Recipient Phone (WhatsApp)
-                </label>
-                <input
-                  type="text"
-                  value={recipientPhone}
-                  onChange={(e) => setRecipientPhone(e.target.value)}
-                  placeholder="Enter phone number (e.g. +2348025550198)"
-                  className="w-full bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-                {!recipientPhone && (
-                  <p className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3 text-amber-500" />
-                    No phone number available. Please enter the number manually.
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                    Recipient Phone (WhatsApp)
+                  </label>
+                  <input
+                    type="text"
+                    value={recipientPhone}
+                    onChange={(e) => setRecipientPhone(e.target.value)}
+                    placeholder="Enter phone number (e.g. +2348025550198)"
+                    className="w-full bg-card border border-border rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                  {!recipientPhone && (
+                    <p className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3 text-amber-500" />
+                      No phone number available. Please enter the number manually.
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                    WhatsApp Action
+                  </label>
+                  <div className="grid grid-cols-2 gap-1 rounded-xl bg-accent p-1 border border-border/40 select-none">
+                    <button
+                      type="button"
+                      onClick={() => setWhatsAppAction("open")}
+                      className={`py-2 text-xs font-bold rounded-lg transition cursor-pointer ${
+                        whatsAppAction === "open"
+                          ? "bg-card text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Open WhatsApp Web
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWhatsAppAction("copy")}
+                      className={`py-2 text-xs font-bold rounded-lg transition cursor-pointer ${
+                        whatsAppAction === "copy"
+                          ? "bg-card text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Copy Link Only
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                    {whatsAppAction === "open"
+                      ? "Directly opens the chat tab/window in this browser."
+                      : "Copies the pre-formatted WhatsApp chat link to your clipboard so you can paste it in Firefox or another browser."}
                   </p>
-                )}
+                </div>
               </div>
             )}
 
