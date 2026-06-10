@@ -13,6 +13,7 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportUsRouteImport } from './routes/support-us'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -58,6 +59,7 @@ import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppAiGeneratorRouteImport } from './routes/app.ai-generator'
 import { Route as AppSettingsIndexRouteImport } from './routes/app.settings.index'
+import { Route as FindClientsSkillCityRouteImport } from './routes/find-clients.$skill.$city'
 import { Route as AppSettingsSubscriptionRouteImport } from './routes/app.settings.subscription'
 import { Route as AppSettingsProfileRouteImport } from './routes/app.settings.profile'
 import { Route as AppSettingsNotificationsRouteImport } from './routes/app.settings.notifications'
@@ -81,6 +83,11 @@ const TermsRoute = TermsRouteImport.update({
 const SupportUsRoute = SupportUsRouteImport.update({
   id: '/support-us',
   path: '/support-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
@@ -311,6 +318,11 @@ const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppSettingsRoute,
 } as any)
+const FindClientsSkillCityRoute = FindClientsSkillCityRouteImport.update({
+  id: '/find-clients/$skill/$city',
+  path: '/find-clients/$skill/$city',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppSettingsSubscriptionRoute = AppSettingsSubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
@@ -354,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/services': typeof ServicesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support-us': typeof SupportUsRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -386,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
   '/app/settings/subscription': typeof AppSettingsSubscriptionRoute
+  '/find-clients/$skill/$city': typeof FindClientsSkillCityRoute
   '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -408,6 +422,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/services': typeof ServicesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support-us': typeof SupportUsRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -439,6 +454,7 @@ export interface FileRoutesByTo {
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
   '/app/settings/subscription': typeof AppSettingsSubscriptionRoute
+  '/find-clients/$skill/$city': typeof FindClientsSkillCityRoute
   '/app/settings': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -463,6 +479,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/services': typeof ServicesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/support-us': typeof SupportUsRoute
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -495,6 +512,7 @@ export interface FileRoutesById {
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
   '/app/settings/subscription': typeof AppSettingsSubscriptionRoute
+  '/find-clients/$skill/$city': typeof FindClientsSkillCityRoute
   '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -520,6 +538,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safety'
     | '/services'
+    | '/sitemap.xml'
     | '/support-us'
     | '/terms'
     | '/unsubscribe'
@@ -552,6 +571,7 @@ export interface FileRouteTypes {
     | '/app/settings/notifications'
     | '/app/settings/profile'
     | '/app/settings/subscription'
+    | '/find-clients/$skill/$city'
     | '/app/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -574,6 +594,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safety'
     | '/services'
+    | '/sitemap.xml'
     | '/support-us'
     | '/terms'
     | '/unsubscribe'
@@ -605,6 +626,7 @@ export interface FileRouteTypes {
     | '/app/settings/notifications'
     | '/app/settings/profile'
     | '/app/settings/subscription'
+    | '/find-clients/$skill/$city'
     | '/app/settings'
   id:
     | '__root__'
@@ -628,6 +650,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/safety'
     | '/services'
+    | '/sitemap.xml'
     | '/support-us'
     | '/terms'
     | '/unsubscribe'
@@ -660,6 +683,7 @@ export interface FileRouteTypes {
     | '/app/settings/notifications'
     | '/app/settings/profile'
     | '/app/settings/subscription'
+    | '/find-clients/$skill/$city'
     | '/app/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -684,6 +708,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SafetyRoute: typeof SafetyRoute
   ServicesRoute: typeof ServicesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SupportUsRoute: typeof SupportUsRoute
   TermsRoute: typeof TermsRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
@@ -703,6 +728,7 @@ export interface RootRouteChildren {
   ResourcesOutreachTemplatesRoute: typeof ResourcesOutreachTemplatesRoute
   BlogIndexRoute: typeof BlogIndexRoute
   FreelancersIndexRoute: typeof FreelancersIndexRoute
+  FindClientsSkillCityRoute: typeof FindClientsSkillCityRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -733,6 +759,13 @@ declare module '@tanstack/react-router' {
       path: '/support-us'
       fullPath: '/support-us'
       preLoaderRoute: typeof SupportUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services': {
@@ -1050,6 +1083,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsIndexRouteImport
       parentRoute: typeof AppSettingsRoute
     }
+    '/find-clients/$skill/$city': {
+      id: '/find-clients/$skill/$city'
+      path: '/find-clients/$skill/$city'
+      fullPath: '/find-clients/$skill/$city'
+      preLoaderRoute: typeof FindClientsSkillCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/settings/subscription': {
       id: '/app/settings/subscription'
       path: '/subscription'
@@ -1148,6 +1188,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SafetyRoute: SafetyRoute,
   ServicesRoute: ServicesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SupportUsRoute: SupportUsRoute,
   TermsRoute: TermsRoute,
   UnsubscribeRoute: UnsubscribeRoute,
@@ -1167,17 +1208,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesOutreachTemplatesRoute: ResourcesOutreachTemplatesRoute,
   BlogIndexRoute: BlogIndexRoute,
   FreelancersIndexRoute: FreelancersIndexRoute,
+  FindClientsSkillCityRoute: FindClientsSkillCityRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

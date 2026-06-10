@@ -154,6 +154,23 @@ function LagosPage() {
                 {s.label}
               </Link>
             ))}
+            {/* Additional skill+city cross-links */}
+            {[
+              { label: "SEO in Lagos", to: "/find-clients/seo-specialist/lagos" },
+              { label: "Social Media in Lagos", to: "/find-clients/social-media-manager/lagos" },
+              { label: "Photography in Lagos", to: "/find-clients/photographer/lagos" },
+              { label: "Video Production in Lagos", to: "/find-clients/video-producer/lagos" },
+              { label: "Virtual Assistant in Lagos", to: "/find-clients/virtual-assistant/lagos" },
+              { label: "App Dev in Lagos", to: "/find-clients/app-developer/lagos" },
+            ].map((s) => (
+              <Link
+                key={s.to}
+                to={s.to as any}
+                className="rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 transition-all duration-200 hover:-translate-y-0.5"
+              >
+                {s.label}
+              </Link>
+            ))}
           </div>
         </div>
       </section>

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Code, Globe, MapPin, Zap, Search, BarChart3, Mail } from "lucide-react";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
-import { MaskedLeadCard, MOCK_LEADS, CITY_PILLS, type LeadData } from "@/components/marketing/SEOLeadCard";
+import { MaskedLeadCard, MOCK_LEADS, type LeadData } from "@/components/marketing/SEOLeadCard";
 
 export const Route = createFileRoute("/find-clients/web-developer")({
   head: () => ({
@@ -141,10 +141,19 @@ function WebDevPage() {
             Find web dev clients by city
           </h2>
           <div className="flex flex-wrap gap-3 justify-center">
-            {[...CITY_PILLS, 
-              { label: "Mumbai", to: "/find-clients/web-developers" },
-              { label: "New York", to: "/find-clients/web-developers" },
-              { label: "Paris", to: "/find-clients/web-developers" },
+            {[
+              { label: "Lagos", to: "/find-clients/web-developer/lagos" },
+              { label: "London", to: "/find-clients/web-developer/london" },
+              { label: "Dubai", to: "/find-clients/web-developer/dubai" },
+              { label: "Accra", to: "/find-clients/web-developer/accra" },
+              { label: "Nairobi", to: "/find-clients/web-developer/nairobi" },
+              { label: "Mumbai", to: "/find-clients/web-developer/mumbai" },
+              { label: "Toronto", to: "/find-clients/web-developer/toronto" },
+              { label: "Berlin", to: "/find-clients/web-developer/berlin" },
+              { label: "Paris", to: "/find-clients/web-developer/paris" },
+              { label: "Singapore", to: "/find-clients/web-developer/singapore" },
+              { label: "Austin", to: "/find-clients/web-developer/austin" },
+              { label: "Fort Lauderdale", to: "/find-clients/web-developer/fort-lauderdale" },
             ].map((c) => (
               <Link
                 key={c.label}

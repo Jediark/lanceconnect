@@ -123,19 +123,29 @@ export const MOCK_LEADS: Record<string, LeadData[]> = {
 };
 
 export const SKILL_PILLS = [
-  { label: "Web Development", to: "/find-clients/web-developers" },
-  { label: "Graphic Design", to: "/find-clients/designers" },
-  { label: "Copywriting", to: "/find-clients/copywriters" },
-  { label: "SEO", to: "/find-clients/seo-specialists" },
-  { label: "Social Media", to: "/find-clients/social-media" },
-  { label: "Video Production", to: "/find-clients/videographers" },
-  { label: "Photography", to: "/find-clients/photographers" },
-  { label: "Marketing", to: "/find-clients/marketers" },
-  { label: "App Development", to: "/find-clients/app-developers" },
+  { label: "Web Development", to: "/find-clients/web-developer" },
+  { label: "Graphic Design", to: "/find-clients/graphic-designer" },
+  { label: "Copywriting", to: "/find-clients/copywriter" },
+  { label: "SEO", to: "/find-clients/seo-specialist" },
+  { label: "Social Media", to: "/find-clients/social-media-manager" },
+  { label: "Photography", to: "/find-clients/photographer" },
+  { label: "Video Production", to: "/find-clients/video-producer" },
+  { label: "Virtual Assistant", to: "/find-clients/virtual-assistant" },
+  { label: "Digital Marketing", to: "/find-clients/digital-marketer" },
+  { label: "App Development", to: "/find-clients/app-developer" },
+  { label: "Online Tutoring", to: "/find-clients/tutor" },
+  { label: "MC & Events", to: "/find-clients/mc-events" },
 ];
 
 export const CITY_PILLS = [
   { label: "Lagos", to: "/find-clients/lagos" },
   { label: "London", to: "/find-clients/london" },
   { label: "Dubai", to: "/find-clients/dubai" },
+  { label: "Accra", to: "/find-clients/accra" },
+  { label: "Nairobi", to: "/find-clients/nairobi" },
+  { label: "Johannesburg", to: "/find-clients/johannesburg" },
+  { label: "Toronto", to: "/find-clients/toronto" },
+  { label: "Singapore", to: "/find-clients/singapore" },
+  { label: "Austin", to: "/find-clients/austin" },
+  { label: "Fort Lauderdale", to: "/find-clients/fort-lauderdale" },
 ];

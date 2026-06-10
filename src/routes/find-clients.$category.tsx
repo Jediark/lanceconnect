@@ -1,7 +1,24 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { CATEGORIES } from "@/data/mockData";
 import { FREELANCER_CATEGORIES } from "@/data/content";
+import { MaskedLeadCard, type LeadData } from "@/components/marketing/SEOLeadCard";
+import {
+  isKnownCity,
+  isKnownSkill,
+  isStaticPage,
+  formatCityName,
+  getCountry,
+  COUNTRY_FLAG,
+  US_STATE_MAP,
+  SKILL_CONFIG,
+  TOP_CITIES,
+  ALL_SKILL_SLUGS,
+  getSkillLabel,
+  getMockLeadsForCity,
+  getMockLeadsForSkill,
+} from "@/data/dynamicRouteData";
 import {
   Code,
   Palette,
@@ -25,6 +42,10 @@ import {
   Sparkles,
   Building2,
   AlertTriangle,
+  Globe,
+  Zap,
+  Star,
+  Search,
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -109,6 +130,8 @@ const CATEGORY_SEO: Record<string, { keywords: string }> = {
 
 export const Route = createFileRoute("/find-clients/$category")({
   beforeLoad: ({ params }) => {
+    // Never intercept the 6 static pages (safety net)
+    if (isStaticPage(params.category)) return;
     if (params.category === "web-development") {
       throw redirect({
         to: "/find-clients/$category",
@@ -160,6 +183,53 @@ export const Route = createFileRoute("/find-clients/$category")({
     }
   },
   loader: async ({ params }) => {
+    const slug = params.category;
+
+    // ── Dynamic City or Skill detection ──────────────────────────────
+    if (isKnownCity(slug)) {
+      const cityName = formatCityName(slug);
+      const countryName = getCountry(slug);
+      const usState = US_STATE_MAP[slug];
+      const displayLocation = usState
+        ? `${cityName}, ${usState}`
+        : countryName
+        ? `${cityName}, ${countryName}`
+        : cityName;
+      return {
+        pageType: "city" as const,
+        slug,
+        cityName,
+        countryName,
+        usState,
+        displayLocation,
+        flag: COUNTRY_FLAG[countryName] || "🌍",
+        // generic fields to satisfy TS (unused for city/skill pages)
+        categoryId: slug,
+        label: cityName,
+        emoji: COUNTRY_FLAG[countryName] || "🌍",
+        content: null as any,
+      };
+    }
+
+    if (isKnownSkill(slug)) {
+      const config = SKILL_CONFIG[slug];
+      return {
+        pageType: "skill" as const,
+        slug,
+        skillConfig: config,
+        cityName: "",
+        countryName: "",
+        usState: undefined,
+        displayLocation: "",
+        flag: "",
+        categoryId: config.category,
+        label: config.label,
+        emoji: "💼",
+        content: null as any,
+      };
+    }
+    // ── End dynamic detection — fall through to generic handler ──────
+
     const categoryId = SLUG_TO_ID[params.category] || params.category;
     
     // Find category info in content.ts categories
@@ -188,6 +258,7 @@ export const Route = createFileRoute("/find-clients/$category")({
     const isLocalBusiness = categoryId === "local_business" || params.category === "local-business";
 
     return {
+      pageType: "generic" as const,
       categoryId,
       label: mockCat.label,
       emoji: mockCat.emoji || "💼",
@@ -230,8 +301,33 @@ export const Route = createFileRoute("/find-clients/$category")({
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) return { meta: [] };
-    const { label, content } = loaderData;
     const categoryKey = params.category || "";
+
+    if (loaderData.pageType === "city") {
+      const { displayLocation, countryName } = loaderData;
+      return {
+        meta: [
+          { title: `Find Freelance Clients in ${displayLocation} — LanceConnect` },
+          { name: "description", content: `Find businesses in ${displayLocation} that need freelancers. Get verified phone numbers and emails. 10 free leads, no credit card.` },
+          { name: "keywords", content: `find clients in ${displayLocation}, freelance leads ${displayLocation}, get clients ${countryName}` },
+          { property: "og:title", content: `Find Clients in ${displayLocation} — LanceConnect` },
+        ],
+      };
+    }
+
+    if (loaderData.pageType === "skill") {
+      const { skillConfig } = loaderData;
+      return {
+        meta: [
+          { title: `Find Clients as a ${skillConfig.label} — LanceConnect` },
+          { name: "description", content: `${skillConfig.description} Get direct contact details for businesses that need you. 10 free leads.` },
+          { name: "keywords", content: skillConfig.keywords },
+          { property: "og:title", content: `Find ${skillConfig.label} Clients — LanceConnect` },
+        ],
+      };
+    }
+
+    const { label, content } = loaderData;
     const seoInfo = CATEGORY_SEO[categoryKey] || { keywords: `find ${label.toLowerCase()} clients, ${label.toLowerCase()} leads, B2B ${label.toLowerCase()}` };
     return {
       meta: [
@@ -245,8 +341,8 @@ export const Route = createFileRoute("/find-clients/$category")({
           content: seoInfo.keywords,
         },
         { property: "og:title", content: `Find ${label} Clients Worldwide | LanceConnect` },
-        { property: "og:description", content: content.tagline },
-        { property: "og:image", content: content.image },
+        { property: "og:description", content: content?.tagline },
+        { property: "og:image", content: content?.image },
         { property: "og:type", content: "website" },
       ],
     };
@@ -255,8 +351,20 @@ export const Route = createFileRoute("/find-clients/$category")({
 });
 
 function CategoryLandingPage() {
-  const { categoryId, label, emoji, content } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
 
+  // ── City page ────────────────────────────────────────────────────────────
+  if (loaderData.pageType === "city") {
+    return <CityPage data={loaderData} />;
+  }
+
+  // ── Skill page ───────────────────────────────────────────────────────────
+  if (loaderData.pageType === "skill") {
+    return <SkillPage data={loaderData} />;
+  }
+
+  // ── Generic / existing category page ────────────────────────────────────
+  const { categoryId, label, emoji, content } = loaderData;
   const otherCategories = CATEGORIES.filter((c) => c.id !== categoryId).slice(0, 4);
 
   return (
@@ -344,7 +452,7 @@ function CategoryLandingPage() {
               We monitor millions of local businesses daily, tracking dozens of key parameters. When a business shows a gap that maps to your skill, we score it instantly.
             </p>
             <div className="space-y-3.5">
-              {content.problems.map((prob, idx) => (
+              {content.problems.map((prob: string, idx: number) => (
                 <div
                   key={idx}
                   className="flex gap-3 rounded-2xl border border-border bg-card/50 p-4 text-sm hover:border-primary/20 transition duration-300"
@@ -373,7 +481,7 @@ function CategoryLandingPage() {
               Below are typical examples of businesses scored and parsed in our directory right now.
             </p>
             <div className="space-y-3.5">
-              {content.sampleBusinesses.map((biz, idx) => (
+              {content.sampleBusinesses.map((biz: any, idx: number) => (
                 <div
                   key={idx}
                   className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-sm hover:border-emerald-500/30 transition duration-300"
@@ -464,6 +572,280 @@ function CategoryLandingPage() {
               <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{o.example}</p>
             </Link>
           ))}
+        </div>
+      </section>
+    </MarketingShell>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DYNAMIC CITY PAGE TEMPLATE
+// ═══════════════════════════════════════════════════════════════════════════
+function CityPage({ data }: { data: any }) {
+  const { slug, cityName, countryName, usState, displayLocation, flag } = data;
+  const supabaseUrl =
+    import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
+
+  const [leads, setLeads] = useState<LeadData[]>(
+    getMockLeadsForCity(cityName, countryName)
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`${supabaseUrl}/functions/v1/public-leads`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ city: cityName }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.leads?.length) setLeads(d.leads);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [cityName]);
+
+  const registerUrl = `/register?city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(countryName)}`;
+  const regionLabel = usState ? `${cityName}, ${usState}, ${countryName}` : displayLocation;
+
+  // Skills to show on city page
+  const skillLinks = ALL_SKILL_SLUGS.slice(0, 12);
+
+  return (
+    <MarketingShell>
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/20 via-transparent to-primary/10 pointer-events-none" />
+        <div className="relative mx-auto max-w-5xl px-4 lg:px-8 text-center z-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400 font-mono uppercase tracking-wider mb-6">
+            {flag} {regionLabel}
+          </span>
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
+            Find Clients in{" "}
+            <span className="text-primary">{displayLocation}</span>
+          </h1>
+          <p className="mt-5 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            Discover businesses in {displayLocation} that need your freelance skills — with verified contacts and opportunity scores.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4 justify-center">
+            <Link
+              to={registerUrl as any}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Get Free Leads in {cityName} <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-400 pt-4 justify-center">
+            <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4 text-emerald-500" /> No credit card</span>
+            <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4 text-emerald-500" /> Instant access</span>
+            <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4 text-emerald-500" /> 10 free leads</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Live Lead Cards */}
+      <section className="bg-background py-20 border-b border-border">
+        <div className="mx-auto max-w-6xl px-4 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Real leads from {cityName}</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">Businesses waiting for your services</h2>
+            <p className="mt-3 text-muted-foreground max-w-xl mx-auto text-sm">
+              These are real businesses in {displayLocation} scored by how urgently they need freelance help.
+            </p>
+          </div>
+          {loading ? (
+            <div className="grid gap-6 md:grid-cols-3">
+              {[0,1,2].map(i => (
+                <div key={i} className="rounded-2xl border border-border bg-card/50 h-56 animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-3">
+              {leads.map((lead, idx) => (
+                <MaskedLeadCard key={idx} lead={lead} registerUrl={registerUrl} />
+              ))}
+            </div>
+          )}
+          <div className="text-center mt-10">
+            <Link
+              to={registerUrl as any}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition"
+            >
+              Sign up to see all {cityName} leads <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Why This City */}
+      <section className="bg-muted/30 py-20 border-b border-border">
+        <div className="mx-auto max-w-5xl px-4 lg:px-8">
+          <h2 className="font-display text-2xl font-bold tracking-tight md:text-3xl text-center mb-12">
+            Why freelance in {displayLocation}?
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { icon: TrendingUp, title: "Growing Economy", desc: `${displayLocation} has a rapidly expanding business ecosystem with increasing demand for digital services.` },
+              { icon: Building2, title: "Dense SME Market", desc: "Thousands of small businesses still lack websites, social media, or professional services." },
+              { icon: Globe, title: "Low Digital Adoption", desc: "Most businesses rely on word-of-mouth — a massive opportunity for freelancers." },
+            ].map((item, idx) => (
+              <div key={idx} className="rounded-2xl border border-border bg-card p-6 text-center shadow-card hover:shadow-card-hover transition duration-300">
+                <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-xl bg-primary/10 border border-primary/20">
+                  <item.icon className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="font-display text-sm font-bold text-foreground">{item.title}</h3>
+                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Find by skill in this city */}
+      <section className="bg-background py-16 border-b border-border">
+        <div className="mx-auto max-w-4xl px-4 lg:px-8 text-center">
+          <h2 className="font-display text-xl font-bold tracking-tight md:text-2xl mb-8">
+            Find {cityName} clients as a:
+          </h2>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {skillLinks.map((skillSlug) => (
+              <Link
+                key={skillSlug}
+                to={`/find-clients/${skillSlug}/${slug}` as any}
+                className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:border-primary/30 transition-all duration-200 hover:-translate-y-0.5"
+              >
+                {getSkillLabel(skillSlug)}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="bg-[#020b21] py-20">
+        <div className="mx-auto max-w-3xl px-4 lg:px-8 text-center">
+          <Zap className="h-8 w-8 text-primary mx-auto mb-4" />
+          <h2 className="font-display text-3xl font-bold text-white tracking-tight md:text-4xl">
+            Start finding clients in {cityName} today
+          </h2>
+          <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+            Join freelancers already using LanceConnect to win local business contracts in {displayLocation}.
+          </p>
+          <Link
+            to={registerUrl as any}
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/25 hover:scale-[1.02]"
+          >
+            Get 10 Free Leads <ArrowRight className="h-5 w-5" />
+          </Link>
+        </div>
+      </section>
+    </MarketingShell>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DYNAMIC SKILL PAGE TEMPLATE
+// ═══════════════════════════════════════════════════════════════════════════
+function SkillPage({ data }: { data: any }) {
+  const { slug, skillConfig } = data;
+  const registerUrl = `/register?category=${skillConfig.category}`;
+
+  return (
+    <MarketingShell>
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-primary/10 pointer-events-none" />
+        <div className="relative mx-auto max-w-5xl px-4 lg:px-8 text-center z-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-semibold text-primary font-mono uppercase tracking-wider mb-6">
+            💼 {skillConfig.label}
+          </span>
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
+            Find Clients as a{" "}
+            <span className="text-primary">{skillConfig.label}</span>
+          </h1>
+          <p className="mt-5 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            {skillConfig.description} Get direct contact details. 10 free leads, no credit card.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4 justify-center">
+            <Link
+              to={registerUrl as any}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Get 10 Free {skillConfig.label} Leads <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-400 pt-4 justify-center">
+            <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4 text-emerald-500" /> No credit card</span>
+            <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4 text-emerald-500" /> Instant access</span>
+            <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4 text-emerald-500" /> 10 free leads</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Niche Cards */}
+      <section className="bg-background py-20 border-b border-border">
+        <div className="mx-auto max-w-6xl px-4 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Who needs you right now</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">Businesses that need a {skillConfig.label}</h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {skillConfig.niches.map((niche: any, idx: number) => (
+              <div key={idx} className="rounded-2xl border border-border bg-card p-6 hover:border-primary/30 transition duration-300 shadow-sm">
+                <span className="text-3xl block mb-4">{niche.icon}</span>
+                <h3 className="font-display font-bold text-foreground mb-2">{niche.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{niche.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Cities for this skill */}
+      <section className="bg-muted/30 py-16 border-b border-border">
+        <div className="mx-auto max-w-4xl px-4 lg:px-8 text-center">
+          <h2 className="font-display text-xl font-bold tracking-tight md:text-2xl mb-8">
+            Find {skillConfig.label} clients in:
+          </h2>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {[
+              { label: "Lagos", to: `/find-clients/${slug}/lagos` },
+              { label: "London", to: `/find-clients/${slug}/london` },
+              { label: "Dubai", to: `/find-clients/${slug}/dubai` },
+              ...TOP_CITIES.slice(0, 8).map((city) => ({
+                label: formatCityName(city),
+                to: `/find-clients/${slug}/${city}`,
+              })),
+            ].map((c) => (
+              <Link
+                key={c.label}
+                to={c.to as any}
+                className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:border-primary/30 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5"
+              >
+                <MapPin className="h-3 w-3 text-muted-foreground" /> {c.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="bg-[#020b21] py-20">
+        <div className="mx-auto max-w-3xl px-4 lg:px-8 text-center">
+          <Sparkles className="h-8 w-8 text-primary mx-auto mb-4" />
+          <h2 className="font-display text-3xl font-bold text-white tracking-tight md:text-4xl">
+            Stop waiting. Start winning {skillConfig.label} clients.
+          </h2>
+          <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+            LanceConnect scans millions of businesses and hands you the ones that need exactly what you offer.
+          </p>
+          <Link
+            to={registerUrl as any}
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/25 hover:scale-[1.02]"
+          >
+            Get 10 Free Leads <ArrowRight className="h-5 w-5" />
+          </Link>
         </div>
       </section>
     </MarketingShell>
