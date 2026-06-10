@@ -35,6 +35,7 @@ import { Route as R500RouteImport } from './routes/500'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FreelancersIndexRouteImport } from './routes/freelancers.index'
+import { Route as FindClientsIndexRouteImport } from './routes/find-clients.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as ResourcesOutreachTemplatesRouteImport } from './routes/resources.outreach-templates'
@@ -193,6 +194,11 @@ const IndexRoute = IndexRouteImport.update({
 const FreelancersIndexRoute = FreelancersIndexRouteImport.update({
   id: '/freelancers/',
   path: '/freelancers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindClientsIndexRoute = FindClientsIndexRouteImport.update({
+  id: '/find-clients/',
+  path: '/find-clients/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
@@ -394,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/resources/outreach-templates': typeof ResourcesOutreachTemplatesRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/find-clients/': typeof FindClientsIndexRoute
   '/freelancers/': typeof FreelancersIndexRoute
   '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
@@ -449,6 +456,7 @@ export interface FileRoutesByTo {
   '/resources/outreach-templates': typeof ResourcesOutreachTemplatesRoute
   '/app': typeof AppIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/find-clients': typeof FindClientsIndexRoute
   '/freelancers': typeof FreelancersIndexRoute
   '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
@@ -507,6 +515,7 @@ export interface FileRoutesById {
   '/resources/outreach-templates': typeof ResourcesOutreachTemplatesRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/find-clients/': typeof FindClientsIndexRoute
   '/freelancers/': typeof FreelancersIndexRoute
   '/app/settings/danger-zone': typeof AppSettingsDangerZoneRoute
   '/app/settings/notifications': typeof AppSettingsNotificationsRoute
@@ -566,6 +575,7 @@ export interface FileRouteTypes {
     | '/resources/outreach-templates'
     | '/app/'
     | '/blog/'
+    | '/find-clients/'
     | '/freelancers/'
     | '/app/settings/danger-zone'
     | '/app/settings/notifications'
@@ -621,6 +631,7 @@ export interface FileRouteTypes {
     | '/resources/outreach-templates'
     | '/app'
     | '/blog'
+    | '/find-clients'
     | '/freelancers'
     | '/app/settings/danger-zone'
     | '/app/settings/notifications'
@@ -678,6 +689,7 @@ export interface FileRouteTypes {
     | '/resources/outreach-templates'
     | '/app/'
     | '/blog/'
+    | '/find-clients/'
     | '/freelancers/'
     | '/app/settings/danger-zone'
     | '/app/settings/notifications'
@@ -727,6 +739,7 @@ export interface RootRouteChildren {
   ResourcesGoogleMyBusinessRoute: typeof ResourcesGoogleMyBusinessRoute
   ResourcesOutreachTemplatesRoute: typeof ResourcesOutreachTemplatesRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  FindClientsIndexRoute: typeof FindClientsIndexRoute
   FreelancersIndexRoute: typeof FreelancersIndexRoute
   FindClientsSkillCityRoute: typeof FindClientsSkillCityRoute
 }
@@ -913,6 +926,13 @@ declare module '@tanstack/react-router' {
       path: '/freelancers'
       fullPath: '/freelancers/'
       preLoaderRoute: typeof FreelancersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-clients/': {
+      id: '/find-clients/'
+      path: '/find-clients'
+      fullPath: '/find-clients/'
+      preLoaderRoute: typeof FindClientsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/': {
@@ -1207,6 +1227,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesGoogleMyBusinessRoute: ResourcesGoogleMyBusinessRoute,
   ResourcesOutreachTemplatesRoute: ResourcesOutreachTemplatesRoute,
   BlogIndexRoute: BlogIndexRoute,
+  FindClientsIndexRoute: FindClientsIndexRoute,
   FreelancersIndexRoute: FreelancersIndexRoute,
   FindClientsSkillCityRoute: FindClientsSkillCityRoute,
 }

@@ -270,6 +270,15 @@ export function MarketingNav() {
                       </Link>
                     ))}
                   </div>
+                  <div className="border-t border-border/40 mt-1.5 pt-1.5">
+                    <Link
+                      to="/find-clients"
+                      className="flex items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold text-primary hover:bg-accent hover:text-primary transition-colors"
+                    >
+                      <span>Explore All Cities & Skills</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </nav>
@@ -341,6 +350,14 @@ export function MarketingNav() {
                     {r.label}
                   </Link>
                 ))}
+                <Link
+                  to="/find-clients"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between rounded-md px-5 py-2 text-xs font-semibold text-primary hover:bg-accent hover:text-primary transition-colors mt-1"
+                >
+                  <span>Explore All Cities & Skills</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
               <button
                 onClick={() => {
@@ -447,6 +464,7 @@ export function MarketingFooter() {
         ["Lagos", "/find-clients/lagos"],
         ["London", "/find-clients/london"],
         ["Dubai", "/find-clients/dubai"],
+        ["Explore All Cities", "/find-clients"],
       ] as const,
     },
     {
@@ -455,6 +473,7 @@ export function MarketingFooter() {
         ["Web Developer", "/find-clients/web-developer"],
         ["Graphic Designer", "/find-clients/graphic-designer"],
         ["Copywriter", "/find-clients/copywriter"],
+        ["Explore All Skills", "/find-clients"],
       ] as const,
     },
     {

@@ -239,6 +239,76 @@ export const COUNTRY_FLAG: Record<string, string> = {
   Mexico: "🇲🇽",
 };
 
+// Country to continent/region mapping for the directory page
+export const COUNTRY_REGION_MAP: Record<string, string> = {
+  Nigeria: "Africa",
+  Ghana: "Africa",
+  Kenya: "Africa",
+  "South Africa": "Africa",
+  Tanzania: "Africa",
+  Rwanda: "Africa",
+  Uganda: "Africa",
+  Zambia: "Africa",
+  Zimbabwe: "Africa",
+  Mozambique: "Africa",
+  Senegal: "Africa",
+  "Ivory Coast": "Africa",
+  Cameroon: "Africa",
+  Togo: "Africa",
+  Benin: "Africa",
+  Mali: "Africa",
+  Guinea: "Africa",
+  "Sierra Leone": "Africa",
+  Liberia: "Africa",
+  Gambia: "Africa",
+  Ethiopia: "Africa",
+  Egypt: "Africa",
+  Morocco: "Africa",
+
+  "United Kingdom": "Europe",
+  France: "Europe",
+  Germany: "Europe",
+  Netherlands: "Europe",
+  Spain: "Europe",
+  Italy: "Europe",
+  Turkey: "Europe",
+
+  "Saudi Arabia": "Asia & Middle East",
+  UAE: "Asia & Middle East",
+  India: "Asia & Middle East",
+  Pakistan: "Asia & Middle East",
+  Bangladesh: "Asia & Middle East",
+  Singapore: "Asia & Middle East",
+  Malaysia: "Asia & Middle East",
+  Indonesia: "Asia & Middle East",
+  Philippines: "Asia & Middle East",
+  Japan: "Asia & Middle East",
+  "South Korea": "Asia & Middle East",
+  Thailand: "Asia & Middle East",
+  Vietnam: "Asia & Middle East",
+
+  Australia: "Oceania",
+  "New Zealand": "Oceania",
+
+  Canada: "Americas",
+  "United States": "Americas",
+  Brazil: "Americas",
+  Colombia: "Americas",
+  Peru: "Americas",
+  Mexico: "Americas",
+};
+
+export function getRegionForCity(citySlug: string): string {
+  const normalized = citySlug.toLowerCase();
+  if (normalized === "lagos") return "Africa";
+  if (normalized === "london") return "Europe";
+  if (normalized === "dubai") return "Asia & Middle East";
+
+  const country = CITY_COUNTRY_MAP[normalized];
+  return country ? (COUNTRY_REGION_MAP[country] || "Other") : "Other";
+}
+
+
 // ─── Skill Config ────────────────────────────────────────────────────────────
 
 export interface SkillNiche {
