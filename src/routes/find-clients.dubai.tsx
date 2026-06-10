@@ -68,7 +68,7 @@ function DubaiPage() {
               Get Free Leads in Dubai <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-450 pt-4 justify-center">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono text-slate-400 pt-4 justify-center">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-emerald-500" /> No credit card
             </span>

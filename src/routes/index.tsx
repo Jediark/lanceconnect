@@ -297,7 +297,7 @@ const LiveLeadCard = () => {
       <div className="mt-4 space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-3 font-mono text-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-slate-450">📞</span>
+            <span className="text-slate-400">📞</span>
             <span className="text-foreground">+234 803 080 6363</span>
           </div>
           <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
@@ -993,7 +993,7 @@ function HowItWorks() {
                 <motion.span
                   animate={{ rotate: dropdownOpen ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-slate-450"
+                  className="text-slate-400"
                 >
                   ▼
                 </motion.span>
