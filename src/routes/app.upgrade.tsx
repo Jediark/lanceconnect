@@ -32,47 +32,52 @@ function UpgradePage() {
   const PLANS = [
     {
       id: "free",
-      name: t("plan_free"),
+      name: "Free",
       monthly: 0,
       yearly: 0,
       leads: "10",
+      description: "Perfect for testing the waters and getting started.",
       cta: t("plan_cta_free"),
       popular: false,
       features: [
-        t("plan_free_feature_1"),
-        t("plan_free_feature_2"),
-        t("plan_free_feature_3"),
+        "10 B2B lead searches / mo",
+        "Basic opportunity scoring",
+        "Full contact details (masked)",
+        "Standard email templates"
       ],
     },
     {
       id: "individual",
-      name: t("plan_indiv"),
+      name: "Grow",
       monthly: 20,
       yearly: 200,
       leads: "100",
-      cta: t("plan_cta_indiv"),
+      description: "Great for active freelancers seeking monthly client projects.",
+      cta: t("plan_cta_ind"),
       popular: true,
       features: [
-        t("plan_indiv_feature_1"),
-        t("plan_indiv_feature_2"),
-        t("plan_indiv_feature_3"),
-        t("plan_indiv_feature_4"),
+        "100 B2B lead searches / mo",
+        "Premium opportunity scoring",
+        "Unmasked email & phone lines",
+        "AI outreach script writer",
+        "CRM pipeline management"
       ],
     },
     {
       id: "company",
-      name: t("plan_comp"),
+      name: "Scale",
       monthly: 75,
       yearly: 750,
       leads: "250",
+      description: "For agencies and power users seeking maximum reach.",
       cta: t("plan_cta_comp"),
       popular: false,
       features: [
-        t("plan_comp_feature_1"),
-        t("plan_comp_feature_2"),
-        t("plan_comp_feature_3"),
-        t("plan_comp_feature_4"),
-        t("plan_comp_feature_5"),
+        "250 B2B lead searches / mo",
+        "Priority lead processing",
+        "Advanced filtering & export",
+        "Dedicated account helper",
+        "Early access to new features"
       ],
     },
   ];
@@ -175,7 +180,10 @@ function UpgradePage() {
                   </span>
                   <span className="text-sm text-muted-foreground">{t("plan_mo")}</span>
                 </div>
-                <p className="mt-1 text-sm font-mono-data text-primary">
+                <p className="mt-2 text-xs text-muted-foreground leading-relaxed min-h-[32px]">
+                  {p.description}
+                </p>
+                <p className="mt-3 text-sm font-mono-data text-primary">
                   {p.leads} {t("plan_leads_mo")}
                 </p>
                 <ul className="mt-5 space-y-2 text-sm">
