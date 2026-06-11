@@ -52,7 +52,11 @@ function Templates() {
         body: t.body,
         isDefault: false,
       }));
-      setTemplates(mapped);
+      const defaults = MOCK_TEMPLATES.map((t) => ({
+        ...t,
+        isDefault: true,
+      }));
+      setTemplates([...mapped, ...defaults]);
     } catch (err: any) {
       console.error(err);
       toast.error("Failed to load templates");
@@ -70,7 +74,7 @@ function Templates() {
 
 
     try {
-      if (tpl.id === "new") {
+      if (tpl.id === "new" || tpl.id.startsWith("tpl-")) {
         const { error } = await supabase.from("outreach_templates").insert({
           user_id: user.id,
           name: tpl.name,
@@ -79,7 +83,7 @@ function Templates() {
           body: tpl.body,
         });
         if (error) throw error;
-        toast.success("Template created!");
+        toast.success("Custom template saved!");
       } else {
         const { error } = await supabase
           .from("outreach_templates")
@@ -320,7 +324,7 @@ function TemplateEditor({
             )}
           </div>
           <div className="flex justify-end gap-2 border-t border-border p-4">
-            {template.id !== "new" && onDelete && (
+            {template.id !== "new" && !template.isDefault && !template.id.startsWith("tpl-") && onDelete && (
               <button
                 type="button"
                 onClick={() => onDelete(template.id)}

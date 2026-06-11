@@ -125,6 +125,7 @@ function HomepageComponent() {
       <GlobalReach />
       <WhoFor />
       <Testimonials />
+      <MeetOurTeam />
       <Pricing />
       <BlogTeaser />
       <FAQ />
@@ -1550,39 +1551,99 @@ function categorySlug(id: string) {
    TESTIMONIALS — bigger human imagery, Ramp-credibility feel
    ──────────────────────────────────────────────────────────── */
 function Testimonials() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const scroll = (direction: "left" | "right") => {
+    if (containerRef.current) {
+      const scrollAmount = direction === "left" ? -380 : 380;
+      containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+  };
+
   const items = [
     {
-      quote: "Found 3 clients in my first week.",
-      name: "Taiwo A.",
+      quote: "Found 3 clients in my first week. The opportunity scores let me focus on high-conversion leads.",
+      name: "Taiwo Adeyemi",
       role: "Web Developer",
       city: "Lagos 🇳🇬",
       avatar: IMG.face1,
     },
     {
-      quote: "The WhatsApp links are genius.",
-      name: "Maria S.",
+      quote: "The WhatsApp outreach templates are genius. I can pitch clients in under 30 seconds directly from my phone.",
+      name: "Maria Silva",
       role: "Designer",
       city: "São Paulo 🇧🇷",
       avatar: IMG.face2,
     },
+    {
+      quote: "LanceConnect completely replaced my manual prospecting. I get fresh local business leads daily with verified emails.",
+      name: "James Kariuki",
+      role: "SEO Specialist",
+      city: "Nairobi 🇰🇪",
+      avatar: IMG.face3,
+    },
+    {
+      quote: "Finding high-paying B2B leads used to take hours. Now I just filter by city and skill and start pitching immediately.",
+      name: "Priya Patel",
+      role: "App Developer",
+      city: "London 🇬🇧",
+      avatar: IMG.face4,
+    },
+    {
+      quote: "The system grades opportunity based on mobile speed and reviews. Clients are blown away when I send them their audit points.",
+      name: "Sofia Romano",
+      role: "Copywriter",
+      city: "Rome 🇮🇹",
+      avatar: IMG.face6,
+    },
+    {
+      quote: "Zero commissions. Zero bidding wars. I own the client relationship from day one, which is how freelancing should be.",
+      name: "Kenji Tanaka",
+      role: "Digital Marketer",
+      city: "Tokyo 🇯🇵",
+      avatar: IMG.face7,
+    },
   ];
 
   return (
-    <section className="border-t border-border bg-background py-20">
+    <section className="border-t border-border bg-background py-20 relative overflow-hidden">
       <div className="mx-auto max-w-5xl px-4 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center mb-12">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Customer stories
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl text-foreground">
-            Freelancers trust us
-          </h2>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Customer stories
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl text-foreground">
+              Freelancers trust us
+            </h2>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll("left")}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card hover:bg-accent text-foreground transition cursor-pointer"
+              aria-label="Previous Testimonial"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card hover:bg-accent text-foreground transition cursor-pointer"
+              aria-label="Next Testimonial"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
+
+        <div
+          ref={containerRef}
+          className="flex gap-6 overflow-x-auto pb-8 pt-2 scroll-smooth snap-x snap-mandatory scrollbar-none"
+          style={{ scrollbarWidth: "none" }}
+        >
           {items.map((t, idx) => (
             <figure
               key={idx}
-              className="flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card shadow-sm"
+              className="flex-none w-[290px] sm:w-[350px] snap-center flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card shadow-sm hover:border-primary/40 transition duration-300"
             >
               <img
                 src={t.avatar}
@@ -1590,13 +1651,91 @@ function Testimonials() {
                 className="h-16 w-16 rounded-full object-cover border border-border mb-4"
                 loading="lazy"
               />
-              <blockquote className="text-sm font-semibold italic text-foreground/90 mb-4 leading-relaxed">
+              <blockquote className="text-sm font-semibold italic text-foreground/90 mb-4 leading-relaxed flex-1">
                 "{t.quote}"
               </blockquote>
-              <figcaption className="text-xs text-muted-foreground">
-                <span className="font-bold text-foreground">{t.name}</span>, {t.role} · {t.city}
+              <figcaption className="text-xs text-muted-foreground mt-auto">
+                <span className="font-bold text-foreground">{t.name}</span>, {t.role} <br />
+                <span className="text-[10px] text-muted-foreground mt-0.5 block">{t.city}</span>
               </figcaption>
             </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   MEET OUR TEAM
+   ──────────────────────────────────────────────────────────── */
+function MeetOurTeam() {
+  const team = [
+    {
+      name: "Lucas Fernández",
+      role: "Co-Founder & Product Lead",
+      bio: "Former freelance designer. Builder of lead generators, focused on making outreach seamless.",
+      avatar: IMG.face5,
+      location: "Buenos Aires 🇦🇷",
+    },
+    {
+      name: "Sofia Romano",
+      role: "Co-Founder & Tech Lead",
+      bio: "Ex-SaaS architect. Keeps our global lead crawlers scanning and verifying 24/7.",
+      avatar: IMG.face6,
+      location: "Naples 🇮🇹",
+    },
+    {
+      name: "Taiwo Adeyemi",
+      role: "Head of Data Engineering",
+      bio: "Crawler Specialist. Optimizes our Google Maps scraping pipelines and rating models.",
+      avatar: IMG.face1,
+      location: "Lagos 🇳🇬",
+    },
+    {
+      name: "Akinola Olujobi",
+      role: "Growth & Community",
+      bio: "Digital Marketer & MC. Builds LanceConnect's community and freelancer success programs.",
+      avatar: IMG.face8,
+      location: "Abuja 🇳🇬",
+    },
+  ];
+
+  return (
+    <section className="border-t border-border bg-[#020b21] py-20 text-white relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-40 pointer-events-none" />
+      <div className="mx-auto max-w-5xl px-4 lg:px-8 relative z-10">
+        <div className="mx-auto max-w-2xl text-center mb-16">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+            Behind the platform
+          </p>
+          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl text-white">
+            Meet the Builders
+          </h2>
+          <p className="mt-4 text-sm text-slate-400">
+            We are a distributed team of freelancers and creators building the future of client sourcing.
+          </p>
+        </div>
+
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {team.map((m, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col items-center text-center p-6 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm shadow-xl transition-all duration-300 hover:translate-y-[-4px] hover:border-primary/20 hover:bg-white/[0.04]"
+            >
+              <img
+                src={m.avatar}
+                alt={m.name}
+                className="h-24 w-24 rounded-full object-cover border border-white/10 mb-4 shadow-md"
+                loading="lazy"
+              />
+              <h3 className="text-base font-bold text-white">{m.name}</h3>
+              <p className="text-xs text-primary font-semibold mt-1">{m.role}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">{m.location}</p>
+              <p className="mt-3 text-xs text-slate-450 leading-relaxed">
+                {m.bio}
+              </p>
+            </div>
           ))}
         </div>
       </div>

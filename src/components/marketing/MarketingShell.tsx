@@ -18,9 +18,9 @@ import { useState, useEffect, useRef } from "react";
 import { usePreferences, Language, Currency } from "@/contexts/PreferencesContext";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
-import { TopNav } from "@/components/layout/TopNav";
 
 export function MarketingNav() {
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -300,34 +300,56 @@ export function MarketingNav() {
                   <Sun className="h-4.5 w-4.5 text-amber-400" />
                 )}
               </button>
-              <Link
-                to="/login"
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
-              >
-                {t("nav_login")}
-              </Link>
-              <Link
-                to="/register"
-                className="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm hover:shadow-md"
-              >
-                {t("nav_start_free")}
-              </Link>
+              {user ? (
+                <Link
+                  to="/app/dashboard"
+                  className="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm hover:shadow-md"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
+                  >
+                    {t("nav_login")}
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm hover:shadow-md"
+                  >
+                    {t("nav_start_free")}
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
-            <Link
-              to="/login"
-              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
-            >
-              {t("nav_login")}
-            </Link>
-            <Link
-              to="/register"
-              className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm animate-fade-in"
-            >
-              {t("nav_start_free")}
-            </Link>
+            {user ? (
+              <Link
+                to="/app/dashboard"
+                className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm animate-fade-in"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
+                >
+                  {t("nav_login")}
+                </Link>
+                <Link
+                  to="/register"
+                  className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm animate-fade-in"
+                >
+                  {t("nav_start_free")}
+                </Link>
+              </>
+            )}
             <button
               onClick={() => setOpen(!open)}
               className="rounded-lg p-1.5 text-slate-800 dark:text-slate-300 hover:bg-accent"
@@ -424,20 +446,32 @@ export function MarketingNav() {
               </div>
 
               <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-border/40">
-                <Link
-                  to="/login"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl border border-border bg-card px-3 py-2.5 text-center text-xs font-semibold text-foreground hover:bg-accent transition"
-                >
-                  {t("nav_login")}
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition"
-                >
-                  {t("nav_start_free")}
-                </Link>
+                {user ? (
+                  <Link
+                    to="/app/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="col-span-2 rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition"
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      onClick={() => setOpen(false)}
+                      className="rounded-xl border border-border bg-card px-3 py-2.5 text-center text-xs font-semibold text-foreground hover:bg-accent transition"
+                    >
+                      {t("nav_login")}
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setOpen(false)}
+                      className="rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition"
+                    >
+                      {t("nav_start_free")}
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -742,11 +776,11 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-background relative">
-      {user ? <TopNav /> : <MarketingNav />}
-      <main className={user ? "flex-1 px-4 py-6 lg:px-8 max-w-7xl mx-auto w-full" : "flex-1"}>
+      <MarketingNav />
+      <main className="flex-1">
         {children}
       </main>
-      {!user && <MarketingFooter />}
+      <MarketingFooter />
 
       {/* Floating Action Buttons */}
       <div className="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-40 select-none">

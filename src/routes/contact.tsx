@@ -12,7 +12,7 @@ export const Route = createFileRoute("/contact")({
       { title: "Contact — LanceConnect" },
       {
         name: "description",
-        content: "Reach the LanceConnect team. We reply within a jiffy or a minute, 7 days a week.",
+        content: "Reach the LanceConnect team. We reply within minutes, 7 days a week.",
       },
       { property: "og:title", content: "Contact LanceConnect" },
       { name: "keywords", content: "contact lanceconnect, freelancer support, B2B lead help, customer service, get in touch" },
@@ -42,7 +42,7 @@ function ContactPage() {
     setSending(true);
     setTimeout(() => {
       setSending(false);
-      toast.success("Message sent! We'll get back within a jiffy or a minute.");
+      toast.success("Message sent! We'll get back within minutes.");
       setForm({ name: "", email: "", subject: "", message: "" });
     }, 800);
   };
@@ -51,7 +51,7 @@ function ContactPage() {
     <MarketingShell>
       <PageHeader
         eyebrow="Contact"
-        title="We reply within a jiffy or a minute."
+        title="We reply within minutes."
         subtitle="Real freelancers reading every message. No bots, no ticket numbers. Just a human in Buenos Aires, Lagos or Naples."
         image={IMG.workspace}
       />
@@ -74,7 +74,7 @@ function ContactPage() {
             <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Response time
             </p>
-            <p className="mt-1 text-sm font-semibold">Within a jiffy or a minute, 7 days a week</p>
+            <p className="mt-1 text-sm font-semibold">Within minutes, 7 days a week</p>
             <p className="mt-1 text-xs text-muted-foreground">Avg: 38 minutes</p>
           </div>
           <div className="rounded-2xl border border-border bg-card p-5">

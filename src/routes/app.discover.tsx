@@ -56,43 +56,19 @@ const ONLINE_ELIGIBLE = [
 
 function Discover() {
   const { user } = useAuth();
-  const [category, setCategory] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("lc_disc_category") || "";
-    }
-    return "";
-  });
-  const [country, setCountry] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("lc_disc_country") || "";
-    }
-    return "";
-  });
-  const [city, setCity] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("lc_disc_city") || "";
-    }
-    return "";
-  });
+  const [category, setCategory] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [product, setProduct] = useState("");
+  const [selectedNiche, setSelectedNiche] = useState("");
+  const [results, setResults] = useState<Lead[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
   const [website, setWebsite] = useState("");
   const [minScore, setMinScore] = useState(0);
   const [view, setView] = useState<"grid" | "table">("grid");
   const [sort, setSort] = useState<"score" | "rating">("score");
   const [detail, setDetail] = useState<Lead | null>(null);
-  const [results, setResults] = useState<Lead[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("lc_disc_results");
-      try {
-        return saved ? JSON.parse(saved) : [];
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
   const [loading, setLoading] = useState(false);
-  const [product, setProduct] = useState("");
-  const [selectedNiche, setSelectedNiche] = useState("");
   const [onlineJobs, setOnlineJobs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"local" | "online">("local");
   const [loadingOnline, setLoadingOnline] = useState(false);
@@ -103,25 +79,50 @@ function Discover() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const savedCategory = sessionStorage.getItem("lc_disc_category");
+      const savedCountry = sessionStorage.getItem("lc_disc_country");
+      const savedCity = sessionStorage.getItem("lc_disc_city");
+      const savedResults = sessionStorage.getItem("lc_disc_results");
+
+      if (savedCategory) setCategory(savedCategory);
+      if (savedCountry) setCountry(savedCountry);
+      if (savedCity) setCity(savedCity);
+      if (savedResults) {
+        try {
+          setResults(JSON.parse(savedResults));
+        } catch {
+          // ignore
+        }
+      }
+      setIsMounted(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && typeof window !== "undefined") {
       sessionStorage.setItem("lc_disc_category", category);
       sessionStorage.setItem("lc_disc_country", country);
       sessionStorage.setItem("lc_disc_city", city);
     }
-  }, [category, country, city]);
+  }, [category, country, city, isMounted]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isMounted && typeof window !== "undefined") {
       sessionStorage.setItem("lc_disc_results", JSON.stringify(results));
       if (results.length > 0) {
         sessionStorage.setItem("lc_disc_has_session", "true");
+      } else {
+        sessionStorage.removeItem("lc_disc_has_session");
       }
     }
-  }, [results]);
+  }, [results, isMounted]);
 
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
   useEffect(() => {
-    if (user) {
+    if (!isMounted || !user) return;
+    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_disc_has_session") === "true";
+    if (!hasSavedSession) {
       if (
         ["african_food_export", "b2b_trade", "restaurant_supplier", "product_export", "human_capital", "training_recruitment"].includes(
           user.freelancerCategory || "",
@@ -136,7 +137,7 @@ function Discover() {
         }
       }
     }
-  }, [user]);
+  }, [user, isMounted]);
 
   const attachClaimsToLeads = async (leads: Lead[]) => {
     if (leads.length === 0) return leads;
@@ -198,81 +199,79 @@ function Discover() {
   };
 
   useEffect(() => {
-    if (user) {
-      const params = new URLSearchParams(window.location.search);
-      const autoSearch = params.get("autoSearch");
-      if (autoSearch === "true") {
-        const categoryParam = params.get("category") || "";
-        const cityParam = params.get("city") || "";
-        const countryParam = params.get("country") || "";
-        if (categoryParam && cityParam) {
-          setCategory(categoryParam);
-          setCity(cityParam);
-          setCountry(countryParam);
-          handleSearch({
-            category: categoryParam,
-            country: countryParam,
-            city: cityParam,
-            product: "",
-            niche: "",
-          });
-          return;
-        }
-      }
+    if (!isMounted || !user) return;
 
-      const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_disc_has_session") === "true";
-      if (!hasSavedSession) {
-        setLoading(true);
-        let queryBuilder = supabase.from("leads").select("*");
-        if (user.freelancerCategory) {
-          queryBuilder = queryBuilder.eq("industry", user.freelancerCategory);
-        }
-        queryBuilder
-          .order("created_at", { ascending: false })
-          .limit(12)
-          .then(({ data, error }) => {
-            setLoading(false);
-            if (error) console.error("Error fetching initial leads:", error);
-            if (data) {
-              const mapped = data.map((dbLead: any) => ({
-                id: dbLead.id,
-                businessName: dbLead.business_name,
-                businessType: dbLead.business_type,
-                industry: dbLead.industry,
-                city: dbLead.city,
-                country: dbLead.country,
-                fullAddress: dbLead.full_address,
-                phone: dbLead.phone || "",
-                email: dbLead.email || null,
-                websiteUrl: dbLead.website_url || null,
-                hasWebsite: dbLead.has_website || false,
-                googleRating: Number(dbLead.google_rating || 0),
-                googleReviewCount: Number(dbLead.google_review_count || 0),
-                opportunityScore: Number(dbLead.opportunity_score || 0),
-                createdAt: dbLead.created_at,
-                source: dbLead.source || "google_maps",
-                savedAt: null,
-                status: null,
-                facebookUrl: dbLead.facebook_url || null,
-                instagramUrl: dbLead.instagram_url || null,
-                hasLinkedin: dbLead.has_linkedin || false,
-                linkedinUrl: dbLead.linkedin_url || null,
-                phoneVerified: dbLead.phone_verified || false,
-                emailVerified: dbLead.email_verified || false,
-                websiteLive: dbLead.website_live || false,
-                isFlagged: dbLead.is_flagged || false,
-                suspiciousCount: dbLead.suspicious_count || 0,
-              }));
-              attachClaimsToLeads(mapped).then((enriched) => {
-                setResults(enriched);
-              });
-            }
-          });
+    const params = new URLSearchParams(window.location.search);
+    const autoSearch = params.get("autoSearch");
+    if (autoSearch === "true") {
+      const categoryParam = params.get("category") || "";
+      const cityParam = params.get("city") || "";
+      const countryParam = params.get("country") || "";
+      if (categoryParam && cityParam) {
+        setCategory(categoryParam);
+        setCity(cityParam);
+        setCountry(countryParam);
+        handleSearch({
+          category: categoryParam,
+          country: countryParam,
+          city: cityParam,
+          product: "",
+          niche: "",
+        });
+        return;
       }
-    } else {
-      setResults([]);
     }
-  }, [user]);
+
+    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_disc_has_session") === "true";
+    if (!hasSavedSession) {
+      setLoading(true);
+      let queryBuilder = supabase.from("leads").select("*");
+      if (user.freelancerCategory) {
+        queryBuilder = queryBuilder.eq("industry", user.freelancerCategory);
+      }
+      queryBuilder
+        .order("created_at", { ascending: false })
+        .limit(12)
+        .then(({ data, error }) => {
+          setLoading(false);
+          if (error) console.error("Error fetching initial leads:", error);
+          if (data) {
+            const mapped = data.map((dbLead: any) => ({
+              id: dbLead.id,
+              businessName: dbLead.business_name,
+              businessType: dbLead.business_type,
+              industry: dbLead.industry,
+              city: dbLead.city,
+              country: dbLead.country,
+              fullAddress: dbLead.full_address,
+              phone: dbLead.phone || "",
+              email: dbLead.email || null,
+              websiteUrl: dbLead.website_url || null,
+              hasWebsite: dbLead.has_website || false,
+              googleRating: Number(dbLead.google_rating || 0),
+              googleReviewCount: Number(dbLead.google_review_count || 0),
+              opportunityScore: Number(dbLead.opportunity_score || 0),
+              createdAt: dbLead.created_at,
+              source: dbLead.source || "google_maps",
+              savedAt: null,
+              status: null,
+              facebookUrl: dbLead.facebook_url || null,
+              instagramUrl: dbLead.instagram_url || null,
+              hasLinkedin: dbLead.has_linkedin || false,
+              linkedinUrl: dbLead.linkedin_url || null,
+              phoneVerified: dbLead.phone_verified || false,
+              emailVerified: dbLead.email_verified || false,
+              websiteLive: dbLead.website_live || false,
+              isFlagged: dbLead.is_flagged || false,
+              suspiciousCount: dbLead.suspicious_count || 0,
+            }));
+            attachClaimsToLeads(mapped).then((enriched) => {
+              setResults(enriched);
+            });
+          }
+        });
+    }
+  }, [user, isMounted]);
 
   const handleSearch = async (
     searchParams?: { category: string; country: string; city: string; product: string; niche: string } | React.MouseEvent

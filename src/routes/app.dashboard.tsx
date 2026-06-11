@@ -75,53 +75,52 @@ function Dashboard() {
   const [savedThisMonth, setSavedThisMonth] = useState(0);
   const [contactedCountFromDb, setContactedCountFromDb] = useState(0);
 
-  const [quickCity, setQuickCity] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("lc_db_city") || "";
-    }
-    return "";
-  });
-  const [quickCategory, setQuickCategory] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("lc_db_category") || "web_dev";
-    }
-    return "web_dev";
-  });
-  const [quickCountry, setQuickCountry] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("lc_db_country") || "Nigeria";
-    }
-    return "Nigeria";
-  });
-  const [results, setResults] = useState<Lead[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("lc_db_results");
-      try {
-        return saved ? JSON.parse(saved) : [];
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
+  const [quickCity, setQuickCity] = useState("");
+  const [quickCategory, setQuickCategory] = useState("web_dev");
+  const [quickCountry, setQuickCountry] = useState("Nigeria");
+  const [results, setResults] = useState<Lead[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const savedCity = sessionStorage.getItem("lc_db_city");
+      const savedCategory = sessionStorage.getItem("lc_db_category");
+      const savedCountry = sessionStorage.getItem("lc_db_country");
+      const savedResults = sessionStorage.getItem("lc_db_results");
+
+      if (savedCity) setQuickCity(savedCity);
+      if (savedCategory) setQuickCategory(savedCategory);
+      if (savedCountry) setQuickCountry(savedCountry);
+      if (savedResults) {
+        try {
+          setResults(JSON.parse(savedResults));
+        } catch {
+          // ignore
+        }
+      }
+      setIsMounted(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && typeof window !== "undefined") {
       sessionStorage.setItem("lc_db_city", quickCity);
       sessionStorage.setItem("lc_db_category", quickCategory);
       sessionStorage.setItem("lc_db_country", quickCountry);
     }
-  }, [quickCity, quickCategory, quickCountry]);
+  }, [quickCity, quickCategory, quickCountry, isMounted]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isMounted && typeof window !== "undefined") {
       sessionStorage.setItem("lc_db_results", JSON.stringify(results));
       if (results.length > 0) {
         sessionStorage.setItem("lc_db_has_session", "true");
+      } else {
+        sessionStorage.removeItem("lc_db_has_session");
       }
     }
-  }, [results]);
+  }, [results, isMounted]);
 
   const [detail, setDetail] = useState<Lead | null>(null);
   const [enriching, setEnriching] = useState(false);
@@ -238,7 +237,7 @@ function Dashboard() {
   }, [results, pipeline, activeFilter]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!isMounted || !user) return;
     setLoading(true);
 
     // Prefill search parameters from user profile only if there is no session-saved search
@@ -390,7 +389,7 @@ function Dashboard() {
           setLeadsChartData(last7Days.map((d) => ({ name: d.name, leads: d.leads })));
         }
       });
-  }, [user]);
+  }, [user, isMounted]);
 
   const handleEnrich = async () => {
     if (!detail || !detail.websiteUrl || enriching) return;

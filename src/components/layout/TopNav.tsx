@@ -33,6 +33,30 @@ export function TopNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [outreachDropdownOpen, setOutreachDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    {
+      id: "notif-1",
+      title: "Lead scan completed",
+      description: "Found 12 new web developer leads in Abuja",
+      time: "5m ago",
+      unread: true,
+    },
+    {
+      id: "notif-2",
+      title: "High Opportunity Score",
+      description: "Edvoura matched your target profile in London",
+      time: "2h ago",
+      unread: true,
+    },
+    {
+      id: "notif-3",
+      title: "Geographic Expansion",
+      description: "New city search directories added for Nigeria & UK",
+      time: "1d ago",
+      unread: false,
+    },
+  ]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   if (!user && !loading) return null;
 
@@ -125,10 +149,86 @@ export function TopNav() {
             <Crown className="h-4.5 w-4.5" /> Upgrade
           </Link>
 
-          <button className="relative grid h-9 w-9 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-lg border border-border bg-background hover:bg-accent transition">
-            <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-foreground" />
-            <span className="absolute right-1.5 top-1.5 sm:right-2 sm:top-2 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-red-500" />
-          </button>
+          <div className="relative shrink-0">
+            <button
+              onClick={() => {
+                setNotificationsOpen(!notificationsOpen);
+                setProfileDropdownOpen(false);
+              }}
+              className="relative grid h-9 w-9 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-lg border border-border bg-background hover:bg-accent transition cursor-pointer"
+            >
+              <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-foreground" />
+              {notifications.some((n) => n.unread) && (
+                <span className="absolute right-1.5 top-1.5 sm:right-2 sm:top-2 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-red-500 animate-pulse" />
+              )}
+            </button>
+
+            {notificationsOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setNotificationsOpen(false)}
+                />
+                <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-xl border border-border bg-card shadow-xl z-50 animate-in fade-in slide-in-from-top-2 p-2">
+                  <div className="flex items-center justify-between p-2 border-b border-border mb-1 select-none">
+                    <span className="text-xs font-extrabold text-foreground">Notifications</span>
+                    {notifications.some((n) => n.unread) && (
+                      <button
+                        onClick={() => {
+                          setNotifications(notifications.map((n) => ({ ...n, unread: false })));
+                        }}
+                        className="text-[10px] text-primary hover:underline font-semibold cursor-pointer bg-transparent border-none outline-none"
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                  </div>
+                  <div className="divide-y divide-border max-h-60 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="p-4 text-center text-xs text-muted-foreground select-none">
+                        No notifications
+                      </div>
+                    ) : (
+                      notifications.map((n) => (
+                        <div
+                          key={n.id}
+                          onClick={() => {
+                            setNotifications(
+                              notifications.map((notif) =>
+                                notif.id === n.id ? { ...notif, unread: false } : notif,
+                              ),
+                            );
+                          }}
+                          className={cn(
+                            "p-3 text-left hover:bg-accent/50 transition cursor-pointer rounded-lg my-0.5",
+                            n.unread && "bg-primary/5",
+                          )}
+                        >
+                          <div className="flex justify-between items-start gap-1">
+                            <p className={cn("text-xs text-foreground", n.unread ? "font-bold" : "font-medium")}>
+                              {n.title}
+                            </p>
+                            <span className="text-[9px] text-muted-foreground whitespace-nowrap">{n.time}</span>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">
+                            {n.description}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div className="border-t border-border pt-1 flex justify-between items-center text-[10px] select-none">
+                    <button
+                      onClick={() => setNotifications([])}
+                      className="text-muted-foreground hover:text-foreground p-1 font-medium cursor-pointer"
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
 
           {loading ? (
             <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-accent animate-pulse shrink-0" />
