@@ -42,7 +42,10 @@ import {
   BookOpen,
   Brain,
   Heart,
+  Bot,
+  FolderKanban,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { HeroCarousel } from "@/components/marketing/HeroCarousel";
@@ -1300,12 +1303,12 @@ const FEATURES_LIST = [
 
 function Features() {
   const features = [
-    { icon: "🌍", text: "150+ countries covered" },
-    { icon: "📞", text: "Verified phone numbers" },
-    { icon: "📧", text: "Email finder included" },
-    { icon: "📊", text: "Opportunity score 1-100" },
-    { icon: "🤖", text: "AI outreach generator" },
-    { icon: "📋", text: "Built-in CRM pipeline" },
+    { icon: Globe2, text: "150+ countries covered", color: "text-blue-500 bg-blue-500/10 border-blue-500/20" },
+    { icon: Phone, text: "Verified phone numbers", color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" },
+    { icon: Mail, text: "Email finder included", color: "text-amber-500 bg-amber-500/10 border-amber-500/20" },
+    { icon: BarChart3, text: "Opportunity score 1-100", color: "text-sky-500 bg-sky-500/10 border-sky-500/20" },
+    { icon: Bot, text: "AI outreach generator", color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20" },
+    { icon: FolderKanban, text: "Built-in CRM pipeline", color: "text-violet-500 bg-violet-500/10 border-violet-500/20" },
   ];
 
   return (
@@ -1321,19 +1324,22 @@ function Features() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl border bg-card p-6 flex items-center gap-4 hover:scale-[1.02] hover:border-primary/30 transition-all duration-300 shadow-sm"
-            >
-              <div className="text-3xl shrink-0 p-3 rounded-xl bg-slate-100/10 border border-border">
-                {f.icon}
+          {features.map((f, idx) => {
+            const Icon = f.icon;
+            return (
+              <div
+                key={idx}
+                className="rounded-2xl border bg-card p-6 flex items-center gap-4 hover:scale-[1.02] hover:border-primary/30 transition-all duration-300 shadow-sm"
+              >
+                <div className={cn("shrink-0 p-3 rounded-xl border", f.color)}>
+                  <Icon className="h-6 w-6" />
+                </div>
+                <p className="font-display text-base font-bold text-foreground">
+                  {f.text}
+                </p>
               </div>
-              <p className="font-display text-base font-bold text-foreground">
-                {f.text}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
