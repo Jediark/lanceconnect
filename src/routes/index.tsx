@@ -1730,7 +1730,7 @@ function MeetOurTeam() {
               <img
                 src={m.avatar}
                 alt={m.name}
-                className="h-28 w-28 rounded-full object-cover border border-white/10 mb-4 shadow-md"
+                className="h-32 w-32 rounded-full object-cover object-top border-2 border-primary/30 mb-4 shadow-lg ring-4 ring-primary/10"
                 loading="lazy"
               />
               <h3 className="text-base font-bold text-white">{m.name}</h3>
