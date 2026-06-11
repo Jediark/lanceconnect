@@ -62,10 +62,10 @@ function PricingPage() {
     },
     {
       name: "Grow",
-      price: "$10",
+      price: "$20",
       description: "Great for active freelancers seeking monthly client projects.",
       features: [
-        "150 B2B lead searches / mo",
+        "100 B2B lead searches / mo",
         "Premium opportunity scoring",
         "Unmasked email & phone lines",
         "AI outreach script writer",
@@ -78,10 +78,10 @@ function PricingPage() {
     },
     {
       name: "Scale",
-      price: "$50",
+      price: "$75",
       description: "For agencies and power users seeking maximum reach.",
       features: [
-        "Unlimited lead searches",
+        "250 B2B lead searches / mo",
         "Priority lead processing",
         "Advanced filtering & export",
         "Dedicated account helper",

@@ -35,7 +35,7 @@ function UpgradePage() {
       name: t("plan_free"),
       monthly: 0,
       yearly: 0,
-      leads: "10/mo",
+      leads: "10",
       cta: t("plan_cta_free"),
       popular: false,
       features: [
@@ -47,9 +47,9 @@ function UpgradePage() {
     {
       id: "individual",
       name: t("plan_indiv"),
-      monthly: 9,
-      yearly: 90,
-      leads: "Unlimited",
+      monthly: 20,
+      yearly: 200,
+      leads: "100",
       cta: t("plan_cta_indiv"),
       popular: true,
       features: [
@@ -62,9 +62,9 @@ function UpgradePage() {
     {
       id: "company",
       name: t("plan_comp"),
-      monthly: 29,
-      yearly: 290,
-      leads: "Unlimited",
+      monthly: 75,
+      yearly: 750,
+      leads: "250",
       cta: t("plan_cta_comp"),
       popular: false,
       features: [
