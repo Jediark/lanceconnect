@@ -53,11 +53,11 @@ Deno.serve(async (req) => {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const userId = session.metadata?.supabase_user_id;
-        const checkoutType = session.metadata?.checkout_type;
+        const userId = session.metadata?.supabase_user_id || session.client_reference_id;
+        const checkoutType = session.metadata?.checkout_type || (session.subscription ? "subscription" : undefined);
 
         if (!userId) {
-          console.warn("Checkout session completed without supabase_user_id in metadata");
+          console.warn("Checkout session completed without supabase_user_id or client_reference_id");
           break;
         }
 
@@ -88,16 +88,38 @@ Deno.serve(async (req) => {
 
             console.log(`Credited ${creditsAmount} credits to user: ${userId}`);
           }
-        } else if (checkoutType === "subscription") {
+        } else if (checkoutType === "subscription" || session.subscription) {
           const subscriptionId = session.subscription as string;
-          const planName = session.metadata?.plan_name || "starter";
+          let planName = session.metadata?.plan_name || "starter";
 
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          const priceId = subscription.items.data[0]?.price?.id;
+
+          if ((planName === "starter" || !planName) && priceId) {
+            try {
+              const priceObj = await stripe.prices.retrieve(priceId, { expand: ["product"] });
+              const product = priceObj.product;
+              if (typeof product === "object" && product !== null) {
+                const prodName = (product.name || "").toLowerCase();
+                if (prodName.includes("company") || prodName.includes("scale") || prodName.includes("pro")) {
+                  planName = "company";
+                } else if (prodName.includes("individual") || prodName.includes("grow") || prodName.includes("starter")) {
+                  planName = "individual";
+                }
+              }
+            } catch (err) {
+              console.error("Failed to retrieve price details for webhook fallback mapping:", err);
+            }
+          }
 
           let leadsLimit = 10;
-          if (planName === "starter") leadsLimit = 100;
-          else if (planName === "pro") leadsLimit = 500;
-          else if (planName === "agency") leadsLimit = 2000;
+          if (planName === "starter" || planName === "individual" || planName === "grow") {
+            leadsLimit = 100;
+          } else if (planName === "pro" || planName === "company" || planName === "scale") {
+            leadsLimit = 250;
+          } else if (planName === "agency") {
+            leadsLimit = 2000;
+          }
 
           const { data: profile } = await supabase
             .from("profiles")

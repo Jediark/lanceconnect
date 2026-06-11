@@ -101,6 +101,7 @@ function UpgradePage() {
         planName: planId as "individual" | "company",
         currency: selectedCurrency,
         customerEmail: user?.email,
+        userId: user?.id,
       });
 
       if (res.url) {

@@ -16,6 +16,7 @@ export interface CheckoutParams {
   customerEmail?: string;
   successUrl?: string;
   cancelUrl?: string;
+  userId?: string;
 }
 
 export interface CheckoutResult {
@@ -71,6 +72,7 @@ export async function initiateCheckout(params: CheckoutParams): Promise<Checkout
           checkoutType: params.checkoutType || "subscription",
           email: params.customerEmail,
           callbackUrl: successUrl,
+          userId: params.userId,
         },
       });
 
@@ -89,6 +91,7 @@ export async function initiateCheckout(params: CheckoutParams): Promise<Checkout
           successUrl,
           cancelUrl,
           customerEmail: params.customerEmail,
+          userId: params.userId,
         },
       });
 

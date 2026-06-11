@@ -67,13 +67,28 @@ Deno.serve(async (req) => {
       case "charge.success": {
         const data = event.data;
         const metadata = data.metadata || {};
-        const userId = metadata.supabase_user_id || metadata.user_id;
-        const checkoutType = metadata.checkout_type;
+        let targetUserId = metadata.supabase_user_id || metadata.user_id;
+        const checkoutType = metadata.checkout_type || (metadata.plan_name ? "subscription" : undefined);
         const reference = data.reference;
+
+        // Fallback to email lookup if user ID is missing
+        if (!targetUserId && data.customer?.email) {
+          try {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("id")
+              .eq("email", data.customer.email)
+              .single();
+            if (profile) {
+              targetUserId = profile.id;
+            }
+          } catch (err) {
+            console.error("Failed to query profile by email:", err);
+          }
+        }
 
         if (metadata.payment_type === "donation" || checkoutType === "donation") {
           const { donor_name, show_on_wall, message } = metadata;
-          const targetUserId = userId || metadata.user_id;
           const amount = data.amount / 100; // Paystack sends in kobo
 
           // Record donation
@@ -122,8 +137,8 @@ Deno.serve(async (req) => {
           break;
         }
 
-        if (!userId) {
-          console.warn("charge.success without supabase_user_id in metadata");
+        if (!targetUserId) {
+          console.warn("charge.success without targetUserId and no matching email profile found");
           break;
         }
 
@@ -132,7 +147,7 @@ Deno.serve(async (req) => {
           await supabase
             .from("profiles")
             .update({ paystack_customer_code: data.customer.customer_code })
-            .eq("id", userId)
+            .eq("id", targetUserId)
             .is("paystack_customer_code", null);
         }
 
@@ -142,7 +157,7 @@ Deno.serve(async (req) => {
             const { data: profile } = await supabase
               .from("profiles")
               .select("credits_balance")
-              .eq("id", userId)
+              .eq("id", targetUserId)
               .single();
 
             const newBalance = (profile?.credits_balance || 0) + creditsAmount;
@@ -150,10 +165,10 @@ Deno.serve(async (req) => {
             await supabase
               .from("profiles")
               .update({ credits_balance: newBalance })
-              .eq("id", userId);
+              .eq("id", targetUserId);
 
             await supabase.from("credit_transactions").insert({
-              user_id: userId,
+              user_id: targetUserId,
               type: "purchase",
               amount: creditsAmount,
               balance_after: newBalance,
@@ -161,14 +176,28 @@ Deno.serve(async (req) => {
               stripe_payment_id: `paystack_${reference}`,
             });
 
-            console.log(`Credited ${creditsAmount} credits to user: ${userId}`);
+            console.log(`Credited ${creditsAmount} credits to user: ${targetUserId}`);
           }
-        } else if (checkoutType === "subscription") {
-          const planName = metadata.plan_name || "individual";
+        } else if (checkoutType === "subscription" || data.plan) {
+          // If checked out via Payment Page, data.plan or metadata.plan_name might be used
+          // Let's resolve the plan name from paystack plan code or page slugs
+          let planName = metadata.plan_name || "individual";
+          
+          if (data.plan?.name) {
+            const planNameLower = data.plan.name.toLowerCase();
+            if (planNameLower.includes("scale") || planNameLower.includes("company") || planNameLower.includes("pro")) {
+              planName = "company";
+            } else if (planNameLower.includes("grow") || planNameLower.includes("individual") || planNameLower.includes("starter")) {
+              planName = "individual";
+            }
+          }
 
           let leadsLimit = 10;
-          if (planName === "individual") leadsLimit = 200;
-          else if (planName === "company") leadsLimit = -1; // unlimited
+          if (planName === "individual" || planName === "grow" || planName === "starter") {
+            leadsLimit = 100;
+          } else if (planName === "company" || planName === "scale" || planName === "pro") {
+            leadsLimit = 250;
+          }
 
           const { data: profile } = await supabase
             .from("profiles")
@@ -179,11 +208,11 @@ Deno.serve(async (req) => {
               paystack_reference: reference,
               leads_limit: leadsLimit,
             })
-            .eq("id", userId)
+            .eq("id", targetUserId)
             .select()
             .single();
 
-          console.log(`Activated plan "${planName}" for user: ${userId}`);
+          console.log(`Activated plan "${planName}" for user: ${targetUserId}`);
 
           // Send Upgrade Confirmation Email
           if (profile) {

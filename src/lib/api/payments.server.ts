@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { getServerConfig } from "../config.server";
 
 // ─── Stripe Checkout ────────────────────────────────────────────────────────
 
@@ -9,6 +10,7 @@ const stripeCheckoutInput = z.object({
   successUrl: z.string().url(),
   cancelUrl: z.string().url(),
   customerEmail: z.string().email().optional(),
+  userId: z.string().optional(),
 });
 
 /**
@@ -17,10 +19,11 @@ const stripeCheckoutInput = z.object({
  * 2. If missing, queries Stripe's active prices and matches by metadata or product name.
  */
 async function resolveStripePriceId(stripe: any, planName: "individual" | "company"): Promise<string> {
+  const config = getServerConfig();
   // 1. Check environment variables
   const envVar = planName === "individual"
-    ? process.env.STRIPE_INDIVIDUAL_PRICE_ID
-    : process.env.STRIPE_COMPANY_PRICE_ID;
+    ? config.stripeIndividualPriceId
+    : config.stripeCompanyPriceId;
   if (envVar) return envVar;
 
   // 2. Query the Stripe active prices list
@@ -78,18 +81,32 @@ async function resolveStripePriceId(stripe: any, planName: "individual" | "compa
 export const createStripeCheckout = createServerFn({ method: "POST" })
   .inputValidator(stripeCheckoutInput)
   .handler(async ({ data }) => {
-    const secretKey = process.env.STRIPE_SECRET_KEY;
+    const config = getServerConfig();
+    const secretKey = config.stripeSecretKey;
+    const fallbackUrl = "https://buy.stripe.com/test_9B6fZi2wd0d85IG2aK57W00";
+
     if (!secretKey) {
-      throw new Error(
-        "STRIPE_SECRET_KEY is not configured. Add it to your Vercel environment variables.",
-      );
+      console.warn("STRIPE_SECRET_KEY is not configured. Falling back to direct Stripe payment link.");
+      const redirectUrl = data.userId
+        ? `${fallbackUrl}?client_reference_id=${data.userId}`
+        : fallbackUrl;
+      return { url: redirectUrl };
     }
 
     const Stripe = (await import("stripe")).default;
     const stripe = new Stripe(secretKey);
 
     // Resolve Price ID (via env vars or dynamic query)
-    const priceId = await resolveStripePriceId(stripe, data.planName);
+    let priceId: string;
+    try {
+      priceId = await resolveStripePriceId(stripe, data.planName);
+    } catch (err) {
+      console.warn("Failed to resolve Price ID. Falling back to direct Stripe payment link:", err);
+      const redirectUrl = data.userId
+        ? `${fallbackUrl}?client_reference_id=${data.userId}`
+        : fallbackUrl;
+      return { url: redirectUrl };
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -98,9 +115,14 @@ export const createStripeCheckout = createServerFn({ method: "POST" })
       success_url: data.successUrl,
       cancel_url: data.cancelUrl,
       ...(data.customerEmail && { customer_email: data.customerEmail }),
+      metadata: {
+        supabase_user_id: data.userId || "",
+        checkout_type: data.checkoutType,
+        plan_name: data.planName,
+      },
     });
 
-    return { url: session.url };
+    return { url: session.url || undefined };
   });
 
 // ─── Stripe Donation (one-time payment with custom amount) ──────────────────
@@ -120,7 +142,8 @@ const stripeDonationInput = z.object({
 export const createStripeDonation = createServerFn({ method: "POST" })
   .inputValidator(stripeDonationInput)
   .handler(async ({ data }) => {
-    const secretKey = process.env.STRIPE_SECRET_KEY;
+    const config = getServerConfig();
+    const secretKey = config.stripeSecretKey;
     if (!secretKey) {
       throw new Error(
         "STRIPE_SECRET_KEY is not configured. Add it to your Vercel environment variables.",
@@ -164,6 +187,7 @@ const paystackCheckoutInput = z.object({
   email: z.string().email(),
   callbackUrl: z.string().url(),
   amount: z.number().min(100).optional(), // kobo (100 kobo = ₦1) — used for one-time
+  userId: z.string().optional(),
 });
 
 /**
@@ -172,26 +196,37 @@ const paystackCheckoutInput = z.object({
 export const createPaystackCheckout = createServerFn({ method: "POST" })
   .inputValidator(paystackCheckoutInput)
   .handler(async ({ data }) => {
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
+    const config = getServerConfig();
+    const secretKey = config.paystackSecretKey;
+    const fallbackUrls = {
+      individual: "https://paystack.com/buy/grow-plan-dwxaqk",
+      company: "https://paystack.com/buy/scale-plan-vanvod",
+    };
+
     if (!secretKey) {
-      throw new Error(
-        "PAYSTACK_SECRET_KEY is not configured. Add it to your Vercel environment variables.",
-      );
+      console.warn("PAYSTACK_SECRET_KEY is not configured. Falling back to direct Paystack page.");
+      const redirectUrl = new URL(fallbackUrls[data.planName]);
+      if (data.email) {
+        redirectUrl.searchParams.set("email", data.email);
+      }
+      return { authorization_url: redirectUrl.toString() };
     }
 
     // For subscriptions, use Paystack Plans
     if (data.checkoutType === "subscription") {
       const planCodeMap: Record<string, string | undefined> = {
-        individual: process.env.PAYSTACK_INDIVIDUAL_PLAN_CODE,
-        company: process.env.PAYSTACK_COMPANY_PLAN_CODE,
+        individual: config.paystackIndividualPlanCode,
+        company: config.paystackCompanyPlanCode,
       };
 
       const planCode = planCodeMap[data.planName];
       if (!planCode) {
-        throw new Error(
-          `Paystack Plan Code for "${data.planName}" is not configured. ` +
-            `Set PAYSTACK_INDIVIDUAL_PLAN_CODE / PAYSTACK_COMPANY_PLAN_CODE in Vercel env vars.`,
-        );
+        console.warn(`Paystack Plan Code for "${data.planName}" is not configured. Falling back to direct Paystack page.`);
+        const redirectUrl = new URL(fallbackUrls[data.planName]);
+        if (data.email) {
+          redirectUrl.searchParams.set("email", data.email);
+        }
+        return { authorization_url: redirectUrl.toString() };
       }
 
       const res = await fetch("https://api.paystack.co/transaction/initialize", {
@@ -204,6 +239,11 @@ export const createPaystackCheckout = createServerFn({ method: "POST" })
           email: data.email,
           plan: planCode,
           callback_url: data.callbackUrl,
+          metadata: {
+            supabase_user_id: data.userId || "",
+            checkout_type: data.checkoutType,
+            plan_name: data.planName,
+          },
         }),
       });
 
@@ -260,7 +300,8 @@ const paystackDonationInput = z.object({
 export const createPaystackDonation = createServerFn({ method: "POST" })
   .inputValidator(paystackDonationInput)
   .handler(async ({ data }) => {
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
+    const config = getServerConfig();
+    const secretKey = config.paystackSecretKey;
     if (!secretKey) {
       throw new Error(
         "PAYSTACK_SECRET_KEY is not configured. Add it to your Vercel environment variables.",
