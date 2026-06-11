@@ -3,8 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { initiateDonation } from "@/lib/checkout";
 import { toast } from "sonner";
 import { Heart, Globe, CreditCard, ShieldCheck, Cpu, Code, HelpCircle, ArrowRight, Loader2 } from "lucide-react";
+import { PaymentButton, PaymentTrustBadge } from "@/components/ui/PaymentBranding";
 
 export const Route = createFileRoute("/support-us")({
   head: () => ({
@@ -21,12 +23,21 @@ export const Route = createFileRoute("/support-us")({
 
 function SupportUsPage() {
   const { user } = useAuth();
-  const [donationAmount, setDonationAmount] = useState<number | "">("");
+
+  // ── International (Stripe) donation state ──
+  const [stripeAmount, setStripeAmount] = useState<number | "">(5);
+  const [stripeCurrency, setStripeCurrency] = useState<"USD" | "EUR" | "GBP">("USD");
+  const [stripeSubmitting, setStripeSubmitting] = useState(false);
+
+  // ── Nigerian (Paystack) donation state ──
+  const [donationAmount, setDonationAmount] = useState<number | "">(1000);
   const [donorName, setDonorName] = useState(user?.fullName || "");
   const [showOnWall, setShowOnWall] = useState(true);
   const [message, setMessage] = useState("");
-  const [supporters, setSupporters] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
+  // ── Supporters wall ──
+  const [supporters, setSupporters] = useState<any[]>([]);
 
   useEffect(() => {
     async function loadSupporters() {
@@ -47,6 +58,35 @@ function SupportUsPage() {
     loadSupporters();
   }, []);
 
+  // ── Stripe Donation Handler ──
+  const handleStripeDonation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripeAmount || stripeAmount <= 0) {
+      toast.error("Please enter a valid donation amount.");
+      return;
+    }
+
+    setStripeSubmitting(true);
+    try {
+      const res = await initiateDonation({
+        amount: Number(stripeAmount),
+        currency: stripeCurrency,
+        email: user?.email || "",
+        donorName: user?.fullName || "Anonymous",
+      });
+
+      if (res.url) {
+        window.location.href = res.url;
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to initialize Stripe donation.");
+    } finally {
+      setStripeSubmitting(false);
+    }
+  };
+
+  // ── Paystack Donation Handler ──
   const handlePaystackDonation = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -60,44 +100,27 @@ function SupportUsPage() {
 
     setSubmitting(true);
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
-      const { data: { session } } = await supabase.auth.getSession();
-
-      const res = await fetch(`${supabaseUrl}/functions/v1/paystack-checkout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({
-          checkoutType: "donation",
-          donationAmount: Number(donationAmount),
-          currency: "NGN",
-          callbackUrl: window.location.origin + "/app/dashboard",
-          donorName: donorName || "Anonymous",
-          showOnWall,
-          message,
-        }),
+      const res = await initiateDonation({
+        amount: Number(donationAmount),
+        currency: "NGN",
+        email: user.email || "",
+        donorName: donorName || "Anonymous",
+        message,
+        showOnWall,
       });
 
-      const result = await res.json();
-      if (!res.ok || result.error) {
-        throw new Error(result.error || "Initialization failed");
-      }
-
-      if (result.authorization_url) {
-        toast.success("Redirecting to Paystack secure checkout...");
-        window.location.href = result.authorization_url;
-      } else {
-        throw new Error("Missing authorization URL");
+      if (res.url) {
+        window.location.href = res.url;
       }
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Failed to initialize Paystack checkout. Please try again.");
+      toast.error(err.message || "Failed to initialize Paystack donation.");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const currencySymbol = stripeCurrency === "EUR" ? "€" : stripeCurrency === "GBP" ? "£" : "$";
 
   return (
     <MarketingShell>
@@ -132,7 +155,7 @@ function SupportUsPage() {
       {/* Donation Grid */}
       <section className="mx-auto max-w-5xl px-4 py-16">
         <div className="grid gap-8 md:grid-cols-2">
-          {/* Option 1 — International (Buy Me a Coffee) */}
+          {/* Option 1 — International (Stripe) */}
           <div className="rounded-3xl border border-border bg-card p-8 flex flex-col justify-between shadow-lg hover:border-primary/20 transition-all duration-300">
             <div className="space-y-4">
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 font-bold">
@@ -140,25 +163,70 @@ function SupportUsPage() {
               </span>
               <h3 className="font-display text-lg font-bold text-foreground">International Supporters</h3>
               <p className="text-xs text-muted-foreground">
-                Pay in USD, GBP, EUR or any currency using cards, Google Pay, or Apple Pay.
+                Pay in USD, GBP, or EUR securely via Stripe. Cards, Google Pay, and Apple Pay accepted.
               </p>
-              <div className="pt-8 flex justify-center items-center h-28">
-                <a
-                  href="https://buymeacoffee.com/lanceconnect"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:scale-105 active:scale-95 transition duration-200"
-                >
-                  <img
-                    src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-                    alt="Buy Me A Coffee"
-                    style={{ height: "60px", width: "217px" }}
+
+              <form onSubmit={handleStripeDonation} className="space-y-3 pt-2">
+                <div>
+                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Currency
+                  </label>
+                  <div className="mt-1 flex gap-1.5">
+                    {(["USD", "EUR", "GBP"] as const).map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setStripeCurrency(c)}
+                        className={`rounded-lg px-3 py-1.5 text-[11px] font-bold border transition ${
+                          stripeCurrency === c
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-background text-muted-foreground hover:border-primary/30"
+                        }`}
+                      >
+                        {c === "USD" ? "$ USD" : c === "EUR" ? "€ EUR" : "£ GBP"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Donation Amount ({currencySymbol})
+                  </label>
+                  <div className="mt-1 flex gap-1.5">
+                    {[3, 5, 10, 25].map((amt) => (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={() => setStripeAmount(amt)}
+                        className={`rounded-lg px-3 py-1.5 text-[11px] font-bold border transition ${
+                          stripeAmount === amt
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-background text-muted-foreground hover:border-primary/30"
+                        }`}
+                      >
+                        {currencySymbol}{amt}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Or enter custom amount"
+                    value={stripeAmount}
+                    onChange={(e) => setStripeAmount(e.target.value === "" ? "" : Number(e.target.value))}
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary h-[38px]"
                   />
-                </a>
-              </div>
+                </div>
+                <PaymentButton
+                  gateway="stripe"
+                  type="submit"
+                  loading={stripeSubmitting}
+                  disabled={stripeSubmitting}
+                />
+              </form>
             </div>
             <p className="text-[10px] text-center text-muted-foreground mt-4 italic font-mono">
-              Redirects safely to Buy Me a Coffee portal.
+              PCI-DSS Level 1 certified · 256-bit SSL encryption
             </p>
           </div>
 
@@ -179,14 +247,30 @@ function SupportUsPage() {
                     <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Donation Amount (₦)
                     </label>
+                    <div className="mt-1 flex gap-1.5">
+                      {[500, 1000, 5000, 10000].map((amt) => (
+                        <button
+                          key={amt}
+                          type="button"
+                          onClick={() => setDonationAmount(amt)}
+                          className={`rounded-lg px-2.5 py-1.5 text-[11px] font-bold border transition ${
+                            donationAmount === amt
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border bg-background text-muted-foreground hover:border-primary/30"
+                          }`}
+                        >
+                          ₦{amt.toLocaleString()}
+                        </button>
+                      ))}
+                    </div>
                     <input
                       type="number"
                       required
                       min="100"
-                      placeholder="e.g. 1000, 5000, 10000"
+                      placeholder="Or enter custom amount"
                       value={donationAmount}
                       onChange={(e) => setDonationAmount(e.target.value === "" ? "" : Number(e.target.value))}
-                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary h-[38px]"
+                      className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary h-[38px]"
                     />
                   </div>
                   <div>
@@ -222,21 +306,12 @@ function SupportUsPage() {
                     />
                     <span>Show my name on the supporter wall below</span>
                   </label>
-                  <button
+                  <PaymentButton
+                    gateway="paystack"
                     type="submit"
+                    loading={submitting}
                     disabled={submitting}
-                    className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 h-[38px] transition duration-200 flex items-center justify-center gap-1.5 uppercase tracking-wider disabled:opacity-50 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-                  >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" /> Initializing...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="h-4 w-4" /> Support LanceConnect
-                      </>
-                    )}
-                  </button>
+                  />
                 </form>
               ) : (
                 <div className="pt-6 pb-2 text-center space-y-4">
@@ -253,7 +328,7 @@ function SupportUsPage() {
               )}
             </div>
             <p className="text-[10px] text-center text-muted-foreground mt-4 italic font-mono">
-              Secure processing via Paystack inline gateway.
+              Paystack is CBN-licensed · PCI-DSS compliant
             </p>
           </div>
         </div>
@@ -311,6 +386,11 @@ function SupportUsPage() {
             💡 LanceConnect is built by freelancers, for freelancers. Your support means we can keep expanding, listing more members, and staying free for everyone.
           </div>
         </div>
+      </section>
+
+      {/* Payment Trust */}
+      <section className="py-8">
+        <PaymentTrustBadge />
       </section>
 
       {/* Supporter Wall Section */}

@@ -2,16 +2,30 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlanUsageBar } from "@/components/ui/PlanUsageBar";
 import { toast } from "sonner";
+import { CheckCircle2 } from "lucide-react";
+import { z } from "zod";
+
+const subscriptionSearchSchema = z.object({
+  success: z.string().optional(),
+});
 
 export const Route = createFileRoute("/app/settings/subscription")({
+  validateSearch: subscriptionSearchSchema,
   component: SubscriptionPage,
 });
 
 function SubscriptionPage() {
   const { user } = useAuth();
+  const { success } = Route.useSearch();
   if (!user) return null;
   return (
     <div className="max-w-2xl space-y-4">
+      {success && (
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 text-sm text-foreground flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+          <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+          <span>Payment successful! Your plan has been upgraded. Thank you for supporting LanceConnect. 🎉</span>
+        </div>
+      )}
       <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
         <div className="flex items-baseline justify-between">
           <div>

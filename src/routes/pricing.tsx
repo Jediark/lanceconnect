@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { IMG } from "@/data/content";
 import { Check, Heart, HeartHandshake, Shield, Sparkles, HelpCircle } from "lucide-react";
+import { PaymentTrustBadge } from "@/components/ui/PaymentBranding";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -144,6 +145,11 @@ function PricingPage() {
                 >
                   {plan.cta}
                 </Link>
+                {plan.price !== "$0" && (
+                  <p className="mt-2 text-[9px] text-center text-muted-foreground">
+                    💳 Pay securely via Stripe or Paystack
+                  </p>
+                )}
               </div>
             </div>
           ))}
@@ -178,6 +184,11 @@ function PricingPage() {
               </details>
             ))}
           </div>
+        </div>
+
+        {/* Payment Trust Badge */}
+        <div className="pt-16">
+          <PaymentTrustBadge />
         </div>
       </section>
     </MarketingShell>

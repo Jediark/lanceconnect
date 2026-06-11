@@ -1,11 +1,19 @@
-import { supabase } from "./supabase";
 import { toast } from "sonner";
+import {
+  createStripeCheckout,
+  createStripeDonation,
+  createPaystackCheckout,
+  createPaystackDonation,
+} from "./api/payments.server";
+
+// ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface CheckoutParams {
   planName: "individual" | "company";
-  checkoutType?: "subscription" | "credits";
+  checkoutType?: "subscription" | "payment";
   creditsAmount?: number;
   currency: string;
+  customerEmail?: string;
   successUrl?: string;
   cancelUrl?: string;
 }
@@ -15,18 +23,35 @@ export interface CheckoutResult {
   error?: string;
 }
 
+export interface DonationParams {
+  amount: number; // For NGN: raw naira (e.g. 1000 = ₦1,000). For others: dollars/euros/pounds.
+  currency: string;
+  email: string;
+  donorName?: string;
+  message?: string;
+  showOnWall?: boolean;
+  successUrl?: string;
+  cancelUrl?: string;
+}
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function getOrigin(): string {
+  return typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+}
+
+// ─── Plan Checkout (Upgrade page) ───────────────────────────────────────────
+
 /**
  * Trigger payment gateway checkout based on selected currency.
- * routes to:
- *   - NGN -> Paystack Edge Function (paystack-checkout)
- *   - Others -> Stripe Edge Function (create-checkout)
+ * Routes to:
+ *   - NGN → Paystack server function
+ *   - Others → Stripe server function
  */
 export async function initiateCheckout(params: CheckoutParams): Promise<CheckoutResult> {
-  const currentHost =
-    typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
-  const successUrl = params.successUrl || `${currentHost}/app/settings/subscription?success=true`;
-  const cancelUrl = params.cancelUrl || `${currentHost}/app/upgrade?canceled=true`;
-
+  const origin = getOrigin();
+  const successUrl = params.successUrl || `${origin}/app/settings/subscription?success=true`;
+  const cancelUrl = params.cancelUrl || `${origin}/app/upgrade?canceled=true`;
   const isNgn = params.currency.toUpperCase() === "NGN";
 
   try {
@@ -34,73 +59,123 @@ export async function initiateCheckout(params: CheckoutParams): Promise<Checkout
       id: "checkout-redirect",
     });
 
-    // Ensure we are authenticated (if mock authentication is used, we fallback)
-    const session = (await supabase.auth.getSession()).data.session;
-
-    if (!session) {
-      // In development / demo mode, if no active session is found, mock the redirection URL
-      // to let the user see the visual transition without throwing an exception.
-      console.warn("No Supabase session found. Mocking checkout response in demo mode.");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const mockUrl = isNgn
-        ? `https://checkout.paystack.com/mock-session-${params.planName}`
-        : `https://checkout.stripe.com/pay/mock-session-${params.planName}`;
-
-      toast.success("Redirecting to sandbox payment gateway...", { id: "checkout-redirect" });
-      return { url: mockUrl };
-    }
-
     if (isNgn) {
-      // Route to Paystack Edge Function
-      const { data, error } = await supabase.functions.invoke("paystack-checkout", {
-        body: {
+      // ── Paystack ──
+      if (!params.customerEmail) {
+        throw new Error("Email is required for Paystack checkout. Please log in first.");
+      }
+
+      const result = await createPaystackCheckout({
+        data: {
           planName: params.planName,
           checkoutType: params.checkoutType || "subscription",
-          creditsAmount: params.creditsAmount || 0,
-          currency: "NGN",
+          email: params.customerEmail,
           callbackUrl: successUrl,
         },
       });
 
-      if (error || !data?.authorization_url) {
-        throw new Error(error?.message || data?.message || "Paystack initialization failed");
+      if (!result.authorization_url) {
+        throw new Error("Paystack initialization failed — no redirect URL received.");
       }
 
       toast.success("Redirecting to Paystack...", { id: "checkout-redirect" });
-      return { url: data.authorization_url };
+      return { url: result.authorization_url };
     } else {
-      // Route to Stripe Edge Function (starter / pro / agency mapping)
-      // Stripe uses Price IDs configured on Stripe. Let's map our plans:
-      // Map 'individual' -> 'individual_price_id', 'company' -> 'company_price_id'
-      const priceIdMap: Record<string, string> = {
-        individual:
-          import.meta.env.VITE_STRIPE_INDIVIDUAL_PRICE_ID || "price_individual_placeholder",
-        company: import.meta.env.VITE_STRIPE_COMPANY_PRICE_ID || "price_company_placeholder",
-      };
-
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: {
-          priceId: priceIdMap[params.planName],
+      // ── Stripe ──
+      const result = await createStripeCheckout({
+        data: {
           planName: params.planName,
           checkoutType: params.checkoutType || "subscription",
-          creditsAmount: params.creditsAmount || 0,
           successUrl,
           cancelUrl,
+          customerEmail: params.customerEmail,
         },
       });
 
-      if (error || !data?.url) {
-        throw new Error(error?.message || data?.message || "Stripe initialization failed");
+      if (!result.url) {
+        throw new Error("Stripe initialization failed — no redirect URL received.");
       }
 
       toast.success("Redirecting to Stripe...", { id: "checkout-redirect" });
-      return { url: data.url };
+      return { url: result.url };
     }
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : "Checkout initialization failed";
     console.error("Checkout error:", err);
     toast.error(errorMsg, { id: "checkout-redirect" });
+    return { error: errorMsg };
+  }
+}
+
+// ─── Donation (Support-us page) ─────────────────────────────────────────────
+
+/**
+ * Initiate a one-time donation payment.
+ * Routes to:
+ *   - NGN → Paystack donation
+ *   - Others → Stripe donation
+ */
+export async function initiateDonation(params: DonationParams): Promise<CheckoutResult> {
+  const origin = getOrigin();
+  const successUrl = params.successUrl || `${origin}/app/dashboard?donation=success`;
+  const cancelUrl = params.cancelUrl || `${origin}/support-us?donation=canceled`;
+  const isNgn = params.currency.toUpperCase() === "NGN";
+
+  try {
+    toast.loading(`Redirecting to ${isNgn ? "Paystack" : "Stripe"}...`, {
+      id: "donation-redirect",
+    });
+
+    if (isNgn) {
+      // Amount in kobo (1 NGN = 100 kobo)
+      const amountKobo = params.amount * 100;
+
+      const result = await createPaystackDonation({
+        data: {
+          amount: amountKobo,
+          email: params.email,
+          callbackUrl: successUrl,
+          donorName: params.donorName,
+          message: params.message,
+          showOnWall: params.showOnWall ?? true,
+        },
+      });
+
+      if (!result.authorization_url) {
+        throw new Error("Paystack donation initialization failed.");
+      }
+
+      toast.success("Redirecting to Paystack...", { id: "donation-redirect" });
+      return { url: result.authorization_url };
+    } else {
+      // Amount in cents (1 USD = 100 cents)
+      const amountCents = params.amount * 100;
+
+      const currencyLower = params.currency.toLowerCase();
+      const validCurrency = (["usd", "eur", "gbp"].includes(currencyLower) ? currencyLower : "usd") as "usd" | "eur" | "gbp";
+
+      const result = await createStripeDonation({
+        data: {
+          amount: amountCents,
+          currency: validCurrency,
+          successUrl,
+          cancelUrl,
+          customerEmail: params.email,
+          donorName: params.donorName,
+        },
+      });
+
+      if (!result.url) {
+        throw new Error("Stripe donation initialization failed.");
+      }
+
+      toast.success("Redirecting to Stripe...", { id: "donation-redirect" });
+      return { url: result.url };
+    }
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : "Donation initialization failed";
+    console.error("Donation error:", err);
+    toast.error(errorMsg, { id: "donation-redirect" });
     return { error: errorMsg };
   }
 }

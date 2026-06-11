@@ -19,8 +19,13 @@ import process from "node:process";
 export function getServerConfig() {
   return {
     nodeEnv: process.env.NODE_ENV,
-    // Add server-only values here, e.g.:
-    //   databaseUrl: process.env.DATABASE_URL,
-    //   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    paystackSecretKey: process.env.PAYSTACK_SECRET_KEY,
+    // Stripe Price IDs for subscription plans
+    stripeIndividualPriceId: process.env.STRIPE_INDIVIDUAL_PRICE_ID,
+    stripeCompanyPriceId: process.env.STRIPE_COMPANY_PRICE_ID,
+    // Paystack Plan Codes for subscription plans
+    paystackIndividualPlanCode: process.env.PAYSTACK_INDIVIDUAL_PLAN_CODE,
+    paystackCompanyPlanCode: process.env.PAYSTACK_COMPANY_PLAN_CODE,
   };
 }

@@ -1,15 +1,22 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Info, X } from "lucide-react";
+import { DualPaymentButtons } from "@/components/ui/PaymentBranding";
 import { Header } from "@/components/layout/Header";
+import { z } from "zod";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { initiateCheckout } from "@/lib/checkout";
 import { toast } from "sonner";
 
+const upgradeSearchSchema = z.object({
+  canceled: z.string().optional(),
+});
+
 export const Route = createFileRoute("/app/upgrade")({
   head: () => ({ meta: [{ title: "Upgrade — LanceConnect" }] }),
+  validateSearch: upgradeSearchSchema,
   component: UpgradePage,
 });
 
@@ -17,37 +24,46 @@ function UpgradePage() {
   const { user } = useAuth();
   const [annual, setAnnual] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [loadingGateway, setLoadingGateway] = useState<"stripe" | "paystack" | null>(null);
   const { t, formatPrice, getCurrencySymbol, currency } = usePreferences();
+  const { canceled } = Route.useSearch();
+
 
   const PLANS = [
     {
       id: "free",
       name: t("plan_free"),
       monthly: 0,
-      leads: "10",
+      yearly: 0,
+      leads: "10/mo",
       cta: t("plan_cta_free"),
       popular: false,
-      features: [t("plan_free_feature_1"), t("plan_free_feature_2"), t("plan_free_feature_3")],
+      features: [
+        t("plan_free_feature_1"),
+        t("plan_free_feature_2"),
+        t("plan_free_feature_3"),
+      ],
     },
     {
       id: "individual",
-      name: t("plan_individual"),
-      monthly: 7,
-      leads: "200",
-      cta: t("plan_cta_ind"),
+      name: t("plan_indiv"),
+      monthly: 9,
+      yearly: 90,
+      leads: "Unlimited",
+      cta: t("plan_cta_indiv"),
       popular: true,
       features: [
-        t("plan_ind_feature_1"),
-        t("plan_ind_feature_2"),
-        t("plan_ind_feature_3"),
-        t("plan_ind_feature_4"),
-        t("plan_ind_feature_5"),
+        t("plan_indiv_feature_1"),
+        t("plan_indiv_feature_2"),
+        t("plan_indiv_feature_3"),
+        t("plan_indiv_feature_4"),
       ],
     },
     {
       id: "company",
-      name: t("plan_company"),
-      monthly: 20,
+      name: t("plan_comp"),
+      monthly: 29,
+      yearly: 290,
       leads: "Unlimited",
       cta: t("plan_cta_comp"),
       popular: false,
@@ -61,17 +77,25 @@ function UpgradePage() {
     },
   ];
 
-  const handleCheckout = async (planId: string) => {
+  const handleCheckout = async (planId: string, gateway?: "stripe" | "paystack") => {
     if (planId === "free") {
       toast.info("You're already on the free plan!");
       return;
     }
 
     setLoadingPlan(planId);
+    if (gateway) {
+      setLoadingGateway(gateway);
+    }
     try {
+      const selectedCurrency = gateway === "paystack"
+        ? "NGN"
+        : (currency === "NGN" ? "USD" : currency);
+
       const res = await initiateCheckout({
         planName: planId as "individual" | "company",
-        currency,
+        currency: selectedCurrency,
+        customerEmail: user?.email,
       });
 
       if (res.url) {
@@ -79,6 +103,7 @@ function UpgradePage() {
       }
     } finally {
       setLoadingPlan(null);
+      setLoadingGateway(null);
     }
   };
 
@@ -86,6 +111,12 @@ function UpgradePage() {
     <>
       <Header title="Upgrade" />
       <div className="space-y-6 px-4 py-6 lg:px-8">
+        {canceled && (
+          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-foreground flex items-center gap-3">
+            <Info className="h-5 w-5 text-amber-500 shrink-0" />
+            <span>Checkout was canceled. No charges were made. You can try again anytime.</span>
+          </div>
+        )}
         {user && (
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-foreground">
             LanceConnect is now <strong className="text-primary font-bold">100% Free and Unlimited</strong> for everyone! There are no billing limits, search quotas, or paid plans.
@@ -155,19 +186,28 @@ function UpgradePage() {
                     </li>
                   ))}
                 </ul>
-                <button
-                  disabled={isLoading || user?.plan === p.id}
-                  onClick={() => handleCheckout(p.id)}
-                  className={cn(
-                    "mt-6 w-full rounded-lg py-2.5 text-sm font-semibold transition flex items-center justify-center gap-2",
-                    p.popular
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary/50"
-                      : "border border-border bg-background hover:bg-accent disabled:opacity-50",
-                  )}
-                >
-                  {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {user?.plan === p.id ? "Current Plan" : p.cta}
-                </button>
+                {user?.plan === p.id ? (
+                  <div className="mt-6 w-full rounded-lg py-2.5 text-sm font-semibold text-center text-muted-foreground border border-border bg-background">
+                    Current Plan
+                  </div>
+                ) : p.id === "free" ? (
+                  <button
+                    onClick={() => handleCheckout(p.id)}
+                    className="mt-6 w-full rounded-lg py-2.5 text-sm font-semibold transition border border-border bg-background hover:bg-accent"
+                  >
+                    {p.cta}
+                  </button>
+                ) : (
+                  <div className="mt-6">
+                    <DualPaymentButtons
+                      onStripe={() => handleCheckout(p.id, "stripe")}
+                      onPaystack={() => handleCheckout(p.id, "paystack")}
+                      stripeLoading={loadingPlan === p.id && loadingGateway === "stripe"}
+                      paystackLoading={loadingPlan === p.id && loadingGateway === "paystack"}
+                      recommended={currency === "NGN" ? "paystack" : "stripe"}
+                    />
+                  </div>
+                )}
               </div>
             );
           })}
