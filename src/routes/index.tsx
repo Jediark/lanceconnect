@@ -1552,6 +1552,7 @@ function categorySlug(id: string) {
    ──────────────────────────────────────────────────────────── */
 function Testimonials() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
   
   const scroll = (direction: "left" | "right") => {
     if (containerRef.current) {
@@ -1559,6 +1560,21 @@ function Testimonials() {
       containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
+
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      if (containerRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          containerRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          containerRef.current.scrollBy({ left: 380, behavior: "smooth" });
+        }
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isHovered]);
 
   const items = [
     {
@@ -1637,6 +1653,8 @@ function Testimonials() {
 
         <div
           ref={containerRef}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           className="flex gap-6 overflow-x-auto pb-8 pt-2 scroll-smooth snap-x snap-mandatory scrollbar-none"
           style={{ scrollbarWidth: "none" }}
         >
@@ -1672,32 +1690,18 @@ function Testimonials() {
 function MeetOurTeam() {
   const team = [
     {
-      name: "Lucas Fernández",
-      role: "Co-Founder & Product Lead",
-      bio: "Former freelance designer. Builder of lead generators, focused on making outreach seamless.",
-      avatar: IMG.face5,
-      location: "Buenos Aires 🇦🇷",
+      name: "AKINOLA OLUJOBI",
+      role: "CEO / Founder",
+      bio: "Visionary founder driving strategic direction, platform growth, and global freelancer success programs.",
+      avatar: "/assets/team/akinola.jpg",
+      location: "Lagos, Nigeria 🇳🇬",
     },
     {
-      name: "Sofia Romano",
-      role: "Co-Founder & Tech Lead",
-      bio: "Ex-SaaS architect. Keeps our global lead crawlers scanning and verifying 24/7.",
-      avatar: IMG.face6,
-      location: "Naples 🇮🇹",
-    },
-    {
-      name: "Taiwo Adeyemi",
-      role: "Head of Data Engineering",
-      bio: "Crawler Specialist. Optimizes our Google Maps scraping pipelines and rating models.",
-      avatar: IMG.face1,
-      location: "Lagos 🇳🇬",
-    },
-    {
-      name: "Akinola Olujobi",
-      role: "Growth & Community",
-      bio: "Digital Marketer & MC. Builds LanceConnect's community and freelancer success programs.",
-      avatar: IMG.face8,
-      location: "Abuja 🇳🇬",
+      name: "TEARI BEY",
+      role: "COO (Chief Operation Officer)",
+      bio: "Operations leader managing global workflows, scaling systems, and daily product operations.",
+      avatar: "/assets/team/teari.jpg",
+      location: "USA 🇺🇸",
     },
   ];
 
@@ -1710,14 +1714,14 @@ function MeetOurTeam() {
             Behind the platform
           </p>
           <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl text-white">
-            Meet the Builders
+            Meet Our Team
           </h2>
           <p className="mt-4 text-sm text-slate-400">
-            We are a distributed team of freelancers and creators building the future of client sourcing.
+            Building the ultimate ecosystem connecting top-tier freelance talent with local and global clients.
           </p>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="max-w-2xl mx-auto grid gap-8 sm:grid-cols-2">
           {team.map((m, idx) => (
             <div
               key={idx}
@@ -1726,13 +1730,13 @@ function MeetOurTeam() {
               <img
                 src={m.avatar}
                 alt={m.name}
-                className="h-24 w-24 rounded-full object-cover border border-white/10 mb-4 shadow-md"
+                className="h-28 w-28 rounded-full object-cover border border-white/10 mb-4 shadow-md"
                 loading="lazy"
               />
               <h3 className="text-base font-bold text-white">{m.name}</h3>
               <p className="text-xs text-primary font-semibold mt-1">{m.role}</p>
               <p className="text-[10px] text-slate-500 mt-0.5">{m.location}</p>
-              <p className="mt-3 text-xs text-slate-450 leading-relaxed">
+              <p className="mt-3 text-xs text-slate-400 leading-relaxed">
                 {m.bio}
               </p>
             </div>
