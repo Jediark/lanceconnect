@@ -17,6 +17,8 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { usePreferences, Language, Currency } from "@/contexts/PreferencesContext";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { TopNav } from "@/components/layout/TopNav";
 
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
@@ -561,6 +563,7 @@ export function MarketingFooter() {
 }
 
 export function MarketingShell({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   // CMD+K palette states
   const [cmdOpen, setCmdOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -739,9 +742,11 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-background relative">
-      <MarketingNav />
-      <main className="flex-1">{children}</main>
-      <MarketingFooter />
+      {user ? <TopNav /> : <MarketingNav />}
+      <main className={user ? "flex-1 px-4 py-6 lg:px-8 max-w-7xl mx-auto w-full" : "flex-1"}>
+        {children}
+      </main>
+      {!user && <MarketingFooter />}
 
       {/* Floating Action Buttons */}
       <div className="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-40 select-none">
