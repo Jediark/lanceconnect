@@ -504,10 +504,10 @@ export function MarketingFooter() {
     {
       title: "For Freelancers",
       links: [
-        ["Web Developers", "/freelancers/web-developers"],
-        ["Designers", "/freelancers/designers"],
-        ["Copywriters", "/freelancers/copywriters"],
-        ["SEO Specialists", "/freelancers/seo-specialists"],
+        ["Web Developers", "/find-clients/web-developer"],
+        ["Designers", "/find-clients/graphic-designer"],
+        ["Copywriters", "/find-clients/copywriter"],
+        ["SEO Specialists", "/find-clients/seo-specialists"],
       ] as const,
     },
     {

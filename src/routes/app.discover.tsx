@@ -79,10 +79,11 @@ function Discover() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedCategory = sessionStorage.getItem("lc_disc_category");
-      const savedCountry = sessionStorage.getItem("lc_disc_country");
-      const savedCity = sessionStorage.getItem("lc_disc_city");
-      const savedResults = sessionStorage.getItem("lc_disc_results");
+      const savedCategory = sessionStorage.getItem("lc_shared_category");
+      const savedCountry = sessionStorage.getItem("lc_shared_country");
+      const savedCity = sessionStorage.getItem("lc_shared_city");
+      const savedResults = sessionStorage.getItem("lc_shared_results");
+      const savedOnlineJobs = sessionStorage.getItem("lc_shared_online_jobs");
 
       if (savedCategory) setCategory(savedCategory);
       if (savedCountry) setCountry(savedCountry);
@@ -94,34 +95,89 @@ function Discover() {
           // ignore
         }
       }
+      if (savedOnlineJobs) {
+        try {
+          setOnlineJobs(JSON.parse(savedOnlineJobs));
+        } catch {
+          // ignore
+        }
+      }
       setIsMounted(true);
     }
   }, []);
 
   useEffect(() => {
     if (isMounted && typeof window !== "undefined") {
-      sessionStorage.setItem("lc_disc_category", category);
-      sessionStorage.setItem("lc_disc_country", country);
-      sessionStorage.setItem("lc_disc_city", city);
+      sessionStorage.setItem("lc_shared_category", category);
+      sessionStorage.setItem("lc_shared_country", country);
+      sessionStorage.setItem("lc_shared_city", city);
     }
   }, [category, country, city, isMounted]);
 
   useEffect(() => {
     if (isMounted && typeof window !== "undefined") {
-      sessionStorage.setItem("lc_disc_results", JSON.stringify(results));
-      if (results.length > 0) {
-        sessionStorage.setItem("lc_disc_has_session", "true");
+      sessionStorage.setItem("lc_shared_results", JSON.stringify(results));
+      sessionStorage.setItem("lc_shared_online_jobs", JSON.stringify(onlineJobs));
+      if (results.length > 0 || onlineJobs.length > 0) {
+        sessionStorage.setItem("lc_shared_has_session", "true");
       } else {
-        sessionStorage.removeItem("lc_disc_has_session");
+        sessionStorage.removeItem("lc_shared_has_session");
       }
     }
-  }, [results, isMounted]);
+  }, [results, onlineJobs, isMounted]);
+
+  // Background fetch for online opportunities when restoring a search from dashboard or reload
+  useEffect(() => {
+    if (!isMounted || !user) return;
+    
+    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_shared_has_session") === "true";
+    const savedOnlineJobs = typeof window !== "undefined" ? sessionStorage.getItem("lc_shared_online_jobs") : null;
+    
+    if (hasSavedSession && category && ONLINE_ELIGIBLE.includes(category)) {
+      let parsedJobs = [];
+      try {
+        if (savedOnlineJobs) parsedJobs = JSON.parse(savedOnlineJobs);
+      } catch {}
+
+      if (parsedJobs.length === 0 && !loadingOnline && onlineJobs.length === 0) {
+        setLoadingOnline(true);
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
+          fetch(`${supabaseUrl}/functions/v1/online-opportunities`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+            body: JSON.stringify({
+              category,
+              page: 1,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data?.jobs) {
+                setOnlineJobs(data.jobs);
+                if (typeof window !== "undefined") {
+                  sessionStorage.setItem("lc_shared_online_jobs", JSON.stringify(data.jobs));
+                }
+                if (results.length === 0 && data.jobs.length > 0) {
+                  setActiveTab("online");
+                }
+              }
+            })
+            .catch((err) => console.error("Auto fetch online jobs failed:", err))
+            .finally(() => setLoadingOnline(false));
+        });
+      }
+    }
+  }, [isMounted, user, category, results.length]);
 
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
   useEffect(() => {
     if (!isMounted || !user) return;
-    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_disc_has_session") === "true";
+    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_shared_has_session") === "true";
     if (!hasSavedSession) {
       if (
         ["african_food_export", "b2b_trade", "restaurant_supplier", "product_export", "human_capital", "training_recruitment"].includes(
@@ -222,7 +278,7 @@ function Discover() {
       }
     }
 
-    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_disc_has_session") === "true";
+    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_shared_has_session") === "true";
     if (!hasSavedSession) {
       setLoading(true);
       let queryBuilder = supabase.from("leads").select("*");

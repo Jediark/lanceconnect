@@ -84,10 +84,10 @@ function Dashboard() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedCity = sessionStorage.getItem("lc_db_city");
-      const savedCategory = sessionStorage.getItem("lc_db_category");
-      const savedCountry = sessionStorage.getItem("lc_db_country");
-      const savedResults = sessionStorage.getItem("lc_db_results");
+      const savedCity = sessionStorage.getItem("lc_shared_city");
+      const savedCategory = sessionStorage.getItem("lc_shared_category");
+      const savedCountry = sessionStorage.getItem("lc_shared_country");
+      const savedResults = sessionStorage.getItem("lc_shared_results");
 
       if (savedCity) setQuickCity(savedCity);
       if (savedCategory) setQuickCategory(savedCategory);
@@ -105,19 +105,19 @@ function Dashboard() {
 
   useEffect(() => {
     if (isMounted && typeof window !== "undefined") {
-      sessionStorage.setItem("lc_db_city", quickCity);
-      sessionStorage.setItem("lc_db_category", quickCategory);
-      sessionStorage.setItem("lc_db_country", quickCountry);
+      sessionStorage.setItem("lc_shared_city", quickCity);
+      sessionStorage.setItem("lc_shared_category", quickCategory);
+      sessionStorage.setItem("lc_shared_country", quickCountry);
     }
   }, [quickCity, quickCategory, quickCountry, isMounted]);
 
   useEffect(() => {
     if (isMounted && typeof window !== "undefined") {
-      sessionStorage.setItem("lc_db_results", JSON.stringify(results));
+      sessionStorage.setItem("lc_shared_results", JSON.stringify(results));
       if (results.length > 0) {
-        sessionStorage.setItem("lc_db_has_session", "true");
+        sessionStorage.setItem("lc_shared_has_session", "true");
       } else {
-        sessionStorage.removeItem("lc_db_has_session");
+        sessionStorage.removeItem("lc_shared_has_session");
       }
     }
   }, [results, isMounted]);
@@ -241,7 +241,7 @@ function Dashboard() {
     setLoading(true);
 
     // Prefill search parameters from user profile only if there is no session-saved search
-    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_db_has_session") === "true";
+    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_shared_has_session") === "true";
     if (!hasSavedSession) {
       if (user.freelancerCategory) setQuickCategory(user.freelancerCategory);
       const userCountry = user.country;
@@ -887,8 +887,8 @@ function Dashboard() {
                   { label: "Web Developers", to: "/find-clients/web-developer" },
                   { label: "Graphic Designers", to: "/find-clients/graphic-designer" },
                   { label: "Copywriters", to: "/find-clients/copywriter" },
-                  { label: "SEO Specialists", to: "/freelancers/seo-specialists" },
-                  { label: "Social Media", to: "/freelancers/social-media" },
+                  { label: "SEO Specialists", to: "/find-clients/seo-specialists" },
+                  { label: "Social Media", to: "/find-clients/social-media" },
                 ].map((d) => (
                   <Link
                     key={d.label}
