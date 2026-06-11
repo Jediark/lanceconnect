@@ -422,10 +422,13 @@ function Discover() {
       setOnlineJobs(rawJobs);
 
       if (mapped.length > 0) {
-        toast.success(`Found ${mapped.length} leads in ${city}!`);
+        toast.success(`Found ${mapped.length} leads in ${cityName}!`);
       }
       if (rawJobs.length > 0) {
         toast.success(`Found ${rawJobs.length} online opportunities!`);
+        if (mapped.length === 0) {
+          setActiveTab("online");
+        }
       }
     } catch (err: any) {
       console.error(err);
@@ -659,7 +662,7 @@ function Discover() {
         )}
       </div>
 
-      {ONLINE_ELIGIBLE.includes(category) && (
+      {(ONLINE_ELIGIBLE.includes(category) || onlineJobs.length > 0) && (
         <div className="px-4 lg:px-8 mb-2">
           <div className="inline-flex gap-1 border border-border bg-card/50 p-1 rounded-xl backdrop-blur-sm shadow-sm">
             <button

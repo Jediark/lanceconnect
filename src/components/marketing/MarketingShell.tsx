@@ -808,8 +808,8 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
 
       {/* Mini Chat Drawer */}
       {chatOpen && (
-        <div className="fixed bottom-20 right-6 w-80 max-w-[calc(100vw-32px)] h-96 border border-border bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 animate-in slide-in-from-bottom-5 duration-200">
-          <div className="bg-background p-3.5 border-b border-border flex items-center justify-between">
+        <div className="fixed bottom-20 right-6 w-80 max-w-[calc(100vw-32px)] h-96 border border-slate-700 bg-[#0F172A] rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 animate-in slide-in-from-bottom-5 duration-200">
+          <div className="bg-[#0F172A] p-3.5 border-b border-slate-700 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -831,7 +831,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                 key={idx}
                 className={`flex flex-col max-w-[80%] rounded-2xl p-3 text-xs leading-normal ${
                   m.sender === "support"
-                    ? "bg-background border border-border text-slate-300 self-start"
+                    ? "bg-[#1E293B] border border-slate-700 text-slate-300 self-start"
                     : "bg-primary text-white self-end ml-auto"
                 }`}
               >
@@ -839,7 +839,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
               </div>
             ))}
             {typing && (
-              <div className="bg-background border border-border text-slate-500 self-start max-w-[80%] rounded-2xl p-3 text-xs flex gap-1 items-center">
+              <div className="bg-[#1E293B] border border-slate-700 text-slate-500 self-start max-w-[80%] rounded-2xl p-3 text-xs flex gap-1 items-center">
                 <span
                   className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce"
                   style={{ animationDelay: "0ms" }}
@@ -858,14 +858,15 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
 
           <form
             onSubmit={handleSendChat}
-            className="p-3 border-t border-border bg-background flex gap-2"
+            className="p-3 border-t border-slate-700 bg-[#0F172A] flex gap-2"
           >
             <input
               type="text"
               placeholder="Write a message..."
               value={userMsg}
               onChange={(e) => setUserMsg(e.target.value)}
-              className="flex-1 bg-card border border-border rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-primary transition"
+              className="flex-1 bg-[#1E293B] border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-[#F8FAFC] caret-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition"
+              style={{ fontSize: "16px" }}
             />
             <button
               type="submit"

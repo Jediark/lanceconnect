@@ -863,6 +863,66 @@ function Dashboard() {
           className="my-6"
         />
 
+        {/* ═══ QUICK DIRECTORIES ═══ */}
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Globe className="h-4 w-4 text-primary" /> Quick Directories
+              </h3>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Browse leads by skill or city</p>
+            </div>
+            <Link
+              to="/find-clients"
+              className="text-[11px] font-semibold text-primary hover:underline flex items-center gap-1"
+            >
+              View All <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">By Skill</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { label: "Web Developers", to: "/find-clients/web-developer" },
+                  { label: "Graphic Designers", to: "/find-clients/graphic-designer" },
+                  { label: "Copywriters", to: "/find-clients/copywriter" },
+                  { label: "SEO Specialists", to: "/freelancers/seo-specialists" },
+                  { label: "Social Media", to: "/freelancers/social-media" },
+                ].map((d) => (
+                  <Link
+                    key={d.label}
+                    to={d.to as any}
+                    className="rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-primary hover:text-primary transition"
+                  >
+                    {d.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">By City</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { label: "Lagos", to: "/find-clients/lagos" },
+                  { label: "London", to: "/find-clients/london" },
+                  { label: "Dubai", to: "/find-clients/dubai" },
+                  { label: "United States", to: "/find-clients/united-states" },
+                  { label: "All Locations", to: "/find-clients" },
+                ].map((d) => (
+                  <Link
+                    key={d.label}
+                    to={d.to as any}
+                    className="rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-primary hover:text-primary transition"
+                  >
+                    {d.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ═══ ANALYTICS ROW ═══ */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-5 overflow-hidden">
