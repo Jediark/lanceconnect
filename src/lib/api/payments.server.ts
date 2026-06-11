@@ -12,6 +12,66 @@ const stripeCheckoutInput = z.object({
 });
 
 /**
+ * Dynamically resolves the active Stripe Price ID for a plan.
+ * 1. Checks environment variables first.
+ * 2. If missing, queries Stripe's active prices and matches by metadata or product name.
+ */
+async function resolveStripePriceId(stripe: any, planName: "individual" | "company"): Promise<string> {
+  // 1. Check environment variables
+  const envVar = planName === "individual"
+    ? process.env.STRIPE_INDIVIDUAL_PRICE_ID
+    : process.env.STRIPE_COMPANY_PRICE_ID;
+  if (envVar) return envVar;
+
+  // 2. Query the Stripe active prices list
+  try {
+    const prices = await stripe.prices.list({
+      active: true,
+      limit: 100,
+      expand: ["data.product"],
+    });
+
+    for (const price of prices.data) {
+      const product = price.product;
+      if (typeof product === "object" && product !== null) {
+        const metadata = product.metadata || {};
+        const productName = (product.name || "").toLowerCase();
+
+        if (planName === "individual") {
+          if (
+            metadata.plan === "individual" ||
+            metadata.plan === "grow" ||
+            productName.includes("grow") ||
+            productName.includes("individual")
+          ) {
+            return price.id;
+          }
+        } else if (planName === "company") {
+          if (
+            metadata.plan === "company" ||
+            metadata.plan === "scale" ||
+            productName.includes("scale") ||
+            productName.includes("company")
+          ) {
+            return price.id;
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Failed to dynamically resolve Stripe Price ID:", err);
+  }
+
+  throw new Error(
+    `Stripe Price ID for "${planName}" plan is not configured. ` +
+      `Set STRIPE_INDIVIDUAL_PRICE_ID / STRIPE_COMPANY_PRICE_ID in Vercel/Railway env vars, ` +
+      `or ensure your Stripe products have metadata { plan: "${planName}" } or names containing "${
+        planName === "individual" ? "Grow" : "Scale"
+      }".`,
+  );
+}
+
+/**
  * Creates a Stripe Checkout Session on the server.
  * Secret key is read inside the handler — never reaches the client bundle.
  */
@@ -25,23 +85,11 @@ export const createStripeCheckout = createServerFn({ method: "POST" })
       );
     }
 
-    // Dynamic import keeps Stripe SDK out of the client bundle entirely
     const Stripe = (await import("stripe")).default;
     const stripe = new Stripe(secretKey);
 
-    // Map plan names → Stripe Price IDs (set these in Vercel env vars)
-    const priceIdMap: Record<string, string | undefined> = {
-      individual: process.env.STRIPE_INDIVIDUAL_PRICE_ID,
-      company: process.env.STRIPE_COMPANY_PRICE_ID,
-    };
-
-    const priceId = priceIdMap[data.planName];
-    if (!priceId) {
-      throw new Error(
-        `Stripe Price ID for "${data.planName}" plan is not configured. ` +
-          `Set STRIPE_INDIVIDUAL_PRICE_ID / STRIPE_COMPANY_PRICE_ID in Vercel env vars.`,
-      );
-    }
+    // Resolve Price ID (via env vars or dynamic query)
+    const priceId = await resolveStripePriceId(stripe, data.planName);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
