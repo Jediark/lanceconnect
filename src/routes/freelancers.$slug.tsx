@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { FREELANCER_CATEGORIES } from "@/data/content";
-import { CATEGORIES } from "@/data/mockData";
+import { CATEGORIES, MOCK_FREELANCERS } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowRight,
@@ -78,7 +78,15 @@ export const Route = createFileRoute("/freelancers/$slug")({
       return { type: "category" as const, cat, freelancer: null };
     }
 
-    // 2. Otherwise, treat as vanity username or ID and query public freelancer view
+    // 2. Check if slug matches any mock freelancer
+    const mockFree = MOCK_FREELANCERS.find(
+      (f) => f.username === params.slug || f.id === params.slug
+    );
+    if (mockFree) {
+      return { type: "freelancer" as const, cat: null, freelancer: mockFree };
+    }
+
+    // 3. Otherwise, treat as vanity username or ID and query public freelancer view
     let query = supabase.from("freelancer_directory").select("*");
     if (params.slug.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
       query = query.eq("id", params.slug);

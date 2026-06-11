@@ -56,15 +56,40 @@ const ONLINE_ELIGIBLE = [
 
 function Discover() {
   const { user } = useAuth();
-  const [category, setCategory] = useState("");
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
+  const [category, setCategory] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("lc_disc_category") || "";
+    }
+    return "";
+  });
+  const [country, setCountry] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("lc_disc_country") || "";
+    }
+    return "";
+  });
+  const [city, setCity] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("lc_disc_city") || "";
+    }
+    return "";
+  });
   const [website, setWebsite] = useState("");
   const [minScore, setMinScore] = useState(0);
   const [view, setView] = useState<"grid" | "table">("grid");
   const [sort, setSort] = useState<"score" | "rating">("score");
   const [detail, setDetail] = useState<Lead | null>(null);
-  const [results, setResults] = useState<Lead[]>([]);
+  const [results, setResults] = useState<Lead[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("lc_disc_results");
+      try {
+        return saved ? JSON.parse(saved) : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState("");
   const [selectedNiche, setSelectedNiche] = useState("");
@@ -75,6 +100,23 @@ function Discover() {
   const [quickConnectLead, setQuickConnectLead] = useState<Lead | undefined>();
   const [quickConnectChannel, setQuickConnectChannel] = useState<"email" | "linkedin" | "whatsapp">("email");
   const [quickConnectMessage, setQuickConnectMessage] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("lc_disc_category", category);
+      sessionStorage.setItem("lc_disc_country", country);
+      sessionStorage.setItem("lc_disc_city", city);
+    }
+  }, [category, country, city]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("lc_disc_results", JSON.stringify(results));
+      if (results.length > 0) {
+        sessionStorage.setItem("lc_disc_has_session", "true");
+      }
+    }
+  }, [results]);
 
   const suggestedCities = COUNTRY_CITIES[country] || [];
 
@@ -178,52 +220,55 @@ function Discover() {
         }
       }
 
-      setLoading(true);
-      let queryBuilder = supabase.from("leads").select("*");
-      if (user.freelancerCategory) {
-        queryBuilder = queryBuilder.eq("industry", user.freelancerCategory);
+      const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_disc_has_session") === "true";
+      if (!hasSavedSession) {
+        setLoading(true);
+        let queryBuilder = supabase.from("leads").select("*");
+        if (user.freelancerCategory) {
+          queryBuilder = queryBuilder.eq("industry", user.freelancerCategory);
+        }
+        queryBuilder
+          .order("created_at", { ascending: false })
+          .limit(12)
+          .then(({ data, error }) => {
+            setLoading(false);
+            if (error) console.error("Error fetching initial leads:", error);
+            if (data) {
+              const mapped = data.map((dbLead: any) => ({
+                id: dbLead.id,
+                businessName: dbLead.business_name,
+                businessType: dbLead.business_type,
+                industry: dbLead.industry,
+                city: dbLead.city,
+                country: dbLead.country,
+                fullAddress: dbLead.full_address,
+                phone: dbLead.phone || "",
+                email: dbLead.email || null,
+                websiteUrl: dbLead.website_url || null,
+                hasWebsite: dbLead.has_website || false,
+                googleRating: Number(dbLead.google_rating || 0),
+                googleReviewCount: Number(dbLead.google_review_count || 0),
+                opportunityScore: Number(dbLead.opportunity_score || 0),
+                createdAt: dbLead.created_at,
+                source: dbLead.source || "google_maps",
+                savedAt: null,
+                status: null,
+                facebookUrl: dbLead.facebook_url || null,
+                instagramUrl: dbLead.instagram_url || null,
+                hasLinkedin: dbLead.has_linkedin || false,
+                linkedinUrl: dbLead.linkedin_url || null,
+                phoneVerified: dbLead.phone_verified || false,
+                emailVerified: dbLead.email_verified || false,
+                websiteLive: dbLead.website_live || false,
+                isFlagged: dbLead.is_flagged || false,
+                suspiciousCount: dbLead.suspicious_count || 0,
+              }));
+              attachClaimsToLeads(mapped).then((enriched) => {
+                setResults(enriched);
+              });
+            }
+          });
       }
-      queryBuilder
-        .order("created_at", { ascending: false })
-        .limit(12)
-        .then(({ data, error }) => {
-          setLoading(false);
-          if (error) console.error("Error fetching initial leads:", error);
-          if (data) {
-            const mapped = data.map((dbLead: any) => ({
-              id: dbLead.id,
-              businessName: dbLead.business_name,
-              businessType: dbLead.business_type,
-              industry: dbLead.industry,
-              city: dbLead.city,
-              country: dbLead.country,
-              fullAddress: dbLead.full_address,
-              phone: dbLead.phone || "",
-              email: dbLead.email || null,
-              websiteUrl: dbLead.website_url || null,
-              hasWebsite: dbLead.has_website || false,
-              googleRating: Number(dbLead.google_rating || 0),
-              googleReviewCount: Number(dbLead.google_review_count || 0),
-              opportunityScore: Number(dbLead.opportunity_score || 0),
-              createdAt: dbLead.created_at,
-              source: dbLead.source || "google_maps",
-              savedAt: null,
-              status: null,
-              facebookUrl: dbLead.facebook_url || null,
-              instagramUrl: dbLead.instagram_url || null,
-              hasLinkedin: dbLead.has_linkedin || false,
-              linkedinUrl: dbLead.linkedin_url || null,
-              phoneVerified: dbLead.phone_verified || false,
-              emailVerified: dbLead.email_verified || false,
-              websiteLive: dbLead.website_live || false,
-              isFlagged: dbLead.is_flagged || false,
-              suspiciousCount: dbLead.suspicious_count || 0,
-            }));
-            attachClaimsToLeads(mapped).then((enriched) => {
-              setResults(enriched);
-            });
-          }
-        });
     } else {
       setResults([]);
     }
@@ -905,7 +950,7 @@ function LeadTable({
         </thead>
         <tbody className="divide-y divide-border">
           {leads.map((l) => {
-            const isLocked = l.claimStatus && l.claimUserId !== user?.id;
+            const isLocked = !!(l.claimStatus && l.claimUserId !== user?.id);
             return (
               <tr
                 key={l.id}
@@ -1022,7 +1067,7 @@ function LeadDetailModal({
 
   const [currentLead, setCurrentLead] = useState<Lead>(lead);
   const [enriching, setEnriching] = useState(false);
-  const isLocked = currentLead.claimStatus && currentLead.claimUserId !== user?.id;
+  const isLocked = !!(currentLead.claimStatus && currentLead.claimUserId !== user?.id);
 
   useEffect(() => {
     if (currentLead.websiteUrl && !currentLead.email && !enriching) {

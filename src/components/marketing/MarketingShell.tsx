@@ -313,13 +313,27 @@ export function MarketingNav() {
             </div>
           </div>
 
-          <button
-            onClick={() => setOpen(!open)}
-            className="lg:hidden rounded-lg p-2 text-slate-800 dark:text-slate-300 hover:bg-accent"
-            aria-label="Menu"
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <Link
+              to="/login"
+              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-accent transition-colors"
+            >
+              {t("nav_login")}
+            </Link>
+            <Link
+              to="/register"
+              className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm animate-fade-in"
+            >
+              {t("nav_start_free")}
+            </Link>
+            <button
+              onClick={() => setOpen(!open)}
+              className="rounded-lg p-1.5 text-slate-800 dark:text-slate-300 hover:bg-accent"
+              aria-label="Menu"
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         {open && (
@@ -407,20 +421,22 @@ export function MarketingNav() {
                 </button>
               </div>
 
-              <Link
-                to="/login"
-                onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-accent hover:text-foreground"
-              >
-                {t("nav_login")}
-              </Link>
-              <Link
-                to="/register"
-                onClick={() => setOpen(false)}
-                className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground"
-              >
-                {t("nav_start_free")}
-              </Link>
+              <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-border/40">
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl border border-border bg-card px-3 py-2.5 text-center text-xs font-semibold text-foreground hover:bg-accent transition"
+                >
+                  {t("nav_login")}
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition"
+                >
+                  {t("nav_start_free")}
+                </Link>
+              </div>
             </div>
           </div>
         )}
@@ -622,22 +638,103 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
       setTyping(false);
       let reply =
         "Thanks for checking in! To get 10 free leads immediately with verified phone/email lines, you can create a free account right now. What skills are you planning to showcase?";
+      
+      const msgLower = currentMsg.toLowerCase();
+      
       if (
-        currentMsg.toLowerCase().includes("price") ||
-        currentMsg.toLowerCase().includes("pricing") ||
-        currentMsg.toLowerCase().includes("cost")
+        msgLower.includes("hello") ||
+        msgLower.includes("hi") ||
+        msgLower.includes("hey") ||
+        msgLower.includes("greetings") ||
+        msgLower.includes("yo")
       ) {
         reply =
-          "Our plans start at $0/mo (Free tier), with the Individual plan at just $5/mo, and Large Company at $20/mo. All plans cover verified global lead lines, with cancel-anytime triggers.";
+          "Hello! 👋 I'm Lucas from support. I'm here to help you navigate LanceConnect or answer any questions. What are you looking to find today?";
       } else if (
-        currentMsg.toLowerCase().includes("portfolio") ||
-        currentMsg.toLowerCase().includes("work")
+        msgLower.includes("price") ||
+        msgLower.includes("pricing") ||
+        msgLower.includes("cost") ||
+        msgLower.includes("pay") ||
+        msgLower.includes("subscription") ||
+        msgLower.includes("fee")
       ) {
         reply =
-          "You can view all verified freelancer portfolio case studies directly on our 'Portfolio' route, linked right in the header navigation!";
+          "Our plans start at $0/mo (Free tier with 10 free leads!), with our Individual plan at just $5/mo (unlimited searches & leads), and the Large Company plan at $20/mo. All plans cover verified global lead lines with zero commissions!";
+      } else if (
+        msgLower.includes("how") ||
+        msgLower.includes("work") ||
+        msgLower.includes("use") ||
+        msgLower.includes("find") ||
+        msgLower.includes("get leads") ||
+        msgLower.includes("features")
+      ) {
+        reply =
+          "LanceConnect scans the web for businesses lacking active websites, having low Google ratings, or missing social media links. We grade their opportunity score and deliver verified phone numbers and email contacts directly to your dashboard. You can search by city and skill category, save them to your pipeline, and reach out via email or WhatsApp.";
+      } else if (
+        msgLower.includes("free") ||
+        msgLower.includes("trial") ||
+        msgLower.includes("credit")
+      ) {
+        reply =
+          "Yes, absolutely! You get 10 free leads immediately upon signing up. No credit card is required. You can try the dashboard search and discover pages with these free credits.";
+      } else if (
+        msgLower.includes("country") ||
+        msgLower.includes("countries") ||
+        msgLower.includes("city") ||
+        msgLower.includes("cities") ||
+        msgLower.includes("location") ||
+        msgLower.includes("nigeria") ||
+        msgLower.includes("lagos") ||
+        msgLower.includes("london") ||
+        msgLower.includes("dubai") ||
+        msgLower.includes("abuja") ||
+        msgLower.includes("state")
+      ) {
+        reply =
+          "We cover over 150+ countries worldwide, including the US, UK, Canada, Nigeria, UAE, and more. You can drill down to specific cities like Lagos, Abuja, London, or New York, or browse by continent from our global directory (/find-clients).";
+      } else if (
+        msgLower.includes("verify") ||
+        msgLower.includes("verified") ||
+        msgLower.includes("real") ||
+        msgLower.includes("fake") ||
+        msgLower.includes("accuracy")
+      ) {
+        reply =
+          "Every lead is checked for active contact links. We verify phone numbers and email addresses to ensure they are active. We also display a live Opportunity Score so you can prioritize outreach to high-conversion clients.";
+      } else if (
+        msgLower.includes("freelancer") ||
+        msgLower.includes("list") ||
+        msgLower.includes("directory") ||
+        msgLower.includes("profile") ||
+        msgLower.includes("register") ||
+        msgLower.includes("get listed")
+      ) {
+        reply =
+          "If you are a freelancer, you can list your profile in our public directory for free! Just sign up, go to your profile settings, fill in your services, hourly rate, and portfolio links, and turn on the public listing toggle. Clients will then be able to contact you directly off-platform.";
+      } else if (
+        msgLower.includes("whatsapp") ||
+        msgLower.includes("email") ||
+        msgLower.includes("outreach") ||
+        msgLower.includes("message") ||
+        msgLower.includes("contact client") ||
+        msgLower.includes("send")
+      ) {
+        reply =
+          "In the dashboard and discovery screens, you can click on the WhatsApp or Mail icons to open chat templates instantly. You can choose to customize your message templates under the 'Templates' tab.";
+      } else if (
+        msgLower.includes("contact") ||
+        msgLower.includes("support") ||
+        msgLower.includes("help") ||
+        msgLower.includes("issue") ||
+        msgLower.includes("error") ||
+        msgLower.includes("bug")
+      ) {
+        reply =
+          "You're chatting with Lucas from support! If you need further assistance, you can also reach us via the Contact page or email support@lanceconnect.com. How can I help you today?";
       }
+      
       setMessages((prev) => [...prev, { sender: "support", text: reply }]);
-    }, 1500);
+    }, 1200);
   };
 
   return (

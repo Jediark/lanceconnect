@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { MOCK_TEMPLATES } from "@/data/mockData";
 
 export const Route = createFileRoute("/app/templates")({
   head: () => ({ meta: [{ title: "Outreach Templates — LanceConnect" }] }),
@@ -350,7 +351,7 @@ function TemplateEditor({
             {variables.map((v) => (
               <button
                 key={v}
-                onClick={() => setBody((b) => b + " " + v)}
+                onClick={() => setBody((b: string) => b + " " + v)}
                 className="block w-full rounded-md bg-primary/10 px-2 py-1 text-left font-mono-data text-xs text-primary hover:bg-primary/20"
               >
                 {v}

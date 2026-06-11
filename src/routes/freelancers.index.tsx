@@ -19,7 +19,7 @@ import {
   X,
   Shield,
 } from "lucide-react";
-import { CATEGORIES, COUNTRIES } from "@/data/mockData";
+import { CATEGORIES, COUNTRIES, MOCK_FREELANCERS, type DirectoryFreelancer } from "@/data/mockData";
 import { IMG } from "@/data/content";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -70,34 +70,6 @@ export const Route = createFileRoute("/freelancers/")({
   }),
   component: FreelancerDirectoryPage,
 });
-
-type DirectoryFreelancer = {
-  id: string;
-  email: string;
-  full_name: string;
-  avatar_url: string | null;
-  freelancer_category: string;
-  bio: string | null;
-  website_url: string | null;
-  country: string | null;
-  city: string | null;
-  username: string | null;
-  hourly_rate: number | null;
-  portfolio_projects: any[] | null;
-  contact_email: string | null;
-  contact_phone: string | null;
-  github_url: string | null;
-  linkedin_url: string | null;
-  dribbble_url: string | null;
-  twitter_url: string | null;
-  created_at: string;
-  is_verified?: boolean;
-  website_verified?: boolean;
-  is_supporter?: boolean;
-  is_featured?: boolean;
-  tagline?: string | null;
-  is_flagged?: boolean;
-};
 
 function FreelancerDirectoryPage() {
   const { user } = useAuth();
@@ -175,10 +147,14 @@ function FreelancerDirectoryPage() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setFreelancers(data || []);
+      if (data && data.length > 0) {
+        setFreelancers(data);
+      } else {
+        setFreelancers(MOCK_FREELANCERS);
+      }
     } catch (err: any) {
-      console.error("Error fetching freelancers:", err);
-      setError("Failed to load freelancer directory. Please try again.");
+      console.error("Error fetching freelancers, falling back to mock data:", err);
+      setFreelancers(MOCK_FREELANCERS);
     } finally {
       setLoading(false);
     }

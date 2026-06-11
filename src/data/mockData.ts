@@ -514,3 +514,223 @@ export const STATUS_META: Record<
   },
   lost: { label: "Lost", emoji: "✕", color: "bg-red-100 text-red-700", ring: "border-l-red-400" },
 };
+
+export type DirectoryFreelancer = {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url: string | null;
+  freelancer_category: string;
+  bio: string | null;
+  website_url: string | null;
+  country: string | null;
+  city: string | null;
+  username: string | null;
+  hourly_rate: number | null;
+  portfolio_projects: any[] | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  github_url: string | null;
+  linkedin_url: string | null;
+  dribbble_url: string | null;
+  twitter_url: string | null;
+  created_at: string;
+  is_verified?: boolean;
+  website_verified?: boolean;
+  is_supporter?: boolean;
+  is_featured?: boolean;
+  tagline?: string | null;
+  is_flagged?: boolean;
+};
+
+export const MOCK_FREELANCERS: DirectoryFreelancer[] = [
+  {
+    id: "trendtactics-uuid-1111",
+    email: "info@trendtacticsdigital.com",
+    full_name: "Trendtactics Digital",
+    avatar_url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=150&auto=format&fit=crop",
+    freelancer_category: "web_dev",
+    bio: "Bespoke web engineering, high-performance UI/UX design, and custom digital growth systems. We scale businesses with premium web technology.",
+    website_url: "https://trendtacticsdigital.com",
+    country: "Nigeria",
+    city: "Lagos",
+    username: "trendtactics-digital",
+    hourly_rate: 65,
+    portfolio_projects: [
+      { title: "Midway Health Inc.", desc: "Premium healthcare services portal." },
+      { title: "AllenGreen Transportation", desc: "Logistics booking directory." }
+    ],
+    contact_email: "info@trendtacticsdigital.com",
+    contact_phone: "+234 812 345 6789",
+    github_url: "https://github.com/trendtactics",
+    linkedin_url: "https://linkedin.com/company/trendtactics",
+    dribbble_url: null,
+    twitter_url: "https://twitter.com/trendtactics",
+    created_at: "2026-01-01T00:00:00Z",
+    is_verified: true,
+    website_verified: true,
+    is_supporter: true,
+    is_featured: true,
+    tagline: "Transforming Brands. Crafting Legacies."
+  },
+  {
+    id: "akinola-uuid-2222",
+    email: "connect@akinolaolujobi.com",
+    full_name: "Akinola Olujobi",
+    avatar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop",
+    freelancer_category: "mc_events",
+    bio: "Professional Master of Ceremonies (MC) and Event Host providing elite stage presence and eloquent delivery for corporate summits, galas, and high-profile social events.",
+    website_url: "https://akinolaolujobi.com",
+    country: "Nigeria",
+    city: "Abuja",
+    username: "akinola-olujobi",
+    hourly_rate: 100,
+    portfolio_projects: [
+      { title: "Corporate Tech Summit 2026", desc: "Main stage event anchor for 2,000+ attendees." }
+    ],
+    contact_email: "connect@akinolaolujobi.com",
+    contact_phone: "+234 803 123 4567",
+    github_url: null,
+    linkedin_url: "https://linkedin.com/in/akinolaolujobi",
+    dribbble_url: null,
+    twitter_url: "https://twitter.com/akinolamc",
+    created_at: "2026-01-02T00:00:00Z",
+    is_verified: true,
+    website_verified: true,
+    is_supporter: true,
+    is_featured: true,
+    tagline: "Your Event, Artistically Anchored."
+  },
+  {
+    id: "edvoura-uuid-3333",
+    email: "edvouralearninghub@gmail.com",
+    full_name: "Edvoura Learning Hub",
+    avatar_url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=150&auto=format&fit=crop",
+    freelancer_category: "tutor",
+    bio: "Interactive K-12 tutoring, parent-tutor matching, and homework tracking portals tailored for academic success and curriculum prep (SAT, WAEC, JAMB).",
+    website_url: "https://edvouralearninghub.com",
+    country: "United Kingdom",
+    city: "London",
+    username: "edvoura-learning-hub",
+    hourly_rate: 45,
+    portfolio_projects: [
+      { title: "K-12 Math Gamification", desc: "Improving engagement with interactive dashboards." }
+    ],
+    contact_email: "edvouralearninghub@gmail.com",
+    contact_phone: "+44 7700 900077",
+    github_url: null,
+    linkedin_url: "https://linkedin.com/company/edvoura",
+    dribbble_url: null,
+    twitter_url: "https://twitter.com/edvoura",
+    created_at: "2026-01-03T00:00:00Z",
+    is_verified: true,
+    website_verified: true,
+    is_supporter: true,
+    is_featured: true,
+    tagline: "Where Learners' Dreams Come True."
+  },
+  {
+    id: "jemoorel-uuid-4444",
+    email: "info@jemoorel.co.uk",
+    full_name: "Je'moorel UK Ltd",
+    avatar_url: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=150&auto=format&fit=crop",
+    freelancer_category: "african_food_export",
+    bio: "Bulk wholesale suppliers of premium red palm oil, egusi, stockfish, dried crayfish, and smoked food products imported directly for B2B distribution.",
+    website_url: "https://jemoorel.co.uk",
+    country: "United Kingdom",
+    city: "London",
+    username: "jemoorel-uk",
+    hourly_rate: null,
+    portfolio_projects: [],
+    contact_email: "info@jemoorel.co.uk",
+    contact_phone: "+44 7700 900088",
+    github_url: null,
+    linkedin_url: "https://linkedin.com/company/jemoorel",
+    dribbble_url: null,
+    twitter_url: null,
+    created_at: "2026-01-04T00:00:00Z",
+    is_verified: true,
+    website_verified: true,
+    is_supporter: true,
+    is_featured: true,
+    tagline: "Quality Food. Transformational Learning."
+  },
+  {
+    id: "freelancer-5555",
+    email: "sarah.c@designstudio.io",
+    full_name: "Sarah Chen",
+    avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop",
+    freelancer_category: "designer",
+    bio: "UI/UX designer with 6+ years of experience crafting conversion-focused SaaS dashboards, sleek brand identities, and modern mobile applications.",
+    website_url: "https://sarahchendesign.com",
+    country: "Singapore",
+    city: "Singapore",
+    username: "sarah-chen",
+    hourly_rate: 75,
+    portfolio_projects: [],
+    contact_email: "sarah.c@designstudio.io",
+    contact_phone: "+65 9123 4567",
+    github_url: null,
+    linkedin_url: "https://linkedin.com/in/sarahchen",
+    dribbble_url: "https://dribbble.com/sarahchen",
+    twitter_url: null,
+    created_at: "2026-01-05T00:00:00Z",
+    is_verified: true,
+    website_verified: true,
+    is_supporter: false,
+    is_featured: false,
+    tagline: "Designing interfaces that convert."
+  },
+  {
+    id: "freelancer-6666",
+    email: "david@millerseo.com",
+    full_name: "David Miller",
+    avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop",
+    freelancer_category: "seo",
+    bio: "Technical SEO specialist. I help e-commerce and local business websites increase organic search traffic by auditing and optimizing site structures.",
+    website_url: "https://millerseo.com",
+    country: "United States",
+    city: "Austin",
+    username: "david-miller",
+    hourly_rate: 80,
+    portfolio_projects: [],
+    contact_email: "david@millerseo.com",
+    contact_phone: "+1 512 555 0199",
+    github_url: null,
+    linkedin_url: "https://linkedin.com/in/davidmiller",
+    dribbble_url: null,
+    twitter_url: null,
+    created_at: "2026-01-06T00:00:00Z",
+    is_verified: true,
+    website_verified: false,
+    is_supporter: false,
+    is_featured: false,
+    tagline: "Rank higher. Get more customers."
+  },
+  {
+    id: "freelancer-7777",
+    email: "aisha@bellocopy.com",
+    full_name: "Aisha Bello",
+    avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop",
+    freelancer_category: "copywriter",
+    bio: "SaaS copywriter and content strategist. Writing high-converting email sequences, blogs, and landing pages that sound human.",
+    website_url: "https://bellocopy.com",
+    country: "Nigeria",
+    city: "Lagos",
+    username: "aisha-bello",
+    hourly_rate: 50,
+    portfolio_projects: [],
+    contact_email: "aisha@bellocopy.com",
+    contact_phone: "+234 812 555 1212",
+    github_url: null,
+    linkedin_url: "https://linkedin.com/in/aishabello",
+    dribbble_url: null,
+    twitter_url: null,
+    created_at: "2026-01-07T00:00:00Z",
+    is_verified: true,
+    website_verified: true,
+    is_supporter: false,
+    is_featured: false,
+    tagline: "Copy that connects and sells."
+  }
+];

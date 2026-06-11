@@ -24,7 +24,7 @@ import { COUNTRY_CITIES } from "@/data/countriesData";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { LeadsOverTimeChart, PipelineFunnelChart } from "@/components/dashboard/AnalyticsCharts";
@@ -222,6 +222,21 @@ function Dashboard() {
     ...pipeline.map((l) => ({ city: l.city, country: l.country })),
   ];
 
+  const [activeFilter, setActiveFilter] = useState<"all" | "saved" | "contacted" | "won">("all");
+
+  const displayedLeads = useMemo(() => {
+    if (activeFilter === "saved") {
+      return pipeline;
+    }
+    if (activeFilter === "contacted") {
+      return pipeline.filter((l) => l.status === "contacted");
+    }
+    if (activeFilter === "won") {
+      return pipeline.filter((l) => l.status === "won");
+    }
+    return results;
+  }, [results, pipeline, activeFilter]);
+
   useEffect(() => {
     if (!user) return;
     setLoading(true);
@@ -230,14 +245,15 @@ function Dashboard() {
     const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_db_has_session") === "true";
     if (!hasSavedSession) {
       if (user.freelancerCategory) setQuickCategory(user.freelancerCategory);
-      if (user.country) {
+      const userCountry = user.country;
+      if (userCountry) {
         const countryObj = COUNTRIES.find(
-          (c) => c.code.toLowerCase() === user.country.toLowerCase() || c.name.toLowerCase() === user.country.toLowerCase()
+          (c) => c.code.toLowerCase() === userCountry.toLowerCase() || c.name.toLowerCase() === userCountry.toLowerCase()
         );
         if (countryObj) {
           setQuickCountry(countryObj.name);
         } else {
-          setQuickCountry(user.country);
+          setQuickCountry(userCountry);
         }
       }
       if (user.city) setQuickCity(user.city);
@@ -281,45 +297,49 @@ function Dashboard() {
       .then(({ count, error }) => {
         if (!error && count !== null) setScansCount(count);
       });
-    let leadsQuery = supabase.from("leads").select("*");
-    if (user.freelancerCategory) {
-      leadsQuery = leadsQuery.eq("industry", user.freelancerCategory);
+
+    if (!hasSavedSession) {
+      let leadsQuery = supabase.from("leads").select("*");
+      if (user.freelancerCategory) {
+        leadsQuery = leadsQuery.eq("industry", user.freelancerCategory);
+      }
+      leadsQuery
+        .order("created_at", { ascending: false })
+        .limit(6)
+        .then(({ data, error }) => {
+          if (error) console.error(error);
+          if (data) {
+            const mapped = data.map((d: any) => ({
+              id: d.id,
+              businessName: d.business_name,
+              businessType: d.business_type,
+              industry: d.industry,
+              city: d.city,
+              country: d.country,
+              fullAddress: d.full_address,
+              phone: d.phone || "",
+              email: d.email || null,
+              websiteUrl: d.website_url || null,
+              hasWebsite: d.has_website || false,
+              googleRating: Number(d.google_rating || 0),
+              googleReviewCount: Number(d.google_review_count || 0),
+              opportunityScore: Number(d.opportunity_score || 0),
+              score_breakdown: d.score_breakdown || null,
+              createdAt: d.created_at,
+              source: d.source || "google_maps",
+              savedAt: null,
+              status: null,
+              phoneVerified: d.phone_verified || false,
+              emailVerified: d.email_verified || false,
+              websiteLive: d.website_live || false,
+              isFlagged: d.is_flagged || false,
+              suspiciousCount: d.suspicious_count || 0,
+            }));
+            setResults(mapped); // No automatic fallback emails for database leads for integrity
+          }
+        });
     }
-    leadsQuery
-      .order("created_at", { ascending: false })
-      .limit(6)
-      .then(({ data, error }) => {
-        if (error) console.error(error);
-        if (data) {
-          const mapped = data.map((d: any) => ({
-            id: d.id,
-            businessName: d.business_name,
-            businessType: d.business_type,
-            industry: d.industry,
-            city: d.city,
-            country: d.country,
-            fullAddress: d.full_address,
-            phone: d.phone || "",
-            email: d.email || null,
-            websiteUrl: d.website_url || null,
-            hasWebsite: d.has_website || false,
-            googleRating: Number(d.google_rating || 0),
-            googleReviewCount: Number(d.google_review_count || 0),
-            opportunityScore: Number(d.opportunity_score || 0),
-            score_breakdown: d.score_breakdown || null,
-            createdAt: d.created_at,
-            source: d.source || "google_maps",
-            savedAt: null,
-            status: null,
-            phoneVerified: d.phone_verified || false,
-            emailVerified: d.email_verified || false,
-            websiteLive: d.website_live || false,
-            isFlagged: d.is_flagged || false,
-            suspiciousCount: d.suspicious_count || 0,
-          }));
-          setResults(mapped); // No automatic fallback emails for database leads for integrity
-        }
-      });
+
     supabase
       .from("audit_log")
       .select("*")
@@ -649,12 +669,20 @@ function Dashboard() {
               </p>
             </div>
           </div>
-          <Link
-            to="/freelancers"
-            className="w-full sm:w-auto text-center shrink-0 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition"
-          >
-            Browse Public Directory
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto justify-center sm:justify-start">
+            <Link
+              to="/freelancers"
+              className="w-full sm:w-auto text-center shrink-0 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition"
+            >
+              Browse Public Directory
+            </Link>
+            <Link
+              to="/find-clients"
+              className="w-full sm:w-auto text-center shrink-0 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1.5 text-[11px] font-bold text-cyan-400 hover:bg-cyan-500/20 transition flex items-center justify-center gap-1"
+            >
+              <Globe className="h-3.5 w-3.5 shrink-0" /> Global SEO Directory
+            </Link>
+          </div>
         </div>
 
         {/* ═══ HERO SEARCH ═══ */}
@@ -773,6 +801,7 @@ function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
+              id: "all",
               label: "Searches Performed",
               value: scansCount,
               icon: Search,
@@ -780,6 +809,7 @@ function Dashboard() {
               fg: "text-white",
             },
             {
+              id: "saved",
               label: "Saved This Month",
               value: savedThisMonth,
               icon: Users,
@@ -787,6 +817,7 @@ function Dashboard() {
               fg: "text-white",
             },
             {
+              id: "contacted",
               label: "Leads Contacted",
               value: contactedCountFromDb,
               icon: MessageSquare,
@@ -794,6 +825,7 @@ function Dashboard() {
               fg: "text-white",
             },
             {
+              id: "won",
               label: "Win Rate",
               value: `${conversionRate}%`,
               icon: Target,
@@ -803,7 +835,12 @@ function Dashboard() {
           ].map((s) => (
             <div
               key={s.label}
-              className="rounded-2xl border border-border bg-card p-5 hover:border-primary transition group"
+              onClick={() => setActiveFilter(s.id as any)}
+              className={`rounded-2xl border bg-card p-5 transition group cursor-pointer ${
+                activeFilter === s.id
+                  ? "border-primary ring-1 ring-primary"
+                  : "border-border hover:border-primary/50"
+              }`}
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className={`grid h-9 w-9 place-items-center rounded-xl ${s.bg}`}>
@@ -848,12 +885,30 @@ function Dashboard() {
           <div className="lg:col-span-2 space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <h3 className="text-lg font-bold text-foreground">Discovered Businesses</h3>
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <span>
+                    {activeFilter === "all"
+                      ? "Discovered Businesses"
+                      : activeFilter === "saved"
+                      ? "Saved Leads"
+                      : activeFilter === "contacted"
+                      ? "Contacted Leads"
+                      : "Won Leads"}
+                  </span>
+                  {activeFilter !== "all" && (
+                    <button
+                      onClick={() => setActiveFilter("all")}
+                      className="text-[10px] bg-primary/20 border border-primary/30 text-primary px-2.5 py-0.5 rounded-full font-mono hover:bg-primary hover:text-white transition cursor-pointer"
+                    >
+                      Clear Filter [x]
+                    </button>
+                  )}
+                </h3>
                 <p className="text-xs text-muted-foreground">
-                  {results.length} results found. Click any card to view details.
+                  {displayedLeads.length} leads found. Click any card to view details.
                 </p>
               </div>
-              {results.length > 0 && (
+              {displayedLeads.length > 0 && activeFilter === "all" && (
                 <button
                   onClick={downloadCSV}
                   className="self-start sm:self-auto flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-accent transition cursor-pointer"
@@ -870,19 +925,29 @@ function Dashboard() {
                 </div>
                 <p className="text-sm text-muted-foreground">Scanning business directories...</p>
               </div>
-            ) : results.length === 0 ? (
+            ) : displayedLeads.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-card/50">
                 <div className="grid h-16 w-16 place-items-center rounded-2xl bg-primary/8 mb-4">
                   <Search className="h-7 w-7 text-primary/60" />
                 </div>
-                <p className="text-base font-semibold text-foreground">No results yet</p>
+                <p className="text-base font-semibold text-foreground">
+                  {activeFilter === "all"
+                    ? "No results yet"
+                    : activeFilter === "saved"
+                    ? "No saved leads yet"
+                    : activeFilter === "contacted"
+                    ? "No contacted leads yet"
+                    : "No won leads yet"}
+                </p>
                 <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-                  Search for any business type in any city above to discover clients.
+                  {activeFilter === "all"
+                    ? "Search for any business type in any city above to discover clients."
+                    : "Move leads into this stage in your pipeline/discover tool to view them here."}
                 </p>
               </div>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
-                {results.map((lead) => {
+                {displayedLeads.map((lead) => {
                   const isSaved = savedIds.has(lead.id);
                   return (
                     <div

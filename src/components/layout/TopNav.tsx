@@ -18,6 +18,7 @@ import {
   LogOut,
   Briefcase,
   Shield,
+  Globe,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -62,6 +63,12 @@ export function TopNav() {
             icon={Kanban}
             label="Pipeline"
             active={pathname === "/app/pipeline"}
+          />
+          <NavLink
+            to="/find-clients"
+            icon={Globe}
+            label="Locations"
+            active={pathname === "/find-clients"}
           />
 
           {/* Dropdown: Outreach */}
@@ -264,6 +271,13 @@ export function TopNav() {
               icon={Kanban}
               label="Pipeline"
               active={pathname === "/app/pipeline"}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <MobileNavLink
+              to="/find-clients"
+              icon={Globe}
+              label="Locations"
+              active={pathname === "/find-clients"}
               onClick={() => setMobileMenuOpen(false)}
             />
             <div className="pt-4 border-t border-border">
