@@ -43,6 +43,7 @@ import { Route as ResourcesGoogleMyBusinessRouteImport } from './routes/resource
 import { Route as ResourcesExportGuideRouteImport } from './routes/resources.export-guide'
 import { Route as FreelancersSlugRouteImport } from './routes/freelancers.$slug'
 import { Route as FindClientsWebDeveloperRouteImport } from './routes/find-clients.web-developer'
+import { Route as FindClientsUnitedStatesRouteImport } from './routes/find-clients.united-states'
 import { Route as FindClientsLondonRouteImport } from './routes/find-clients.london'
 import { Route as FindClientsLagosRouteImport } from './routes/find-clients.lagos'
 import { Route as FindClientsGraphicDesignerRouteImport } from './routes/find-clients.graphic-designer'
@@ -238,6 +239,11 @@ const FindClientsWebDeveloperRoute = FindClientsWebDeveloperRouteImport.update({
   path: '/find-clients/web-developer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FindClientsUnitedStatesRoute = FindClientsUnitedStatesRouteImport.update({
+  id: '/find-clients/united-states',
+  path: '/find-clients/united-states',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FindClientsLondonRoute = FindClientsLondonRouteImport.update({
   id: '/find-clients/london',
   path: '/find-clients/london',
@@ -393,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/find-clients/graphic-designer': typeof FindClientsGraphicDesignerRoute
   '/find-clients/lagos': typeof FindClientsLagosRoute
   '/find-clients/london': typeof FindClientsLondonRoute
+  '/find-clients/united-states': typeof FindClientsUnitedStatesRoute
   '/find-clients/web-developer': typeof FindClientsWebDeveloperRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/resources/export-guide': typeof ResourcesExportGuideRoute
@@ -449,6 +456,7 @@ export interface FileRoutesByTo {
   '/find-clients/graphic-designer': typeof FindClientsGraphicDesignerRoute
   '/find-clients/lagos': typeof FindClientsLagosRoute
   '/find-clients/london': typeof FindClientsLondonRoute
+  '/find-clients/united-states': typeof FindClientsUnitedStatesRoute
   '/find-clients/web-developer': typeof FindClientsWebDeveloperRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/resources/export-guide': typeof ResourcesExportGuideRoute
@@ -508,6 +516,7 @@ export interface FileRoutesById {
   '/find-clients/graphic-designer': typeof FindClientsGraphicDesignerRoute
   '/find-clients/lagos': typeof FindClientsLagosRoute
   '/find-clients/london': typeof FindClientsLondonRoute
+  '/find-clients/united-states': typeof FindClientsUnitedStatesRoute
   '/find-clients/web-developer': typeof FindClientsWebDeveloperRoute
   '/freelancers/$slug': typeof FreelancersSlugRoute
   '/resources/export-guide': typeof ResourcesExportGuideRoute
@@ -568,6 +577,7 @@ export interface FileRouteTypes {
     | '/find-clients/graphic-designer'
     | '/find-clients/lagos'
     | '/find-clients/london'
+    | '/find-clients/united-states'
     | '/find-clients/web-developer'
     | '/freelancers/$slug'
     | '/resources/export-guide'
@@ -624,6 +634,7 @@ export interface FileRouteTypes {
     | '/find-clients/graphic-designer'
     | '/find-clients/lagos'
     | '/find-clients/london'
+    | '/find-clients/united-states'
     | '/find-clients/web-developer'
     | '/freelancers/$slug'
     | '/resources/export-guide'
@@ -682,6 +693,7 @@ export interface FileRouteTypes {
     | '/find-clients/graphic-designer'
     | '/find-clients/lagos'
     | '/find-clients/london'
+    | '/find-clients/united-states'
     | '/find-clients/web-developer'
     | '/freelancers/$slug'
     | '/resources/export-guide'
@@ -733,6 +745,7 @@ export interface RootRouteChildren {
   FindClientsGraphicDesignerRoute: typeof FindClientsGraphicDesignerRoute
   FindClientsLagosRoute: typeof FindClientsLagosRoute
   FindClientsLondonRoute: typeof FindClientsLondonRoute
+  FindClientsUnitedStatesRoute: typeof FindClientsUnitedStatesRoute
   FindClientsWebDeveloperRoute: typeof FindClientsWebDeveloperRoute
   FreelancersSlugRoute: typeof FreelancersSlugRoute
   ResourcesExportGuideRoute: typeof ResourcesExportGuideRoute
@@ -984,6 +997,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FindClientsWebDeveloperRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/find-clients/united-states': {
+      id: '/find-clients/united-states'
+      path: '/find-clients/united-states'
+      fullPath: '/find-clients/united-states'
+      preLoaderRoute: typeof FindClientsUnitedStatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/find-clients/london': {
       id: '/find-clients/london'
       path: '/find-clients/london'
@@ -1221,6 +1241,7 @@ const rootRouteChildren: RootRouteChildren = {
   FindClientsGraphicDesignerRoute: FindClientsGraphicDesignerRoute,
   FindClientsLagosRoute: FindClientsLagosRoute,
   FindClientsLondonRoute: FindClientsLondonRoute,
+  FindClientsUnitedStatesRoute: FindClientsUnitedStatesRoute,
   FindClientsWebDeveloperRoute: FindClientsWebDeveloperRoute,
   FreelancersSlugRoute: FreelancersSlugRoute,
   ResourcesExportGuideRoute: ResourcesExportGuideRoute,

@@ -170,12 +170,46 @@ export const CITY_COUNTRY_MAP: Record<string, string> = {
   "mexico-city": "Mexico",
 };
 
+import { US_STATES, GLOBAL_REGIONS } from "./geography";
+
 export function isKnownCity(slug: string): boolean {
-  return slug.toLowerCase() in CITY_COUNTRY_MAP;
+  const norm = slug.toLowerCase();
+  if (norm in CITY_COUNTRY_MAP) return true;
+  if (norm === "lagos" || norm === "london" || norm === "dubai") return true;
+  
+  // Check US_STATES
+  const isUsCity = US_STATES.some(state => state.cities.includes(norm));
+  if (isUsCity) return true;
+
+  // Check GLOBAL_REGIONS
+  const isGlobalCity = GLOBAL_REGIONS.some(region => 
+    region.countries.some(country => country.cities.includes(norm))
+  );
+  return isGlobalCity;
 }
 
 export function getCountry(slug: string): string {
-  return CITY_COUNTRY_MAP[slug.toLowerCase()] || "";
+  const norm = slug.toLowerCase();
+  if (norm === "london") return "United Kingdom";
+  if (norm === "dubai") return "UAE";
+  if (norm === "lagos") return "Nigeria";
+  
+  if (CITY_COUNTRY_MAP[norm]) return CITY_COUNTRY_MAP[norm];
+
+  // Check US_STATES
+  const isUsCity = US_STATES.some(state => state.cities.includes(norm));
+  if (isUsCity) return "United States";
+
+  // Check GLOBAL_REGIONS
+  for (const region of GLOBAL_REGIONS) {
+    for (const country of region.countries) {
+      if (country.cities.includes(norm)) {
+        return country.country;
+      }
+    }
+  }
+
+  return "";
 }
 
 // US state labels (for subtitle display)
@@ -183,6 +217,14 @@ export const US_STATE_MAP: Record<string, string> = {
   austin: "Texas",
   "fort-lauderdale": "Florida",
 };
+
+export function getUSStateForCity(slug: string): string | undefined {
+  const norm = slug.toLowerCase();
+  if (US_STATE_MAP[norm]) return US_STATE_MAP[norm];
+  
+  const foundState = US_STATES.find(state => state.cities.includes(norm));
+  return foundState ? foundState.state : undefined;
+}
 
 // Flag emoji by country
 export const COUNTRY_FLAG: Record<string, string> = {

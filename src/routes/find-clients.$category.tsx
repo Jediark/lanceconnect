@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { MarketingShell } from "@/components/marketing/MarketingShell";
+import { useState, useEffect, useMemo } from "react";
+import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { CATEGORIES } from "@/data/mockData";
 import { FREELANCER_CATEGORIES } from "@/data/content";
 import { MaskedLeadCard, type LeadData } from "@/components/marketing/SEOLeadCard";
@@ -12,13 +12,16 @@ import {
   getCountry,
   COUNTRY_FLAG,
   US_STATE_MAP,
+  getUSStateForCity,
   SKILL_CONFIG,
   TOP_CITIES,
   ALL_SKILL_SLUGS,
   getSkillLabel,
   getMockLeadsForCity,
   getMockLeadsForSkill,
+  CITY_COUNTRY_MAP,
 } from "@/data/dynamicRouteData";
+import { GLOBAL_REGIONS } from "@/data/geography";
 import {
   Code,
   Palette,
@@ -189,7 +192,7 @@ export const Route = createFileRoute("/find-clients/$category")({
     if (isKnownCity(slug)) {
       const cityName = formatCityName(slug);
       const countryName = getCountry(slug);
-      const usState = US_STATE_MAP[slug];
+      const usState = getUSStateForCity(slug);
       const displayLocation = usState
         ? `${cityName}, ${usState}`
         : countryName
@@ -203,11 +206,12 @@ export const Route = createFileRoute("/find-clients/$category")({
         usState,
         displayLocation,
         flag: COUNTRY_FLAG[countryName] || "🌍",
-        // generic fields to satisfy TS (unused for city/skill pages)
+        // generic fields to satisfy TS
         categoryId: slug,
         label: cityName,
         emoji: COUNTRY_FLAG[countryName] || "🌍",
         content: null as any,
+        cities: [] as string[],
       };
     }
 
@@ -226,7 +230,61 @@ export const Route = createFileRoute("/find-clients/$category")({
         label: config.label,
         emoji: "💼",
         content: null as any,
+        cities: [] as string[],
       };
+    }
+
+    // ── Dynamic Country detection ────────────────────────────────────
+    if (slug !== "united-states") {
+      let matchedCountryName = "";
+      let matchedCities: string[] = [];
+
+      // A. Check GLOBAL_REGIONS
+      for (const region of GLOBAL_REGIONS) {
+        const found = region.countries.find((c) => c.slug === slug);
+        if (found) {
+          matchedCountryName = found.country;
+          matchedCities = found.cities;
+          break;
+        }
+      }
+
+      // B. Check CITY_COUNTRY_MAP
+      if (!matchedCountryName) {
+        const countryNames = Array.from(new Set(Object.values(CITY_COUNTRY_MAP)));
+        const foundName = countryNames.find(
+          (name) => name.toLowerCase().replace(/\s+/g, "-") === slug
+        );
+        if (foundName) {
+          matchedCountryName = foundName;
+          const citiesList = Object.entries(CITY_COUNTRY_MAP)
+            .filter(([_, country]) => country === foundName)
+            .map(([citySlug, _]) => citySlug);
+          
+          if (foundName === "Nigeria") citiesList.unshift("lagos");
+          if (foundName === "United Kingdom") citiesList.unshift("london");
+          if (foundName === "UAE") citiesList.unshift("dubai");
+
+          matchedCities = Array.from(new Set(citiesList));
+        }
+      }
+
+      if (matchedCountryName) {
+        return {
+          pageType: "country" as const,
+          slug,
+          countryName: matchedCountryName,
+          flag: COUNTRY_FLAG[matchedCountryName] || "🌍",
+          cities: matchedCities,
+          cityName: "",
+          usState: undefined,
+          displayLocation: matchedCountryName,
+          categoryId: slug,
+          label: matchedCountryName,
+          emoji: COUNTRY_FLAG[matchedCountryName] || "🌍",
+          content: null as any,
+        };
+      }
     }
     // ── End dynamic detection — fall through to generic handler ──────
 
@@ -315,6 +373,18 @@ export const Route = createFileRoute("/find-clients/$category")({
       };
     }
 
+    if (loaderData.pageType === "country") {
+      const { countryName } = loaderData;
+      return {
+        meta: [
+          { title: `Find Freelance Clients in ${countryName} — LanceConnect` },
+          { name: "description", content: `Browse active local B2B opportunities and business leads across cities in ${countryName}. Get verified contact details. 10 free leads.` },
+          { name: "keywords", content: `find clients in ${countryName}, freelance leads ${countryName}, B2B opportunities ${countryName}` },
+          { property: "og:title", content: `Find Clients in ${countryName} — LanceConnect` },
+        ],
+      };
+    }
+
     if (loaderData.pageType === "skill") {
       const { skillConfig } = loaderData;
       return {
@@ -356,6 +426,11 @@ function CategoryLandingPage() {
   // ── City page ────────────────────────────────────────────────────────────
   if (loaderData.pageType === "city") {
     return <CityPage data={loaderData} />;
+  }
+
+  // ── Country page ─────────────────────────────────────────────────────────
+  if (loaderData.pageType === "country") {
+    return <CountryHub data={loaderData} />;
   }
 
   // ── Skill page ───────────────────────────────────────────────────────────
@@ -846,6 +921,128 @@ function SkillPage({ data }: { data: any }) {
           >
             Get 10 Free Leads <ArrowRight className="h-5 w-5" />
           </Link>
+        </div>
+      </section>
+    </MarketingShell>
+  );
+}
+
+// ── Country Hub Component ──────────────────────────────────────────────────
+interface CountryHubProps {
+  data: {
+    slug: string;
+    countryName: string;
+    flag: string;
+    cities: string[];
+  };
+}
+
+function CountryHub({ data }: CountryHubProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const { countryName, flag, cities } = data;
+
+  const filteredCities = useMemo(() => {
+    if (!searchQuery.trim()) return cities;
+    const q = searchQuery.toLowerCase();
+    return cities.filter((c) => c.replace(/-/g, " ").toLowerCase().includes(q));
+  }, [cities, searchQuery]);
+
+  const primeCity = cities[0] || "";
+
+  const popularSkills = [
+    { label: "Web Developer", slug: "web-developer" },
+    { label: "SEO Specialist", slug: "seo-specialist" },
+    { label: "Social Media Manager", slug: "social-media-manager" },
+    { label: "Digital Marketer", slug: "digital-marketer" },
+  ];
+
+  return (
+    <MarketingShell>
+      <PageHeader
+        eyebrow="Country Directory"
+        title={`Find Freelance Clients in ${countryName}`}
+        subtitle={`LanceConnect scans B2B opportunities across ${cities.length} cities in ${countryName}. Choose a city or search directly to access verified active leads.`}
+      />
+
+      <section className="w-full bg-background text-foreground transition-colors duration-350 min-h-screen py-16">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          
+          {/* Header section with Flag */}
+          <div className="text-center mb-16">
+            <span className="text-7xl block mb-4 select-none">{flag}</span>
+            <h2 className="text-3xl font-extrabold tracking-tight font-display text-white">
+              Explore {countryName} Hubs
+            </h2>
+            <p className="text-sm text-slate-400 mt-2 max-w-xl mx-auto">
+              Scan dry cleaners, dental clinics, local restaurants, and storefronts in your local city.
+            </p>
+          </div>
+
+          {/* Search bar */}
+          <div className="max-w-md mx-auto mb-12">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder={`Search cities in ${countryName}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-3 rounded-xl border border-border bg-card text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Cities Grid */}
+          <div className="mb-20">
+            {filteredCities.length === 0 ? (
+              <div className="text-center py-12 border border-dashed border-border rounded-2xl">
+                <p className="text-muted-foreground text-sm">No cities found matching "{searchQuery}"</p>
+              </div>
+            ) : (
+              <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {filteredCities.map((city: string) => (
+                  <Link
+                    key={city}
+                    to={`/find-clients/${city}` as any}
+                    className="flex items-center gap-2 bg-card hover:bg-slate-900/40 border border-border dark:border-slate-800 hover:border-primary/40 rounded-2xl p-4 text-left transition-all group cursor-pointer"
+                  >
+                    <MapPin className="h-4 w-4 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-semibold capitalize truncate">
+                      {city.replace(/-/g, " ")}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Skill combos */}
+          {primeCity && (
+            <div className="bg-card border border-border dark:border-slate-800/80 rounded-3xl p-8 shadow-sm">
+              <h3 className="text-lg font-bold font-display mb-6 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-secondary animate-pulse" />
+                Featured B2B Combos in {countryName}
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {popularSkills.map((skill) => (
+                  <Link
+                    key={skill.slug}
+                    to={`/find-clients/${skill.slug}/${primeCity}` as any}
+                    className="flex items-center justify-between bg-background hover:bg-primary/5 border border-border dark:border-slate-800 rounded-2xl p-4 text-left transition-all group cursor-pointer"
+                  >
+                    <div>
+                      <p className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider">B2B Combo</p>
+                      <p className="text-xs font-bold text-white mt-0.5 capitalize truncate">
+                        {skill.label} in {primeCity.replace(/-/g, " ")}
+                      </p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
       </section>
     </MarketingShell>

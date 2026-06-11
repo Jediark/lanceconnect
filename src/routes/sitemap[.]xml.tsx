@@ -55,6 +55,24 @@ const skillCityPages = ALL_SKILLS.flatMap((skill) =>
   TOP_CITIES.map((city) => `/find-clients/${skill}/${city}`)
 );
 
+const countryPages = [
+  '/find-clients/united-states',
+  '/find-clients/nigeria',
+  '/find-clients/united-kingdom',
+  '/find-clients/india',
+  '/find-clients/ghana',
+  '/find-clients/kenya',
+  '/find-clients/south-africa',
+  '/find-clients/canada',
+  '/find-clients/australia',
+  '/find-clients/germany',
+  '/find-clients/france',
+  '/find-clients/uae',
+  '/find-clients/brazil',
+  '/find-clients/philippines',
+  '/find-clients/malaysia',
+];
+
 function buildXml(urls: Array<{ loc: string; priority: string; freq: string }>) {
   const items = urls
     .map(
@@ -77,6 +95,7 @@ export const Route = createFileRoute("/sitemap.xml")({
   loader: () => {
     const urlList = [
       ...CORE_PAGES.map((loc) => ({ loc, priority: "1.0", freq: "daily" })),
+      ...countryPages.map((loc) => ({ loc, priority: "0.8", freq: "weekly" })),
       ...STATIC_SEO_PAGES.map((loc) => ({ loc, priority: "0.9", freq: "weekly" })),
       ...dynamicCityPages.map((loc) => ({ loc, priority: "0.7", freq: "weekly" })),
       ...dynamicSkillPages.map((loc) => ({ loc, priority: "0.7", freq: "weekly" })),
