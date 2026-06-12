@@ -53,6 +53,7 @@ import { CATEGORIES } from "@/data/mockData";
 import { IMG, BLOG_POSTS } from "@/data/content";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import useEmblaCarousel from "embla-carousel-react";
+import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -1763,23 +1764,26 @@ function Pricing() {
       price: "$0",
       description: "Perfect for testing the waters and getting started.",
       features: [
-        "10 lead searches / mo",
-        "Opportunity scoring",
-        "Masked contact details"
+        "10 B2B lead searches / mo",
+        "Basic opportunity scoring",
+        "Full contact details (masked)",
+        "Standard email templates"
       ],
-      cta: "Start Free",
+      cta: "Start for Free",
       ctaLink: "/register",
       popular: false,
       color: "border-slate-850 bg-[#0d1527]/50"
     },
     {
       name: "Grow",
-      price: "$10",
-      description: "Great for active freelancers looking for client projects.",
+      price: "$20",
+      description: "Great for active freelancers seeking monthly client projects.",
       features: [
-        "150 lead searches / mo",
-        "Unmasked contact lines",
-        "AI outreach script writer"
+        "100 B2B lead searches / mo",
+        "Premium opportunity scoring",
+        "Unmasked email & phone lines",
+        "AI outreach script writer",
+        "CRM pipeline management"
       ],
       cta: "Get Started",
       ctaLink: "/register?plan=grow",
@@ -1788,12 +1792,14 @@ function Pricing() {
     },
     {
       name: "Scale",
-      price: "$50",
+      price: "$75",
       description: "For agencies and power users seeking maximum reach.",
       features: [
-        "Unlimited lead searches",
+        "250 B2B lead searches / mo",
         "Priority lead processing",
-        "Advanced CSV export"
+        "Advanced filtering & export",
+        "Dedicated account helper",
+        "Early access to new features"
       ],
       cta: "Scale Now",
       ctaLink: "/register?plan=scale",
@@ -1861,6 +1867,9 @@ function Pricing() {
           </div>
         ))}
       </div>
+
+      {/* Live Currency Calculator */}
+      <CurrencyConverter className="mt-16 bg-slate-900/40 border-slate-800" mode="plans" />
     </section>
   );
 }

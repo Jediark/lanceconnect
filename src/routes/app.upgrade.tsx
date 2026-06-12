@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { initiateCheckout } from "@/lib/checkout";
 import { toast } from "sonner";
+import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 
 const upgradeSearchSchema = z.object({
   canceled: z.string().optional(),
@@ -220,6 +221,11 @@ function UpgradePage() {
               </div>
             );
           })}
+        </div>
+
+        {/* Live Currency Calculator */}
+        <div className="mt-8 max-w-5xl mx-auto">
+          <CurrencyConverter className="bg-card border-border" mode="plans" />
         </div>
       </div>
     </>

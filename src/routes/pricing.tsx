@@ -3,6 +3,7 @@ import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShel
 import { IMG } from "@/data/content";
 import { Check, Heart, HeartHandshake, Shield, Sparkles, HelpCircle } from "lucide-react";
 import { PaymentTrustBadge } from "@/components/ui/PaymentBranding";
+import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -154,6 +155,9 @@ function PricingPage() {
             </div>
           ))}
         </div>
+
+        {/* Live Currency Calculator */}
+        <CurrencyConverter className="mt-16 bg-[#0d1527]/40 border-slate-800" mode="plans" />
 
         {/* Philosophy / Value Perception */}
         <div className="max-w-3xl mx-auto text-center bg-card/45 border border-border p-8 md:p-12 rounded-3xl backdrop-blur-sm mt-16">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
+import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 import { FREELANCER_CATEGORIES } from "@/data/content";
 import { CATEGORIES, MOCK_FREELANCERS } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
@@ -1215,6 +1216,14 @@ function FreelancerSlugPage() {
                   )}
                 </div>
               </div>
+
+              {/* Cost Estimator & Currency Converter for Clients */}
+              <CurrencyConverter
+                mode="client"
+                hourlyRate={freelancer.hourly_rate || 25}
+                freelancerName={freelancer.full_name}
+                className="bg-card border-border shadow-card"
+              />
 
               {/* Safety/Traction Notice */}
               <div className="rounded-3xl border border-border bg-card/60 p-6 shadow-card space-y-3 font-mono text-[10px] leading-relaxed text-muted-foreground select-none">

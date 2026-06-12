@@ -230,35 +230,57 @@ export const Route = createFileRoute("/about")({
       </section>
 
       {/* The Team Section */}
-      <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8 bg-background">
-        <div className="mx-auto max-w-2xl text-center mb-12">
-          <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
-            // our.team
-          </p>
-          <h2 className="font-display text-3xl font-extrabold tracking-tight">Meet the builders</h2>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Six people across six time zones, building for freelancers everywhere.
-          </p>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {TEAM.map((m) => (
-            <div
-              key={m.name}
-              className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-card group hover:border-primary/20 transition duration-300"
-            >
-              <img
-                src={m.avatar}
-                alt={m.name}
-                className="h-14 w-14 shrink-0 rounded-full object-cover border-2 border-primary/20"
-              />
-              <div>
-                <p className="font-display font-bold text-base leading-snug">{m.name}</p>
-                <p className="text-xs text-primary font-medium mt-0.5">{m.role}</p>
-                <p className="text-[10px] text-slate-500 font-mono mt-0.5">{m.city}</p>
-                <p className="mt-3 text-xs text-muted-foreground leading-relaxed">{m.bio}</p>
+      <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8 bg-[#020b21] border-t border-border text-white relative rounded-3xl select-none">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-40 pointer-events-none" />
+        <div className="mx-auto max-w-5xl px-4 lg:px-8 relative z-10">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Behind the platform
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl text-white">
+              Meet Our Team
+            </h2>
+            <p className="mt-4 text-sm text-slate-400">
+              Building the ultimate ecosystem connecting top-tier freelance talent with local and global clients.
+            </p>
+          </div>
+
+          <div className="max-w-2xl mx-auto grid gap-8 sm:grid-cols-2">
+            {[
+              {
+                name: "AKINOLA OLUJOBI",
+                role: "CEO / Founder",
+                bio: "Visionary founder driving strategic direction, platform growth, and global freelancer success programs.",
+                avatar: "/assets/team/akinola.jpg",
+                location: "Lagos, Nigeria 🇳🇬",
+              },
+              {
+                name: "TEARI BEY",
+                role: "COO (Chief Operation Officer)",
+                bio: "Operations leader managing global workflows, scaling systems, and daily product operations.",
+                avatar: "/assets/team/teari.jpg",
+                location: "USA 🇺🇸",
+              },
+            ].map((m, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col items-center text-center p-6 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm shadow-xl transition-all duration-300 hover:translate-y-[-4px] hover:border-primary/20 hover:bg-white/[0.04]"
+              >
+                <img
+                  src={m.avatar}
+                  alt={m.name}
+                  className="h-32 w-32 rounded-full object-cover object-top border-2 border-primary/30 mb-4 shadow-lg ring-4 ring-primary/10"
+                  loading="lazy"
+                />
+                <h3 className="text-base font-bold text-white">{m.name}</h3>
+                <p className="text-xs text-primary font-semibold mt-1">{m.role}</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">{m.location}</p>
+                <p className="mt-3 text-xs text-slate-400 leading-relaxed">
+                  {m.bio}
+                </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
