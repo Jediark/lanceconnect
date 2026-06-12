@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { BookOpen, ChevronRight } from "lucide-react";
 import { MarketingShell, PageHeader } from "@/components/marketing/MarketingShell";
 import { BLOG_POSTS } from "@/data/content";
 
@@ -26,71 +27,115 @@ function BlogIndex() {
         subtitle="Cold-email scripts that landed real clients. Pricing mistakes. Outreach experiments. Written by the people who actually do the work."
       />
       <section className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <Link
-          to="/blog/$slug"
-          params={{ slug: hero.slug }}
-          className="group grid gap-8 rounded-3xl border border-border bg-card p-6 lg:grid-cols-2 lg:p-8 hover:shadow-card-hover transition"
-        >
-          <div className="relative overflow-hidden rounded-2xl">
-            <img
-              src={hero.cover}
-              alt={hero.title}
-              className="aspect-[4/3] w-full object-cover transition group-hover:scale-105"
-            />
-          </div>
-          <div className="flex flex-col justify-center">
-            <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-              {hero.category} · Featured
-            </span>
-            <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">{hero.title}</h2>
-            <p className="mt-4 text-muted-foreground">{hero.excerpt}</p>
-            <div className="mt-5 flex items-center gap-3 text-xs text-muted-foreground">
-              <img
-                src={hero.authorAvatar}
-                alt={hero.author}
-                className="h-8 w-8 rounded-full object-cover"
-              />
-              <span>
-                {hero.author} · {hero.date} · {hero.readMins} min read
-              </span>
-            </div>
-          </div>
-        </Link>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {rest.map((p) => (
+        <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
+          {/* Main Feed Column */}
+          <div className="space-y-12">
             <Link
-              key={p.slug}
               to="/blog/$slug"
-              params={{ slug: p.slug }}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-card-hover"
+              params={{ slug: hero.slug }}
+              className="group grid gap-8 rounded-3xl border border-border bg-card p-6 lg:grid-cols-2 lg:p-8 hover:shadow-card-hover transition"
             >
-              <div className="overflow-hidden">
+              <div className="relative overflow-hidden rounded-2xl">
                 <img
-                  src={p.cover}
-                  alt={p.title}
-                  className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
+                  src={hero.cover}
+                  alt={hero.title}
+                  className="aspect-[4/3] w-full object-cover transition group-hover:scale-105"
                 />
               </div>
-              <div className="flex flex-1 flex-col p-5">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">
-                  {p.category}
+              <div className="flex flex-col justify-center">
+                <span className="text-xs font-semibold uppercase tracking-widest text-primary">
+                  {hero.category} · Featured
                 </span>
-                <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>
-                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.excerpt}</p>
-                <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">{hero.title}</h2>
+                <p className="mt-4 text-muted-foreground">{hero.excerpt}</p>
+                <div className="mt-5 flex items-center gap-3 text-xs text-muted-foreground">
                   <img
-                    src={p.authorAvatar}
-                    alt={p.author}
-                    className="h-6 w-6 rounded-full object-cover"
+                    src={hero.authorAvatar}
+                    alt={hero.author}
+                    className="h-8 w-8 rounded-full object-cover"
                   />
                   <span>
-                    {p.author} · {p.readMins} min
+                    {hero.author} · {hero.date} · {hero.readMins} min read
                   </span>
                 </div>
               </div>
             </Link>
-          ))}
+
+            <div className="grid gap-6 md:grid-cols-2">
+              {rest.map((p) => (
+                <Link
+                  key={p.slug}
+                  to="/blog/$slug"
+                  params={{ slug: p.slug }}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-card-hover"
+                >
+                  <div className="overflow-hidden">
+                    <img
+                      src={p.cover}
+                      alt={p.title}
+                      className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">
+                      {p.category}
+                    </span>
+                    <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.excerpt}</p>
+                    <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                      <img
+                        src={p.authorAvatar}
+                        alt={p.author}
+                        className="h-6 w-6 rounded-full object-cover"
+                      />
+                      <span>
+                        {p.author} · {p.readMins} min
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Sticky Sidebar Column */}
+          <aside className="space-y-6">
+            <div className="sticky top-28 space-y-6">
+              {/* Sponsored Ad Widget */}
+              <div className="rounded-2xl border border-dashed border-border bg-card/20 p-5 space-y-3 select-none">
+                <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-muted-foreground bg-slate-800 px-2 py-0.5 rounded">
+                  Sponsored Ad
+                </span>
+                <div className="aspect-[16/10] w-full rounded-xl bg-gradient-to-br from-primary/10 to-cyan-500/10 border border-primary/20 flex flex-col items-center justify-center p-4 text-center">
+                  <p className="font-display font-bold text-xs text-foreground">Reach 50,000+ Freelancers</p>
+                  <p className="text-[9px] text-muted-foreground mt-1 leading-normal">
+                    Promote your SaaS, tool, or community to active builders.
+                  </p>
+                  <Link
+                    to="/support-us"
+                    className="mt-3 inline-flex items-center justify-center rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/30 text-primary px-3 py-1.5 text-[9px] font-bold transition"
+                  >
+                    Advertise Here
+                  </Link>
+                </div>
+              </div>
+
+              {/* Promo widget */}
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-3 select-none">
+                <BookOpen className="h-5 w-5 text-primary" />
+                <h4 className="font-display font-bold text-xs text-foreground">LanceConnect Platform</h4>
+                <p className="text-[10px] text-muted-foreground leading-normal">
+                  Find active business leads in 150+ countries. Filter by gap detection, contact status, and opportunity scores.
+                </p>
+                <Link
+                  to="/pricing"
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-primary hover:underline"
+                >
+                  Explore Pricing Plans <ChevronRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+          </aside>
         </div>
 
         {/* Parallax Divider */}

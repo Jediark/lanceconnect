@@ -78,12 +78,112 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "pricing-as-a-new-freelancer",
     title: "Pricing as a new freelancer (without underselling yourself)",
     excerpt: "Three pricing mistakes I made in my first year — and what I'd do differently.",
-    body: `My first website design cost the client $80. It took me 32 hours of design, code, and revisions. That is $2.50 per hour. It was less than a coffee in Naples. I was working day and night, but I could barely pay my bills.\n\nI made every pricing mistake in the book. Here are the three lessons that changed my business.\n\n## 1. Stop Charging by the Hour\nWhen you charge by the hour, you are penalized for being fast. If you get better and finish a site in 5 hours instead of 10, you get paid half as much. Charge by the project instead. Focus on the value you bring to the business.\n\n## 2. Limit Your Revisions\nIf you do not set a limit, clients will ask for changes forever. Always include a limit in your proposal:\n- **Round 1**: Big structural feedback.\n- **Round 2**: Text edits and polish.\n- **Anything else**: Charged at a flat rate.\n\n## 3. Factor in Admin Time\nA project is not just design and development. It is also emails, calls, and project management. Always add a 20% buffer to your estimates to cover this unbilled time. It will keep your business healthy.`,
+    body: `My first website design cost the client $80. It took me 32 hours of design, code, and revisions. That is $2.50 per hour. It was less than a coffee in Naples. I was working day and night, but I could barely pay my bills.
+
+I made every pricing mistake in the book. Here are the three lessons that changed my business.
+
+## 1. Stop Charging by the Hour
+When you charge by the hour, you are penalized for being fast. If you get better and finish a site in 5 hours instead of 10, you get paid half as much. Charge by the project instead. Focus on the value you bring to the business.
+
+Hourly billing sets up a fundamentally adversarial relationship between you and your client. The client wants the project completed as quickly as possible to minimize their bill, which naturally leads to them questioning every single hour logged on your invoice. Meanwhile, you want to take your time to ensure quality (and make a living wage), meaning you are incentivized to work slower. This is a recipe for constant conflict and suspicion.
+
+Furthermore, hourly rates cap your earning potential. There are only 24 hours in a day, and even the most seasoned freelancers can only bill a fraction of those hours after accounting for administration, sales, and breaks. If your pricing is tied solely to your hours, your business cannot scale without you raising your rates to astronomical heights that mid-tier clients cannot afford.
+
+The solution is Value-Based Pricing or Project-Based Pricing. When you price by the project, you charge for the deliverable and the outcomes, not the hours. This aligns incentives: the faster and more efficiently you work, the more profitable the project becomes for you, while the client gets their finished product sooner.
+
+To transition to project pricing, start by scoping out projects as fixed packages:
+- **Analyze the Client's Pain Point**: Understating their commercial goals is the key. Are they looking to capture leads, sell products directly, or showcase credibility to high-net-worth investors?
+- **Define a Concrete Scope**: Be extremely explicit about what is included (and what is not). Detail the exact number of pages, custom integrations, and assets.
+- **Anchor the Price to Value**: Base your pricing on the commercial return the project will generate. If a website helps a bakery secure just 5 more corporate catering contracts a year worth $2,000 each, a $4,000 design fee is an absolute bargain.
+
+Let's dive deeper into how you actually pitch this value to clients. When a client asks, "What is your hourly rate?" your answer should always redirect the conversation. Instead of saying "$50 an hour," you should say: "I don't charge by the hour because I don't want to penalize efficiency. If I build your site in half the time because of my years of experience, you shouldn't pay less for a faster delivery. Instead, I charge flat project fees so you know exactly what the investment will be from day one, with no surprise invoices." This simple reframing immediately establishes you as a professional rather than a hired hand.
+
+Furthermore, project pricing allows you to build systems. If you develop a library of reusable code, templates, and workflows, you can build a site that used to take 30 hours in just 10 hours. Under project pricing, you make the exact same amount of money in one-third of the time. This is how you escape the hourly trap and start scaling your freelance income like a real business owner.
+
+## 2. Limit Your Revisions
+If you do not set a limit, clients will ask for changes forever. Always include a limit in your proposal:
+- **Round 1**: Big structural feedback.
+- **Round 2**: Text edits and polish.
+- **Anything else**: Charged at a flat rate.
+
+Scope creep is the silent killer of freelance businesses. It starts with a simple request: "Can we just change this font?" or "Could we add one more page to show our latest team member?" Without clear boundaries, these minor adjustments cascade into weeks of extra, unpaid labor.
+
+The mistake I made in my first year was trying to make every client happy by offering unlimited edits. I assumed that going above and beyond would lead to referrals and five-star reviews. Instead, it taught clients that my time was free and that they didn't need to make decisions quickly. Projects that should have taken two weeks dragged on for six months, taking up mental bandwidth and preventing me from taking on new, higher-paying contracts.
+
+Establishing a strict "Revision Cap" in your contract changes client behavior instantly. It forces them to consolidate their feedback and be deliberate about their choices. When they know they only have two rounds of feedback, they review the work carefully and present you with a structured, comprehensive list of adjustments, rather than sending twenty disjointed emails at 11pm.
+
+To implement this successfully:
+- **Present Revisions as Milestones**: Explicitly define what can be changed in each round. For example, Round 1 is for layouts and structure; changes to the core structure during Round 2 will incur additional fees.
+- **Define the Cost of Excess Revisions**: In your proposal, state clearly: "Additional rounds of edits beyond the standard two rounds will be billed at a flat rate of $150 per round or $75/hr."
+- **Use Visual Tools**: Share mockups on platforms like Figma or Loom recordings explaining your design choices so clients understand the rationale before they request changes.
+
+Managing revisions is largely about setting expectations during the kickoff meeting. Explain to the client: "To keep us on schedule, our agreement includes two complete rounds of revisions. When I send you the draft, please gather feedback from all stakeholders in your company and send it to me as a single, consolidated list. This ensures we don't get stuck in a feedback loop and can launch your project on time." By showing them that the limit is for their benefit (launching on time), they will respect the boundary and appreciate your project management discipline.
+
+Remember, every round of revision has an administrative cost. You have to open the project files, make the change, upload the new draft, write the email, and wait for approval. A simple "5-minute text change" actually consumes 45 minutes of context-switching time. By capping these rounds, you protect your focus and maintain project momentum, ensuring you can deliver your best work without burnout.
+
+## 3. Factor in Admin and Overhead Time
+A project is not just design and development. It is also emails, calls, and project management. Always add a 20% buffer to your estimates to cover this unbilled time. It will keep your business healthy.
+
+When you estimate a project, it is easy to look at the coding or design phase and say, "That will take me about 20 hours of focused work." If you charge based on that 20-hour window, you are ignoring the hidden costs of running a business.
+
+Consider all the tasks that happen around the actual work:
+- **Client Communication**: Emails, Slack messages, weekly check-in calls, and alignment meetings.
+- **Project Setup**: Configuring hosting, staging environments, domain transfers, and project folders.
+- **Client Onboarding**: Invoicing, drafting contracts, chasing payments, and gathering assets (copy, logos, images).
+- **Administrative Overhead**: Accounting, taxes, software subscriptions, and hardware maintenance.
+
+In my first year, I spent roughly 15 hours a week on these administrative tasks. Because I wasn't accounting for them in my project pricing, my actual hourly rate was nearly cut in half. I was earning far less than my estimates suggested.
+
+To solve this, you must apply an **Admin Buffer** to every project estimate. If a project requires 20 hours of direct design and development, multiply that figure by 1.25 to account for 5 hours of administrative support. Your quote should reflect this loaded estimate.
+
+Additionally, you must account for the cost of client management tools, development environments, and other business expenses. If you use Slack, Figma, GitHub, accounting software, and a premium hosting platform, these overhead costs should be factored into your base project fees. Many junior freelancers price their work so low that they are actually losing money once software licenses and self-employment taxes are factored in.
+
+Treat your freelance practice like a real company. A web agency doesn't charge you only for the developer's time; they charge for the project manager, the QA tester, the account executive, and the office space. As a solo freelancer, you are playing all of these roles yourself. If you do not charge for the hours spent project managing, onboarding, and supporting the client, you are working those hours for free. Always build that 20-25% admin buffer directly into your flat project proposals.
+
+## 4. The Power of Tiered Options
+When presenting a proposal, never give a client a single price. A single price forces a "yes or no" decision. Instead, present three tiers (Bronze, Silver, Gold). This shifts the client's psychological evaluation from "Should I hire this freelancer?" to "Which option fits my budget best?"
+
+A standard tiered structure looks like:
+- **The Core Package (Bronze)**: The essential features required to solve their primary problem.
+- **The Recommended Package (Silver)**: The core package plus additional value additions (e.g., basic SEO setup, custom animations, speed optimization). This should be priced to be the most attractive.
+- **The Premium Package (Gold)**: A premium, white-glove option containing everything plus ongoing support, copywriting, and custom branding. This anchors your pricing high, making the Silver tier look like a highly reasonable middle ground.
+
+Tiered pricing takes advantage of a psychological concept known as price anchoring. When a client sees a Gold package for $8,000, it makes the Silver package at $4,500 look incredibly affordable by comparison. Without that high anchor, a single quote of $4,500 might feel expensive to the client. By offering options, you also capture clients who might have a higher budget than you anticipated. If a client is willing to pay $8,000 for a fully managed, hands-off experience, you would have left $3,500 on the table by only offering a single $4,500 option.
+
+Furthermore, tiered options put the client in control of the scope. If they look at the recommended option and say, "That's a bit out of our budget," you don't have to discount your rate. Instead, you can simply say: "No problem, we can downgrade to the Bronze package which removes the custom animations and basic copywriting." This protects your hourly worth because any reduction in price is accompanied by a corresponding reduction in deliverables.
+
+## 5. Transition to Maintenance Retainers
+Project-based freelancing is a rollercoaster. One month you land a $5,000 project, and the next month you are scraping by with zero leads. This "feast or famine" cycle is the most stressful aspect of freelance life.
+
+The key to long-term stability is building recurring revenue through maintenance retainers. After launching a website or completing a contract, offer your client a monthly support package:
+- **Security & Backups**: Weekly core updates, security scans, and database backups.
+- **Minor Content Updates**: Up to 2 hours of copy changes, image uploads, or layout tweaks per month.
+- **SEO Monitoring**: Monthly speed audits and tracking Google Search Console health.
+
+If you charge a modest $200/month for this service, securing just 10 retainer clients yields a steady $2,000/month in baseline recurring income. This covers your basic expenses, giving you the peace of mind to negotiate higher rates for larger, one-off projects.
+
+Retainers are also highly beneficial for the client. Websites are dynamic pieces of software that require regular security patches and updates. If a client's site gets hacked or goes down, it can cost thousands of dollars in emergency development fees to fix. A monthly retainer is essentially an insurance policy for their digital storefront. It guarantees that a professional is keeping their site secure, fast, and up-to-date, allowing them to focus on running their business.
+
+When pitching a retainer, present it as part of the project wrap-up. You can say: "Now that your site is launched, we want to make sure it stays secure and performs optimally. I offer a monthly Care Plan where I handle all software updates, backups, security monitoring, and small content requests. This ensures your website remains a high-performing asset without you having to worry about technical issues. Would you like to add this support plan starting next month?" By framing it as a continuation of your successful partnership, most clients will happily opt in.
+
+## 6. Aligning Price with Value
+Ultimately, pricing is not about what you cost; it is about what your work is worth to the client. If your website design helps an e-commerce shop increase their conversion rate by just 1%, resulting in $50,000 in additional sales, your $5,000 fee is trivial.
+
+Always direct the sales conversation away from templates and code, and focus on business growth metrics:
+- **Customer Acquisition**: How does this site attract new inquiries?
+- **Brand Authority**: How does premium design build trust with high-value prospects?
+- **Operational Savings**: Can we automate booking or support to save them hours of manual labor?
+
+By shifting your positioning from a simple technical coder to a strategic business partner, your value increases, allowing you to charge professional fees with absolute confidence.
+
+To do this successfully, you must master the art of the discovery call. Instead of asking, "How many pages do you want?" ask: "What is the primary business goal of this new website? If this project is a massive success twelve months from now, what does that look like for your business?" If the client replies, "We want to double our monthly leads from 20 to 40," you now have a value metric. You are no longer building a "5-page website"; you are building a "lead generation engine that will double their sales pipeline." Pricing a lead generation engine at $6,000 is far easier to justify than pricing a 5-page WordPress site.
+
+In conclusion, fixing your freelance pricing requires a mental shift. You are not selling your hours, your code, or your design skills. You are selling solutions to business problems. Once you start pricing based on the value of those solutions, setting strict boundaries on your revisions, factoring in your admin time, offering tiered options, and building monthly recurring retainers, you will transform your freelance hobby into a highly profitable, sustainable business.`,
     cover: IMG.blog3,
     author: "James Kariuki",
     authorAvatar: IMG.face3,
     date: "May 7, 2026",
-    readMins: 5,
+    readMins: 10,
     category: "Business",
   },
   {

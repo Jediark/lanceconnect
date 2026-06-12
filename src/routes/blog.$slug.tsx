@@ -118,6 +118,62 @@ const MOCK_COMMENTS: Record<string, Comment[]> = {
   ],
 };
 
+interface Block {
+  type: "h2" | "h3" | "ul" | "p";
+  content: string | string[];
+}
+
+function parseMarkdownToBlocks(body: string): Block[] {
+  const lines = body.split("\n").map((l) => l.trim());
+  const blocks: Block[] = [];
+  let currentList: string[] = [];
+
+  const flushList = () => {
+    if (currentList.length > 0) {
+      blocks.push({ type: "ul", content: [...currentList] });
+      currentList = [];
+    }
+  };
+
+  for (const line of lines) {
+    if (!line) {
+      flushList();
+      continue;
+    }
+
+    if (line.startsWith("## ")) {
+      flushList();
+      blocks.push({ type: "h2", content: line.replace("## ", "") });
+    } else if (line.startsWith("### ")) {
+      flushList();
+      blocks.push({ type: "h3", content: line.replace("### ", "") });
+    } else if (line.startsWith("- ")) {
+      currentList.push(line.replace(/^- /, "").trim());
+    } else {
+      flushList();
+      blocks.push({ type: "p", content: line });
+    }
+  }
+  flushList();
+  return blocks;
+}
+
+function parseInlineBold(text: string): React.ReactNode[] {
+  if (!text.includes("**")) {
+    return [text];
+  }
+  const parts = text.split("**");
+  return parts.map((part, idx) =>
+    idx % 2 === 1 ? (
+      <strong key={idx} className="font-bold text-slate-900 dark:text-white">
+        {part}
+      </strong>
+    ) : (
+      part
+    )
+  );
+}
+
 function BlogPost() {
   const { post } = Route.useLoaderData();
   const related = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3);
@@ -179,9 +235,10 @@ function BlogPost() {
 
   // Yoast SEO: Extract headings for Table of Contents
   const headings = post.body
-    .split("\n\n")
-    .filter((para) => para.trim().startsWith("## "))
-    .map((para) => para.trim().replace("## ", ""));
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("## "))
+    .map((line) => line.replace(/^##\s+/, ""));
 
   const getAuthorBio = (authorName: string) => {
     switch (authorName) {
@@ -241,7 +298,7 @@ function BlogPost() {
 
       <article className="min-h-screen bg-background">
         {/* Premium Immersive Hero Section */}
-        <header className="relative overflow-hidden bg-[#070e1e] border-b border-border/40 py-16 md:py-24">
+        <header className="relative overflow-hidden bg-[#070e1e] border-b border-border/40 pt-28 md:pt-36 pb-16 md:pb-24">
           {/* Subtle Ambient Blurred Cover Backdrop */}
           <div className="absolute inset-0 z-0 opacity-15 pointer-events-none select-none">
             <img
@@ -273,7 +330,7 @@ function BlogPost() {
                   </h1>
                 </div>
 
-                <p className="text-sm md:text-base text-slate-350 leading-relaxed max-w-2xl font-normal">
+                <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-2xl font-normal">
                   {post.excerpt}
                 </p>
 
@@ -322,7 +379,7 @@ function BlogPost() {
               </div>
 
               {/* Right Side: Main Cover Frame */}
-              <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden border border-slate-850 shadow-2xl hover:border-primary/30 transition duration-300">
+              <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden border border-slate-800 shadow-2xl hover:border-primary/30 transition duration-300">
                 <img
                   src={post.cover}
                   alt={post.title}
@@ -408,92 +465,56 @@ function BlogPost() {
             )}
 
             {/* Structured Article Body Content */}
-            <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-350 leading-relaxed text-base font-normal space-y-6">
-              {post.body.split("\n\n").map((para: string, i: number) => {
-                const trimmed = para.trim();
-
-                // H2 Heading Parsing
-                if (trimmed.startsWith("## ")) {
-                  const headingText = trimmed.replace("## ", "");
-                  const headingId = headings.indexOf(headingText);
-                  return (
-                    <h2
-                      key={i}
-                      id={`section-${headingId}`}
-                      className="font-display text-xl md:text-2xl font-black text-slate-900 dark:text-white mt-12 mb-4 pt-6 border-t border-border/40 tracking-tight scroll-mt-24 flex items-center gap-2"
-                    >
-                      <span className="text-primary/70 font-mono text-sm font-bold">#</span>
-                      {headingText}
-                    </h2>
-                  );
+            <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed text-base font-normal space-y-6">
+              {parseMarkdownToBlocks(post.body).map((block, i) => {
+                switch (block.type) {
+                  case "h2": {
+                    const headingText = block.content as string;
+                    const headingId = headings.indexOf(headingText);
+                    return (
+                      <h2
+                        key={i}
+                        id={`section-${headingId}`}
+                        className="font-display text-xl md:text-2xl font-black text-slate-900 dark:text-white mt-12 mb-4 pt-6 border-t border-border/40 tracking-tight scroll-mt-24 flex items-center gap-2"
+                      >
+                        <span className="text-primary/70 font-mono text-sm font-bold">#</span>
+                        {headingText}
+                      </h2>
+                    );
+                  }
+                  case "h3": {
+                    return (
+                      <h3
+                        key={i}
+                        className="font-display text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-8 mb-3 tracking-tight"
+                      >
+                        {parseInlineBold(block.content as string)}
+                      </h3>
+                    );
+                  }
+                  case "ul": {
+                    const items = block.content as string[];
+                    return (
+                      <ul
+                        key={i}
+                        className="list-disc pl-6 my-4 space-y-2.5 text-slate-700 dark:text-slate-300 font-normal"
+                      >
+                        {items.map((item, idx) => (
+                          <li key={idx}>{parseInlineBold(item)}</li>
+                        ))}
+                      </ul>
+                    );
+                  }
+                  case "p": {
+                    return (
+                      <p key={i} className="mb-6 leading-relaxed">
+                        {parseInlineBold(block.content as string)}
+                      </p>
+                    );
+                  }
+                  default:
+                    return null;
                 }
-
-                // H3 Heading Parsing
-                if (trimmed.startsWith("### ")) {
-                  return (
-                    <h3
-                      key={i}
-                      className="font-display text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-8 mb-3 tracking-tight"
-                    >
-                      {trimmed.replace("### ", "")}
-                    </h3>
-                  );
-                }
-
-                // Bullet Lists Parsing
-                if (trimmed.startsWith("- ")) {
-                  const items = trimmed.split("\n").map((li) => li.replace(/^- /, "").trim());
-                  return (
-                    <ul
-                      key={i}
-                      className="list-disc pl-6 my-4 space-y-2.5 text-slate-700 dark:text-slate-350 font-normal"
-                    >
-                      {items.map((item, idx) => {
-                        if (item.includes("**")) {
-                          const parts = item.split("**");
-                          return (
-                            <li key={idx}>
-                              {parts.map((part, pidx) =>
-                                pidx % 2 === 1 ? (
-                                  <strong key={pidx} className="font-bold text-slate-900 dark:text-white">
-                                    {part}
-                                  </strong>
-                                ) : (
-                                  part
-                                ),
-                              )}
-                            </li>
-                          );
-                        }
-                        return <li key={idx}>{item}</li>;
-                      })}
-                    </ul>
-                  );
-                }
-
-                // Paragraph with Inline Bold Formatting
-                if (trimmed.includes("**")) {
-                  const parts = trimmed.split("**");
-                  return (
-                    <p key={i} className="mb-6 leading-relaxed">
-                      {parts.map((part, pidx) =>
-                        pidx % 2 === 1 ? (
-                          <strong key={pidx} className="font-bold text-slate-900 dark:text-white">
-                            {part}
-                          </strong>
-                        ) : (
-                          part
-                        ),
-                      )}
-                    </p>
-                  );
-                }
-
-                return (
-                  <p key={i} className="mb-6 leading-relaxed">
-                    {para}
-                  </p>
-                );
               })}
             </div>
 
@@ -638,6 +659,25 @@ function BlogPost() {
           {/* Column 3: Secondary Sidebar (Desktop/XL Only) */}
           <aside className="hidden xl:block">
             <div className="sticky top-28 space-y-6 max-h-[calc(100vh-140px)] overflow-y-auto pl-4 scrollbar-thin">
+              {/* Sponsored Ad Widget */}
+              <div className="rounded-2xl border border-dashed border-border bg-card/20 p-5 space-y-3 select-none">
+                <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-muted-foreground bg-slate-800 px-2 py-0.5 rounded">
+                  Sponsored Ad
+                </span>
+                <div className="aspect-[16/10] w-full rounded-xl bg-gradient-to-br from-primary/10 to-cyan-500/10 border border-primary/20 flex flex-col items-center justify-center p-4 text-center">
+                  <p className="font-display font-bold text-xs text-foreground">Reach 50,000+ Freelancers</p>
+                  <p className="text-[9px] text-muted-foreground mt-1 leading-normal">
+                    Promote your SaaS, tool, or community to active builders.
+                  </p>
+                  <Link
+                    to="/support-us"
+                    className="mt-3 inline-flex items-center justify-center rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/30 text-primary px-3 py-1.5 text-[9px] font-bold transition"
+                  >
+                    Advertise Here
+                  </Link>
+                </div>
+              </div>
+
               {/* Promo widget */}
               <div className="rounded-2xl border border-border bg-card p-5 space-y-3 select-none">
                 <BookOpen className="h-5 w-5 text-primary" />
