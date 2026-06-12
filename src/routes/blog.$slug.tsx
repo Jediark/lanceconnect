@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { BLOG_POSTS } from "@/data/content";
@@ -11,6 +11,9 @@ import {
   Send,
   Calendar,
   User,
+  ChevronRight,
+  Clock,
+  BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -29,6 +32,11 @@ export const Route = createFileRoute("/blog/$slug")({
           { property: "og:description", content: loaderData.post.excerpt },
           { property: "og:image", content: loaderData.post.cover },
           { property: "og:type", content: "article" },
+          { property: "og:url", content: `https://lanceconnect.vercel.app/blog/${loaderData.post.slug}` },
+          { name: "twitter:card", content: "summary_large_image" },
+          { name: "twitter:title", content: loaderData.post.title },
+          { name: "twitter:description", content: loaderData.post.excerpt },
+          { name: "twitter:image", content: loaderData.post.cover },
         ]
       : [],
   }),
@@ -119,6 +127,19 @@ function BlogPost() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [text, setText] = useState("");
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Scroll tracking for progress indicator
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        setScrollProgress((window.scrollY / totalHeight) * 100);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handlePostComment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,74 +163,243 @@ function BlogPost() {
     toast.success("Comment posted successfully!");
   };
 
+  const handleShare = (platform: "twitter" | "linkedin" | "copy") => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const title = post.title;
+    
+    if (platform === "twitter") {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, "_blank");
+    } else if (platform === "linkedin") {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank");
+    } else {
+      navigator.clipboard.writeText(url);
+      toast.success("Article link copied to clipboard!");
+    }
+  };
+
   // Yoast SEO: Extract headings for Table of Contents
   const headings = post.body
     .split("\n\n")
     .filter((para) => para.trim().startsWith("## "))
     .map((para) => para.trim().replace("## ", ""));
 
+  const getAuthorBio = (authorName: string) => {
+    switch (authorName) {
+      case "Taiwo Adeyemi":
+        return "Taiwo Adeyemi is a senior client acquisition specialist and outreach designer. Having sent thousands of cold emails for startups and freelancers, he helps professionals secure clients globally.";
+      case "Maria Silva":
+        return "Maria Silva is a freelance growth strategist and data analyst based in Brazil. She designs lead scoring models and advises agencies on cold outreach operations.";
+      case "Sophia Jenkins":
+        return "Sophia Jenkins is a senior freelance writer and B2B marketer with a focus on value pricing models and positioning strategy.";
+      default:
+        return `${authorName} is a senior writer and marketing consultant at LanceConnect, specializing in B2B lead generation, client positioning, and freelance growth strategy.`;
+    }
+  };
+
+  // Yoast SEO: JSON-LD Structured Data Schema Markup
+  const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "image": [post.cover],
+    "datePublished": "2026-05-21", // Fallback standard date
+    "author": {
+      "@type": "Person",
+      "name": post.author,
+      "image": post.authorAvatar
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "LanceConnect",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://lanceconnect.vercel.app/favicon.png"
+      }
+    },
+    "description": post.excerpt,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": typeof window !== "undefined" ? window.location.href : `https://lanceconnect.vercel.app/blog/${post.slug}`
+    }
+  };
+
   return (
     <MarketingShell>
+      {/* JSON-LD Schema Script */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
+
+      {/* Scroll Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-[3px] bg-border/20 z-50 select-none">
+        <div
+          className="h-full bg-gradient-to-r from-primary to-cyan-500 transition-all duration-100"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       <article className="min-h-screen bg-background">
-        {/* Post Title & Metadata (SEO-Standard H1) */}
-        <div className="mx-auto max-w-3xl px-4 pt-12 lg:px-8">
-          <Link
-            to="/blog"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back to blog
-          </Link>
-          <span className="mt-6 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
-            {post.category}
-          </span>
-          <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight text-foreground md:text-5xl lg:text-6xl tracking-tight">
-            {post.title}
-          </h1>
-          <div className="mt-6 flex items-center gap-3 border-y border-border/60 py-4 text-sm text-muted-foreground">
+        {/* Premium Immersive Hero Section */}
+        <header className="relative overflow-hidden bg-[#070e1e] border-b border-border/40 py-16 md:py-24">
+          {/* Subtle Ambient Blurred Cover Backdrop */}
+          <div className="absolute inset-0 z-0 opacity-15 pointer-events-none select-none">
             <img
-              src={post.authorAvatar}
-              alt={post.author}
-              className="h-10 w-10 rounded-full object-cover border-2 border-primary/20"
+              src={post.cover}
+              alt=""
+              className="w-full h-full object-cover blur-3xl scale-110"
             />
-            <div>
-              <p className="font-bold text-foreground">{post.author}</p>
-              <p className="text-xs flex items-center gap-2 mt-0.5">
-                <Calendar className="h-3.5 w-3.5 text-muted-foreground/60" /> {post.date} ·{" "}
-                {post.readMins} min read
-              </p>
+            <div className="absolute inset-0 bg-[#070e1e]/85" />
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-6xl px-4 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-[1fr_420px] items-center">
+              {/* Left Side: Post Metadata & Title */}
+              <div className="space-y-6">
+                <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-muted-foreground select-none uppercase tracking-widest">
+                  <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
+                  <ChevronRight className="h-3 w-3" />
+                  <Link to="/blog" className="hover:text-foreground transition-colors">Blog</Link>
+                  <ChevronRight className="h-3 w-3" />
+                  <span className="text-primary font-semibold">{post.category}</span>
+                </div>
+
+                <div className="space-y-3">
+                  <span className="inline-block rounded-full bg-primary/10 border border-primary/25 px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-primary">
+                    {post.category}
+                  </span>
+                  <h1 className="font-display text-3xl font-black leading-tight text-white md:text-4xl lg:text-5xl tracking-tight">
+                    {post.title}
+                  </h1>
+                </div>
+
+                <p className="text-sm md:text-base text-slate-350 leading-relaxed max-w-2xl font-normal">
+                  {post.excerpt}
+                </p>
+
+                {/* Author Info & Share Tools */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-slate-800/80">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={post.authorAvatar}
+                      alt={post.author}
+                      className="h-11 w-11 rounded-full object-cover border-2 border-primary/20 bg-primary/10"
+                    />
+                    <div>
+                      <p className="font-bold text-white text-sm leading-snug">{post.author}</p>
+                      <p className="text-[10px] text-slate-400 flex items-center gap-2 mt-1 font-mono">
+                        <Calendar className="h-3.5 w-3.5" /> {post.date} • <Clock className="h-3.5 w-3.5" /> {post.readMins} min read
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Share button tray */}
+                  <div className="flex items-center gap-2 select-none">
+                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline">Share:</span>
+                    <button
+                      onClick={() => handleShare("twitter")}
+                      className="p-2 border border-slate-800 bg-slate-900/40 rounded-xl text-slate-400 hover:text-white hover:border-slate-700 hover:bg-slate-900 transition"
+                      title="Share on Twitter"
+                    >
+                      <Twitter className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleShare("linkedin")}
+                      className="p-2 border border-slate-800 bg-slate-900/40 rounded-xl text-slate-400 hover:text-white hover:border-slate-700 hover:bg-slate-900 transition"
+                      title="Share on LinkedIn"
+                    >
+                      <Linkedin className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleShare("copy")}
+                      className="p-2 border border-slate-800 bg-slate-900/40 rounded-xl text-slate-400 hover:text-white hover:border-slate-700 hover:bg-slate-900 transition"
+                      title="Copy Link"
+                    >
+                      <Link2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side: Main Cover Frame */}
+              <div className="relative aspect-[16/10] w-full rounded-3xl overflow-hidden border border-slate-850 shadow-2xl hover:border-primary/30 transition duration-300">
+                <img
+                  src={post.cover}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </header>
 
-        {/* Featured Cover Image */}
-        <div className="mx-auto mt-10 max-w-5xl px-4 lg:px-8">
-          <img
-            src={post.cover}
-            alt={post.title}
-            className="aspect-[16/9] w-full rounded-2xl object-cover shadow-sm border border-border/80"
-          />
-        </div>
-
-        {/* Content Layout with Table of Contents & Body */}
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1fr_280px] lg:px-8">
-          <div className="space-y-6">
-            {/* Table of Contents for Readability (Yoast SEO Requirement) */}
-            {headings.length > 0 && (
-              <div className="rounded-xl border border-border bg-card/40 p-4 mb-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+        {/* 3-Column Responsive Reading Layout */}
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-[220px_1fr] xl:grid-cols-[220px_1fr_280px] lg:px-8">
+          
+          {/* Column 1: Sticky Table of Contents (Desktop Only) */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-28 space-y-6 max-h-[calc(100vh-140px)] overflow-y-auto pr-4 scrollbar-thin select-none">
+              <div className="space-y-4">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
                   Table of Contents
                 </p>
-                <ul className="space-y-1.5 text-sm">
+                <nav className="space-y-2 text-xs">
+                  {headings.length > 0 ? (
+                    headings.map((h, i) => (
+                      <a
+                        key={i}
+                        href={`#section-${i}`}
+                        className="block text-slate-600 dark:text-slate-400 hover:text-primary transition-colors font-medium border-l border-border/80 pl-3 py-1 hover:border-primary"
+                      >
+                        {h}
+                      </a>
+                    ))
+                  ) : (
+                    <span className="text-muted-foreground italic">No subheadings</span>
+                  )}
+                </nav>
+              </div>
+
+              <hr className="border-border/60" />
+
+              <div className="space-y-3">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                  Quick Share
+                </p>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => handleShare("twitter")}
+                    className="flex-1 py-2 rounded-lg border border-border bg-card hover:bg-accent hover:text-foreground text-muted-foreground flex justify-center items-center transition"
+                  >
+                    <Twitter className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleShare("linkedin")}
+                    className="flex-1 py-2 rounded-lg border border-border bg-card hover:bg-accent hover:text-foreground text-muted-foreground flex justify-center items-center transition"
+                  >
+                    <Linkedin className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Column 2: Main Body Column */}
+          <div className="space-y-12 max-w-3xl mx-auto">
+            {/* Inline Table of Contents for Mobile Viewports */}
+            {headings.length > 0 && (
+              <div className="rounded-2xl border border-border bg-card/30 p-5 lg:hidden select-none">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                  Table of Contents
+                </p>
+                <ul className="space-y-2 text-xs">
                   {headings.map((h, i) => (
                     <li key={i}>
                       <a
                         href={`#section-${i}`}
-                        className="text-primary hover:underline font-medium hover:text-primary-foreground flex items-center gap-1.5"
+                        className="text-primary hover:underline font-semibold flex items-center gap-1.5"
                       >
-                        <span className="text-xs text-muted-foreground/60 font-mono">
-                          0{i + 1}.
-                        </span>{" "}
-                        {h}
+                        <span className="text-muted-foreground/50 font-mono">0{i + 1}.</span> {h}
                       </a>
                     </li>
                   ))}
@@ -217,12 +407,12 @@ function BlogPost() {
               </div>
             )}
 
-            {/* Post Content Body */}
-            <div className="space-y-6 text-[16px] md:text-[17px] leading-relaxed text-foreground font-medium">
+            {/* Structured Article Body Content */}
+            <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-350 leading-relaxed text-base font-normal space-y-6">
               {post.body.split("\n\n").map((para: string, i: number) => {
                 const trimmed = para.trim();
 
-                // H2 headings
+                // H2 Heading Parsing
                 if (trimmed.startsWith("## ")) {
                   const headingText = trimmed.replace("## ", "");
                   const headingId = headings.indexOf(headingText);
@@ -230,32 +420,33 @@ function BlogPost() {
                     <h2
                       key={i}
                       id={`section-${headingId}`}
-                      className="font-display text-2xl font-extrabold text-foreground mt-10 mb-4 pt-4 border-t border-border/20 tracking-tight scroll-mt-20"
+                      className="font-display text-xl md:text-2xl font-black text-slate-900 dark:text-white mt-12 mb-4 pt-6 border-t border-border/40 tracking-tight scroll-mt-24 flex items-center gap-2"
                     >
+                      <span className="text-primary/70 font-mono text-sm font-bold">#</span>
                       {headingText}
                     </h2>
                   );
                 }
 
-                // H3 headings
+                // H3 Heading Parsing
                 if (trimmed.startsWith("### ")) {
                   return (
                     <h3
                       key={i}
-                      className="font-display text-xl font-bold text-foreground mt-8 mb-3 tracking-tight"
+                      className="font-display text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-8 mb-3 tracking-tight"
                     >
                       {trimmed.replace("### ", "")}
                     </h3>
                   );
                 }
 
-                // Bullet Lists
+                // Bullet Lists Parsing
                 if (trimmed.startsWith("- ")) {
                   const items = trimmed.split("\n").map((li) => li.replace(/^- /, "").trim());
                   return (
                     <ul
                       key={i}
-                      className="list-disc pl-6 my-4 space-y-2 text-foreground/90 font-normal"
+                      className="list-disc pl-6 my-4 space-y-2.5 text-slate-700 dark:text-slate-350 font-normal"
                     >
                       {items.map((item, idx) => {
                         if (item.includes("**")) {
@@ -264,7 +455,7 @@ function BlogPost() {
                             <li key={idx}>
                               {parts.map((part, pidx) =>
                                 pidx % 2 === 1 ? (
-                                  <strong key={pidx} className="font-extrabold text-foreground">
+                                  <strong key={pidx} className="font-bold text-slate-900 dark:text-white">
                                     {part}
                                   </strong>
                                 ) : (
@@ -280,14 +471,14 @@ function BlogPost() {
                   );
                 }
 
-                // Standard Paragraph with Inline Bold Formatting
+                // Paragraph with Inline Bold Formatting
                 if (trimmed.includes("**")) {
                   const parts = trimmed.split("**");
                   return (
-                    <p key={i} className="mb-4 text-foreground/90 font-normal">
+                    <p key={i} className="mb-6 leading-relaxed">
                       {parts.map((part, pidx) =>
                         pidx % 2 === 1 ? (
-                          <strong key={pidx} className="font-extrabold text-foreground">
+                          <strong key={pidx} className="font-bold text-slate-900 dark:text-white">
                             {part}
                           </strong>
                         ) : (
@@ -299,36 +490,52 @@ function BlogPost() {
                 }
 
                 return (
-                  <p key={i} className="mb-4 text-foreground/90 font-normal">
+                  <p key={i} className="mb-6 leading-relaxed">
                     {para}
                   </p>
                 );
               })}
             </div>
 
-            {/* Newsletter CTA Block */}
-            <hr className="my-10 border-border/50" />
-            <div className="rounded-2xl border border-border bg-card p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="max-w-md">
-                <h4 className="font-display text-lg font-bold text-foreground">
-                  Stop refreshing cold job boards.
+            {/* Author Biography Box (Google EEAT Compliance) */}
+            <div className="rounded-3xl border border-border bg-card/40 p-6 md:p-8 shadow-sm flex flex-col sm:flex-row gap-6 items-start">
+              <img
+                src={post.authorAvatar}
+                alt={post.author}
+                className="h-16 w-16 rounded-full object-cover border-2 border-primary/20 bg-primary/10 shrink-0"
+              />
+              <div className="space-y-2">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary">About the Author</p>
+                <h4 className="font-display font-bold text-base text-slate-900 dark:text-white leading-tight">
+                  {post.author}
                 </h4>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Get 10 fresh, highly-scored leads in your targeted city every week — completely
-                  free.
+                <p className="text-xs text-muted-foreground leading-relaxed font-normal">
+                  {getAuthorBio(post.author)}
+                </p>
+              </div>
+            </div>
+
+            {/* Newsletter CTA Block */}
+            <div className="rounded-3xl border border-border bg-gradient-to-br from-[#0c162b] to-[#040811] p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-[0_0_25px_rgba(6,182,212,0.05)]">
+              <div className="max-w-md space-y-1.5">
+                <h4 className="font-display text-lg font-black text-white">
+                  Stop chasing dead job boards.
+                </h4>
+                <p className="text-xs text-slate-400 leading-normal">
+                  Receive 10 fresh, highly-scored business leads in your target industry and location every week — 100% free.
                 </p>
               </div>
               <Link
                 to="/register"
-                className="w-full md:w-auto text-center shrink-0 inline-flex justify-center items-center rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white hover:brightness-110 transition-all"
+                className="w-full md:w-auto text-center shrink-0 inline-flex justify-center items-center rounded-xl bg-primary px-5 py-3 text-xs font-bold text-white hover:brightness-110 transition shadow-lg shadow-primary/15 select-none"
               >
-                Start Free Program
+                Get 10 Free Leads
               </Link>
             </div>
 
-            {/* Yoast SEO / User Comment Section */}
-            <section className="mt-12 border-t border-border pt-10">
-              <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-6">
+            {/* Comments Section */}
+            <section className="border-t border-border pt-10 space-y-8">
+              <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                 <MessageSquare className="h-5 w-5 text-primary" />
                 Comments ({comments.length})
               </h3>
@@ -336,16 +543,18 @@ function BlogPost() {
               {/* Leave a Comment Form */}
               <form
                 onSubmit={handlePostComment}
-                className="bg-card/50 rounded-xl border border-border p-6 mb-8 space-y-4"
+                className="bg-card/30 rounded-2xl border border-border p-6 space-y-4"
               >
-                <h4 className="text-sm font-bold text-foreground">Join the conversation</h4>
-                <p className="text-xs text-muted-foreground">
-                  Your email address will not be published. Required fields are marked *
-                </p>
+                <div className="space-y-1.5">
+                  <h4 className="text-sm font-bold text-foreground">Join the discussion</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Required fields are marked with * (your email address will not be published).
+                  </p>
+                </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
                       Name *
                     </label>
                     <input
@@ -354,11 +563,11 @@ function BlogPost() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Jane Doe"
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground focus:outline-none focus:border-primary transition"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
                       Email *
                     </label>
                     <input
@@ -367,13 +576,13 @@ function BlogPost() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="jane@example.com"
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground focus:outline-none focus:border-primary transition"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
                     Comment *
                   </label>
                   <textarea
@@ -382,13 +591,13 @@ function BlogPost() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder="Write your thought here..."
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground resize-none focus:outline-none focus:border-primary transition"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer"
+                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer select-none"
                 >
                   <Send className="h-3.5 w-3.5" /> Post Comment
                 </button>
@@ -397,12 +606,12 @@ function BlogPost() {
               {/* Comments List */}
               <div className="space-y-6">
                 {comments.length === 0 ? (
-                  <p className="text-sm text-muted-foreground italic">
-                    No comments yet. Be the first to comment!
+                  <p className="text-xs text-muted-foreground italic">
+                    No comments yet. Be the first to start the conversation!
                   </p>
                 ) : (
                   comments.map((comment) => (
-                    <div key={comment.id} className="flex gap-4 border-b border-border/40 pb-6">
+                    <div key={comment.id} className="flex gap-4 border-b border-border/40 pb-6 last:border-b-0">
                       <img
                         src={comment.avatar}
                         alt={comment.author}
@@ -410,12 +619,12 @@ function BlogPost() {
                       />
                       <div className="space-y-1">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-sm font-bold text-foreground">
+                          <span className="text-xs font-bold text-foreground">
                             {comment.author}
                           </span>
-                          <span className="text-[10px] text-muted-foreground">{comment.date}</span>
+                          <span className="text-[9px] text-muted-foreground font-mono">{comment.date}</span>
                         </div>
-                        <p className="text-sm text-foreground/80 leading-relaxed font-normal">
+                        <p className="text-xs text-foreground/80 leading-relaxed font-normal">
                           {comment.content}
                         </p>
                       </div>
@@ -426,49 +635,48 @@ function BlogPost() {
             </section>
           </div>
 
-          {/* Sidebar */}
-          <aside className="space-y-6">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Share Article
-              </p>
-              <div className="mt-2.5 flex gap-2">
-                {[Twitter, Linkedin, Link2].map((I, i) => (
-                  <button
-                    key={i}
-                    onClick={() => toast.success("Shared link copied!")}
-                    className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-accent transition"
-                  >
-                    <I className="h-4 w-4" />
-                  </button>
-                ))}
+          {/* Column 3: Secondary Sidebar (Desktop/XL Only) */}
+          <aside className="hidden xl:block">
+            <div className="sticky top-28 space-y-6 max-h-[calc(100vh-140px)] overflow-y-auto pl-4 scrollbar-thin">
+              {/* Promo widget */}
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-3 select-none">
+                <BookOpen className="h-5 w-5 text-primary" />
+                <h4 className="font-display font-bold text-xs text-foreground">LanceConnect Platform</h4>
+                <p className="text-[10px] text-muted-foreground leading-normal">
+                  Find active business leads in 150+ countries. Filter by gap detection, contact status, and opportunity scores.
+                </p>
+                <Link
+                  to="/pricing"
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-primary hover:underline"
+                >
+                  Explore Pricing Plans <ChevronRight className="h-3 w-3" />
+                </Link>
               </div>
-            </div>
 
-            <hr className="border-border/60" />
-
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                More from our blog
-              </p>
-              <ul className="mt-4 space-y-4">
-                {related.map((p) => (
-                  <li key={p.slug}>
-                    <Link to="/blog/$slug" params={{ slug: p.slug }} className="group block">
-                      <div className="overflow-hidden rounded-xl border border-border/80">
-                        <img
-                          src={p.cover}
-                          alt={p.title}
-                          className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105"
-                        />
-                      </div>
-                      <p className="mt-2 text-sm font-bold leading-snug text-foreground group-hover:text-primary transition-colors">
-                        {p.title}
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {/* Related posts */}
+              <div className="space-y-4">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                  Read Next
+                </p>
+                <ul className="space-y-4">
+                  {related.map((p) => (
+                    <li key={p.slug} className="group">
+                      <Link to="/blog/$slug" params={{ slug: p.slug }} className="block space-y-2">
+                        <div className="overflow-hidden rounded-xl border border-border/80 aspect-[16/10] relative">
+                          <img
+                            src={p.cover}
+                            alt={p.title}
+                            className="w-full h-full object-cover transition duration-355 group-hover:scale-103"
+                          />
+                        </div>
+                        <p className="text-xs font-bold leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                          {p.title}
+                        </p>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </aside>
         </div>
