@@ -21,9 +21,17 @@ function SubscriptionPage() {
   return (
     <div className="max-w-2xl space-y-4">
       {success && (
-        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 text-sm text-foreground flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
-          <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-          <span>Payment successful! Your plan has been upgraded. Thank you for supporting LanceConnect. 🎉</span>
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 text-sm text-foreground flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+            <span>Payment successful! Your plan has been upgraded. Thank you for supporting LanceConnect. 🎉</span>
+          </div>
+          <Link
+            to="/app/dashboard"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 text-xs font-semibold transition shrink-0 self-start sm:self-auto shadow-sm shadow-emerald-600/10 active:scale-[0.98]"
+          >
+            &larr; Back to Dashboard
+          </Link>
         </div>
       )}
       <div className="rounded-2xl border border-border bg-card p-6 shadow-card">

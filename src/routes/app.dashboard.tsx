@@ -99,6 +99,14 @@ function Dashboard() {
           // ignore
         }
       }
+
+      // Handle successful donation redirect from Stripe/Paystack
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("donation") === "success") {
+        toast.success("Thank you for your generous donation! 🎉 Your support keeps LanceConnect free and unlimited for everyone.");
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
       setIsMounted(true);
     }
   }, []);
