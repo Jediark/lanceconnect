@@ -47,6 +47,15 @@ export function GlobalHeatmap({
       <div className="absolute inset-0 bg-dot-pattern opacity-50 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
 
+      {/* Stylized Vector World Map Background */}
+      <div className="absolute inset-0 opacity-[0.07] dark:opacity-[0.12] pointer-events-none select-none">
+        <img
+          src="/assets/world-map.svg"
+          alt=""
+          className="w-full h-full object-fill invert dark:invert-0 filter brightness-105"
+        />
+      </div>
+
       {/* Dynamic Map Nodes */}
       <div className="absolute inset-0">
         {uniqueRegions.map((reg, index) => {

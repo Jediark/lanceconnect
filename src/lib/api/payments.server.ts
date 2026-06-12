@@ -34,11 +34,44 @@ async function resolveStripePriceId(stripe: any, planName: "individual" | "compa
       expand: ["data.product"],
     });
 
+    // First pass: Match by exact price ($20 / 2000 cents for Grow/individual, $75 / 7500 cents for Scale/company)
     for (const price of prices.data) {
       const product = price.product;
       if (typeof product === "object" && product !== null) {
         const metadata = product.metadata || {};
         const productName = (product.name || "").toLowerCase();
+
+        if (planName === "individual" && price.unit_amount === 2000) {
+          if (
+            metadata.plan === "individual" ||
+            metadata.plan === "grow" ||
+            productName.includes("grow") ||
+            productName.includes("individual")
+          ) {
+            return price.id;
+          }
+        } else if (planName === "company" && price.unit_amount === 7500) {
+          if (
+            metadata.plan === "company" ||
+            metadata.plan === "scale" ||
+            productName.includes("scale") ||
+            productName.includes("company")
+          ) {
+            return price.id;
+          }
+        }
+      }
+    }
+
+    // Second pass: Fallback matching (skipping any known incorrect $95 price)
+    for (const price of prices.data) {
+      const product = price.product;
+      if (typeof product === "object" && product !== null) {
+        const metadata = product.metadata || {};
+        const productName = (product.name || "").toLowerCase();
+
+        // Skip the incorrect $95 pricing test
+        if (price.unit_amount === 9500) continue;
 
         if (planName === "individual") {
           if (
@@ -83,7 +116,11 @@ export const createStripeCheckout = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const config = getServerConfig();
     const secretKey = config.stripeSecretKey;
-    const fallbackUrl = "https://buy.stripe.com/test_9B6fZi2wd0d85IG2aK57W00";
+    const fallbackUrls = {
+      individual: "https://buy.stripe.com/test_9B6fZi2wd0d85IG2aK57W00",
+      company: "https://buy.stripe.com/test_7sY4gAeeVf827QO3eO57W01",
+    };
+    const fallbackUrl = fallbackUrls[data.planName];
 
     if (!secretKey) {
       console.warn("STRIPE_SECRET_KEY is not configured. Falling back to direct Stripe payment link.");

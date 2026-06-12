@@ -17,15 +17,27 @@ import process from "node:process";
 //     VITE_ prefix. Never put secrets here — they ship to the browser.
 
 export function getServerConfig() {
+  const clean = (val: string | undefined) => {
+    if (!val) return undefined;
+    let cleaned = val.trim();
+    if (
+      (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+      (cleaned.startsWith("'") && cleaned.endsWith("'"))
+    ) {
+      cleaned = cleaned.slice(1, -1).trim();
+    }
+    return cleaned;
+  };
+
   return {
     nodeEnv: process.env.NODE_ENV,
-    stripeSecretKey: process.env.STRIPE_SECRET_KEY || process.env.stripe_secret_key,
-    paystackSecretKey: process.env.PAYSTACK_SECRET_KEY || process.env.paystack_secret_key,
+    stripeSecretKey: clean(process.env.STRIPE_SECRET_KEY || process.env.stripe_secret_key || process.env.Stripe_Secret_Key),
+    paystackSecretKey: clean(process.env.PAYSTACK_SECRET_KEY || process.env.paystack_secret_key || process.env.Paystack_Secret_Key),
     // Stripe Price IDs for subscription plans
-    stripeIndividualPriceId: process.env.STRIPE_INDIVIDUAL_PRICE_ID || process.env.stripe_individual_price_id,
-    stripeCompanyPriceId: process.env.STRIPE_COMPANY_PRICE_ID || process.env.stripe_company_price_id,
+    stripeIndividualPriceId: clean(process.env.STRIPE_INDIVIDUAL_PRICE_ID || process.env.stripe_individual_price_id),
+    stripeCompanyPriceId: clean(process.env.STRIPE_COMPANY_PRICE_ID || process.env.stripe_company_price_id),
     // Paystack Plan Codes for subscription plans
-    paystackIndividualPlanCode: process.env.PAYSTACK_INDIVIDUAL_PLAN_CODE || process.env.paystack_individual_plan_code,
-    paystackCompanyPlanCode: process.env.PAYSTACK_COMPANY_PLAN_CODE || process.env.paystack_company_plan_code,
+    paystackIndividualPlanCode: clean(process.env.PAYSTACK_INDIVIDUAL_PLAN_CODE || process.env.paystack_individual_plan_code),
+    paystackCompanyPlanCode: clean(process.env.PAYSTACK_COMPANY_PLAN_CODE || process.env.paystack_company_plan_code),
   };
 }
