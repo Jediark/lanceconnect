@@ -7,6 +7,7 @@ export type RegionItem = {
 };
 
 const CITY_DB: Record<string, { lat: number; lon: number }> = {
+  // Original defaults
   lagos: { lat: 6.5244, lon: 3.3792 },
   london: { lat: 51.5074, lon: -0.1278 },
   newyork: { lat: 40.7128, lon: -74.006 },
@@ -28,6 +29,90 @@ const CITY_DB: Record<string, { lat: number; lon: number }> = {
   houston: { lat: 29.7604, lon: -95.3698 },
   abuja: { lat: 9.0765, lon: 7.3986 },
   edinburgh: { lat: 55.9533, lon: -3.1883 },
+
+  // US States major cities
+  birmingham: { lat: 33.5186, lon: -86.8104 },
+  anchorage: { lat: 61.2181, lon: -149.9003 },
+  phoenix: { lat: 33.4484, lon: -112.0740 },
+  littlerock: { lat: 34.7465, lon: -92.2896 },
+  sanfrancisco: { lat: 37.7749, lon: -122.4194 },
+  denver: { lat: 39.7392, lon: -104.9903 },
+  hartford: { lat: 41.7637, lon: -72.6851 },
+  wilmington: { lat: 39.7447, lon: -75.5484 },
+  miami: { lat: 25.7617, lon: -80.1918 },
+  atlanta: { lat: 33.7490, lon: -84.3880 },
+  honolulu: { lat: 21.3069, lon: -157.8583 },
+  boise: { lat: 43.6150, lon: -116.2023 },
+  chicago: { lat: 41.8781, lon: -87.6298 },
+  indianapolis: { lat: 39.7684, lon: -86.1581 },
+  desmoines: { lat: 41.5868, lon: -93.6250 },
+  wichita: { lat: 37.6872, lon: -97.3301 },
+  louisville: { lat: 38.2527, lon: -85.7585 },
+  neworleans: { lat: 29.9511, lon: -90.0715 },
+  portland: { lat: 45.5152, lon: -122.6784 },
+  baltimore: { lat: 39.2904, lon: -76.6122 },
+  boston: { lat: 42.3601, lon: -71.0589 },
+  detroit: { lat: 42.3314, lon: -83.0458 },
+  minneapolis: { lat: 44.9778, lon: -93.2650 },
+  jackson: { lat: 32.2988, lon: -90.1848 },
+  kansascity: { lat: 39.0997, lon: -94.5786 },
+  billings: { lat: 45.7833, lon: -108.5007 },
+  omaha: { lat: 41.2565, lon: -95.9345 },
+  lasvegas: { lat: 36.1716, lon: -115.1398 },
+  manchester: { lat: 53.4808, lon: -2.2426 },
+  newark: { lat: 40.7357, lon: -74.1724 },
+  albuquerque: { lat: 35.0844, lon: -106.6511 },
+  charlotte: { lat: 35.2271, lon: -80.8431 },
+  fargo: { lat: 46.8772, lon: -96.7898 },
+  columbus: { lat: 39.9612, lon: -82.9988 },
+  oklahomacity: { lat: 35.4676, lon: -97.5164 },
+  philadelphia: { lat: 39.9526, lon: -75.1652 },
+  providence: { lat: 41.8240, lon: -71.4128 },
+  charleston: { lat: 32.7765, lon: -79.9311 },
+  siouxfalls: { lat: 43.5460, lon: -96.7313 },
+  nashville: { lat: 36.1627, lon: -86.7816 },
+  dallas: { lat: 32.7767, lon: -96.7970 },
+  saltlakecity: { lat: 40.7608, lon: -111.8910 },
+  burlington: { lat: 44.4756, lon: -73.2121 },
+  virginiabeach: { lat: 36.8529, lon: -75.9780 },
+  spokane: { lat: 47.6588, lon: -117.4260 },
+  milwaukee: { lat: 43.0389, lon: -87.9065 },
+  cheyenne: { lat: 41.1400, lon: -104.8203 },
+
+  // Global major hubs
+  nairobi: { lat: -1.2921, lon: 36.8219 },
+  capetown: { lat: -33.9249, lon: 18.4241 },
+  addisababa: { lat: 9.0300, lon: 38.7400 },
+  daressalaam: { lat: -6.7924, lon: 39.2083 },
+  kampala: { lat: 0.3476, lon: 32.5825 },
+  kigali: { lat: -1.9403, lon: 30.0619 },
+  dakar: { lat: 14.7167, lon: -17.4677 },
+  abidjan: { lat: 5.3600, lon: -4.0083 },
+  vancouver: { lat: 49.2827, lon: -123.1207 },
+  montreal: { lat: 45.5017, lon: -73.5673 },
+  riodejaneiro: { lat: -22.9068, lon: -43.1729 },
+  mexicocity: { lat: 19.4326, lon: -99.1332 },
+  bogota: { lat: 4.7110, lon: -74.0721 },
+  buenosaires: { lat: -34.6037, lon: -58.3816 },
+  lima: { lat: -12.0464, lon: -77.0428 },
+  delhi: { lat: 28.6139, lon: 77.2090 },
+  bangalore: { lat: 12.9716, lon: 77.5946 },
+  karachi: { lat: 24.8607, lon: 67.0011 },
+  dhaka: { lat: 23.8103, lon: 90.4125 },
+  manila: { lat: 14.5995, lon: 120.9842 },
+  jakarta: { lat: -6.2088, lon: 106.8456 },
+  kualalumpur: { lat: 3.1390, lon: 101.6869 },
+  seoul: { lat: 37.5665, lon: 126.9780 },
+  melbourne: { lat: -37.8136, lon: 144.9631 },
+  hamburg: { lat: 53.5511, lon: 9.9937 },
+  marseille: { lat: 43.2965, lon: 5.3698 },
+  madrid: { lat: 40.4168, lon: -3.7038 },
+  rome: { lat: 41.9028, lon: 12.4964 },
+  amsterdam: { lat: 52.3676, lon: 4.9041 },
+  lisbon: { lat: 38.7223, lon: -9.1393 },
+  dublin: { lat: 53.3498, lon: -6.2603 },
+  riyadh: { lat: 24.7136, lon: 46.6753 },
+  doha: { lat: 25.2854, lon: 51.5310 },
 };
 
 const COORDINATE_TESTS = [
@@ -130,11 +215,22 @@ export function GlobalHeatmap({
   className?: string;
 }) {
   const [debugMode, setDebugMode] = useState(false);
+  const [resolvedCoords, setResolvedCoords] = useState<Record<string, { lat: number; lon: number }>>({});
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setDebugMode(window.location.search.includes("debug=map"));
       
+      // Load cache from localStorage
+      try {
+        const cached = localStorage.getItem("lanceconnect_geo_cache");
+        if (cached) {
+          setResolvedCoords(JSON.parse(cached));
+        }
+      } catch (e) {
+        console.error("Failed to load geo cache", e);
+      }
+
       // Run the relationship verification
       const MAP_WIDTH = 1000;
       const MAP_HEIGHT = 500;
@@ -152,6 +248,62 @@ export function GlobalHeatmap({
   const uniqueRegions = Array.from(
     new Map(validRegions.map((item) => [`${item.city.toLowerCase()}-${item.country.toLowerCase()}`, item])).values()
   );
+
+  // Dynamic geocoding effect for unmapped cities
+  useEffect(() => {
+    if (debugMode) return;
+
+    const fetchCoords = async () => {
+      let updated = false;
+      const newCoords = { ...resolvedCoords };
+
+      for (const reg of uniqueRegions) {
+        const cityNameOnly = reg.city.split(",")[0].trim();
+        const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
+
+        // Skip if already in database or cache
+        if (CITY_DB[key] || resolvedCoords[key]) {
+          continue;
+        }
+
+        try {
+          // Throttle requests to Nominatim API to respect 1 req/sec policy
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          const query = `${cityNameOnly}, ${reg.country}`;
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
+            {
+              headers: {
+                "User-Agent": "LanceConnect-Dashboard-Heatmap/1.0",
+              },
+            }
+          );
+          const data = await response.json();
+          if (data && data.length > 0) {
+            newCoords[key] = {
+              lat: parseFloat(data[0].lat),
+              lon: parseFloat(data[0].lon),
+            };
+            updated = true;
+          }
+        } catch (e) {
+          console.error(`Failed to geocode city: ${reg.city}`, e);
+        }
+      }
+
+      if (updated) {
+        setResolvedCoords(newCoords);
+        try {
+          localStorage.setItem("lanceconnect_geo_cache", JSON.stringify(newCoords));
+        } catch (e) {
+          console.error("Failed to save geo cache", e);
+        }
+      }
+    };
+
+    fetchCoords();
+  }, [uniqueRegions, resolvedCoords, debugMode]);
 
   return (
     <div
@@ -192,12 +344,12 @@ export function GlobalHeatmap({
           })
         ) : (
           uniqueRegions.map((reg, index) => {
-            // Clean up state/country suffixes in city name (e.g., "Los Angeles, CA" -> "losangeles")
             const cityNameOnly = reg.city.split(",")[0].trim();
             const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
             
             let coords;
-            const dbItem = CITY_DB[key];
+            // Check static database first, then local storage cache
+            const dbItem = CITY_DB[key] || resolvedCoords[key];
             if (dbItem) {
               coords = convertLatLngToPercent(dbItem.lat, dbItem.lon);
             } else {
@@ -297,4 +449,3 @@ function MapNode({
     </div>
   );
 }
-
