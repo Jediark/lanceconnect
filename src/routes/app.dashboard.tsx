@@ -227,6 +227,13 @@ function Dashboard() {
   const heatmapRegions = [
     ...(user?.city && user?.country ? [{ city: user.city, country: user.country }] : []),
     ...pipeline.map((l) => ({ city: l.city, country: l.country })),
+    // Geographic test cases for mapping validation
+    { city: "Los Angeles", country: "United States" },
+    { city: "Seattle", country: "United States" },
+    { city: "New York", country: "United States" },
+    { city: "London", country: "United Kingdom" },
+    { city: "Tokyo", country: "Japan" },
+    { city: "Sydney", country: "Australia" },
   ];
 
   const [activeFilter, setActiveFilter] = useState<"all" | "saved" | "contacted" | "won">("all");
