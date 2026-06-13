@@ -653,7 +653,7 @@ export function GlobalHeatmap({
                       {/* Small Directional Pointer Arrow */}
                       <div
                         className={cn(
-                          "absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-950 border-slate-700/60 rotate-45",
+                          "absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-950 border-slate-700 rotate-45",
                           showBelow
                             ? "top-[-6px] border-l border-t"
                             : "bottom-[-6px] border-r border-b",

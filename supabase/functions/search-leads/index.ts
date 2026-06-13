@@ -252,11 +252,12 @@ Deno.serve(async (req) => {
     // 2. Enforce plan-based search limits strictly (Free: 10, Grow: 100, Scale: 250)
     const plan = profile?.plan || "free";
     let maxSearches = 10;
-    if (plan === "grow") {
+    if (plan === "grow" || plan === "individual" || plan === "starter") {
       maxSearches = 100;
-    } else if (plan === "scale" || plan === "agency" || plan === "pro") {
+    } else if (plan === "scale" || plan === "company" || plan === "agency" || plan === "pro") {
       maxSearches = 250;
     }
+
 
     const startOfMonth = new Date();
     startOfMonth.setDate(1);

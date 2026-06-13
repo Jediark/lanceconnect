@@ -1343,10 +1343,10 @@ function LeadDetailModal({
               <div className={cn(
                 "rounded-xl border p-4 flex items-start gap-3 text-sm",
                 currentLead.claimStatus === 'won'
-                  ? "bg-purple-500/10 border-purple-500/20 text-purple-200"
+                  ? "bg-[#241238] border-purple-500/40 text-purple-200"
                   : currentLead.claimUserId === user?.id
-                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-200"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-200"
+                    ? "bg-[#0e2c20] border-emerald-500/40 text-emerald-200"
+                    : "bg-[#2c1a0e] border-amber-500/40 text-amber-200"
               )}>
                 <Shield className="h-5 w-5 shrink-0 mt-0.5 text-current" />
                 <div>
@@ -1529,7 +1529,7 @@ function LeadDetailModal({
                 {reasons.map((r) => (
                   <li
                     key={r.label}
-                    className="flex items-center justify-between rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-emerald-400"
+                    className="flex items-center justify-between rounded-md bg-[#0a2e1d] border border-emerald-850 px-3 py-1.5 text-emerald-450"
                   >
                     <span className="inline-flex items-center gap-2">
                       <Check className="h-4 w-4" /> {r.label}
@@ -1567,7 +1567,7 @@ function LeadDetailModal({
                     return (
                       <div
                         key={index}
-                        className="rounded-xl border border-amber-500/15 bg-amber-500/5 p-3 text-xs"
+                        className="rounded-xl border border-amber-800/40 bg-[#251a0c] p-3 text-xs"
                       >
                         <div className="flex items-center gap-1.5 font-semibold text-amber-500 mb-1">
                           <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
@@ -1736,7 +1736,7 @@ function LeadDetailModal({
               <button
                 type="button"
                 onClick={() => setLeadReportModalOpen(true)}
-                className="rounded-lg border border-red-500/30 text-red-500 bg-red-500/5 px-4 py-2.5 text-sm font-semibold hover:bg-red-500/10 cursor-pointer"
+                className="rounded-lg border border-red-900/50 text-red-400 bg-[#240c0c] px-4 py-2.5 text-sm font-semibold hover:bg-[#351414] cursor-pointer"
               >
                 Report ⚑
               </button>
@@ -1759,7 +1759,7 @@ function LeadDetailModal({
             ) : seoData ? (
               <>
                 {/* Outreach Hook Section */}
-                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2.5">
+                <div className="rounded-xl border border-blue-900/40 bg-[#0c1c3e] p-4 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-semibold uppercase tracking-wide text-primary flex items-center gap-1.5">
                       <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> Outreach SEO
@@ -1783,9 +1783,9 @@ function LeadDetailModal({
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Target Local Keywords
                   </p>
-                  <div className="rounded-xl border border-border bg-background/50 overflow-hidden">
+                  <div className="rounded-xl border border-slate-800 bg-slate-950 overflow-hidden">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-muted/30 text-slate-400 uppercase tracking-wide text-[10px] border-b border-border">
+                      <thead className="bg-slate-900 text-slate-400 uppercase tracking-wide text-[10px] border-b border-slate-800">
                         <tr>
                           <th className="px-4 py-2.5">Keyword</th>
                           <th className="px-4 py-2.5 text-center">Volume</th>

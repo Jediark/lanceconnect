@@ -181,7 +181,7 @@ export function OutreachPreview({
 
   // Phone Script & Fallback Style
   return (
-    <div className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-amber-500/5 dark:bg-slate-950 p-4 font-mono text-left shadow-inner flex flex-col gap-2">
+    <div className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-[#241d0f] dark:bg-slate-950 p-4 font-mono text-left shadow-inner flex flex-col gap-2">
       <div className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest border-b border-amber-500/20 pb-2 mb-1">
         📞 Spoken Phone Script / Notes
       </div>

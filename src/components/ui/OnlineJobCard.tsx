@@ -84,7 +84,7 @@ export function OnlineJobCard({ job }: { job: UnifiedJob }) {
   };
 
   return (
-    <div className="group relative flex w-full flex-col rounded-2xl border border-border/90 bg-card p-5 text-left transition-all duration-300 hover:border-primary/50 hover:bg-card/80">
+    <div className="group relative flex w-full flex-col rounded-2xl border border-border/90 bg-card p-5 text-left transition-all duration-300 hover:border-primary/50 hover:bg-muted">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-display text-lg font-semibold leading-tight group-hover:text-primary transition-colors truncate">

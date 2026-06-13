@@ -1574,7 +1574,7 @@ function Dashboard() {
                     {getScoreReasons(detail).map((r) => (
                       <div
                         key={r.label}
-                        className="flex items-center justify-between rounded-xl bg-emerald-500/8 border border-emerald-500/15 px-3 py-2 text-xs text-emerald-400"
+                        className="flex items-center justify-between rounded-xl bg-[#0a2e1d] border border-emerald-800 px-3 py-2 text-xs text-emerald-400"
                       >
                         <span className="flex items-center gap-1.5">
                           <Check className="h-3 w-3" />
@@ -1620,7 +1620,7 @@ function Dashboard() {
                       return (
                         <div
                           key={index}
-                          className="rounded-xl border border-amber-500/15 bg-amber-500/5 p-3 text-xs"
+                          className="rounded-xl border border-amber-800/40 bg-[#251a0c] p-3 text-xs"
                         >
                           <div className="flex items-center gap-1.5 font-semibold text-amber-500 mb-1">
                             <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
@@ -1764,7 +1764,7 @@ function Dashboard() {
               <button
                 type="button"
                 onClick={() => setLeadReportModalOpen(true)}
-                className="rounded-xl border border-red-500/30 text-red-500 bg-red-500/5 px-4 py-2.5 text-sm font-semibold hover:bg-red-500/10 cursor-pointer"
+                className="rounded-xl border border-red-900/50 text-red-400 bg-[#240c0c] px-4 py-2.5 text-sm font-semibold hover:bg-[#351414] cursor-pointer"
               >
                 Report ⚑
               </button>
@@ -1773,7 +1773,7 @@ function Dashboard() {
 
           {/* Safety Reminder Modal */}
           {safetyReminderOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85">
               <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
                 <div className="flex items-center gap-2 text-amber-500 mb-4">
                   <Shield className="h-6 w-6" />
@@ -1830,7 +1830,7 @@ function Dashboard() {
 
           {/* Lead Report Modal */}
           {leadReportModalOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85">
               <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
                 <button
                   onClick={() => setLeadReportModalOpen(false)}

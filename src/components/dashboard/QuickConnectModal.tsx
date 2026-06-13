@@ -83,6 +83,22 @@ export function QuickConnectModal({
   const { saveLead, updateStatus, pipeline } = usePipeline();
   const { user } = useAuth();
 
+  const buildObservation = (ld: Lead): string => {
+    if (!ld.hasWebsite) {
+      return `I noticed ${ld.businessName} doesn't currently have a website linked to your listing`;
+    }
+    if (!ld.instagramUrl && !ld.facebookUrl) {
+      return `I noticed ${ld.businessName} doesn't have a social media presence yet`;
+    }
+    if (ld.googleReviewCount < 10) {
+      return `I noticed ${ld.businessName} only has ${ld.googleReviewCount} Google reviews so far`;
+    }
+    if (ld.googleRating && ld.googleRating < 3.5) {
+      return `I noticed ${ld.businessName} has some room to improve its online reputation`;
+    }
+    return `I came across ${ld.businessName} on Google Maps`;
+  };
+
   const generateDefaultMessage = (chan: "email" | "linkedin" | "whatsapp", targetLead: Lead) => {
     const role = (() => {
       switch (user?.freelancerCategory) {
@@ -97,105 +113,71 @@ export function QuickConnectModal({
       }
     })();
 
-    const specialties = (() => {
+    const valueProp = (() => {
       switch (user?.freelancerCategory) {
         case "web_dev":
-          return [
-            "Building fast, mobile-responsive custom websites",
-            "Improving web layout UX to convert visitors into clients"
-          ];
+          return `I build fast, mobile-friendly websites that help local customers find your menu or services and contact you directly.`;
         case "seo":
-          return [
-            "Optimizing Google My Business profiles to rank higher in local search",
-            "Conducting keyword analysis to drive high-intent organic traffic"
-          ];
+          return `I help local businesses rank higher on Google search so you get more organic calls and visits from nearby customers.`;
         case "designer":
-          return [
-            "Crafting premium brand identities and modern logos",
-            "Designing engaging marketing materials and social graphics"
-          ];
+          return `I design modern logos, branding materials, and social graphics that make local businesses stand out and attract customers.`;
         case "social_media":
-          return [
-            "Creating high-impact organic content strategies",
-            "Managing communities and growing local audience engagement"
-          ];
+          return `I create simple, engaging social media posts and manage pages to help you build a loyal local following.`;
         case "marketing":
-          return [
-            "Setting up high-conversion paid ads and sales funnels",
-            "Running email outreach and newsletter campaigns"
-          ];
+          return `I run simple local advertising campaigns and setup customer newsletters to help you bring in consistent business.`;
         case "training_recruitment":
-          return [
-            "Sourcing, vetting, and matching top-tier talent for teams",
-            "Designing structured onboarding and employee training programs"
-          ];
+          return `I help growing companies source, screen, and hire qualified staff quickly to save you time.`;
         case "human_capital":
-          return [
-            "Optimizing HR workflows, policies, and structures",
-            "Building retention plans and organizational development tools"
-          ];
+          return `I help companies optimize their team structure, HR policies, and employee training to improve retention.`;
         default:
-          return [
-            "Optimizing online marketing channels to increase visibility",
-            "Improving local customer acquisition strategies"
-          ];
+          return `I help local businesses improve their online visibility and attract more local clients.`;
       }
     })();
 
-    const userName = user?.fullName || "a Digital Growth Specialist";
+    const senderName = user?.fullName || "Freelancer";
+    const firstName = senderName.split(" ")[0];
+    const firstWordOfBusiness = targetLead.businessName.split(" ")[0];
+    const observation = buildObservation(targetLead);
 
     if (chan === "whatsapp") {
-      return `Hi ${targetLead.businessName} team! 👋
+      return `Hi ${firstWordOfBusiness}! 👋
 
-My name is ${userName}, and I'm a local ${role}. I recently came across ${targetLead.businessName} and wanted to reach out. I help businesses like yours grow their digital presence and attract more customers.
+My name is ${senderName}, and I'm a local ${role}. ${observation}.
 
-I specialize in:
-• ${specialties[0]}
-• ${specialties[1]}
+${valueProp} I usually get these set up within two weeks.
 
-I've put together a few quick, free recommendations for your business. Are you the right person to speak with about this, or is there someone else I should connect with?
+Would it be worth a quick 10-minute call to see if this makes sense for you?
 
-Best,
-${userName}`;
+— ${firstName}`;
     }
 
     if (chan === "linkedin") {
-      return `Hi ${targetLead.businessName} team,
-
-My name is ${userName}, and I'm a ${role}. I came across your profile and love the work you are doing at ${targetLead.businessName}.
-
-I specialize in helping businesses in your space with:
-- ${specialties[0]}
-- ${specialties[1]}
-
-I'd love to connect to share a few free growth ideas I put together for you. Let me know if you are open to a quick chat.
-
-Best regards,
-${userName}`;
+      const shortObs = observation.charAt(0).toLowerCase() + observation.slice(1);
+      return `Hi ${firstWordOfBusiness}, I came across ${targetLead.businessName} while looking at businesses in ${targetLead.city}. I'm a local ${role} and ${shortObs}. Let's connect!`;
     }
 
     // Email template
     return `Hi ${targetLead.businessName} team,
 
-My name is ${userName}, and I am a local ${role}. I recently came across ${targetLead.businessName} and wanted to reach out to introduce myself.
+I came across ${targetLead.businessName} on Google Maps while looking at businesses in ${targetLead.city}. ${observation}.
 
-I help companies optimize their online footprint and acquire new customers. Specifically, I specialize in:
-1. ${specialties[0]}
-2. ${specialties[1]}
+${valueProp} Most of my clients see more traffic and inquiries within the first few weeks of working together.
 
-I put together a brief, free evaluation of your current digital presence with 3 quick recommendations that you can implement right away to improve visibility.
-
-Are you the right person to speak with regarding this, or is there a better person I should contact? I'd be happy to forward the recommendations over.
+Would it be okay if I put together a quick mockup of what your site or listing could look like? No cost, just want to show you what's possible.
 
 Best regards,
 
-${userName}
+${senderName}
+${role}
 ${user?.email ? `Email: ${user.email}` : ""}
 ${user?.contactPhone ? `Phone: ${user.contactPhone}` : ""}`;
   };
 
   const generateDefaultSubject = (targetLead: Lead) => {
-    return `Collaboration inquiry for ${targetLead.businessName}`;
+    if (!targetLead.hasWebsite) {
+      return `Quick question about ${targetLead.businessName}'s website`;
+    }
+    return `Found something on Google Maps — ${targetLead.businessName}`;
   };
 
   const handleEnrich = async () => {
