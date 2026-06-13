@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Logo, LanceConnectLogo } from "@/components/Logo";
+import { AssistantChatWidget } from "@/components/layout/AssistantChatWidget";
 import {
   Menu,
   X,
@@ -605,17 +606,6 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
   // Scroll to top states
   const [showScroll, setShowScroll] = useState(false);
 
-  // Live Chat states
-  const [chatOpen, setChatOpen] = useState(false);
-  const [messages, setMessages] = useState<Array<{ sender: "user" | "support"; text: string }>>([
-    {
-      sender: "support",
-      text: "Hi there! 👋 I'm Lucas from support. Ask me anything about LanceConnect!",
-    },
-  ]);
-  const [userMsg, setUserMsg] = useState("");
-  const [typing, setTyping] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Listen to CMD+K triggers
   useEffect(() => {
@@ -651,127 +641,8 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Scroll chat messages box to bottom on update
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, typing]);
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleSendChat = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!userMsg.trim()) return;
-
-    const currentMsg = userMsg;
-    setMessages((prev) => [...prev, { sender: "user", text: currentMsg }]);
-    setUserMsg("");
-
-    setTyping(true);
-    setTimeout(() => {
-      setTyping(false);
-      let reply =
-        "Thanks for checking in! To get 10 free leads immediately with verified phone/email lines, you can create a free account right now. What skills are you planning to showcase?";
-      
-      const msgLower = currentMsg.toLowerCase();
-      
-      if (
-        msgLower.includes("hello") ||
-        msgLower.includes("hi") ||
-        msgLower.includes("hey") ||
-        msgLower.includes("greetings") ||
-        msgLower.includes("yo")
-      ) {
-        reply =
-          "Hello! 👋 I'm Lucas from support. I'm here to help you navigate LanceConnect or answer any questions. What are you looking to find today?";
-      } else if (
-        msgLower.includes("price") ||
-        msgLower.includes("pricing") ||
-        msgLower.includes("cost") ||
-        msgLower.includes("pay") ||
-        msgLower.includes("subscription") ||
-        msgLower.includes("fee")
-      ) {
-        reply =
-          "Our plans start at $0/mo (Free tier with 10 free leads!), with our Individual plan at just $5/mo (unlimited searches & leads), and the Large Company plan at $20/mo. All plans cover verified global lead lines with zero commissions!";
-      } else if (
-        msgLower.includes("how") ||
-        msgLower.includes("work") ||
-        msgLower.includes("use") ||
-        msgLower.includes("find") ||
-        msgLower.includes("get leads") ||
-        msgLower.includes("features")
-      ) {
-        reply =
-          "LanceConnect scans the web for businesses lacking active websites, having low Google ratings, or missing social media links. We grade their opportunity score and deliver verified phone numbers and email contacts directly to your dashboard. You can search by city and skill category, save them to your pipeline, and reach out via email or WhatsApp.";
-      } else if (
-        msgLower.includes("free") ||
-        msgLower.includes("trial") ||
-        msgLower.includes("credit")
-      ) {
-        reply =
-          "Yes, absolutely! You get 10 free leads immediately upon signing up. No credit card is required. You can try the dashboard search and discover pages with these free credits.";
-      } else if (
-        msgLower.includes("country") ||
-        msgLower.includes("countries") ||
-        msgLower.includes("city") ||
-        msgLower.includes("cities") ||
-        msgLower.includes("location") ||
-        msgLower.includes("nigeria") ||
-        msgLower.includes("lagos") ||
-        msgLower.includes("london") ||
-        msgLower.includes("dubai") ||
-        msgLower.includes("abuja") ||
-        msgLower.includes("state")
-      ) {
-        reply =
-          "We cover over 150+ countries worldwide, including the US, UK, Canada, Nigeria, UAE, and more. You can drill down to specific cities like Lagos, Abuja, London, or New York, or browse by continent from our global directory (/find-clients).";
-      } else if (
-        msgLower.includes("verify") ||
-        msgLower.includes("verified") ||
-        msgLower.includes("real") ||
-        msgLower.includes("fake") ||
-        msgLower.includes("accuracy")
-      ) {
-        reply =
-          "Every lead is checked for active contact links. We verify phone numbers and email addresses to ensure they are active. We also display a live Opportunity Score so you can prioritize outreach to high-conversion clients.";
-      } else if (
-        msgLower.includes("freelancer") ||
-        msgLower.includes("list") ||
-        msgLower.includes("directory") ||
-        msgLower.includes("profile") ||
-        msgLower.includes("register") ||
-        msgLower.includes("get listed")
-      ) {
-        reply =
-          "If you are a freelancer, you can list your profile in our public directory for free! Just sign up, go to your profile settings, fill in your services, hourly rate, and portfolio links, and turn on the public listing toggle. Clients will then be able to contact you directly off-platform.";
-      } else if (
-        msgLower.includes("whatsapp") ||
-        msgLower.includes("email") ||
-        msgLower.includes("outreach") ||
-        msgLower.includes("message") ||
-        msgLower.includes("contact client") ||
-        msgLower.includes("send")
-      ) {
-        reply =
-          "In the dashboard and discovery screens, you can click on the WhatsApp or Mail icons to open chat templates instantly. You can choose to customize your message templates under the 'Templates' tab.";
-      } else if (
-        msgLower.includes("contact") ||
-        msgLower.includes("support") ||
-        msgLower.includes("help") ||
-        msgLower.includes("issue") ||
-        msgLower.includes("error") ||
-        msgLower.includes("bug")
-      ) {
-        reply =
-          "You're chatting with Lucas from support! If you need further assistance, you can also reach us via the Contact page or email support@lanceconnect.com. How can I help you today?";
-      }
-      
-      setMessages((prev) => [...prev, { sender: "support", text: reply }]);
-    }, 1200);
   };
 
   return (
@@ -783,7 +654,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
       <MarketingFooter />
 
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-40 select-none">
+      <div className="fixed bottom-24 right-8 flex flex-col items-end gap-3 z-40 select-none">
         {/* Scroll-To-Top Arrow */}
         {showScroll && (
           <button
@@ -794,89 +665,9 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
             <ArrowUp className="h-5 w-5" />
           </button>
         )}
-
-        {/* Live Chat Bubble Toggle */}
-        <button
-          onClick={() => setChatOpen(!chatOpen)}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-2xl hover:bg-primary/95 transition cursor-pointer relative"
-          aria-label="Chat support"
-        >
-          <MessageSquare className="h-5 w-5" />
-          <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-background animate-pulse" />
-        </button>
       </div>
 
-      {/* Mini Chat Drawer */}
-      {chatOpen && (
-        <div className="fixed bottom-20 right-6 w-80 max-w-[calc(100vw-32px)] h-96 border border-slate-700 bg-[#0F172A] rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 animate-in slide-in-from-bottom-5 duration-200">
-          <div className="bg-[#0F172A] p-3.5 border-b border-slate-700 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <p className="text-xs font-bold text-white">Lucas · Support Ops 🌍</p>
-            </div>
-            <button
-              onClick={() => setChatOpen(false)}
-              className="text-slate-500 hover:text-slate-300 text-xs"
-            >
-              Close
-            </button>
-          </div>
-
-          <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-3 scrollbar-thin">
-            {messages.map((m, idx) => (
-              <div
-                key={idx}
-                className={`flex flex-col max-w-[80%] rounded-2xl p-3 text-xs leading-normal ${
-                  m.sender === "support"
-                    ? "bg-[#1E293B] border border-slate-700 text-slate-300 self-start"
-                    : "bg-primary text-white self-end ml-auto"
-                }`}
-              >
-                {m.text}
-              </div>
-            ))}
-            {typing && (
-              <div className="bg-[#1E293B] border border-slate-700 text-slate-500 self-start max-w-[80%] rounded-2xl p-3 text-xs flex gap-1 items-center">
-                <span
-                  className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce"
-                  style={{ animationDelay: "0ms" }}
-                />
-                <span
-                  className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce"
-                  style={{ animationDelay: "150ms" }}
-                />
-                <span
-                  className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce"
-                  style={{ animationDelay: "300ms" }}
-                />
-              </div>
-            )}
-          </div>
-
-          <form
-            onSubmit={handleSendChat}
-            className="p-3 border-t border-slate-700 bg-[#0F172A] flex gap-2"
-          >
-            <input
-              type="text"
-              placeholder="Write a message..."
-              value={userMsg}
-              onChange={(e) => setUserMsg(e.target.value)}
-              className="flex-1 bg-[#1E293B] border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-[#F8FAFC] caret-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition"
-              style={{ fontSize: "16px" }}
-            />
-            <button
-              type="submit"
-              className="bg-primary hover:bg-primary/90 text-white rounded-lg p-1.5 shrink-0 transition flex items-center justify-center"
-            >
-              <Send className="h-3.5 w-3.5" />
-            </button>
-          </form>
-        </div>
-      )}
+      <AssistantChatWidget />
 
       {/* CMD+K Command Palette Modal */}
       {cmdOpen && (

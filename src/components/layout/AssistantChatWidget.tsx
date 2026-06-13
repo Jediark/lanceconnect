@@ -191,7 +191,7 @@ export function AssistantChatWidget() {
                   >
                     {msg.sender === "assistant" && (
                       <div className="h-6 w-6 rounded-full bg-[#101B30] border border-slate-700 flex items-center justify-center flex-shrink-0">
-                        <Bot className="h-3.5 w-3.5 text-[#2D6CFF]" />
+                        <LCWaveLogo size={18} />
                       </div>
                     )}
                     <div
@@ -266,7 +266,7 @@ function TypingIndicator() {
   return (
     <div className="flex items-end gap-2.5 max-w-[85%] mr-auto">
       <div className="h-6 w-6 rounded-full bg-[#101B30] border border-slate-700 flex items-center justify-center flex-shrink-0">
-        <Bot className="h-3.5 w-3.5 text-[#2D6CFF]" />
+        <LCWaveLogo size={18} />
       </div>
       <div className="bg-[#101B30] border border-slate-800/50 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex gap-1 items-center">
         <span className="h-1.5 w-1.5 rounded-full bg-[#2D6CFF] animate-bounce" style={{ animationDelay: "0ms" }} />
