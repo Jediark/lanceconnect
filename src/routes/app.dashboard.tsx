@@ -103,7 +103,9 @@ function Dashboard() {
       // Handle successful donation redirect from Stripe/Paystack
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("donation") === "success") {
-        toast.success("Thank you for your generous donation! 🎉 Your support keeps LanceConnect free and unlimited for everyone.");
+        toast.success(
+          "Thank you for your generous donation! 🎉 Your support keeps LanceConnect free and unlimited for everyone.",
+        );
         window.history.replaceState({}, document.title, window.location.pathname);
       }
 
@@ -203,7 +205,9 @@ function Dashboard() {
 
   const [quickConnectOpen, setQuickConnectOpen] = useState(false);
   const [quickConnectLead, setQuickConnectLead] = useState<Lead | undefined>();
-  const [quickConnectChannel, setQuickConnectChannel] = useState<"email" | "linkedin" | "whatsapp">("email");
+  const [quickConnectChannel, setQuickConnectChannel] = useState<"email" | "linkedin" | "whatsapp">(
+    "email",
+  );
   const [quickConnectMessage, setQuickConnectMessage] = useState("");
   const [leadsChartData, setLeadsChartData] = useState<{ name: string; leads: number }[]>([]);
 
@@ -219,22 +223,169 @@ function Dashboard() {
   const funnelData = [
     { name: "New", value: pipeline.filter((l) => l.status === "new").length, color: "#7C3AED" },
     { name: "Contacted", value: contactedCount, color: "#F59E0B" },
-    { name: "Interested", value: pipeline.filter((l) => l.status === "interested").length, color: "#3B82F6" },
-    { name: "Proposal", value: pipeline.filter((l) => l.status === "proposal_sent").length, color: "#EC4899" },
+    {
+      name: "Interested",
+      value: pipeline.filter((l) => l.status === "interested").length,
+      color: "#3B82F6",
+    },
+    {
+      name: "Proposal",
+      value: pipeline.filter((l) => l.status === "proposal_sent").length,
+      color: "#EC4899",
+    },
     { name: "Won", value: wonCount, color: "#10B981" },
   ];
 
-  const heatmapRegions = [
-    ...(user?.city && user?.country ? [{ city: user.city, country: user.country }] : []),
-    ...pipeline.map((l) => ({ city: l.city, country: l.country })),
-    // Geographic test cases for mapping validation
-    { city: "Los Angeles", country: "United States" },
-    { city: "Seattle", country: "United States" },
-    { city: "New York", country: "United States" },
-    { city: "London", country: "United Kingdom" },
-    { city: "Tokyo", country: "Japan" },
-    { city: "Sydney", country: "Australia" },
-  ];
+  const heatmapRegions = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = new Map<string, any>();
+
+    // 1. Add user's home region if available
+    if (user?.city && user?.country) {
+      const key = `${user.city.toLowerCase()}-${user.country.toLowerCase()}`;
+      map.set(key, {
+        city: user.city,
+        country: user.country,
+        savedLeads: pipeline.filter((l) => l.city.toLowerCase() === user.city!.toLowerCase())
+          .length,
+        activeSearches: 3,
+        topCategory: user.freelancerCategory || "web_dev",
+        status: "active",
+      });
+    }
+
+    // 2. Add pipeline regions
+    pipeline.forEach((l) => {
+      if (!l.city || !l.country) return;
+      const key = `${l.city.toLowerCase()}-${l.country.toLowerCase()}`;
+
+      const existing = map.get(key);
+      const isContacted = ["contacted", "interested", "proposal_sent"].includes(l.status || "");
+      const isWon = l.status === "won";
+
+      if (existing) {
+        existing.savedLeads += 1;
+        if (isContacted && existing.status !== "won") {
+          existing.status = "contacted";
+        } else if (isWon) {
+          existing.status = "saved";
+        }
+      } else {
+        map.set(key, {
+          city: l.city,
+          country: l.country,
+          savedLeads: 1,
+          activeSearches: 1,
+          topCategory: l.industry || "web_dev",
+          status: isContacted ? "contacted" : "saved",
+        });
+      }
+    });
+
+    // 3. Add geographic test cases for mapping validation
+    const testCases = [
+      {
+        city: "Los Angeles",
+        country: "United States",
+        lat: 34.0522,
+        lng: -118.2437,
+        savedLeads: 5,
+        activeSearches: 2,
+        topCategory: "designer",
+        status: "saved",
+      },
+      {
+        city: "Seattle",
+        country: "United States",
+        lat: 47.6062,
+        lng: -122.3321,
+        savedLeads: 0,
+        activeSearches: 4,
+        topCategory: "web_dev",
+        status: "active",
+      },
+      {
+        city: "New York",
+        country: "United States",
+        lat: 40.7128,
+        lng: -74.006,
+        savedLeads: 12,
+        activeSearches: 1,
+        topCategory: "copywriter",
+        status: "contacted",
+      },
+      {
+        city: "London",
+        country: "United Kingdom",
+        lat: 51.5074,
+        lng: -0.1278,
+        savedLeads: 8,
+        activeSearches: 3,
+        topCategory: "seo",
+        status: "contacted",
+      },
+      {
+        city: "Tokyo",
+        country: "Japan",
+        lat: 35.6762,
+        lng: 139.6503,
+        savedLeads: 3,
+        activeSearches: 2,
+        topCategory: "app_dev",
+        status: "saved",
+      },
+      {
+        city: "Sydney",
+        country: "Australia",
+        lat: -33.8688,
+        lng: 151.2093,
+        savedLeads: 2,
+        activeSearches: 1,
+        topCategory: "marketing",
+        status: "active",
+      },
+    ];
+
+    testCases.forEach((tc) => {
+      const key = `${tc.city.toLowerCase()}-${tc.country.toLowerCase()}`;
+      if (!map.has(key)) {
+        map.set(key, tc);
+      }
+    });
+
+    // Resolve lat/lng from a local coordinates dictionary if not already present
+    const localCoords: Record<string, { lat: number; lon: number }> = {
+      lagos: { lat: 6.5244, lon: 3.3792 },
+      london: { lat: 51.5074, lon: -0.1278 },
+      newyork: { lat: 40.7128, lon: -74.006 },
+      losangeles: { lat: 34.0522, lon: -118.2437 },
+      calgary: { lat: 51.0447, lon: -114.0719 },
+      toronto: { lat: 43.6532, lon: -79.3832 },
+      berlin: { lat: 52.52, lon: 13.405 },
+      paris: { lat: 48.8566, lon: 2.3522 },
+      sydney: { lat: -33.8688, lon: 151.2093 },
+      tokyo: { lat: 35.6762, lon: 139.6503 },
+      mumbai: { lat: 19.076, lon: 72.8777 },
+      saopaulo: { lat: -23.5505, lon: -46.6333 },
+      johannesburg: { lat: -26.2041, lon: 28.0473 },
+      cairo: { lat: 30.0444, lon: 31.2357 },
+      dubai: { lat: 25.2048, lon: 55.2708 },
+      seattle: { lat: 47.6062, lon: -122.3321 },
+    };
+
+    const result = Array.from(map.values());
+    result.forEach((r) => {
+      if (!r.lat || !r.lng) {
+        const k = r.city.toLowerCase().replace(/[^a-z]/g, "");
+        if (localCoords[k]) {
+          r.lat = localCoords[k].lat;
+          r.lng = localCoords[k].lon;
+        }
+      }
+    });
+
+    return result;
+  }, [user, pipeline]);
 
   const [activeFilter, setActiveFilter] = useState<"all" | "saved" | "contacted" | "won">("all");
 
@@ -256,13 +407,16 @@ function Dashboard() {
     setLoading(true);
 
     // Prefill search parameters from user profile only if there is no session-saved search
-    const hasSavedSession = typeof window !== "undefined" && sessionStorage.getItem("lc_shared_has_session") === "true";
+    const hasSavedSession =
+      typeof window !== "undefined" && sessionStorage.getItem("lc_shared_has_session") === "true";
     if (!hasSavedSession) {
       if (user.freelancerCategory) setQuickCategory(user.freelancerCategory);
       const userCountry = user.country;
       if (userCountry) {
         const countryObj = COUNTRIES.find(
-          (c) => c.code.toLowerCase() === userCountry.toLowerCase() || c.name.toLowerCase() === userCountry.toLowerCase()
+          (c) =>
+            c.code.toLowerCase() === userCountry.toLowerCase() ||
+            c.name.toLowerCase() === userCountry.toLowerCase(),
         );
         if (countryObj) {
           setQuickCountry(countryObj.name);
@@ -442,9 +596,11 @@ function Dashboard() {
   }, [detail?.id]);
 
   const handleSearch = async (
-    e?: React.FormEvent | { category: string; country: string; city: string; product: string; niche: string }
+    e?:
+      | React.FormEvent
+      | { category: string; country: string; city: string; product: string; niche: string },
   ) => {
-    let isEvent = e && typeof (e as any).preventDefault === "function";
+    const isEvent = e && typeof (e as any).preventDefault === "function";
     if (isEvent) {
       (e as React.FormEvent).preventDefault();
     }
@@ -476,7 +632,7 @@ function Dashboard() {
       if (error) {
         let errMsg = error.message || "Failed to search leads";
         let errCode = "";
-        
+
         try {
           if (error.context) {
             const errJson = await error.context.json();
@@ -885,7 +1041,9 @@ function Dashboard() {
               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <Globe className="h-4 w-4 text-primary" /> Quick Directories
               </h3>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Browse leads by skill or city</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Browse leads by skill or city
+              </p>
             </div>
             <Link
               to="/find-clients"
@@ -896,7 +1054,9 @@ function Dashboard() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">By Skill</p>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                By Skill
+              </p>
               <div className="flex flex-wrap gap-1.5">
                 {[
                   { label: "Web Developers", to: "/find-clients/web-developer" },
@@ -916,7 +1076,9 @@ function Dashboard() {
               </div>
             </div>
             <div>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">By City</p>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                By City
+              </p>
               <div className="flex flex-wrap gap-1.5">
                 {[
                   { label: "Lagos", to: "/find-clients/lagos" },
@@ -951,7 +1113,33 @@ function Dashboard() {
         </div>
 
         {/* ═══ HEATMAP ROW ═══ */}
-        <GlobalHeatmap regions={heatmapRegions} className="h-[300px]" />
+        <GlobalHeatmap
+          regions={heatmapRegions}
+          className="h-[300px]"
+          onViewLeads={(city, country, category) => {
+            setQuickCity(city);
+            const countryObj = COUNTRIES.find(
+              (c) =>
+                c.name.toLowerCase() === country.toLowerCase() ||
+                c.code.toLowerCase() === country.toLowerCase(),
+            );
+            if (countryObj) {
+              setQuickCountry(countryObj.name);
+            } else {
+              setQuickCountry(country);
+            }
+            setQuickCategory(category);
+            handleSearch({ category, country, city, product: "", niche: "" });
+
+            // Scroll to discovered-businesses-list or results container
+            setTimeout(() => {
+              const resultsEl = document.querySelector(".lg\\:col-span-2");
+              if (resultsEl) {
+                resultsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }, 100);
+          }}
+        />
 
         {/* ═══ MAIN CONTENT: RESULTS + SIDEBAR ═══ */}
         <div className="grid gap-6 lg:grid-cols-3">
@@ -964,10 +1152,10 @@ function Dashboard() {
                     {activeFilter === "all"
                       ? "Discovered Businesses"
                       : activeFilter === "saved"
-                      ? "Saved Leads"
-                      : activeFilter === "contacted"
-                      ? "Contacted Leads"
-                      : "Won Leads"}
+                        ? "Saved Leads"
+                        : activeFilter === "contacted"
+                          ? "Contacted Leads"
+                          : "Won Leads"}
                   </span>
                   {activeFilter !== "all" && (
                     <button
@@ -1008,10 +1196,10 @@ function Dashboard() {
                   {activeFilter === "all"
                     ? "No results yet"
                     : activeFilter === "saved"
-                    ? "No saved leads yet"
-                    : activeFilter === "contacted"
-                    ? "No contacted leads yet"
-                    : "No won leads yet"}
+                      ? "No saved leads yet"
+                      : activeFilter === "contacted"
+                        ? "No contacted leads yet"
+                        : "No won leads yet"}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1 max-w-xs">
                   {activeFilter === "all"
@@ -1070,7 +1258,10 @@ function Dashboard() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-col sm:flex-row gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div
+                        className="flex flex-col sm:flex-row gap-2"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <button
                           onClick={() => {
                             setQuickConnectLead(lead);
@@ -1102,7 +1293,6 @@ function Dashboard() {
 
           {/* ── Right sidebar ── */}
           <div className="space-y-5">
-
             {/* Goal Tracker */}
             <GoalTracker current={contactedCount} target={user?.plan === "free" ? 10 : 50} />
 
@@ -1185,7 +1375,8 @@ function Dashboard() {
                 <span className="text-rose-500">☕</span> Keep us free — donate
               </h4>
               <p className="text-[11px] text-muted-foreground leading-normal mb-3">
-                LanceConnect has no paywalls or monthly subscription plans. We rely entirely on voluntary donations from successful freelancers to keep running.
+                LanceConnect has no paywalls or monthly subscription plans. We rely entirely on
+                voluntary donations from successful freelancers to keep running.
               </p>
               <Link
                 to="/support-us"
@@ -1302,10 +1493,7 @@ function Dashboard() {
                     <Mail className="h-4 w-4 shrink-0 text-muted-foreground/60" />
                     {detail.email ? (
                       safetyPopupDismissed ? (
-                        <a
-                          href={`mailto:${detail.email}`}
-                          className="text-primary hover:underline"
-                        >
+                        <a href={`mailto:${detail.email}`} className="text-primary hover:underline">
                           {detail.email}
                         </a>
                       ) : (
@@ -1409,19 +1597,25 @@ function Dashboard() {
                   </p>
                   <div className="space-y-2">
                     {detail.score_breakdown.gmb_gaps.map((gap: string, index: number) => {
-                      let pitchTip = "Highlight this gap as a quick-win optimization you can handle for them.";
+                      let pitchTip =
+                        "Highlight this gap as a quick-win optimization you can handle for them.";
                       if (gap.includes("photos")) {
-                        pitchTip = "Pitch a photographic styling session or stock collection package to increase GMB visibility.";
+                        pitchTip =
+                          "Pitch a photographic styling session or stock collection package to increase GMB visibility.";
                       } else if (gap.includes("description")) {
-                        pitchTip = "Suggest writing an SEO-optimized business biography to rank higher in local search.";
+                        pitchTip =
+                          "Suggest writing an SEO-optimized business biography to rank higher in local search.";
                       } else if (gap.includes("reviews")) {
-                        pitchTip = "Offer a review generation campaign to boost local reputation and rankings.";
+                        pitchTip =
+                          "Offer a review generation campaign to boost local reputation and rankings.";
                       } else if (gap.includes("website")) {
-                        pitchTip = "No website linked means lost traffic. Pitch a landing page or professional site design.";
+                        pitchTip =
+                          "No website linked means lost traffic. Pitch a landing page or professional site design.";
                       } else if (gap.includes("rating")) {
-                        pitchTip = "Low rating hurts trust. Pitch reputation management and automated feedback forms.";
+                        pitchTip =
+                          "Low rating hurts trust. Pitch reputation management and automated feedback forms.";
                       }
-                      
+
                       return (
                         <div
                           key={index}
@@ -1479,7 +1673,9 @@ function Dashboard() {
                         >
                           Copy
                         </button>
-                        {(selectedChannel === "whatsapp" || selectedChannel === "email" || selectedChannel === "linkedin") && (
+                        {(selectedChannel === "whatsapp" ||
+                          selectedChannel === "email" ||
+                          selectedChannel === "linkedin") && (
                           <button
                             onClick={() => {
                               setQuickConnectLead(detail);
@@ -1496,7 +1692,12 @@ function Dashboard() {
                                   : "bg-primary hover:brightness-110"
                             }`}
                           >
-                            Send via {selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "linkedin" ? "LinkedIn" : "Email"}
+                            Send via{" "}
+                            {selectedChannel === "whatsapp"
+                              ? "WhatsApp"
+                              : selectedChannel === "linkedin"
+                                ? "LinkedIn"
+                                : "Email"}
                           </button>
                         )}
                       </div>
@@ -1572,7 +1773,9 @@ function Dashboard() {
               <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
                 <div className="flex items-center gap-2 text-amber-500 mb-4">
                   <Shield className="h-6 w-6" />
-                  <h3 className="text-lg font-bold text-foreground">First-Contact Safety Guidelines</h3>
+                  <h3 className="text-lg font-bold text-foreground">
+                    First-Contact Safety Guidelines
+                  </h3>
                 </div>
                 <p className="text-xs text-muted-foreground mb-4">
                   Please review our safety checklists before reaching out to this contact:
@@ -1580,19 +1783,31 @@ function Dashboard() {
                 <ul className="space-y-2.5 text-xs text-slate-300 mb-6">
                   <li className="flex items-start gap-2">
                     <span className="text-amber-500 mt-0.5">⚠️</span>
-                    <span><strong>No Upfront Payments:</strong> Never pay fees to secure a job or project. Authentic clients will not charge you.</span>
+                    <span>
+                      <strong>No Upfront Payments:</strong> Never pay fees to secure a job or
+                      project. Authentic clients will not charge you.
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-500 mt-0.5">🔍</span>
-                    <span><strong>Verify Legitimacy:</strong> Check the business registry or official website before agreeing to terms.</span>
+                    <span>
+                      <strong>Verify Legitimacy:</strong> Check the business registry or official
+                      website before agreeing to terms.
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-500 mt-0.5">💳</span>
-                    <span><strong>Secure Transactions:</strong> Use verified payment channels or contract escrow systems to protect your earnings.</span>
+                    <span>
+                      <strong>Secure Transactions:</strong> Use verified payment channels or
+                      contract escrow systems to protect your earnings.
+                    </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-500 mt-0.5">💬</span>
-                    <span><strong>Watch for Scams:</strong> Be cautious if a client immediately redirects you to private communication apps to bypass platform logs.</span>
+                    <span>
+                      <strong>Watch for Scams:</strong> Be cautious if a client immediately
+                      redirects you to private communication apps to bypass platform logs.
+                    </span>
                   </li>
                 </ul>
                 <button
@@ -1624,7 +1839,8 @@ function Dashboard() {
                   <h3 className="text-lg font-bold text-foreground">Report Lead</h3>
                 </div>
                 <p className="text-xs text-muted-foreground mb-4">
-                  You are reporting the lead <strong>{detail.businessName}</strong>. Please provide details to help our moderation team review this business.
+                  You are reporting the lead <strong>{detail.businessName}</strong>. Please provide
+                  details to help our moderation team review this business.
                 </p>
                 <form onSubmit={handleSubmitLeadReport} className="space-y-4">
                   <div>
@@ -1687,10 +1903,14 @@ function Dashboard() {
         initialMessage={quickConnectMessage}
         onLeadUpdated={(updated) => {
           setResults((prev) =>
-            prev.map((l) => (l.id === updated.id ? { ...l, email: updated.email, notes: updated.notes } : l))
+            prev.map((l) =>
+              l.id === updated.id ? { ...l, email: updated.email, notes: updated.notes } : l,
+            ),
           );
           if (detail && detail.id === updated.id) {
-            setDetail((prev) => (prev ? { ...prev, email: updated.email, notes: updated.notes } : null));
+            setDetail((prev) =>
+              prev ? { ...prev, email: updated.email, notes: updated.notes } : null,
+            );
           }
         }}
       />

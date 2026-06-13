@@ -1,13 +1,19 @@
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { RefreshCw, MapPin, ChevronDown } from "lucide-react";
 
 export type RegionItem = {
   city: string;
   country: string;
+  lat?: number;
+  lng?: number; // (lon)
+  savedLeads?: number;
+  activeSearches?: number;
+  topCategory?: string;
+  status?: "active" | "saved" | "contacted";
 };
 
 const CITY_DB: Record<string, { lat: number; lon: number }> = {
-  // Original defaults
   lagos: { lat: 6.5244, lon: 3.3792 },
   london: { lat: 51.5074, lon: -0.1278 },
   newyork: { lat: 40.7128, lon: -74.006 },
@@ -23,181 +29,16 @@ const CITY_DB: Record<string, { lat: number; lon: number }> = {
   johannesburg: { lat: -26.2041, lon: 28.0473 },
   cairo: { lat: 30.0444, lon: 31.2357 },
   dubai: { lat: 25.2048, lon: 55.2708 },
-  innsbruck: { lat: 47.2692, lon: 11.4041 },
   seattle: { lat: 47.6062, lon: -122.3321 },
   accra: { lat: 5.6037, lon: -0.187 },
   houston: { lat: 29.7604, lon: -95.3698 },
   abuja: { lat: 9.0765, lon: 7.3986 },
   edinburgh: { lat: 55.9533, lon: -3.1883 },
-
-  // US States major cities
-  birmingham: { lat: 33.5186, lon: -86.8104 },
-  anchorage: { lat: 61.2181, lon: -149.9003 },
-  phoenix: { lat: 33.4484, lon: -112.0740 },
-  littlerock: { lat: 34.7465, lon: -92.2896 },
-  sanfrancisco: { lat: 37.7749, lon: -122.4194 },
-  denver: { lat: 39.7392, lon: -104.9903 },
-  hartford: { lat: 41.7637, lon: -72.6851 },
-  wilmington: { lat: 39.7447, lon: -75.5484 },
-  miami: { lat: 25.7617, lon: -80.1918 },
-  atlanta: { lat: 33.7490, lon: -84.3880 },
-  honolulu: { lat: 21.3069, lon: -157.8583 },
-  boise: { lat: 43.6150, lon: -116.2023 },
-  chicago: { lat: 41.8781, lon: -87.6298 },
-  indianapolis: { lat: 39.7684, lon: -86.1581 },
-  desmoines: { lat: 41.5868, lon: -93.6250 },
-  wichita: { lat: 37.6872, lon: -97.3301 },
-  louisville: { lat: 38.2527, lon: -85.7585 },
-  neworleans: { lat: 29.9511, lon: -90.0715 },
-  portland: { lat: 45.5152, lon: -122.6784 },
-  baltimore: { lat: 39.2904, lon: -76.6122 },
-  boston: { lat: 42.3601, lon: -71.0589 },
-  detroit: { lat: 42.3314, lon: -83.0458 },
-  minneapolis: { lat: 44.9778, lon: -93.2650 },
-  jackson: { lat: 32.2988, lon: -90.1848 },
-  kansascity: { lat: 39.0997, lon: -94.5786 },
-  billings: { lat: 45.7833, lon: -108.5007 },
-  omaha: { lat: 41.2565, lon: -95.9345 },
-  lasvegas: { lat: 36.1716, lon: -115.1398 },
-  manchester: { lat: 53.4808, lon: -2.2426 },
-  newark: { lat: 40.7357, lon: -74.1724 },
-  albuquerque: { lat: 35.0844, lon: -106.6511 },
-  charlotte: { lat: 35.2271, lon: -80.8431 },
-  fargo: { lat: 46.8772, lon: -96.7898 },
-  columbus: { lat: 39.9612, lon: -82.9988 },
-  oklahomacity: { lat: 35.4676, lon: -97.5164 },
-  philadelphia: { lat: 39.9526, lon: -75.1652 },
-  providence: { lat: 41.8240, lon: -71.4128 },
-  charleston: { lat: 32.7765, lon: -79.9311 },
-  siouxfalls: { lat: 43.5460, lon: -96.7313 },
-  nashville: { lat: 36.1627, lon: -86.7816 },
-  dallas: { lat: 32.7767, lon: -96.7970 },
-  saltlakecity: { lat: 40.7608, lon: -111.8910 },
-  burlington: { lat: 44.4756, lon: -73.2121 },
-  virginiabeach: { lat: 36.8529, lon: -75.9780 },
-  spokane: { lat: 47.6588, lon: -117.4260 },
-  milwaukee: { lat: 43.0389, lon: -87.9065 },
-  cheyenne: { lat: 41.1400, lon: -104.8203 },
-
-  // Global major hubs
-  nairobi: { lat: -1.2921, lon: 36.8219 },
-  capetown: { lat: -33.9249, lon: 18.4241 },
-  addisababa: { lat: 9.0300, lon: 38.7400 },
-  daressalaam: { lat: -6.7924, lon: 39.2083 },
-  kampala: { lat: 0.3476, lon: 32.5825 },
-  kigali: { lat: -1.9403, lon: 30.0619 },
-  dakar: { lat: 14.7167, lon: -17.4677 },
-  abidjan: { lat: 5.3600, lon: -4.0083 },
-  vancouver: { lat: 49.2827, lon: -123.1207 },
-  montreal: { lat: 45.5017, lon: -73.5673 },
-  riodejaneiro: { lat: -22.9068, lon: -43.1729 },
-  mexicocity: { lat: 19.4326, lon: -99.1332 },
-  bogota: { lat: 4.7110, lon: -74.0721 },
-  buenosaires: { lat: -34.6037, lon: -58.3816 },
-  lima: { lat: -12.0464, lon: -77.0428 },
-  delhi: { lat: 28.6139, lon: 77.2090 },
-  bangalore: { lat: 12.9716, lon: 77.5946 },
-  karachi: { lat: 24.8607, lon: 67.0011 },
-  dhaka: { lat: 23.8103, lon: 90.4125 },
-  manila: { lat: 14.5995, lon: 120.9842 },
-  jakarta: { lat: -6.2088, lon: 106.8456 },
-  kualalumpur: { lat: 3.1390, lon: 101.6869 },
-  seoul: { lat: 37.5665, lon: 126.9780 },
-  melbourne: { lat: -37.8136, lon: 144.9631 },
-  hamburg: { lat: 53.5511, lon: 9.9937 },
-  marseille: { lat: 43.2965, lon: 5.3698 },
-  madrid: { lat: 40.4168, lon: -3.7038 },
-  rome: { lat: 41.9028, lon: 12.4964 },
-  amsterdam: { lat: 52.3676, lon: 4.9041 },
-  lisbon: { lat: 38.7223, lon: -9.1393 },
-  dublin: { lat: 53.3498, lon: -6.2603 },
-  riyadh: { lat: 24.7136, lon: 46.6753 },
-  doha: { lat: 25.2854, lon: 51.5310 },
-};
-
-const COORDINATE_TESTS = [
-  {
-    city: 'Los Angeles',
-    lat: 34.0522,
-    lng: -118.2437,
-    expectedRegion: 'US west coast — left side of map, middle height',
-    expectedX: 'between 150-200px (left quarter of map)',
-    expectedY: 'between 140-170px (middle of map, slightly above center)'
-  },
-  {
-    city: 'Seattle',
-    lat: 47.6062,
-    lng: -122.3321,
-    expectedRegion: 'US Pacific Northwest — left of LA, above LA',
-    expectedX: 'between 150-175px (slightly left of LA)',
-    expectedY: 'between 110-130px (above LA on map)'
-  },
-  {
-    city: 'New York',
-    lat: 40.7128,
-    lng: -74.0060,
-    expectedRegion: 'US east coast — right of LA but still left half of map',
-    expectedX: 'between 290-320px (left-center of map)',
-    expectedY: 'between 135-150px (similar height to LA)'
-  },
-  {
-    city: 'London',
-    lat: 51.5074,
-    lng: -0.1278,
-    expectedRegion: 'Western Europe — just left of center',
-    expectedX: 'between 495-505px (near center, slightly left)',
-    expectedY: 'between 105-120px (upper portion of map)'
-  },
-  {
-    city: 'Tokyo',
-    lat: 35.6762,
-    lng: 139.6503,
-    expectedRegion: 'East Asia — right side of map',
-    expectedX: 'between 860-890px (right portion of map)',
-    expectedY: 'between 150-165px (middle height)'
-  },
-  {
-    city: 'Sydney',
-    lat: -33.8688,
-    lng: 151.2093,
-    expectedRegion: 'Southeast Australia — right side, lower half',
-    expectedX: 'between 864-920px (right portion of map)',
-    expectedY: 'between 340-360px (lower half of map)'
-  },
-];
-
-const verifyRelationships = (results: { city: string; x: number; y: number }[]) => {
-  const LA = results.find(r => r.city === 'Los Angeles')!;
-  const Seattle = results.find(r => r.city === 'Seattle')!;
-  const NewYork = results.find(r => r.city === 'New York')!;
-  const London = results.find(r => r.city === 'London')!;
-  const Tokyo = results.find(r => r.city === 'Tokyo')!;
-  const Sydney = results.find(r => r.city === 'Sydney')!;
-
-  console.assert(Seattle.x < NewYork.x, 'Seattle must be LEFT of New York');
-  console.assert(LA.x < NewYork.x, 'LA must be LEFT of New York');
-  console.assert(Seattle.y < LA.y, 'Seattle must be ABOVE LA (smaller Y)');
-  console.assert(NewYork.x < London.x, 'New York must be LEFT of London');
-  console.assert(London.x < Tokyo.x, 'London must be LEFT of Tokyo');
-  console.assert(Sydney.x > London.x, 'Sydney must be RIGHT of London');
-  console.assert(Sydney.y > Tokyo.y, 'Sydney must be BELOW Tokyo (larger Y)');
-  console.assert(LA.x < 300, 'LA must be in left half of map (negative longitude)');
-  console.assert(Tokyo.x > 700, 'Tokyo must be in right half of map (positive longitude)');
-
-  console.log('All coordinate relationship tests passed ✅');
-  
-  // Also print the computed pixels for verification
-  console.log('Computed coordinates for verification:');
-  results.forEach(r => {
-    console.log(`- ${r.city}: x = ${r.x.toFixed(1)}px, y = ${r.y.toFixed(1)}px`);
-  });
 };
 
 function convertLatLngToPercent(lat: number, lon: number) {
   // Longitudinal linear mapping for equirectangular projection
-  // Left side of map = -180 lon, Right side = 180 lon
   const left = ((lon + 180) / 360) * 100;
-  
   // Latitudinal linear mapping (higher latitude = closer to top of map)
   const top = ((90 - lat) / 180) * 100;
 
@@ -207,52 +48,122 @@ function convertLatLngToPercent(lat: number, lon: number) {
   };
 }
 
+const getCategoryLabel = (id: string) => {
+  const map: Record<string, string> = {
+    web_dev: "💻 Web Dev",
+    designer: "🎨 Design",
+    copywriter: "✍️ Copywriting",
+    seo: "📈 SEO",
+    social_media: "📱 Socials",
+    video: "🎥 Video",
+    photography: "📸 Photos",
+    marketing: "📣 Marketing",
+    app_dev: "📲 App Dev",
+    va: "🤝 Assistant",
+    tutor: "🎓 Tutor",
+    personal_trainer: "💪 Fitness",
+    landscaping: "🌿 Landscape",
+    hairstylist: "✂️ Hairstylist",
+    makeup_artist: "💄 Makeup",
+    voiceover: "🎙️ Voiceover",
+    accounting: "📊 Finance",
+    handyman: "🔧 Handyman",
+    wedding_planner: "💍 Wedding",
+    massage_therapist: "💆 Massage",
+    music_teacher: "🎵 Music",
+    pet_care: "🐾 Pet Care",
+    house_cleaning: "🧹 Cleaning",
+  };
+  return map[id] || id;
+};
+
 export function GlobalHeatmap({
   regions = [],
   className,
+  onViewLeads,
 }: {
   regions?: RegionItem[];
   className?: string;
+  onViewLeads?: (city: string, country: string, category: string) => void;
 }) {
-  const [debugMode, setDebugMode] = useState(false);
-  const [resolvedCoords, setResolvedCoords] = useState<Record<string, { lat: number; lon: number }>>({});
+  const [resolvedCoords, setResolvedCoords] = useState<
+    Record<string, { lat: number; lon: number }>
+  >({});
+  const [selectedRegion, setSelectedRegion] = useState<RegionItem | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [newCityKey, setNewCityKey] = useState<string | null>(null);
+  const prevRegionsRef = useRef<string[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Zoom & Pan states
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+
+  // Mobile Pinch states
+  const [touchStartDist, setTouchStartDist] = useState(0);
+  const [touchStartZoom, setTouchStartZoom] = useState(1);
+
+  // Legend / Filter state
+  const [visibleStatuses, setVisibleStatuses] = useState<Record<string, boolean>>({
+    active: true,
+    saved: true,
+    contacted: true,
+  });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setDebugMode(window.location.search.includes("debug=map"));
-      
-      // Load cache from localStorage
-      try {
-        const cached = localStorage.getItem("lanceconnect_geo_cache");
-        if (cached) {
-          setResolvedCoords(JSON.parse(cached));
-        }
-      } catch (e) {
-        console.error("Failed to load geo cache", e);
+    // Load cache from localStorage
+    try {
+      const cached = localStorage.getItem("lanceconnect_geo_cache");
+      if (cached) {
+        setResolvedCoords(JSON.parse(cached));
       }
-
-      // Run the relationship verification
-      const MAP_WIDTH = 1000;
-      const MAP_HEIGHT = 500;
-      const testResults = COORDINATE_TESTS.map(t => {
-        const x = ((t.lng + 180) / 360) * MAP_WIDTH;
-        const y = ((90 - t.lat) / 180) * MAP_HEIGHT;
-        return { city: t.city, x, y };
-      });
-      verifyRelationships(testResults);
+    } catch (e) {
+      console.error("Failed to load geo cache", e);
     }
   }, []);
 
   // Filter out invalid/empty entries and deduplicate
   const validRegions = regions.filter((r) => r.city && r.city.trim() !== "");
   const uniqueRegions = Array.from(
-    new Map(validRegions.map((item) => [`${item.city.toLowerCase()}-${item.country.toLowerCase()}`, item])).values()
+    new Map(
+      validRegions.map((item) => [
+        `${item.city.toLowerCase()}-${item.country.toLowerCase()}`,
+        item,
+      ]),
+    ).values(),
   );
+
+  // Animate new markers dropping in
+  useEffect(() => {
+    const prevKeys = prevRegionsRef.current;
+    const currentKeys = uniqueRegions.map(
+      (r) => `${r.city.toLowerCase()}-${r.country.toLowerCase()}`,
+    );
+
+    const added = currentKeys.find((k) => !prevKeys.includes(k));
+    if (added && prevKeys.length > 0) {
+      setNewCityKey(added);
+      setTimeout(() => setNewCityKey(null), 3000);
+    }
+    prevRegionsRef.current = currentKeys;
+  }, [uniqueRegions]);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   // Dynamic geocoding effect for unmapped cities
   useEffect(() => {
-    if (debugMode) return;
-
     const fetchCoords = async () => {
       let updated = false;
       const newCoords = { ...resolvedCoords };
@@ -261,14 +172,13 @@ export function GlobalHeatmap({
         const cityNameOnly = reg.city.split(",")[0].trim();
         const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
 
-        // Skip if already in database or cache
-        if (CITY_DB[key] || resolvedCoords[key]) {
+        // Skip if already in database or cache or has custom coords
+        if (CITY_DB[key] || resolvedCoords[key] || (reg.lat && reg.lng)) {
           continue;
         }
 
         try {
-          // Throttle requests to Nominatim API to respect 1 req/sec policy
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Rate limiting
 
           const query = `${cityNameOnly}, ${reg.country}`;
           const response = await fetch(
@@ -277,7 +187,7 @@ export function GlobalHeatmap({
               headers: {
                 "User-Agent": "LanceConnect-Dashboard-Heatmap/1.0",
               },
-            }
+            },
           );
           const data = await response.json();
           if (data && data.length > 0) {
@@ -303,149 +213,519 @@ export function GlobalHeatmap({
     };
 
     fetchCoords();
-  }, [uniqueRegions, resolvedCoords, debugMode]);
+  }, [uniqueRegions, resolvedCoords]);
+
+  // Scroll to Zoom wheel handler
+  useEffect(() => {
+    const container = document.getElementById("heatmap-viewport");
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault(); // Prevent full page scroll
+
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const zoomFactor = 1.15;
+      const nextZoom =
+        e.deltaY < 0 ? Math.min(6, zoom * zoomFactor) : Math.max(1, zoom / zoomFactor);
+
+      if (nextZoom === zoom) return;
+
+      const mapX = (mouseX - pan.x) / zoom;
+      const mapY = (mouseY - pan.y) / zoom;
+
+      const newPanX = mouseX - mapX * nextZoom;
+      const newPanY = mouseY - mapY * nextZoom;
+
+      const W = container.offsetWidth;
+      const H = container.offsetHeight;
+      const minX = W * (1 - nextZoom);
+      const maxX = 0;
+      const minY = H * (1 - nextZoom);
+      const maxY = 0;
+
+      setZoom(nextZoom);
+      setPan({
+        x: Math.max(minX, Math.min(maxX, newPanX)),
+        y: Math.max(minY, Math.min(maxY, newPanY)),
+      });
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+    };
+  }, [zoom, pan]);
+
+  // Mouse Pan handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Only left click
+
+    const target = e.target as HTMLElement;
+    if (
+      target.closest("button") ||
+      target.closest(".info-card") ||
+      target.closest(".region-dropdown")
+    ) {
+      return;
+    }
+
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setPanStart({ x: pan.x, y: pan.y });
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+
+    const container = document.getElementById("heatmap-viewport");
+    if (container) {
+      const W = container.offsetWidth;
+      const H = container.offsetHeight;
+
+      const minX = W * (1 - zoom);
+      const maxX = 0;
+      const minY = H * (1 - zoom);
+      const maxY = 0;
+
+      setPan({
+        x: Math.max(minX, Math.min(maxX, panStart.x + dx)),
+        y: Math.max(minY, Math.min(maxY, panStart.y + dy)),
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Mobile Touch Pan / Pinch Zoom handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.closest("button") ||
+      target.closest(".info-card") ||
+      target.closest(".region-dropdown")
+    ) {
+      return;
+    }
+
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+      setPanStart({ x: pan.x, y: pan.y });
+    } else if (e.touches.length === 2) {
+      setIsDragging(false);
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY,
+      );
+      setTouchStartDist(dist);
+      setTouchStartZoom(zoom);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 1 && isDragging) {
+      const dx = e.touches[0].clientX - dragStart.x;
+      const dy = e.touches[0].clientY - dragStart.y;
+
+      const container = document.getElementById("heatmap-viewport");
+      if (container) {
+        const W = container.offsetWidth;
+        const H = container.offsetHeight;
+        const minX = W * (1 - zoom);
+        const maxX = 0;
+        const minY = H * (1 - zoom);
+        const maxY = 0;
+
+        setPan({
+          x: Math.max(minX, Math.min(maxX, panStart.x + dx)),
+          y: Math.max(minY, Math.min(maxY, panStart.y + dy)),
+        });
+      }
+    } else if (e.touches.length === 2 && touchStartDist > 0) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY,
+      );
+      const scale = dist / touchStartDist;
+      const nextZoom = Math.max(1, Math.min(6, touchStartZoom * scale));
+
+      setZoom(nextZoom);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setTouchStartDist(0);
+  };
+
+  // Center/focus on a selected dropdown region
+  const focusRegion = (reg: RegionItem) => {
+    const container = document.getElementById("heatmap-viewport");
+    if (!container) return;
+
+    const W = container.offsetWidth;
+    const H = container.offsetHeight;
+
+    const cityNameOnly = reg.city.split(",")[0].trim();
+    const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
+
+    let leftPercent = 50;
+    let topPercent = 50;
+
+    if (reg.lat && reg.lng) {
+      leftPercent = ((reg.lng + 180) / 360) * 100;
+      topPercent = ((90 - reg.lat) / 180) * 100;
+    } else {
+      const dbItem = CITY_DB[key] || resolvedCoords[key];
+      if (dbItem) {
+        leftPercent = ((dbItem.lon + 180) / 360) * 100;
+        topPercent = ((90 - dbItem.lat) / 180) * 100;
+      } else {
+        let hash = 0;
+        for (let i = 0; i < reg.city.length; i++) {
+          hash = reg.city.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        topPercent = Math.abs(Math.sin(hash)) * 50 + 20;
+        leftPercent = Math.abs(Math.cos(hash)) * 70 + 15;
+      }
+    }
+
+    const px = (leftPercent / 100) * W;
+    const py = (topPercent / 100) * H;
+
+    const targetZoom = 2.5;
+    const targetPanX = W / 2 - px * targetZoom;
+    const targetPanY = H / 2 - py * targetZoom;
+
+    const minX = W * (1 - targetZoom);
+    const maxX = 0;
+    const minY = H * (1 - targetZoom);
+    const maxY = 0;
+
+    setZoom(targetZoom);
+    setPan({
+      x: Math.max(minX, Math.min(maxX, targetPanX)),
+      y: Math.max(minY, Math.min(maxY, targetPanY)),
+    });
+
+    setSelectedRegion(reg);
+    setDropdownOpen(false);
+  };
+
+  const toggleStatusFilter = (status: string) => {
+    setVisibleStatuses((prev) => ({
+      ...prev,
+      [status]: !prev[status],
+    }));
+  };
 
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-border bg-card group",
+        "relative overflow-hidden rounded-2xl border border-border bg-[#020b21] p-5 group flex flex-col justify-between select-none",
         className,
       )}
     >
-      <div className="absolute inset-0 bg-dot-pattern opacity-50 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+      <style>{`
+        @keyframes softPulseBlue {
+          0% { transform: scale(0.95); opacity: 0.85; box-shadow: 0 0 0 0 rgba(45, 108, 255, 0.6); }
+          70% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 0 8px rgba(45, 108, 255, 0); }
+          100% { transform: scale(0.95); opacity: 0.85; box-shadow: 0 0 0 0 rgba(45, 108, 255, 0); }
+        }
+        @keyframes softPulseGreen {
+          0% { transform: scale(0.95); opacity: 0.85; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+          70% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+          100% { transform: scale(0.95); opacity: 0.85; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        @keyframes softPulseAmber {
+          0% { transform: scale(0.95); opacity: 0.85; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
+          70% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+          100% { transform: scale(0.95); opacity: 0.85; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+        @keyframes markerBounce {
+          0% { transform: translateY(-40px) scale(0.4); opacity: 0; }
+          60% { transform: translateY(8px) scale(1.15); opacity: 1; }
+          80% { transform: translateY(-4px) scale(0.95); }
+          100% { transform: translateY(0) scale(1); }
+        }
+        .pulse-blue {
+          animation: softPulseBlue 2s infinite ease-in-out;
+        }
+        .pulse-green {
+          animation: softPulseGreen 2s infinite ease-in-out;
+        }
+        .pulse-amber {
+          animation: softPulseAmber 2s infinite ease-in-out;
+        }
+        .marker-drop {
+          animation: markerBounce 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+      `}</style>
 
-      {/* Stylized Vector World Map Background */}
-      <div className="absolute inset-0 opacity-80 dark:opacity-50 pointer-events-none select-none">
-        <img
-          src="/assets/world-map.svg"
-          alt=""
-          className="w-full h-full object-fill"
-        />
-      </div>
+      {/* Header Info */}
+      <div className="flex items-start justify-between z-10">
+        <div>
+          <h4 className="text-sm font-bold text-white mb-0.5 flex items-center gap-1.5">
+            🗺️ Pipeline Global Heatmap
+          </h4>
+          <p className="text-[11px] text-slate-400">
+            Click markers or select from active searches to inspect local prospect volume
+          </p>
+        </div>
 
-      {/* Dynamic Map Nodes */}
-      <div className="absolute inset-0">
-        {debugMode ? (
-          COORDINATE_TESTS.map((t, index) => {
-            const coords = convertLatLngToPercent(t.lat, t.lng);
-            return (
-              <MapNode
-                key={`test-${t.city}-${index}`}
-                top={coords.top}
-                left={coords.left}
-                label={`[TEST] ${t.city}`}
-                size="lg"
-                delay="0s"
-                className="scale-110"
-                isTest={true}
-              />
-            );
-          })
-        ) : (
-          uniqueRegions.map((reg, index) => {
-            const cityNameOnly = reg.city.split(",")[0].trim();
-            const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
-            
-            let coords;
-            // Check static database first, then local storage cache
-            const dbItem = CITY_DB[key] || resolvedCoords[key];
-            if (dbItem) {
-              coords = convertLatLngToPercent(dbItem.lat, dbItem.lon);
-            } else {
-              // Generate stable pseudo-random coordinates based on city name characters
-              let hash = 0;
-              for (let i = 0; i < reg.city.length; i++) {
-                hash = reg.city.charCodeAt(i) + ((hash << 5) - hash);
-              }
-              const seedTop = Math.abs(Math.sin(hash)) * 50 + 20; // 20% to 70%
-              const seedLeft = Math.abs(Math.cos(hash)) * 70 + 15; // 15% to 85%
-              coords = { top: `${seedTop.toFixed(1)}%`, left: `${seedLeft.toFixed(1)}%` };
-            }
-
-            const delay = `${(index * 0.4).toFixed(1)}s`;
-            const size = index % 3 === 0 ? "lg" : index % 3 === 1 ? "md" : "sm";
-
-            return (
-              <MapNode
-                key={`${reg.city}-${index}`}
-                top={coords.top}
-                left={coords.left}
-                label={`${reg.city}`}
-                size={size}
-                delay={delay}
-              />
-            );
-          })
+        {/* Reset View Button */}
+        {(zoom > 1 || pan.x !== 0 || pan.y !== 0) && (
+          <button
+            onClick={() => {
+              setZoom(1);
+              setPan({ x: 0, y: 0 });
+              setSelectedRegion(null);
+            }}
+            className="bg-slate-900/90 border border-slate-700 hover:border-slate-500 text-white rounded-lg px-2.5 py-1 text-[10px] font-bold shadow-md transition pointer-events-auto flex items-center gap-1 cursor-pointer"
+            title="Reset Map View"
+          >
+            <RefreshCw className="h-3 w-3" /> Reset
+          </button>
         )}
       </div>
 
-      <div className="relative z-10 p-5 flex flex-col h-full pointer-events-none select-none">
-        <h4 className="text-sm font-bold text-foreground mb-1">
-          {debugMode ? "Pipeline Global Heatmap [Debug Mode]" : "Pipeline Global Heatmap"}
-        </h4>
-        <p className="text-xs text-muted-foreground">
-          {debugMode ? "Displaying coordinate test locations" : "Locations of your saved prospects and active search areas"}
-        </p>
+      {/* Viewport View (Drag and Wheel zoom boundaries) */}
+      <div
+        id="heatmap-viewport"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className={cn(
+          "relative w-full h-[220px] rounded-xl overflow-hidden mt-3 border border-slate-800/40 bg-[#060e24] select-none",
+          isDragging ? "cursor-grabbing" : "cursor-grab",
+        )}
+      >
+        {/* Faint dot-pattern grid overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none" />
 
-        <div className="mt-auto pt-10">
-          <div className="inline-flex items-center gap-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border px-3 py-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", debugMode ? "bg-red-400" : "bg-emerald-400")}></span>
-              <span className={cn("relative inline-flex rounded-full h-2 w-2", debugMode ? "bg-red-500" : "bg-emerald-500")}></span>
-            </span>
-            <span className="text-[11px] font-medium text-foreground">
-              {debugMode ? "6 Test Cases" : `${uniqueRegions.length} Active ${uniqueRegions.length === 1 ? "Region" : "Regions"}`}
-            </span>
+        {/* Dynamic Zoom & Pan Wrapper */}
+        <div
+          className="w-full h-full relative origin-top-left transition-transform duration-100 ease-out"
+          style={{
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          }}
+        >
+          {/* Refined Vector Map Background */}
+          <div className="absolute inset-0 opacity-45 select-none pointer-events-none">
+            <img src="/assets/world-map.svg" alt="" className="w-full h-full object-fill" />
           </div>
+
+          {/* Dynamic Map Nodes */}
+          {uniqueRegions
+            .filter((reg) => visibleStatuses[reg.status || "saved"])
+            .map((reg) => {
+              const cityNameOnly = reg.city.split(",")[0].trim();
+              const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
+
+              let coords;
+              if (reg.lat && reg.lng) {
+                coords = convertLatLngToPercent(reg.lat, reg.lng);
+              } else {
+                const dbItem = CITY_DB[key] || resolvedCoords[key];
+                if (dbItem) {
+                  coords = convertLatLngToPercent(dbItem.lat, dbItem.lon);
+                } else {
+                  let hash = 0;
+                  for (let i = 0; i < reg.city.length; i++) {
+                    hash = reg.city.charCodeAt(i) + ((hash << 5) - hash);
+                  }
+                  const seedTop = Math.abs(Math.sin(hash)) * 50 + 20;
+                  const seedLeft = Math.abs(Math.cos(hash)) * 70 + 15;
+                  coords = { top: `${seedTop.toFixed(1)}%`, left: `${seedLeft.toFixed(1)}%` };
+                }
+              }
+
+              const status = reg.status || "saved";
+              const isNewlyAdded =
+                newCityKey === `${reg.city.toLowerCase()}-${reg.country.toLowerCase()}`;
+
+              // Color configs
+              const colorMap = {
+                active:
+                  "bg-blue-500 border-blue-400/80 pulse-blue shadow-[0_0_12px_rgba(45,108,255,0.7)]",
+                saved:
+                  "bg-emerald-500 border-emerald-400/80 pulse-green shadow-[0_0_12px_rgba(34,197,94,0.7)]",
+                contacted:
+                  "bg-amber-500 border-amber-400/80 pulse-amber shadow-[0_0_12px_rgba(245,158,11,0.7)]",
+              };
+
+              return (
+                <div
+                  key={`${reg.city}-${status}`}
+                  className={cn(
+                    "absolute flex flex-col items-center z-25 group/marker",
+                    isNewlyAdded ? "marker-drop" : "",
+                  )}
+                  style={{ top: coords.top, left: coords.left }}
+                >
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedRegion(selectedRegion?.city === reg.city ? null : reg);
+                    }}
+                    className={cn(
+                      "h-3 w-3 rounded-full border-2 cursor-pointer transition duration-300 transform hover:scale-130 active:scale-95",
+                      colorMap[status],
+                    )}
+                  />
+
+                  {/* Inline Info Card */}
+                  {selectedRegion && selectedRegion.city === reg.city && (
+                    <div
+                      className="absolute bottom-6 left-1/2 -translate-x-1/2 mb-2 w-52 bg-slate-955 border border-slate-700/60 p-3.5 rounded-xl shadow-2xl z-40 pointer-events-auto text-left animate-in fade-in zoom-in-95 duration-200"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-2">
+                        <span className="text-[11px] font-bold text-white truncate max-w-[130px] flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-cyan-400 shrink-0" />
+                          {reg.city}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRegion(null);
+                          }}
+                          className="text-slate-400 hover:text-white text-[10px] bg-slate-800 hover:bg-slate-700 h-4 w-4 rounded-full flex items-center justify-center transition"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <div className="space-y-1.5 text-[10px] text-slate-300 font-mono">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Saved Leads:</span>
+                          <span className="text-emerald-400 font-bold">{reg.savedLeads || 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Active Searches:</span>
+                          <span className="text-blue-400 font-bold">{reg.activeSearches || 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Top Skill:</span>
+                          <span className="text-amber-400 font-bold truncate max-w-[90px]">
+                            {getCategoryLabel(reg.topCategory || "web_dev")}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* View Leads Action Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onViewLeads) {
+                            onViewLeads(reg.city, reg.country, reg.topCategory || "web_dev");
+                          }
+                          setSelectedRegion(null);
+                        }}
+                        className="mt-3 w-full bg-[#2D6CFF] hover:bg-[#2D6CFF]/90 text-white font-bold py-1.5 px-2 rounded-lg text-[10px] text-center transition shadow-lg cursor-pointer"
+                      >
+                        View Leads
+                      </button>
+
+                      {/* Small Down pointing Arrow */}
+                      <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-950 border-r border-b border-slate-700/60 rotate-45" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
         </div>
       </div>
-    </div>
-  );
-}
 
-function MapNode({
-  top,
-  left,
-  label,
-  size = "md",
-  delay = "0s",
-  className,
-  isTest = false,
-}: {
-  top: string;
-  left: string;
-  label: string;
-  size?: "sm" | "md" | "lg";
-  delay?: string;
-  className?: string;
-  isTest?: boolean;
-}) {
-  const sizeMap = { sm: "h-1.5 w-1.5", md: "h-2 w-2", lg: "h-3 w-3" };
-  const pingSizeMap = { sm: "h-4 w-4", md: "h-5 w-5", lg: "h-6 w-6" };
+      {/* Footer controls: Dropdown badge + Legend filters */}
+      <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 select-none z-30">
+        {/* Dropdown Badge */}
+        <div ref={dropdownRef} className="relative inline-block text-left pointer-events-auto">
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 px-3 py-1.5 text-[11px] font-bold text-slate-200 transition cursor-pointer"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            {uniqueRegions.length} Regions
+            <ChevronDown
+              className={cn("h-3 w-3 text-slate-400 transition", dropdownOpen ? "rotate-180" : "")}
+            />
+          </button>
 
-  const dotColor = isTest ? "bg-red-500" : "bg-primary";
-  const pingColor = isTest ? "bg-red-400/40" : "bg-primary/40";
-  const borderColor = isTest ? "border-red-500/50" : "border-primary/30";
+          {/* Regions focus list dropdown */}
+          {dropdownOpen && (
+            <div className="absolute bottom-11 left-0 w-56 bg-slate-955 border border-slate-700/60 rounded-xl shadow-2xl z-40 overflow-hidden text-left pointer-events-auto max-h-48 overflow-y-auto animate-in slide-in-from-bottom-2 duration-150">
+              <div className="text-[10px] font-bold text-slate-400 bg-slate-900 px-3 py-2 border-b border-slate-850">
+                Pan & Focus Region:
+              </div>
+              {uniqueRegions.map((reg) => (
+                <button
+                  key={`${reg.city}-${reg.country}`}
+                  onClick={() => focusRegion(reg)}
+                  className="w-full text-left px-3 py-2 text-xs text-slate-350 hover:bg-[#2D6CFF]/20 hover:text-white border-b border-slate-800/40 transition flex items-center justify-between cursor-pointer"
+                >
+                  <span className="truncate max-w-[140px] font-medium">📍 {reg.city}</span>
+                  <span className="text-[9px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800/50 text-slate-400 font-mono">
+                    {reg.savedLeads || 0} leads
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
-  return (
-    <div className={cn("absolute flex flex-col items-center z-20", className)} style={{ top, left }}>
-      <div className="relative flex items-center justify-center">
-        <span
-          className={cn("animate-ping absolute rounded-full", pingColor, pingSizeMap[size])}
-          style={{ animationDuration: "3s", animationDelay: delay }}
-        />
-        <span className={cn("relative rounded-full", dotColor, sizeMap[size])} />
+        {/* Legend filters */}
+        <div className="flex flex-wrap gap-x-4 gap-y-2 pointer-events-auto">
+          <button
+            onClick={() => toggleStatusFilter("active")}
+            className={cn(
+              "flex items-center gap-1.5 text-[11px] font-semibold transition cursor-pointer",
+              visibleStatuses.active ? "text-slate-200" : "text-slate-500 line-through",
+            )}
+          >
+            <span className="h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_#2d6cff]" />
+            Active Searches ({uniqueRegions.filter((r) => r.status === "active").length})
+          </button>
+
+          <button
+            onClick={() => toggleStatusFilter("saved")}
+            className={cn(
+              "flex items-center gap-1.5 text-[11px] font-semibold transition cursor-pointer",
+              visibleStatuses.saved ? "text-slate-200" : "text-slate-500 line-through",
+            )}
+          >
+            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#22c55e]" />
+            Saved Leads ({uniqueRegions.filter((r) => r.status === "saved").length})
+          </button>
+
+          <button
+            onClick={() => toggleStatusFilter("contacted")}
+            className={cn(
+              "flex items-center gap-1.5 text-[11px] font-semibold transition cursor-pointer",
+              visibleStatuses.contacted ? "text-slate-200" : "text-slate-500 line-through",
+            )}
+          >
+            <span className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_8px_#f59e0b]" />
+            Contacted ({uniqueRegions.filter((r) => r.status === "contacted").length})
+          </button>
+        </div>
       </div>
-      <span
-        className={cn(
-          "mt-1 text-[9px] font-bold text-foreground bg-background/90 backdrop-blur-sm px-1.5 py-0.5 rounded border tracking-wide animate-pulse",
-          borderColor
-        )}
-        style={{ animationDuration: "3s", animationDelay: delay }}
-      >
-        {label}
-      </span>
     </div>
   );
 }
