@@ -1115,7 +1115,7 @@ function Dashboard() {
         {/* ═══ HEATMAP ROW ═══ */}
         <GlobalHeatmap
           regions={heatmapRegions}
-          className="h-[300px]"
+          className="h-[400px]"
           onViewLeads={(city, country, category) => {
             setQuickCity(city);
             const countryObj = COUNTRIES.find(

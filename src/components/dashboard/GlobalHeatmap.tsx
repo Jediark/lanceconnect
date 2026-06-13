@@ -509,7 +509,7 @@ export function GlobalHeatmap({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         className={cn(
-          "relative w-full h-[220px] rounded-xl overflow-hidden mt-3 border border-slate-800/40 bg-[#060e24] select-none",
+          "relative w-full h-[300px] rounded-xl overflow-hidden mt-3 border border-slate-800/40 bg-[#060e24] select-none",
           isDragging ? "cursor-grabbing" : "cursor-grab",
         )}
       >
@@ -525,10 +525,9 @@ export function GlobalHeatmap({
         >
           {/* Refined Vector Map Background */}
           <div className="absolute inset-0 opacity-45 select-none pointer-events-none">
-            <img src="/assets/world-map.svg" alt="" className="w-full h-full object-fill" />
+            <img src="/assets/world-map.svg" alt="" className="w-full h-full object-cover" />
           </div>
 
-          {/* Dynamic Map Nodes */}
           {uniqueRegions
             .filter((reg) => visibleStatuses[reg.status || "saved"])
             .map((reg) => {
@@ -556,6 +555,10 @@ export function GlobalHeatmap({
               const status = reg.status || "saved";
               const isNewlyAdded =
                 newCityKey === `${reg.city.toLowerCase()}-${reg.country.toLowerCase()}`;
+
+              // Determine whether to show popover card below the marker (if marker is in top 35% of map)
+              const topVal = parseFloat(coords.top);
+              const showBelow = topVal < 35;
 
               // Color configs
               const colorMap = {
@@ -590,7 +593,10 @@ export function GlobalHeatmap({
                   {/* Inline Info Card */}
                   {selectedRegion && selectedRegion.city === reg.city && (
                     <div
-                      className="absolute bottom-6 left-1/2 -translate-x-1/2 mb-2 w-52 bg-slate-955 border border-slate-700/60 p-3.5 rounded-xl shadow-2xl z-40 pointer-events-auto text-left animate-in fade-in zoom-in-95 duration-200"
+                      className={cn(
+                        "absolute left-1/2 -translate-x-1/2 w-52 bg-slate-950 border border-slate-700/60 p-3.5 rounded-xl shadow-2xl z-40 pointer-events-auto text-left animate-in fade-in zoom-in-95 duration-200",
+                        showBelow ? "top-6 mt-2" : "bottom-6 mb-2",
+                      )}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-2">
@@ -640,8 +646,15 @@ export function GlobalHeatmap({
                         View Leads
                       </button>
 
-                      {/* Small Down pointing Arrow */}
-                      <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-950 border-r border-b border-slate-700/60 rotate-45" />
+                      {/* Small Directional Pointer Arrow */}
+                      <div
+                        className={cn(
+                          "absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-950 border-slate-700/60 rotate-45",
+                          showBelow
+                            ? "top-[-6px] border-l border-t"
+                            : "bottom-[-6px] border-r border-b",
+                        )}
+                      />
                     </div>
                   )}
                 </div>
@@ -670,7 +683,7 @@ export function GlobalHeatmap({
 
           {/* Regions focus list dropdown */}
           {dropdownOpen && (
-            <div className="absolute bottom-11 left-0 w-56 bg-slate-955 border border-slate-700/60 rounded-xl shadow-2xl z-40 overflow-hidden text-left pointer-events-auto max-h-48 overflow-y-auto animate-in slide-in-from-bottom-2 duration-150">
+            <div className="absolute bottom-11 left-0 w-56 bg-slate-950 border border-slate-700/60 rounded-xl shadow-2xl z-40 overflow-hidden text-left pointer-events-auto max-h-48 overflow-y-auto animate-in slide-in-from-bottom-2 duration-150">
               <div className="text-[10px] font-bold text-slate-400 bg-slate-900 px-3 py-2 border-b border-slate-850">
                 Pan & Focus Region:
               </div>
