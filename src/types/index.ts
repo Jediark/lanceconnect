@@ -204,5 +204,18 @@ export const CATEGORY_TO_PLACES_QUERY: Record<string, string[]> = {
     "new office opening",
     "graduate recruitment program",
   ],
+  translation: ["legal translation agency", "immigration consultant", "embassy", "import export company"],
+  personal_trainer: ["gym", "fitness center", "hotel gym", "sports club", "wellness retreat"],
+  landscaping: ["real estate developer", "property management company", "hotel", "golf course"],
+  hairstylist: ["beauty salon", "hair salon", "spa", "wedding planner", "hotel spa"],
+  makeup_artist: ["photography studio", "wedding planner", "beauty salon", "modeling agency"],
+  voiceover: ["video production agency", "recording studio", "advertising agency", "radio station"],
+  accounting: ["law firm", "consulting firm", "retail store", "restaurant", "manufacturing company"],
+  handyman: ["property management company", "real estate office", "hotel", "apartment complex"],
+  wedding_planner: ["wedding venue", "hotel events office", "bridal boutique", "catering company"],
+  massage_therapist: ["spa", "wellness center", "chiropractor clinic", "hotel spa"],
+  music_teacher: ["music school", "private school", "community center", "after school program"],
+  pet_care: ["veterinary clinic", "pet shop", "dog kennel", "dog grooming salon"],
+  house_cleaning: ["office cleaning", "property management company", "hotel", "cleaning agency"],
 };
 

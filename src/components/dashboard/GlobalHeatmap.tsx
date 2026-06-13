@@ -509,7 +509,7 @@ export function GlobalHeatmap({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         className={cn(
-          "relative w-full h-[300px] rounded-xl overflow-hidden mt-3 border border-slate-800/40 bg-[#060e24] select-none",
+          "relative w-full h-[380px] rounded-xl overflow-hidden mt-3 border border-slate-800 bg-[#060e24] select-none",
           isDragging ? "cursor-grabbing" : "cursor-grab",
         )}
       >
@@ -582,7 +582,11 @@ export function GlobalHeatmap({
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedRegion(selectedRegion?.city === reg.city ? null : reg);
+                      if (selectedRegion?.city === reg.city) {
+                        setSelectedRegion(null);
+                      } else {
+                        focusRegion(reg);
+                      }
                     }}
                     className={cn(
                       "h-3 w-3 rounded-full border-2 cursor-pointer transition duration-300 transform hover:scale-130 active:scale-95",
@@ -594,7 +598,7 @@ export function GlobalHeatmap({
                   {selectedRegion && selectedRegion.city === reg.city && (
                     <div
                       className={cn(
-                        "absolute left-1/2 -translate-x-1/2 w-52 bg-slate-950 border border-slate-700/60 p-3.5 rounded-xl shadow-2xl z-40 pointer-events-auto text-left animate-in fade-in zoom-in-95 duration-200",
+                        "absolute left-1/2 -translate-x-1/2 w-52 bg-slate-950 border border-slate-700 p-3.5 rounded-xl shadow-2xl z-40 pointer-events-auto text-left animate-in fade-in zoom-in-95 duration-200",
                         showBelow ? "top-6 mt-2" : "bottom-6 mb-2",
                       )}
                       onClick={(e) => e.stopPropagation()}

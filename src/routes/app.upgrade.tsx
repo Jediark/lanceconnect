@@ -124,11 +124,7 @@ function UpgradePage() {
             <span>Checkout was canceled. No charges were made. You can try again anytime.</span>
           </div>
         )}
-        {user && (
-          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-foreground">
-            LanceConnect is now <strong className="text-primary font-bold">100% Free and Unlimited</strong> for everyone! There are no billing limits, search quotas, or paid plans.
-          </div>
-        )}
+
 
         <div className="flex justify-center">
           <div className="inline-flex rounded-full border border-border bg-card p-1">

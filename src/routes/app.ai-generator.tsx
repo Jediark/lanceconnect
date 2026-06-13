@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Header } from "@/components/layout/Header";
+import { OutreachPreview } from "@/components/ui/OutreachPreview";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sparkles, Copy, RefreshCw, Crown } from "lucide-react";
 import { toast } from "sonner";
@@ -47,6 +48,33 @@ function AIPage() {
   const [provider, setProvider] = useState("");
 
   const lead = activeLeads.find((l) => l.id === currentLeadId) || activeLeads[0];
+
+  const getPlaceholder = () => {
+    if (channel === "WhatsApp") {
+      return `Hi 85°C Bakery! 👋
+
+I was searching for bakeries in Los Angeles on Google Maps and noticed you don't have a website linked to your listing. For a place with 2,600+ reviews, that's a lot of potential customers who can't find your menu or hours online.
+
+I build websites specifically for restaurants and cafes — usually live within 2 weeks. Would it be worth a quick 10-minute call to see if it makes sense for you?
+
+— James`;
+    }
+    if (channel === "Email") {
+      return `Subject: Quick question about 85°C Bakery's website
+
+Hi,
+
+I came across 85°C Bakery on Google Maps while looking at local cafes in Downtown LA. With over 2,600 reviews you clearly have loyal customers — but I noticed there's no website linked to your listing, which means anyone searching for your menu or hours online hits a dead end.
+
+I build websites for bakeries and cafes that connect directly to Google Maps, show your menu, and let customers order or reserve online. Most of my clients see more foot traffic within the first month.
+
+Would it be alright if I put together a quick mockup of what your site could look like? No cost, just want to show you what's possible.
+
+James
+Web Designer, Los Angeles`;
+    }
+    return "Your generated message will appear here…";
+  };
 
   const generate = async () => {
     if (!isPro) {
@@ -210,12 +238,14 @@ function AIPage() {
               </button>
             )}
           </div>
-          <textarea
+          <OutreachPreview
+            channel={channelMap[channel] as any}
             value={output}
-            onChange={(e) => setOutput(e.target.value)}
-            placeholder="Your generated message will appear here…"
-            rows={18}
-            className="input resize-none"
+            onChange={(val) => setOutput(val)}
+            senderName={user?.fullName || "Freelancer"}
+            businessName={lead?.businessName || "Client Business"}
+            businessEmail={lead?.email || "info@business.com"}
+            placeholder={getPlaceholder()}
           />
           <p className="mt-2 text-xs text-muted-foreground">
             Tip: edit before sending. The best messages are 80% the AI, 20% you.

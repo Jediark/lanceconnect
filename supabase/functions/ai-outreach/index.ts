@@ -73,10 +73,85 @@ Deno.serve(async (req) => {
       .single();
 
     const plan = profile?.plan || "free";
-    const userName = profile?.full_name || "Freelancer";
+
+    // Get sender name correctly (full name or email prefix)
+    const senderName = profile?.full_name ||
+      (profile?.email ? profile.email.split('@')[0]
+        .replace(/[^a-zA-Z\s]/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase())
+        .trim() : "Freelancer");
 
     const userCategory = profile?.freelancer_category || lead.industry || "web_dev";
     const supplierProfile = (profile?.supplier_profile as any) || {};
+
+    const getCategoryLabel = (id: string) => {
+      const map: Record<string, string> = {
+        web_dev: "Web Developer & Designer",
+        designer: "Graphic Designer",
+        copywriter: "Copywriter",
+        seo: "SEO Specialist",
+        social_media: "Social Media Manager",
+        video: "Video Editor",
+        photography: "Photographer",
+        marketing: "Digital Marketer",
+        app_dev: "App Developer",
+        va: "Virtual Assistant",
+        tutor: "Tutor",
+        personal_trainer: "Personal Trainer",
+        landscaping: "Landscaper",
+        hairstylist: "Hairstylist",
+        makeup_artist: "Makeup Artist",
+        voiceover: "Voiceover Artist",
+        accounting: "Accountant",
+        handyman: "Handyman",
+        wedding_planner: "Wedding Planner",
+        massage_therapist: "Massage Therapist",
+        music_teacher: "Music Teacher",
+        pet_care: "Pet Care Specialist",
+        house_cleaning: "House Cleaner",
+      };
+      return map[id] || id;
+    };
+
+    const buildObservation = (ld: any): string => {
+      if (!ld.has_website) {
+        return `I noticed ${ld.business_name} doesn't currently have a website`;
+      }
+      if (ld.website_score && ld.website_score < 50) {
+        return `I noticed ${ld.business_name}'s website scores poorly on mobile devices`;
+      }
+      if (!ld.has_instagram && !ld.has_facebook) {
+        return `I noticed ${ld.business_name} doesn't have a social media presence yet`;
+      }
+      if (ld.google_review_count < 10) {
+        return `I noticed ${ld.business_name} only has ${ld.google_review_count} Google reviews so far`;
+      }
+      if (ld.google_rating && ld.google_rating < 3.5) {
+        return `I noticed ${ld.business_name} has some room to improve its online reputation`;
+      }
+      return `I came across ${ld.business_name} on Google Maps`;
+    };
+
+    const TONE_ADDITIONS = {
+      professional: `
+        Tone: Confident and authoritative. Write as a seasoned professional.
+        Formal but warm. Like a consultant reaching out.`,
+
+      friendly: `
+        Tone: Warm, approachable, conversational.
+        Like a neighbor who happens to be an expert.
+        Can use first names. Contractions welcome.`,
+
+      direct: `
+        Tone: No fluff. Get to the point in the first sentence.
+        Busy people appreciate brevity.
+        State the problem, state your solution, ask for the next step.
+        Maximum 80 words total.`
+    };
+
+    const toneKey = tone === "casual" ? "friendly" : tone === "bold" ? "direct" : "professional";
+    const toneInstruction = TONE_ADDITIONS[toneKey];
+    const serviceLabel = userCategory === "web_dev" ? "Web Developer & Designer" : getCategoryLabel(userCategory);
 
     let promptRole = "world-class freelance marketer pitching your services";
     let promptGoal =
@@ -192,9 +267,158 @@ Focus on:
       }
     }
 
-    promptExtraRules += `\n- The output message MUST be written in ${targetLang}.`;
+    const languageInstruction = `\n- The output message MUST be written in ${targetLang}.`;
 
-    const prompt = `You are a ${promptRole}. 
+    let finalPrompt = "";
+    if (channel === "whatsapp" || channel === "sms") {
+      finalPrompt = `
+You are a professional freelancer writing a genuine WhatsApp message to a potential client.
+This is NOT a mass marketing message. It is a personal, one-to-one outreach from a real person.
+
+SENDER:
+Name: ${senderName}
+Service: ${serviceLabel}
+Location: ${profile?.city || 'Nigeria'} (or nearby)
+
+RECIPIENT BUSINESS:
+Name: ${lead.business_name}
+Type: ${lead.business_type}
+Location: ${lead.city}, ${lead.country}
+Key observation: ${buildObservation(lead)}
+
+${toneInstruction}
+
+RULES — follow these exactly:
+1. Start with "Hi [first word of business name]!" — not "Hello team" or "Dear Sir"
+2. Second sentence: mention the specific observation above naturally
+3. Third paragraph: ONE specific benefit relevant to their business type — be concrete, not generic
+4. End with a simple yes/no question that takes 2 seconds to answer
+5. Sign off with sender's first name only
+6. Maximum 4 short paragraphs — WhatsApp messages must be brief
+7. Never use bullet points
+8. Never say "digital presence", "grow your business", "take it to the next level"
+9. Sound like a real person, not a marketing email
+10. Do NOT mention prices or packages
+${languageInstruction}
+
+Write the WhatsApp message now. Nothing else, just the message.
+`;
+    } else if (channel === "email") {
+      finalPrompt = `
+You are a professional ${serviceLabel} writing a cold email to a potential client.
+This email must feel personally written, not mass-blasted.
+
+SENDER:
+Name: ${senderName}
+Service: ${serviceLabel}
+
+RECIPIENT BUSINESS:
+Name: ${lead.business_name}
+Type: ${lead.business_type}
+Location: ${lead.city}, ${lead.country}
+Key observation: ${buildObservation(lead)}
+
+${toneInstruction}
+
+STRUCTURE — follow exactly:
+
+SUBJECT LINE: Must be specific and curiosity-inducing. Reference their business or city.
+Examples of good subjects:
+- "Quick question about ${lead.business_name}'s website"
+- "Found something on Google Maps — ${lead.business_name}"
+- "A website idea for ${lead.business_name}"
+NOT: "Grow your business" / "Digital marketing services" / "Exciting opportunity"
+
+PARAGRAPH 1 (1-2 sentences): Why you're reaching out — reference the specific observation.
+
+PARAGRAPH 2 (2-3 sentences): What you can do for them specifically — NOT a generic list.
+Connect your service to their specific situation.
+Example: "A simple website would let customers find your opening hours,
+browse your menu, and call you directly from Google search."
+
+PARAGRAPH 3 (1 sentence): Low-pressure CTA — make it easy to say yes.
+Example: "Would it be okay if I sent over a quick mock-up of what your site could look like?"
+
+SIGNATURE:
+${senderName}
+${serviceLabel}
+[Phone if available]
+
+RULES:
+- Never use bullet points in the email body
+- Never say "I hope this email finds you well"
+- Never use jargon: "synergy", "leverage", "digital presence", "take your business to the next level"
+- Maximum 150 words in the body
+- Sound like a human wrote this at their desk
+${languageInstruction}
+
+Write the subject line on the first line, then the email body.
+`;
+    } else if (channel === "phone_script") {
+      finalPrompt = `
+Write a natural phone call script for a ${serviceLabel} cold-calling ${lead.business_name}.
+
+Observation to reference: ${buildObservation(lead)}
+
+${toneInstruction}
+
+SCRIPT SECTIONS:
+
+GATEKEEPER OPENER (if receptionist answers):
+"Hi, is the owner or manager available? My name is ${senderName}."
+
+OWNER OPENER (when owner answers):
+10 seconds maximum. State name, why calling, ask permission to continue.
+
+BODY (if they say yes):
+30 seconds. ONE specific observation about their business.
+ONE concrete benefit. Ask one question to understand their situation.
+
+CLOSE:
+Ask for a 10-minute call or to send information — not a sale.
+
+OBJECTION HANDLERS:
+- "Not interested" → [response]
+- "We already have someone" → [response]
+- "Call back later" → [response]
+
+RULES:
+- Use natural spoken language — contractions are fine
+- No marketing speak
+- Short sentences — easier to say out loud
+- Sound curious and helpful, not salesy
+${languageInstruction}
+
+Write the full script now.
+`;
+    } else if (channel === "linkedin") {
+      finalPrompt = `
+You are a professional ${serviceLabel} writing a LinkedIn outreach message to a potential client.
+This must feel like a peer-to-peer connection request or InMail, not a sales pitch.
+
+SENDER:
+Name: ${senderName}
+Service: ${serviceLabel}
+
+RECIPIENT BUSINESS:
+Name: ${lead.business_name}
+Type: ${lead.business_type}
+Location: ${lead.city}, ${lead.country}
+Key observation: ${buildObservation(lead)}
+
+${toneInstruction}
+
+RULES — follow exactly:
+1. Max 300 characters for connection request, or max 3 short sentences for InMail.
+2. NO selling in the first message.
+3. Lead with shared context or observation.
+4. Sound like a human, professional and curious.
+${languageInstruction}
+
+Write the LinkedIn message now. Nothing else.
+`;
+    } else {
+      finalPrompt = `You are a ${promptRole}. 
 Write a short, highly personalized ${channel} message in a ${tone} tone to ${lead.business_name}.
 Context:
 - Business Type: ${lead.business_type}
@@ -207,8 +431,11 @@ Context:
 Rules:
 - Do not use placeholders (like [Name]). 
 - Keep it short and to the point.
-- ${promptGoal}${promptExtraRules}
+- ${promptGoal}${languageInstruction}
 - Provide a single, clear call to action.`;
+    }
+
+    const prompt = finalPrompt;
 
     let generatedText = "";
     let providerLabel = "";

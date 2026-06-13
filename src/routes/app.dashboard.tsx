@@ -24,6 +24,7 @@ import { COUNTRY_CITIES } from "@/data/countriesData";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { OutreachPreview } from "@/components/ui/OutreachPreview";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -1188,7 +1189,7 @@ function Dashboard() {
                 <p className="text-sm text-muted-foreground">Scanning business directories...</p>
               </div>
             ) : displayedLeads.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-card/50">
+              <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-card">
                 <div className="grid h-16 w-16 place-items-center rounded-2xl bg-primary/8 mb-4">
                   <Search className="h-7 w-7 text-primary/60" />
                 </div>
@@ -1369,7 +1370,7 @@ function Dashboard() {
             </div>
 
             {/* Donation Card */}
-            <div className="rounded-2xl border border-rose-500/20 bg-gradient-to-br from-rose-500/5 via-card to-card p-5 shadow-sm text-left relative overflow-hidden group hover:border-rose-500/30 transition">
+            <div className="rounded-2xl border border-rose-500/20 bg-card p-5 shadow-sm text-left relative overflow-hidden group hover:border-rose-500/30 transition">
               <div className="absolute top-0 right-0 -mt-3 -mr-3 h-10 w-10 bg-rose-500/10 rounded-full blur-lg pointer-events-none" />
               <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-1.5">
                 <span className="text-rose-500">☕</span> Keep us free — donate
@@ -1412,9 +1413,9 @@ function Dashboard() {
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={() => setDetail(null)}
         >
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
+          <div className="absolute inset-0 bg-slate-950/85" />
           <div
-            className="relative w-full max-w-md rounded-2xl border border-[rgba(124,58,237,0.2)] bg-card animate-in fade-in zoom-in-95 duration-200"
+            className="relative w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 animate-in fade-in zoom-in-95 duration-200 text-slate-100"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -1653,10 +1654,13 @@ function Dashboard() {
                 </h4>
                 {outreachDraft ? (
                   <div className="space-y-3">
-                    <textarea
+                    <OutreachPreview
+                      channel={selectedChannel === "whatsapp" ? "whatsapp" : selectedChannel === "linkedin" ? "linkedin" : selectedChannel === "phone_script" ? "phone_script" : selectedChannel === "letter" ? "letter" : "email"}
                       value={outreachDraft}
-                      onChange={(e) => setOutreachDraft(e.target.value)}
-                      className="w-full h-32 rounded-xl border border-border bg-background p-3 text-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      onChange={(val) => setOutreachDraft(val)}
+                      senderName={user?.fullName || "Freelancer"}
+                      businessName={detail.businessName}
+                      businessEmail={detail.email || "info@business.com"}
                     />
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <span className="text-[10px] text-muted-foreground">{provider}</span>
@@ -1709,21 +1713,21 @@ function Dashboard() {
                       <select
                         value={selectedChannel}
                         onChange={(e) => setSelectedChannel(e.target.value as any)}
-                        className="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground"
+                        className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary"
                       >
-                        <option value="email">Email</option>
-                        <option value="linkedin">LinkedIn</option>
-                        <option value="whatsapp">WhatsApp</option>
-                        <option value="phone_script">Phone Script</option>
+                        <option value="email" className="bg-slate-800 text-slate-100">Email</option>
+                        <option value="linkedin" className="bg-slate-800 text-slate-100">LinkedIn</option>
+                        <option value="whatsapp" className="bg-slate-800 text-slate-100">WhatsApp</option>
+                        <option value="phone_script" className="bg-slate-800 text-slate-100">Phone Script</option>
                       </select>
                       <select
                         value={selectedTone}
                         onChange={(e) => setSelectedTone(e.target.value as any)}
-                        className="rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground"
+                        className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary"
                       >
-                        <option value="professional">Professional</option>
-                        <option value="casual">Casual</option>
-                        <option value="bold">Bold</option>
+                        <option value="professional" className="bg-slate-800 text-slate-100">Professional</option>
+                        <option value="casual" className="bg-slate-800 text-slate-100">Casual</option>
+                        <option value="bold" className="bg-slate-800 text-slate-100">Bold/Direct</option>
                       </select>
                     </div>
                     <button

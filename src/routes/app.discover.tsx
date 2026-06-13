@@ -23,6 +23,7 @@ import { LeadCard } from "@/components/ui/LeadCard";
 import { OnlineJobCard } from "@/components/ui/OnlineJobCard";
 import { OpportunityScore } from "@/components/ui/OpportunityScore";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { OutreachPreview } from "@/components/ui/OutreachPreview";
 import { TrendingSearches } from "@/components/ui/TrendingSearches";
 import { QuickConnectModal } from "@/components/dashboard/QuickConnectModal";
 import { CATEGORIES, COUNTRIES, type Lead } from "@/data/mockData";
@@ -579,7 +580,7 @@ function Discover() {
         className="mx-4 lg:mx-8 mt-4"
       />
 
-      <div className="border-b border-border bg-card/60 px-4 py-3 lg:px-8">
+      <div className="border-b border-border bg-card px-4 py-3 lg:px-8">
         <div className="flex flex-wrap items-center gap-2">
           <select
             value={category}
@@ -720,7 +721,7 @@ function Discover() {
 
       {(ONLINE_ELIGIBLE.includes(category) || onlineJobs.length > 0) && (
         <div className="px-4 lg:px-8 mb-2">
-          <div className="inline-flex gap-1 border border-border bg-card/50 p-1 rounded-xl backdrop-blur-sm shadow-sm">
+          <div className="inline-flex gap-1 border border-border bg-card p-1 rounded-xl shadow-sm">
             <button
               type="button"
               onClick={() => setActiveTab("local")}
@@ -1284,12 +1285,12 @@ function LeadDetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 animate-in fade-in"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-card border border-border animate-in zoom-in-95"
+        className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-slate-900 border border-slate-700 animate-in zoom-in-95 text-slate-100"
       >
         <div className="flex items-start justify-between border-b border-border p-6">
           <div>
@@ -1308,7 +1309,7 @@ function LeadDetailModal({
           </button>
         </div>
 
-        <div className="flex border-b border-border px-6 select-none bg-[#0e1322]">
+        <div className="flex border-b border-slate-800 px-6 select-none bg-slate-950">
           <button
             onClick={() => setActiveTab("overview")}
             className={cn(
@@ -1387,7 +1388,7 @@ function LeadDetailModal({
               </div>
             </div>
 
-            <div className="space-y-2 rounded-xl bg-background border border-border p-4 text-sm text-slate-300">
+            <div className="space-y-2 rounded-xl bg-slate-950 border border-slate-800 p-4 text-sm text-slate-200">
               <p className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-slate-500 shrink-0" />{" "}
                 {currentLead.fullAddress || ""}
@@ -1439,8 +1440,8 @@ function LeadDetailModal({
                       });
                     }}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white transition",
-                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
+                      "inline-flex items-center gap-1 rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-[10px] text-slate-100 transition",
+                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-700 cursor-pointer"
                     )}
                   >
                     <Copy className="h-2.5 w-2.5" /> Copy
@@ -1491,8 +1492,8 @@ function LeadDetailModal({
                       });
                     }}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-white transition",
-                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
+                      "inline-flex items-center gap-1 rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-[10px] text-slate-100 transition",
+                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-700 cursor-pointer"
                     )}
                   >
                     <Copy className="h-2.5 w-2.5" /> Copy
@@ -1601,17 +1602,20 @@ function LeadDetailModal({
 
               {outreachDraft ? (
                 <div className="mt-3 space-y-2">
-                  <textarea
+                  <OutreachPreview
+                    channel={selectedChannel === "whatsapp" ? "whatsapp" : selectedChannel === "linkedin" ? "linkedin" : selectedChannel === "phone_script" ? "phone_script" : selectedChannel === "letter" ? "letter" : "email"}
                     value={outreachDraft}
-                    onChange={(e) => setOutreachDraft(e.target.value)}
-                    className="w-full h-36 rounded-lg border border-border bg-background p-3 text-xs font-sans text-slate-300 focus:outline-none focus:border-primary"
+                    onChange={(val) => setOutreachDraft(val)}
+                    senderName={user?.fullName || "Freelancer"}
+                    businessName={currentLead.businessName}
+                    businessEmail={currentLead.email || "info@business.com"}
                   />
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-slate-500">{provider}</span>
                     <div className="flex gap-2">
                       <button
                         onClick={() => setOutreachDraft("")}
-                        className="rounded-lg border border-border bg-card px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer"
+                        className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer"
                       >
                         Edit Settings
                       </button>
@@ -1648,21 +1652,21 @@ function LeadDetailModal({
                   </div>
                 </div>
               ) : (
-                <div className="mt-3 rounded-xl border border-border bg-background p-3.5 space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0d1222] p-2 rounded-lg">
+                <div className="mt-3 rounded-xl border border-slate-800 bg-slate-950 p-3.5 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-2 rounded-lg">
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-slate-400 font-medium">Channel:</span>
                       <select
                         value={selectedChannel}
                         onChange={(e) => setSelectedChannel(e.target.value as any)}
-                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="bg-slate-800 text-slate-100 text-xs border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary"
                       >
-                        <option value="email">Email</option>
-                        <option value="linkedin">LinkedIn DM</option>
-                        <option value="whatsapp">WhatsApp Message</option>
-                        <option value="phone_script">Phone Script</option>
+                        <option value="email" className="bg-slate-800 text-slate-100">Email</option>
+                        <option value="linkedin" className="bg-slate-800 text-slate-100">LinkedIn DM</option>
+                        <option value="whatsapp" className="bg-slate-800 text-slate-100">WhatsApp Message</option>
+                        <option value="phone_script" className="bg-slate-800 text-slate-100">Phone Script</option>
                         {["african_food_export", "restaurant_supplier", "product_export", "b2b_trade", "human_capital", "training_recruitment"].includes(currentLead.industry || "") && (
-                          <option value="letter">Physical Letter</option>
+                          <option value="letter" className="bg-slate-800 text-slate-100">Physical Letter</option>
                         )}
                       </select>
                     </div>
@@ -1671,11 +1675,11 @@ function LeadDetailModal({
                       <select
                         value={selectedTone}
                         onChange={(e) => setSelectedTone(e.target.value as any)}
-                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="bg-slate-800 text-slate-100 text-xs border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary"
                       >
-                        <option value="professional">Professional</option>
-                        <option value="casual">Casual</option>
-                        <option value="bold">Bold/Direct</option>
+                        <option value="professional" className="bg-slate-800 text-slate-100">Professional</option>
+                        <option value="casual" className="bg-slate-800 text-slate-100">Casual</option>
+                        <option value="bold" className="bg-slate-800 text-slate-100">Bold/Direct</option>
                       </select>
                     </div>
                     <div className="flex items-center gap-1">
@@ -1683,23 +1687,23 @@ function LeadDetailModal({
                       <select
                         value={selectedLanguage}
                         onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="bg-card text-xs border border-border rounded px-1.5 py-0.5 text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="bg-slate-800 text-slate-100 text-xs border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary"
                       >
-                        <option value="English">English</option>
-                        <option value="French">French</option>
-                        <option value="German">German</option>
-                        <option value="Spanish">Spanish</option>
-                        <option value="Portuguese">Portuguese</option>
-                        <option value="Arabic">Arabic</option>
-                        <option value="Japanese">Japanese</option>
-                        <option value="Chinese">Chinese</option>
+                        <option value="English" className="bg-slate-800 text-slate-100">English</option>
+                        <option value="French" className="bg-slate-800 text-slate-100">French</option>
+                        <option value="German" className="bg-slate-800 text-slate-100">German</option>
+                        <option value="Spanish" className="bg-slate-800 text-slate-100">Spanish</option>
+                        <option value="Portuguese" className="bg-slate-800 text-slate-100">Portuguese</option>
+                        <option value="Arabic" className="bg-slate-800 text-slate-100">Arabic</option>
+                        <option value="Japanese" className="bg-slate-800 text-slate-100">Japanese</option>
+                        <option value="Chinese" className="bg-slate-800 text-slate-100">Chinese</option>
                       </select>
                     </div>
                   </div>
                   <button
                     onClick={handleGenerate}
                     disabled={generating || isLocked}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/20 hover:bg-primary/30 border border-primary/45 py-2 text-xs font-semibold text-primary-foreground cursor-pointer transition disabled:opacity-40"
+                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 py-2 text-xs font-semibold text-white cursor-pointer transition disabled:opacity-40"
                   >
                     {generating ? (
                       <>

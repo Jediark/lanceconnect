@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
     const { data: profile } = await supabase
       .from("profiles")
       .select(
-        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit, supplier_profile",
+        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit, supplier_profile, plan",
       )
       .eq("id", user.id)
       .single();
@@ -112,6 +112,19 @@ Deno.serve(async (req) => {
         "gala dinner organizer",
         "concert promoter",
       ],
+      translation: ["legal translation agency", "immigration consultant", "embassy", "import export company"],
+      personal_trainer: ["gym", "fitness center", "hotel gym", "sports club", "wellness retreat"],
+      landscaping: ["real estate developer", "property management company", "hotel", "golf course"],
+      hairstylist: ["beauty salon", "hair salon", "spa", "wedding planner", "hotel spa"],
+      makeup_artist: ["photography studio", "wedding planner", "beauty salon", "modeling agency"],
+      voiceover: ["video production agency", "recording studio", "advertising agency", "radio station"],
+      accounting: ["law firm", "consulting firm", "retail store", "restaurant", "manufacturing company"],
+      handyman: ["property management company", "real estate office", "hotel", "apartment complex"],
+      wedding_planner: ["wedding venue", "hotel events office", "bridal boutique", "catering company"],
+      massage_therapist: ["spa", "wellness center", "chiropractor clinic", "hotel spa"],
+      music_teacher: ["music school", "private school", "community center", "after school program"],
+      pet_care: ["veterinary clinic", "pet shop", "dog kennel", "dog grooming salon"],
+      house_cleaning: ["office cleaning", "property management company", "hotel", "cleaning agency"],
     };
 
     const GLOBAL_CATEGORY_TERMS: Record<string, Record<string, string[]>> = {
@@ -236,8 +249,37 @@ Deno.serve(async (req) => {
     }
 
 
-    // 2. Check user lead limits (Bypassed since platform is free and unlimited)
-    const limitCheck = true;
+    // 2. Enforce plan-based search limits strictly (Free: 10, Grow: 100, Scale: 250)
+    const plan = profile?.plan || "free";
+    let maxSearches = 10;
+    if (plan === "grow") {
+      maxSearches = 100;
+    } else if (plan === "scale" || plan === "agency" || plan === "pro") {
+      maxSearches = 250;
+    }
+
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const { count: searchesThisMonth, error: countError } = await supabase
+      .from("search_history")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", startOfMonth.toISOString());
+
+    if (countError) {
+      console.warn("Error counting search history:", countError);
+    }
+
+    const currentCount = searchesThisMonth || 0;
+    if (currentCount >= maxSearches) {
+      throw new AppError(
+        `Search limit reached! Your ${plan.toUpperCase()} plan allows ${maxSearches} searches per month. You have already completed ${currentCount} searches. Please upgrade to increase your limit.`,
+        402,
+        "LIMIT_REACHED",
+      );
+    }
 
     // 3. Query cached database first
     const { data: cachedLeads, error: cacheError } = await supabase
