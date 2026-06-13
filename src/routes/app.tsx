@@ -2,6 +2,7 @@ import { Outlet, createFileRoute, redirect, useNavigate } from "@tanstack/react-
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { TopNav } from "@/components/layout/TopNav";
+import { AssistantChatWidget } from "@/components/layout/AssistantChatWidget";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: () => {
@@ -37,6 +38,7 @@ function AppLayout() {
       <main className="flex-1 flex flex-col">
         <Outlet />
       </main>
+      <AssistantChatWidget />
     </div>
   );
 }
