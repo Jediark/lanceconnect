@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
     const { data: profile } = await supabase
       .from("profiles")
       .select(
-        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit, supplier_profile, plan",
+        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit, supplier_profile, plan, device_fingerprint",
       )
       .eq("id", user.id)
       .single();
@@ -258,15 +258,28 @@ Deno.serve(async (req) => {
       maxSearches = 250;
     }
 
-
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
+    let userIdsToCount = [user.id];
+
+    // Multi-account detection: if plan is free and device fingerprint is recorded, find all sibling accounts on the same device
+    if (plan === "free" && profile?.device_fingerprint) {
+      const { data: siblings } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("device_fingerprint", profile.device_fingerprint);
+      
+      if (siblings && siblings.length > 0) {
+        userIdsToCount = siblings.map((s: any) => s.id);
+      }
+    }
+
     const { count: searchesThisMonth, error: countError } = await supabase
       .from("search_history")
       .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
+      .in("user_id", userIdsToCount)
       .gte("created_at", startOfMonth.toISOString());
 
     if (countError) {
@@ -275,11 +288,19 @@ Deno.serve(async (req) => {
 
     const currentCount = searchesThisMonth || 0;
     if (currentCount >= maxSearches) {
-      throw new AppError(
-        `Search limit reached! Your ${plan.toUpperCase()} plan allows ${maxSearches} searches per month. You have already completed ${currentCount} searches. Please upgrade to increase your limit.`,
-        402,
-        "LIMIT_REACHED",
-      );
+      if (userIdsToCount.length > 1) {
+        throw new AppError(
+          `Search limit reached! Your device has reached the limit of 10 free searches per month across all accounts. Please upgrade to a premium plan to continue searching.`,
+          402,
+          "LIMIT_REACHED",
+        );
+      } else {
+        throw new AppError(
+          `Search limit reached! Your ${plan.toUpperCase()} plan allows ${maxSearches} searches per month. You have already completed ${currentCount} searches. Please upgrade to increase your limit.`,
+          402,
+          "LIMIT_REACHED",
+        );
+      }
     }
 
     // 3. Query cached database first

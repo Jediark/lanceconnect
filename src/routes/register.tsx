@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthSplit } from "./login";
+import { isDisposableEmail } from "@/lib/authUtils";
 
 export const Route = createFileRoute("/register")({
   head: () => ({ meta: [{ title: "Create account — LanceConnect" }] }),
@@ -86,8 +87,13 @@ function RegisterPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = email.trim();
+    if (isDisposableEmail(cleanEmail)) {
+      toast.error("Registration rejected: Temporary or disposable email addresses are not allowed.");
+      return;
+    }
     setLoading(true);
-    const { error, session } = await signup(email, pwd, fullName);
+    const { error, session } = await signup(cleanEmail, pwd, fullName);
     setLoading(false);
     if (error) {
       toast.error(error.message || "Failed to create account.");
@@ -97,7 +103,7 @@ function RegisterPage() {
         nav({ to: "/onboarding" });
       } else {
         toast.success("Account created! Please verify your email.");
-        nav({ to: "/verify-email", search: { email } });
+        nav({ to: "/verify-email", search: { email: cleanEmail } });
       }
     }
   };

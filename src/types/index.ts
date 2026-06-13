@@ -76,6 +76,8 @@ export type User = {
   dribbbleUrl?: string | null;
   twitterUrl?: string | null;
   supplierProfile?: SupplierProfile | null;
+  deviceFingerprint?: string | null;
+  normalizedEmail?: string | null;
 };
 
 export type OutreachTemplate = {

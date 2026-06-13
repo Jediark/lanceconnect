@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { User } from "@/types";
 import { supabase } from "@/lib/supabase";
+import { getBrowserFingerprint, normalizeEmail, isDisposableEmail } from "@/lib/authUtils";
 
 type AuthCtx = {
   user: User | null;
@@ -48,6 +49,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // If user lacks a device fingerprint, generate one and update profile in the background
+      if (!data.device_fingerprint) {
+        const fingerprint = getBrowserFingerprint();
+        if (fingerprint && fingerprint !== "ssr-env" && fingerprint !== "error-generating-fingerprint") {
+          console.log("Backfilling missing device fingerprint...");
+          supabase
+            .from("profiles")
+            .update({ device_fingerprint: fingerprint })
+            .eq("id", uid)
+            .then(({ error: upError }) => {
+              if (upError) console.error("Error updating device fingerprint:", upError);
+            });
+        }
+      }
+
       setUser({
         id: data.id,
         email: data.email,
@@ -75,6 +91,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         dribbbleUrl: data.dribbble_url,
         twitterUrl: data.twitter_url,
         supplierProfile: data.supplier_profile,
+        deviceFingerprint: data.device_fingerprint,
+        normalizedEmail: data.normalized_email,
       });
     } catch (err) {
       console.error("Error mapping profile:", err);
@@ -165,12 +183,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (email: string, password: string, fullName: string) => {
     setLoading(true);
     try {
+      const cleanEmail = email.trim();
+      if (isDisposableEmail(cleanEmail)) {
+        return { error: new Error("Registration rejected: Temporary or disposable email addresses are not allowed.") };
+      }
+
+      const normalized = normalizeEmail(cleanEmail);
+      // Query profiles for existing normalized email before trying to sign up
+      const { data: existingProf, error: checkError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("normalized_email", normalized)
+        .maybeSingle();
+
+      if (existingProf) {
+        return { error: new Error("An account with this email (or a variation of it) already exists. Please log in.") };
+      }
+
+      const fingerprint = getBrowserFingerprint();
+
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
         options: {
           data: {
             full_name: fullName,
+            device_fingerprint: fingerprint,
           },
           emailRedirectTo:
             typeof window !== "undefined" ? window.location.origin + "/onboarding" : undefined,
