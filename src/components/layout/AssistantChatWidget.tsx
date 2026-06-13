@@ -116,6 +116,935 @@ function LCWaveLogo({ className, size = 24 }: { className?: string; size?: numbe
   );
 }
 
+interface IntentExample {
+  id: number;
+  patterns: string[];
+  reply: string;
+  slotToFill?: keyof Slots;
+  slotValue?: string;
+}
+
+const INTENT_EXAMPLES: IntentExample[] = [
+  {
+    id: 1,
+    patterns: [
+      "i'm a copywriter",
+      "i am a copywriter",
+      "copywriter",
+      "copywriting",
+      "do copywriting",
+      "write copy",
+    ],
+    reply:
+      "Got it — copywriting! That's a high-demand category on LanceConnect. Are you focused on a specific niche, like sales pages, email sequences, or SEO blog content? And where are you (or your ideal clients) located?",
+    slotToFill: "category",
+    slotValue: "Content Writing",
+  },
+  {
+    id: 2,
+    patterns: [
+      "i do web design",
+      "web design",
+      "web designer",
+      "website design",
+      "designing websites",
+      "ui/ux design",
+    ],
+    reply:
+      "Awesome — web design is one of our most active categories. Are you more focused on UI/UX, full website builds, or platforms like Shopify/WordPress? Let's find clients near you — what city or region should I search?",
+    slotToFill: "category",
+    slotValue: "Graphic Design",
+  },
+  {
+    id: 3,
+    patterns: [
+      "i'm a web developer",
+      "i am a web developer",
+      "web developer",
+      "web development",
+      "do web dev",
+      "software developer",
+      "coder",
+      "programmer",
+    ],
+    reply:
+      "Web development — great choice. Do you specialize in front-end, back-end, or full-stack? I'll use that to fine-tune your client search. What's your target location?",
+    slotToFill: "category",
+    slotValue: "Web Development",
+  },
+  {
+    id: 4,
+    patterns: [
+      "virtual assistant",
+      "i am a virtual assistant",
+      "i'm a virtual assistant",
+      "va",
+      "admin support",
+      "assistant work",
+      "administrative assistant",
+    ],
+    reply:
+      "Virtual assistants are in huge demand right now. Do you focus on admin support, email management, scheduling, or something more specialized like e-commerce VA work? Where are your ideal clients based?",
+    slotToFill: "category",
+    slotValue: "Virtual Assistant",
+  },
+  {
+    id: 5,
+    patterns: [
+      "i watch pets / pet sitting",
+      "i watch pets",
+      "pet sitting",
+      "pet care",
+      "dog walker",
+      "dog sitting",
+      "cat sitting",
+      "pet sitter",
+      "watch pets",
+      "animal care",
+    ],
+    reply:
+      "Pet care — love it! Local pet owners and small business owners (groomers, vets, boarding facilities) often need reliable help. What city should I search for pet care clients near you?",
+    slotToFill: "category",
+    slotValue: "Pet Care",
+  },
+  {
+    id: 6,
+    patterns: [
+      "i'm a graphic designer",
+      "i am a graphic designer",
+      "graphic designer",
+      "graphic design",
+      "create graphics",
+      "branding designer",
+    ],
+    reply:
+      "Graphic design — perfect. Are you focused on branding/logos, social media graphics, print design, or packaging? Let's narrow down a location to search.",
+    slotToFill: "category",
+    slotValue: "Graphic Design",
+  },
+  {
+    id: 7,
+    patterns: [
+      "i do social media management",
+      "social media manager",
+      "social media management",
+      "manage social media",
+      "instagram manager",
+      "tiktok manager",
+    ],
+    reply:
+      "Social media management is one of the fastest-growing categories on LanceConnect. Do you specialize in a platform (Instagram, TikTok, LinkedIn) or industry (restaurants, real estate, salons)? What's your target city?",
+    slotToFill: "category",
+    slotValue: "Social Media Management",
+  },
+  {
+    id: 8,
+    patterns: [
+      "i'm a video editor",
+      "i am a video editor",
+      "video editor",
+      "video editing",
+      "edit videos",
+      "video maker",
+    ],
+    reply:
+      "Video editing — great. Are you mainly doing YouTube content, short-form (Reels/TikTok), or corporate/commercial work? Where should I focus the client search?",
+    slotToFill: "category",
+    slotValue: "Video Editing",
+  },
+  {
+    id: 9,
+    patterns: [
+      "i do bookkeeping",
+      "bookkeeper",
+      "bookkeeping",
+      "keep books",
+      "accounting assistant",
+      "quickbooks bookkeeping",
+    ],
+    reply:
+      "Bookkeeping is a steady, recurring-revenue category — nice pick. Do you work with a specific software (QuickBooks, Xero) or industry niche? What location are you targeting?",
+    slotToFill: "category",
+    slotValue: "Bookkeeping",
+  },
+  {
+    id: 10,
+    patterns: [
+      "i'm a photographer",
+      "i am a photographer",
+      "photographer",
+      "photography",
+      "take photos",
+      "shoot photos",
+    ],
+    reply:
+      "Photography — got it. Are you focused on portraits, products, events, or real estate photography? Let's find clients in your area — what city are you in?",
+    slotToFill: "category",
+    slotValue: "Photography",
+  },
+  {
+    id: 11,
+    patterns: [
+      "i do translation work",
+      "translation",
+      "translator",
+      "translate",
+      "translating",
+      "language translation",
+    ],
+    reply:
+      "Translation — excellent, that's a globally in-demand skill. What language pairs do you work with, and do you have a preferred region or are you open to remote clients worldwide?",
+    slotToFill: "category",
+    slotValue: "Translation",
+  },
+  {
+    id: 12,
+    patterns: [
+      "i'm a personal trainer looking for clients",
+      "i am a personal trainer",
+      "personal trainer",
+      "personal training",
+      "fitness coach",
+      "gym trainer",
+    ],
+    reply:
+      "Personal training — got it. Are you offering in-person sessions, online coaching, or both? What city or area should I focus the search on?",
+    slotToFill: "category",
+    slotValue: "Personal Training",
+  },
+  {
+    id: 13,
+    patterns: [
+      "i clean houses / cleaning services",
+      "i clean houses",
+      "cleaning services",
+      "house cleaning",
+      "cleaner",
+      "maid service",
+      "commercial cleaning",
+    ],
+    reply:
+      "House cleaning is a great local-service category with consistent demand. Are you looking for residential clients, commercial (offices), or both? What's your service area?",
+    slotToFill: "category",
+    slotValue: "House Cleaning",
+  },
+  {
+    id: 14,
+    patterns: [
+      "i do landscaping/lawn care",
+      "i do landscaping",
+      "lawn care",
+      "landscaping",
+      "gardening",
+      "mow lawns",
+      "landscaper",
+    ],
+    reply:
+      "Landscaping and lawn care — perfect, very high local search volume. What's your service radius or target city?",
+    slotToFill: "category",
+    slotValue: "Landscaping/Lawn Care",
+  },
+  {
+    id: 15,
+    patterns: [
+      "i'm a hairstylist",
+      "i am a hairstylist",
+      "hairstylist",
+      "hair stylist",
+      "hair salon",
+      "cut hair",
+    ],
+    reply:
+      "Hairstylist — got it! I noticed your dashboard already has some great salon leads in Las Vegas. Want me to pull similar salon leads in another city, or keep building out that region?",
+    slotToFill: "category",
+    slotValue: "Hairstylist",
+  },
+  {
+    id: 16,
+    patterns: [
+      "i'm a makeup artist",
+      "i am a makeup artist",
+      "makeup artist",
+      "mua",
+      "makeup artistry",
+      "apply makeup",
+    ],
+    reply:
+      "Makeup artistry — love it. Are you focused on bridal, editorial, or everyday glam clients? What city should I search?",
+    slotToFill: "category",
+    slotValue: "Makeup Artistry",
+  },
+  {
+    id: 17,
+    patterns: [
+      "i'm a tutor",
+      "i am a tutor",
+      "tutor",
+      "tutoring",
+      "teach students",
+      "teacher",
+      "academic tutor",
+    ],
+    reply:
+      "Tutoring — great category. What subject(s) and grade level or age group do you specialize in, and are you looking for local or online students?",
+    slotToFill: "category",
+    slotValue: "Tutoring",
+  },
+  {
+    id: 18,
+    patterns: [
+      "i do voiceover work",
+      "voiceover",
+      "voice actor",
+      "voice acting",
+      "voice artist",
+      "vo work",
+    ],
+    reply:
+      "Voiceover — nice, fully remote-friendly category. What types of projects (commercials, audiobooks, e-learning)? Since this is remote, do you want me to search broadly or focus on a specific country/market?",
+    slotToFill: "category",
+    slotValue: "Voiceover",
+  },
+  {
+    id: 19,
+    patterns: [
+      "i'm an accountant / cpa",
+      "i am an accountant",
+      "accountant",
+      "cpa",
+      "certified public accountant",
+      "accounting",
+    ],
+    reply:
+      "Accounting — great, high-trust category. Are you focused on individual tax prep, small business bookkeeping, or both? What region are your ideal clients in?",
+    slotToFill: "category",
+    slotValue: "Accounting",
+  },
+  {
+    id: 20,
+    patterns: [
+      "i do handyman work",
+      "handyman",
+      "handyperson",
+      "home repairs",
+      "general repairs",
+      "fix things",
+    ],
+    reply:
+      "Handyman services — perfect for local leads. What's your specialty (general repairs, electrical, plumbing, carpentry) and what's your service area?",
+    slotToFill: "category",
+    slotValue: "Handyman",
+  },
+  {
+    id: 21,
+    patterns: [
+      "i'm a wedding planner",
+      "i am a wedding planner",
+      "wedding planner",
+      "wedding planning",
+      "event planner",
+      "coordinate weddings",
+    ],
+    reply:
+      "Wedding planning — exciting! Are you full-service or day-of coordination? What's your primary market city?",
+    slotToFill: "category",
+    slotValue: "Wedding Planning",
+  },
+  {
+    id: 22,
+    patterns: [
+      "i do app development",
+      "app developer",
+      "app dev",
+      "ios developer",
+      "android developer",
+      "mobile app developer",
+    ],
+    reply:
+      "App development — strong demand category. iOS, Android, or cross-platform (Flutter/React Native)? Are you targeting local startups or open to remote clients?",
+    slotToFill: "category",
+    slotValue: "App Development",
+  },
+  {
+    id: 23,
+    patterns: [
+      "i'm a massage therapist",
+      "i am a massage therapist",
+      "massage therapist",
+      "massage therapy",
+      "give massages",
+    ],
+    reply:
+      "Massage therapy — got it. Are you mobile/in-home, or working from a studio? What city should I focus on?",
+    slotToFill: "category",
+    slotValue: "Massage Therapy",
+  },
+  {
+    id: 24,
+    patterns: [
+      "i do seo / digital marketing",
+      "seo",
+      "digital marketing",
+      "seo specialist",
+      "seo marketing",
+      "search engine optimization",
+      "digital marketer",
+    ],
+    reply:
+      "SEO and digital marketing — that's actually built right into the LanceConnect mission! Do you focus on local SEO, e-commerce, or content marketing? What's your target market?",
+    slotToFill: "category",
+    slotValue: "SEO / Digital Marketing",
+  },
+  {
+    id: 25,
+    patterns: [
+      "i'm a music teacher",
+      "i am a music teacher",
+      "music teacher",
+      "music lessons",
+      "piano teacher",
+      "guitar teacher",
+      "teach music",
+    ],
+    reply:
+      "Music lessons — great, recurring-client category. What instrument(s) do you teach, and are lessons in-person or online?",
+    slotToFill: "category",
+    slotValue: "Music Lessons",
+  },
+  {
+    id: 26,
+    patterns: ["i'm in seattle", "i am in seattle", "based in seattle", "seattle", "seattle wa"],
+    reply:
+      "Seattle — I see that's already one of your saved search regions. Want me to refresh your search there or expand to a nearby city like Portland or Tacoma?",
+    slotToFill: "location",
+    slotValue: "Seattle",
+  },
+  {
+    id: 27,
+    patterns: [
+      "my clients are in los angeles",
+      "los angeles",
+      "la",
+      "clients in la",
+      "based in los angeles",
+      "l.a.",
+    ],
+    reply:
+      "Los Angeles — got it, that's already on your pipeline map too. I'll prioritize LA leads in your category. Anything specific about LA you're targeting, like a particular neighborhood or industry?",
+    slotToFill: "location",
+    slotValue: "Los Angeles",
+  },
+  {
+    id: 28,
+    patterns: [
+      "i work remotely, no specific location",
+      "i work remotely",
+      "no specific location",
+      "remote",
+      "remote work",
+      "work from home",
+      "anywhere",
+      "worldwide",
+    ],
+    reply:
+      "No problem — remote work opens up a much wider pool. Want me to search broadly across major U.S. markets, or focus on a specific country/timezone for easier collaboration?",
+    slotToFill: "location",
+    slotValue: "Remote",
+  },
+  {
+    id: 29,
+    patterns: ["anywhere in texas", "texas", "tx", "cities in texas", "texas cities"],
+    reply:
+      "Texas — got it. I can search across major Texas cities like Houston, Austin, Dallas, and San Antonio. Want me to run all four, or pick one to start?",
+    slotToFill: "location",
+    slotValue: "Texas",
+  },
+  {
+    id: 30,
+    patterns: [
+      "outside the us, i'm based in the uk",
+      "outside the us",
+      "i'm based in the uk",
+      "uk",
+      "united kingdom",
+      "britain",
+      "england",
+      "based in uk",
+    ],
+    reply:
+      "Great — LanceConnect supports global searches. Should I focus on London specifically, or search across the UK more broadly?",
+    slotToFill: "location",
+    slotValue: "United Kingdom",
+  },
+  {
+    id: 31,
+    patterns: [
+      "i charge $50 an hour",
+      "50 an hour",
+      "$50/hour",
+      "$50 an hour",
+      "50 per hour",
+      "50/hr",
+      "$50/hr",
+    ],
+    reply:
+      "$50/hour — noted. That'll help me filter for clients whose typical project budgets align with that rate. Want me to set that as your default rate for proposals too?",
+    slotToFill: "budget",
+    slotValue: "$50/hr",
+  },
+  {
+    id: 32,
+    patterns: [
+      "my budget is around $2000 for a project",
+      "my budget is around $2000",
+      "$2000 for a project",
+      "budget is 2000",
+      "2000 project",
+      "$2000 budget",
+      "project budget $2000",
+    ],
+    reply:
+      "$2,000 project budget — got it. I'll prioritize leads whose project size matches that range. Is this a one-time project or could it lead to ongoing work?",
+    slotToFill: "budget",
+    slotValue: "$2,000",
+  },
+  {
+    id: 33,
+    patterns: [
+      "i'm not sure what to charge",
+      "i am not sure what to charge",
+      "not sure what to charge",
+      "dont know what to charge",
+      "don't know what to charge",
+      "unsure of rates",
+      "unsure about rates",
+    ],
+    reply:
+      "No worries — that's really common starting out. Based on your category and location, I can show you typical market rates so you can set a competitive starting price. Want me to pull those benchmarks?",
+    slotToFill: "budget",
+    slotValue: "Unsure",
+  },
+  {
+    id: 34,
+    patterns: [
+      "i want at least $30/hr",
+      "at least 30",
+      "at least $30/hr",
+      "minimum $30",
+      "minimum 30/hr",
+      "at least 30/hour",
+    ],
+    reply:
+      "$30/hour minimum — got it, I'll use that as a baseline filter so we don't waste time on underpriced leads.",
+    slotToFill: "budget",
+    slotValue: "$30/hr",
+  },
+  {
+    id: 35,
+    patterns: [
+      "i do retainer work, $1500/month",
+      "i do retainer work",
+      "$1500/month",
+      "$1500 a month",
+      "retainer of 1500",
+      "monthly retainer",
+      "1500 per month",
+    ],
+    reply:
+      "Monthly retainers at $1,500 — that's a solid recurring-revenue target. I'll flag leads that look like good fits for ongoing monthly arrangements.",
+    slotToFill: "budget",
+    slotValue: "$1,500/mo retainer",
+  },
+  {
+    id: 36,
+    patterns: [
+      "i'm just starting out",
+      "i am just starting out",
+      "just starting out",
+      "beginner",
+      "junior",
+      "no experience",
+      "start out",
+      "starting out",
+      "newbie",
+    ],
+    reply:
+      "Welcome to freelancing! As a beginner, I'd recommend starting with smaller, lower-pressure projects to build reviews and a portfolio. I'll prioritize leads marked as good for newer freelancers.",
+    slotToFill: "experience_level",
+    slotValue: "Beginner",
+  },
+  {
+    id: 37,
+    patterns: [
+      "i've been doing this for 10 years",
+      "doing this for 10 years",
+      "10 years experience",
+      "10 years of experience",
+      "ten years",
+      "veteran",
+    ],
+    reply:
+      "10 years of experience — that's excellent, you can confidently target premium-rate clients. I'll prioritize leads that match a higher budget tier.",
+    slotToFill: "experience_level",
+    slotValue: "Expert",
+  },
+  {
+    id: 38,
+    patterns: [
+      "i'm intermediate, maybe 2-3 years",
+      "i'm intermediate",
+      "intermediate",
+      "2-3 years",
+      "two to three years",
+      "2 or 3 years",
+      "mid-level",
+      "mid level",
+    ],
+    reply:
+      "2-3 years — solid middle ground. You're past the beginner stage but still building your reputation. I'll balance the search between growth opportunities and steady-paying clients.",
+    slotToFill: "experience_level",
+    slotValue: "Intermediate",
+  },
+  {
+    id: 39,
+    patterns: [
+      "i'm an expert in my field",
+      "i am an expert",
+      "expert in my field",
+      "expert",
+      "senior developer",
+      "highly experienced",
+      "pro",
+    ],
+    reply:
+      "Expert level — great, I'll prioritize premium leads and larger projects that match your skill level.",
+    slotToFill: "experience_level",
+    slotValue: "Expert",
+  },
+  {
+    id: 40,
+    patterns: [
+      "i have a portfolio but no paid clients yet",
+      "i have a portfolio",
+      "no paid clients yet",
+      "portfolio but no clients",
+      "have samples but no clients",
+      "portfolio only",
+    ],
+    reply:
+      "That's a great foundation! Having a portfolio puts you ahead. I'll focus on leads that are open to newer freelancers with strong samples — your portfolio will do a lot of the talking.",
+    slotToFill: "experience_level",
+    slotValue: "Beginner",
+  },
+  {
+    id: 41,
+    patterns: [
+      "how does lanceconnect work",
+      "how does this work",
+      "how does it work",
+      "what is lanceconnect",
+      "explain lanceconnect",
+    ],
+    reply:
+      "LanceConnect connects freelancers directly with clients — no bidding wars, no commission cuts. You search for local businesses or clients in your category, get verified contact info (phone, email, website), and reach out directly. We also help clients find vetted freelancers the same way.",
+  },
+  {
+    id: 42,
+    patterns: [
+      "is there a fee",
+      "does it cost money",
+      "free",
+      "pricing",
+      "fees",
+      "commission",
+      "do i have to pay",
+      "subscription fee",
+    ],
+    reply:
+      "LanceConnect operates on a 0% platform commission model — what you earn is yours. There may be optional premium features for advanced search and lead tools, but core connections are commission-free.",
+  },
+  {
+    id: 43,
+    patterns: [
+      "how do i save a lead",
+      "save lead",
+      "saving leads",
+      "how to save lead",
+      "bookmark lead",
+    ],
+    reply:
+      "Easy — when you see a business or client card in your 'Discovered Businesses' list, just tap the green 'Save Lead' button. It'll be added to your saved pipeline for follow-up.",
+  },
+  {
+    id: 44,
+    patterns: [
+      "what does the score next to each business mean",
+      "what does the score mean",
+      "lead quality score",
+      "quality score",
+      "leads score",
+      "score next to business",
+      "what is the score",
+    ],
+    reply:
+      "That's our Lead Quality Score — it factors in things like how complete their contact info is, their online presence, and how good of a fit they are for your category. Higher scores (green) mean stronger leads.",
+  },
+  {
+    id: 45,
+    patterns: [
+      "can i export my leads",
+      "export csv",
+      "export leads",
+      "download csv",
+      "download leads",
+      "export spreadsheet",
+    ],
+    reply:
+      "Yes! Use the 'Export CSV' button above your Discovered Businesses list to download all your current leads as a spreadsheet.",
+  },
+  {
+    id: 46,
+    patterns: [
+      "what's the heatmap for",
+      "what is the heatmap for",
+      "heatmap",
+      "global heatmap",
+      "map markers",
+      "what's the heatmap",
+    ],
+    reply:
+      "The Pipeline Global Heatmap shows where your saved prospects and active search areas are located worldwide. It's a quick visual of your pipeline's geographic spread — tap any region marker to see saved leads and stats for that area.",
+  },
+  {
+    id: 47,
+    patterns: [
+      "how do i contact a lead",
+      "how to contact",
+      "contact lead",
+      "reach out",
+      "send message to business",
+    ],
+    reply:
+      "Tap 'Quick Connect' on any business card to open a pre-drafted message you can send via email or your preferred channel — it's customized based on your category and their info.",
+  },
+  {
+    id: 48,
+    patterns: [
+      "what's a quick connect message",
+      "what is a quick connect message",
+      "quick connect",
+      "quick connect message",
+      "outreach template message",
+    ],
+    reply:
+      "It's a short, professional outreach message I help generate based on the lead's business type and your services — designed to get a reply, not get filtered as spam.",
+  },
+  {
+    id: 49,
+    patterns: [
+      "can i change my category later",
+      "change category",
+      "update category",
+      "change my service",
+      "update service",
+    ],
+    reply:
+      "Absolutely — just update it anytime in the 'My Category / Service' dropdown on your dashboard, or tell me here and I'll update it for you.",
+  },
+  {
+    id: 50,
+    patterns: [
+      "i'm a client looking to hire someone",
+      "i am a client looking to hire",
+      "looking to hire",
+      "client looking to hire",
+      "i want to hire",
+      "hire someone",
+      "need to hire",
+    ],
+    reply:
+      "Welcome! LanceConnect works both ways — I can help you find a vetted freelancer. What kind of work do you need done, and what's your location and budget?",
+  },
+  {
+    id: 51,
+    patterns: [
+      "i need a logo designed",
+      "logo design",
+      "need a logo",
+      "hire a logo designer",
+      "want a logo",
+    ],
+    reply:
+      "Got it — sounds like you're looking for a graphic/brand designer. What's your budget range for the logo, and what city or region are you located in? I'll pull some matched freelancers.",
+  },
+  {
+    id: 52,
+    patterns: [
+      "i need someone to manage my instagram",
+      "manage instagram",
+      "instagram management",
+      "manage social media",
+      "instagram manager",
+    ],
+    reply:
+      "That falls under social media management. What's your monthly budget for this, and where's your business located? I can find local or remote specialists.",
+  },
+  {
+    id: 53,
+    patterns: [
+      "how accurate is the contact info",
+      "accurate contact",
+      "is contact info correct",
+      "verified emails",
+      "verified phone numbers",
+    ],
+    reply:
+      "We verify contact details where possible — phone, email, and website — and clearly mark when info like email or website isn't available, so you always know what you're working with.",
+  },
+  {
+    id: 54,
+    patterns: [
+      "do you have leads outside the us",
+      "leads outside us",
+      "leads outside the united states",
+      "global leads",
+      "international leads",
+    ],
+    reply:
+      "Yes — LanceConnect supports global searches. Just tell me the country or city you're interested in, and I'll run the search for that region.",
+  },
+  {
+    id: 55,
+    patterns: [
+      "i'm a freelance writer",
+      "i am a freelance writer",
+      "freelance writer",
+      "content writer",
+      "writing services",
+      "articles writer",
+    ],
+    reply:
+      "Freelance writing — great, very versatile category. Do you specialize in blog content, copywriting, technical writing, or ghostwriting? And what's your target location or are you open to remote clients?",
+    slotToFill: "category",
+    slotValue: "Content Writing",
+  },
+  {
+    id: 56,
+    patterns: [
+      "thanks, that's all for now",
+      "thanks that is all for now",
+      "thanks",
+      "that's all",
+      "thank you",
+      "all for now",
+      "goodbye",
+      "done",
+    ],
+    reply:
+      "You're all set! Your details are saved, and I've updated your dashboard filters. Good luck out there — I'll be here if you need anything else. 👋",
+  },
+];
+
+function findBestMatchedIntent(text: string): IntentExample | null {
+  const clean = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/fifty/g, "50")
+      .replace(/thirty/g, "30")
+      .replace(/twenty/g, "20")
+      .replace(/ten/g, "10")
+      .replace(/thousand/g, "1000")
+      .replace(/[^\w\s$/-]/g, "")
+      .trim();
+
+  const cleanedInput = clean(text);
+
+  // 1. Exact or clear substring matching
+  for (const intent of INTENT_EXAMPLES) {
+    for (const pattern of intent.patterns) {
+      const cleanedPattern = clean(pattern);
+      if (cleanedInput === cleanedPattern || cleanedInput === pattern.toLowerCase()) {
+        return intent;
+      }
+    }
+  }
+
+  // 2. Token overlap similarity matching
+  const getWords = (str: string) => {
+    return new Set(
+      str
+        .split(/\s+/)
+        .filter(
+          (w) =>
+            ![
+              "i",
+              "im",
+              "a",
+              "an",
+              "the",
+              "my",
+              "in",
+              "do",
+              "for",
+              "to",
+              "is",
+              "are",
+              "work",
+              "looking",
+              "some",
+              "someone",
+              "any",
+              "get",
+              "with",
+              "do",
+              "does",
+              "did",
+              "have",
+              "has",
+              "had",
+            ].includes(w),
+        ),
+    );
+  };
+
+  const isSimilarWord = (w1: string, w2: string) => {
+    return (
+      w1 === w2 || w1.startsWith(w2) || w2.startsWith(w1) || w1.includes(w2) || w2.includes(w1)
+    );
+  };
+
+  const inputWords = getWords(cleanedInput);
+  if (inputWords.size === 0) return null;
+
+  let bestIntent: IntentExample | null = null;
+  let maxScore = 0;
+
+  for (const intent of INTENT_EXAMPLES) {
+    for (const pattern of intent.patterns) {
+      const patternWords = getWords(clean(pattern));
+      if (patternWords.size === 0) continue;
+
+      const intersect = new Set(
+        [...inputWords].filter((iw) => [...patternWords].some((pw) => isSimilarWord(iw, pw))),
+      );
+
+      const unionSize = inputWords.size + patternWords.size - intersect.size;
+      const score = intersect.size / unionSize;
+
+      if (score > maxScore) {
+        maxScore = score;
+        bestIntent = intent;
+      }
+    }
+  }
+
+  if (bestIntent && maxScore >= 0.35) {
+    return bestIntent;
+  }
+
+  return null;
+}
+
 export function AssistantChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([OPENING_MESSAGE]);
@@ -430,36 +1359,64 @@ I'll plug this into your search so you can start finding real, contactable leads
     setInputValue("");
     setIsThinking(true);
 
-    // 3. Process slot filling
+    // 3. Process slot filling and intent matching
     setTimeout(() => {
       setIsThinking(false);
 
-      // Parse text for slots
-      const parsed = parseSlotsFromInput(text, currentUnfilledSlot);
+      const matchedIntent = findBestMatchedIntent(text);
 
-      // Merge slots
-      const updatedSlots = { ...slots, ...parsed };
-      setSlots(updatedSlots);
+      let botText = "";
+      let botQuickReplies: string[] | undefined = undefined;
+      let newSlots = { ...slots };
 
-      // Find next unfilled slot
+      if (matchedIntent) {
+        botText = matchedIntent.reply;
+
+        // If the intent fills a slot, update newSlots
+        if (matchedIntent.slotToFill && matchedIntent.slotValue) {
+          newSlots[matchedIntent.slotToFill] = matchedIntent.slotValue;
+        } else {
+          const parsed = parseSlotsFromInput(text, currentUnfilledSlot);
+          newSlots = { ...newSlots, ...parsed };
+        }
+      } else {
+        const parsed = parseSlotsFromInput(text, currentUnfilledSlot);
+        newSlots = { ...newSlots, ...parsed };
+      }
+
+      setSlots(newSlots);
+
+      // Determine next slot
       let nextSlot: keyof Slots | null = null;
-      if (!updatedSlots.goal) nextSlot = "goal";
-      else if (!updatedSlots.category) nextSlot = "category";
-      else if (!updatedSlots.location) nextSlot = "location";
-      else if (!updatedSlots.budget) nextSlot = "budget";
-      else if (!updatedSlots.experience_level) nextSlot = "experience_level";
+      if (!newSlots.goal) nextSlot = "goal";
+      else if (!newSlots.category) nextSlot = "category";
+      else if (!newSlots.location) nextSlot = "location";
+      else if (!newSlots.budget) nextSlot = "budget";
+      else if (!newSlots.experience_level) nextSlot = "experience_level";
 
       setCurrentUnfilledSlot(nextSlot);
 
-      // Get next bot prompt
-      const prompt = getBotPromptForNextSlot(updatedSlots);
+      const nextPrompt = getBotPromptForNextSlot(newSlots);
+
+      if (matchedIntent) {
+        botQuickReplies = nextPrompt.quickReplies;
+
+        // If all slots are now filled, append summary prompt to custom reply
+        if (!nextSlot) {
+          botText += `\n\n${nextPrompt.text}`;
+          botQuickReplies = nextPrompt.quickReplies;
+        }
+      } else {
+        botText = nextPrompt.text;
+        botQuickReplies = nextPrompt.quickReplies;
+      }
 
       const botMsg: Message = {
         id: Date.now().toString(),
         sender: "assistant",
-        text: prompt.text,
+        text: botText,
         timestamp: new Date(),
-        quickReplies: prompt.quickReplies,
+        quickReplies: botQuickReplies,
       };
 
       setMessages((prev) => [...prev, botMsg]);
