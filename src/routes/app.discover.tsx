@@ -1576,14 +1576,14 @@ function LeadDetailModal({
                     return (
                       <div
                         key={index}
-                        className="rounded-xl border border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10 p-3 text-xs"
+                        className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/15 p-3 text-xs"
                       >
-                        <div className="flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-400 mb-1">
+                        <div className="flex items-center gap-1.5 font-bold text-amber-700 dark:text-amber-400 mb-1">
                           <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                           {gap}
                         </div>
-                        <p className="text-slate-700 dark:text-slate-200 leading-relaxed pl-3">
-                          <span className="font-bold text-slate-900 dark:text-slate-100">Pitch Tip: </span>
+                        <p className="text-muted-foreground leading-relaxed pl-3">
+                          <span className="font-bold text-foreground">Pitch Tip: </span>
                           {pitchTip}
                         </p>
                       </div>
@@ -1624,7 +1624,7 @@ function LeadDetailModal({
                     <div className="flex gap-2">
                       <button
                         onClick={() => setOutreachDraft("")}
-                        className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-300 hover:text-white cursor-pointer"
+                        className="rounded-lg border border-border bg-muted px-3 py-1 text-xs text-foreground hover:bg-accent cursor-pointer transition"
                       >
                         Edit Settings
                       </button>
@@ -1646,7 +1646,7 @@ function LeadDetailModal({
                           }}
                           className={cn(
                             "rounded-lg px-3 py-1 text-xs font-semibold text-white flex items-center gap-1 transition",
-                            isLocked ? "bg-slate-700 text-slate-400 cursor-not-allowed" : "cursor-pointer",
+                            isLocked ? "bg-muted text-muted-foreground cursor-not-allowed" : "cursor-pointer",
                             !isLocked && (selectedChannel === "whatsapp"
                               ? "bg-emerald-600 hover:bg-emerald-700"
                               : selectedChannel === "linkedin"
@@ -1661,51 +1661,51 @@ function LeadDetailModal({
                   </div>
                 </div>
               ) : (
-                <div className="mt-3 rounded-xl border border-slate-800 bg-slate-950 p-3.5 space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-2 rounded-lg">
+                <div className="mt-3 rounded-xl border border-border bg-muted/40 p-3.5 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-card border border-border p-2 rounded-lg">
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-slate-400 font-medium">Channel:</span>
+                      <span className="text-xs text-muted-foreground font-medium">Channel:</span>
                       <select
                         value={selectedChannel}
                         onChange={(e) => setSelectedChannel(e.target.value as any)}
-                        className="bg-slate-800 text-slate-100 text-xs border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="bg-background text-foreground text-xs border border-border rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                       >
-                        <option value="email" className="bg-slate-800 text-slate-100">Email</option>
-                        <option value="linkedin" className="bg-slate-800 text-slate-100">LinkedIn DM</option>
-                        <option value="whatsapp" className="bg-slate-800 text-slate-100">WhatsApp Message</option>
-                        <option value="phone_script" className="bg-slate-800 text-slate-100">Phone Script</option>
+                        <option value="email" className="bg-background text-foreground">Email</option>
+                        <option value="linkedin" className="bg-background text-foreground">LinkedIn DM</option>
+                        <option value="whatsapp" className="bg-background text-foreground">WhatsApp Message</option>
+                        <option value="phone_script" className="bg-background text-foreground">Phone Script</option>
                         {["african_food_export", "restaurant_supplier", "product_export", "b2b_trade", "human_capital", "training_recruitment"].includes(currentLead.industry || "") && (
-                          <option value="letter" className="bg-slate-800 text-slate-100">Physical Letter</option>
+                          <option value="letter" className="bg-background text-foreground">Physical Letter</option>
                         )}
                       </select>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-slate-400 font-medium">Tone:</span>
+                      <span className="text-xs text-muted-foreground font-medium">Tone:</span>
                       <select
                         value={selectedTone}
                         onChange={(e) => setSelectedTone(e.target.value as any)}
-                        className="bg-slate-800 text-slate-100 text-xs border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="bg-background text-foreground text-xs border border-border rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                       >
-                        <option value="professional" className="bg-slate-800 text-slate-100">Professional</option>
-                        <option value="casual" className="bg-slate-800 text-slate-100">Casual</option>
-                        <option value="bold" className="bg-slate-800 text-slate-100">Bold/Direct</option>
+                        <option value="professional" className="bg-background text-foreground">Professional</option>
+                        <option value="casual" className="bg-background text-foreground">Casual</option>
+                        <option value="bold" className="bg-background text-foreground">Bold/Direct</option>
                       </select>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-slate-400 font-medium">Language:</span>
+                      <span className="text-xs text-muted-foreground font-medium">Language:</span>
                       <select
                         value={selectedLanguage}
                         onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="bg-slate-800 text-slate-100 text-xs border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="bg-background text-foreground text-xs border border-border rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                       >
-                        <option value="English" className="bg-slate-800 text-slate-100">English</option>
-                        <option value="French" className="bg-slate-800 text-slate-100">French</option>
-                        <option value="German" className="bg-slate-800 text-slate-100">German</option>
-                        <option value="Spanish" className="bg-slate-800 text-slate-100">Spanish</option>
-                        <option value="Portuguese" className="bg-slate-800 text-slate-100">Portuguese</option>
-                        <option value="Arabic" className="bg-slate-800 text-slate-100">Arabic</option>
-                        <option value="Japanese" className="bg-slate-800 text-slate-100">Japanese</option>
-                        <option value="Chinese" className="bg-slate-800 text-slate-100">Chinese</option>
+                        <option value="English" className="bg-background text-foreground">English</option>
+                        <option value="French" className="bg-background text-foreground">French</option>
+                        <option value="German" className="bg-background text-foreground">German</option>
+                        <option value="Spanish" className="bg-background text-foreground">Spanish</option>
+                        <option value="Portuguese" className="bg-background text-foreground">Portuguese</option>
+                        <option value="Arabic" className="bg-background text-foreground">Arabic</option>
+                        <option value="Japanese" className="bg-background text-foreground">Japanese</option>
+                        <option value="Chinese" className="bg-background text-foreground">Chinese</option>
                       </select>
                     </div>
                   </div>
@@ -1745,7 +1745,7 @@ function LeadDetailModal({
               <button
                 type="button"
                 onClick={() => setLeadReportModalOpen(true)}
-                className="rounded-lg border border-red-900/50 text-red-400 bg-[#240c0c] px-4 py-2.5 text-sm font-semibold hover:bg-[#351414] cursor-pointer"
+                className="rounded-lg border border-destructive/30 text-destructive bg-destructive/10 px-4 py-2.5 text-sm font-semibold hover:bg-destructive/20 cursor-pointer transition"
               >
                 Report ⚑
               </button>
@@ -1768,7 +1768,7 @@ function LeadDetailModal({
             ) : seoData ? (
               <>
                 {/* Outreach Hook Section */}
-                <div className="rounded-xl border border-blue-900/40 bg-[#0c1c3e] p-4 space-y-2.5">
+                <div className="rounded-xl border border-primary/25 bg-primary/5 p-4 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-semibold uppercase tracking-wide text-primary flex items-center gap-1.5">
                       <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> Outreach SEO
@@ -1784,7 +1784,7 @@ function LeadDetailModal({
                       <Copy className="h-2.5 w-2.5" /> Copy Hook
                     </button>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed italic">"{seoData.hook}"</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed italic font-medium">"{seoData.hook}"</p>
                 </div>
 
                 {/* Keywords Table */}
@@ -1792,9 +1792,9 @@ function LeadDetailModal({
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Target Local Keywords
                   </p>
-                  <div className="rounded-xl border border-slate-800 bg-slate-950 overflow-hidden">
+                  <div className="rounded-xl border border-border bg-card overflow-hidden">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-slate-900 text-slate-400 uppercase tracking-wide text-[10px] border-b border-slate-800">
+                      <thead className="bg-muted/80 text-muted-foreground uppercase tracking-wide text-[10px] border-b border-border">
                         <tr>
                           <th className="px-4 py-2.5">Keyword</th>
                           <th className="px-4 py-2.5 text-center">Volume</th>
@@ -1802,7 +1802,7 @@ function LeadDetailModal({
                           <th className="px-4 py-2.5 text-right">Est. Rank</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border/60 text-slate-300">
+                      <tbody className="divide-y divide-border text-foreground">
                         {seoData.keywords.map((kw: any) => {
                           let diffColor =
                             "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
@@ -1832,14 +1832,14 @@ function LeadDetailModal({
                             );
 
                           return (
-                            <tr key={kw.keyword} className="hover:bg-muted/10 transition">
-                              <td className="px-4 py-3 font-mono text-[11px] font-semibold text-slate-200">
+                            <tr key={kw.keyword} className="hover:bg-muted/30 transition">
+                              <td className="px-4 py-3 font-mono text-[11px] font-semibold text-foreground">
                                 {kw.keyword}
                               </td>
                               <td className="px-4 py-3 text-center">
                                 <div className="flex flex-col items-center gap-1">
                                   <span className="font-mono font-semibold">{kw.volume}</span>
-                                  <div className="w-12 h-1 rounded-full bg-slate-800 overflow-hidden">
+                                  <div className="w-12 h-1 rounded-full bg-muted overflow-hidden">
                                     <div
                                       className="h-full bg-primary"
                                       style={{
@@ -1888,7 +1888,7 @@ function LeadDetailModal({
             <p className="text-xs text-muted-foreground mb-4">
               Please review our safety checklists before reaching out to this contact:
             </p>
-            <ul className="space-y-2.5 text-xs text-slate-300 mb-6">
+            <ul className="space-y-2.5 text-xs text-muted-foreground mb-6">
               <li className="flex items-start gap-2">
                 <span className="text-amber-500 mt-0.5">⚠️</span>
                 <span><strong>No Upfront Payments:</strong> Never pay fees to secure a job or project. Authentic clients will not charge you.</span>
@@ -1962,7 +1962,7 @@ function LeadDetailModal({
                   onChange={(e) => setLeadReportDescription(e.target.value)}
                   placeholder="Describe the issue in detail..."
                   rows={4}
-                  className="w-full rounded-xl border border-border bg-background p-3 text-xs font-mono text-slate-300 placeholder-slate-500 focus:border-primary focus:outline-none"
+                  className="w-full rounded-xl border border-border bg-background p-3 text-xs font-mono text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none"
                   required
                 />
               </div>
