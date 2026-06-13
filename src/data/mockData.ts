@@ -474,6 +474,84 @@ export const CATEGORIES = [
     label: "MC & Events Host",
     example: "Find corporate events, weddings and conferences needing a professional MC",
   },
+  {
+    id: "translation",
+    emoji: "🌐",
+    label: "Translation",
+    example: "Find translation agencies, localization clients",
+  },
+  {
+    id: "personal_trainer",
+    emoji: "💪",
+    label: "Personal Training",
+    example: "Find fitness centers, private clients",
+  },
+  {
+    id: "landscaping",
+    emoji: "🌿",
+    label: "Landscaping & Lawn Care",
+    example: "Find commercial properties, residential lawn care",
+  },
+  {
+    id: "hairstylist",
+    emoji: "✂️",
+    label: "Hairstylist",
+    example: "Find beauty salons, wedding parties, private events",
+  },
+  {
+    id: "makeup_artist",
+    emoji: "💄",
+    label: "Makeup Artistry",
+    example: "Find wedding shoots, editorial fashion, salons",
+  },
+  {
+    id: "voiceover",
+    emoji: "🎙️",
+    label: "Voiceover",
+    example: "Find audiobooks, commercial ads, e-learning narration",
+  },
+  {
+    id: "accounting",
+    emoji: "📊",
+    label: "Accounting & CPA",
+    example: "Find corporate finance, individual tax returns",
+  },
+  {
+    id: "handyman",
+    emoji: "🔧",
+    label: "Handyman Services",
+    example: "Find residential repairs, property managers needing help",
+  },
+  {
+    id: "wedding_planner",
+    emoji: "💍",
+    label: "Wedding Planning",
+    example: "Find brides, venues, corporate event planners",
+  },
+  {
+    id: "massage_therapist",
+    emoji: "💆",
+    label: "Massage Therapy",
+    example: "Find spas, wellness centers, private in-home bookings",
+  },
+  {
+    id: "music_teacher",
+    emoji: "🎵",
+    label: "Music Lessons",
+    example: "Find private students, local schools needing instructors",
+  },
+  {
+    id: "pet_care",
+    emoji: "🐾",
+    label: "Pet Care",
+    example: "Find dog walking, pet boarding, grooming leads",
+  },
+  {
+    id: "house_cleaning",
+    emoji: "🧹",
+    label: "House Cleaning",
+    example: "Find residential homes, commercial offices needing cleaners",
+  },
 ];
 
 export const COUNTRIES = ALL_COUNTRIES;

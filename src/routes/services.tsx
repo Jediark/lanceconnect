@@ -33,6 +33,18 @@ import {
   Send,
   CheckCircle2,
   MailCheck,
+  Globe,
+  Dumbbell,
+  Sprout,
+  Scissors,
+  Brush,
+  Mic,
+  Calculator,
+  Wrench,
+  Heart,
+  Activity,
+  Music,
+  HeartHandshake,
 } from "lucide-react";
 
 export const Route = createFileRoute("/services")({
@@ -70,6 +82,19 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
   human_capital: Brain,
   training_recruitment: Target,
   parent_tutor: Users,
+  translation: Globe,
+  personal_trainer: Dumbbell,
+  landscaping: Sprout,
+  hairstylist: Scissors,
+  makeup_artist: Brush,
+  voiceover: Mic,
+  accounting: Calculator,
+  handyman: Wrench,
+  wedding_planner: Heart,
+  massage_therapist: Activity,
+  music_teacher: Music,
+  pet_care: HeartHandshake,
+  house_cleaning: Sparkles,
 };
 
 function categorySlug(id: string) {
@@ -92,6 +117,19 @@ function categorySlug(id: string) {
     human_capital: "human-capital-development",
     training_recruitment: "training-recruitment",
     parent_tutor: "parent-tutor-matching",
+    translation: "translators",
+    personal_trainer: "personal-trainers",
+    landscaping: "landscaping-services",
+    hairstylist: "hairstylists",
+    makeup_artist: "makeup-artists",
+    voiceover: "voiceover-artists",
+    accounting: "accountants",
+    handyman: "handyman-services",
+    wedding_planner: "wedding-planners",
+    massage_therapist: "massage-therapists",
+    music_teacher: "music-teachers",
+    pet_care: "pet-care-services",
+    house_cleaning: "house-cleaning-services",
   };
   return map[id] ?? id;
 }
@@ -142,19 +180,42 @@ function ServicesPage() {
           "marketing",
           "app_dev",
           "va",
+          "voiceover",
         ].includes(c.id)
       );
     }
     if (activeTab === "trade") {
       return (
         matchesSearch &&
-        ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"].includes(c.id)
+        [
+          "african_food_export",
+          "restaurant_supplier",
+          "product_export",
+          "b2b_trade",
+          "landscaping",
+          "handyman",
+          "house_cleaning",
+        ].includes(c.id)
       );
     }
     if (activeTab === "consulting") {
       return (
         matchesSearch &&
-        ["tutor", "human_capital", "training_recruitment", "parent_tutor"].includes(c.id)
+        [
+          "tutor",
+          "human_capital",
+          "training_recruitment",
+          "parent_tutor",
+          "translation",
+          "personal_trainer",
+          "hairstylist",
+          "makeup_artist",
+          "accounting",
+          "wedding_planner",
+          "massage_therapist",
+          "music_teacher",
+          "pet_care",
+        ].includes(c.id)
       );
     }
     return matchesSearch;

@@ -33,7 +33,19 @@ const CATEGORY_MAP: Record<string, string> = {
   "Graphic Design": "designer",
   "Virtual Assistant": "va",
   "Content Writing": "copywriter",
-  "Pet Care": "local_business",
+  "Pet Care": "pet_care",
+  "Translation": "translation",
+  "Personal Training": "personal_trainer",
+  "Landscaping & Lawn Care": "landscaping",
+  "Hairstylist": "hairstylist",
+  "Makeup Artistry": "makeup_artist",
+  "Voiceover": "voiceover",
+  "Accounting & CPA": "accounting",
+  "Handyman Services": "handyman",
+  "Wedding Planning": "wedding_planner",
+  "Massage Therapy": "massage_therapist",
+  "Music Lessons": "music_teacher",
+  "House Cleaning": "house_cleaning",
 };
 
 function getCategoryParam(catLabel: string | null): string {
@@ -45,7 +57,19 @@ function getCategoryParam(catLabel: string | null): string {
   if (norm.includes("design")) return "designer";
   if (norm.includes("assist") || norm.includes("va")) return "va";
   if (norm.includes("writ") || norm.includes("copy")) return "copywriter";
-  if (norm.includes("pet") || norm.includes("dog")) return "local_business";
+  if (norm.includes("trans")) return "translation";
+  if (norm.includes("train") || norm.includes("fitness")) return "personal_trainer";
+  if (norm.includes("landscape") || norm.includes("lawn")) return "landscaping";
+  if (norm.includes("hair")) return "hairstylist";
+  if (norm.includes("makeup") || norm.includes("mua")) return "makeup_artist";
+  if (norm.includes("voice")) return "voiceover";
+  if (norm.includes("account") || norm.includes("cpa")) return "accounting";
+  if (norm.includes("handy")) return "handyman";
+  if (norm.includes("wed")) return "wedding_planner";
+  if (norm.includes("mass")) return "massage_therapist";
+  if (norm.includes("music") || norm.includes("piano") || norm.includes("guitar")) return "music_teacher";
+  if (norm.includes("pet") || norm.includes("dog") || norm.includes("cat")) return "pet_care";
+  if (norm.includes("clean")) return "house_cleaning";
   if (norm.includes("seo")) return "seo";
   if (norm.includes("social")) return "social_media";
   if (norm.includes("video")) return "video";

@@ -36,6 +36,19 @@ const FREELANCE_IDS = [
   "app_dev",
   "va",
   "mc_events",
+  "translation",
+  "personal_trainer",
+  "landscaping",
+  "hairstylist",
+  "makeup_artist",
+  "voiceover",
+  "accounting",
+  "handyman",
+  "wedding_planner",
+  "massage_therapist",
+  "music_teacher",
+  "pet_care",
+  "house_cleaning",
 ];
 
 const B2B_IDS = [
@@ -49,7 +62,12 @@ const B2B_IDS = [
   "training_recruitment",
 ];
 
-const WHOLESALE_CATEGORIES = ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"];
+const WHOLESALE_CATEGORIES = [
+  "african_food_export",
+  "restaurant_supplier",
+  "product_export",
+  "b2b_trade",
+];
 
 export const Route = createFileRoute("/freelancers/")({
   head: () => ({
@@ -85,7 +103,9 @@ function FreelancerDirectoryPage() {
 
   // Report Modal States
   const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [reportedFreelancer, setReportedFreelancer] = useState<{ id: string; name: string } | null>(null);
+  const [reportedFreelancer, setReportedFreelancer] = useState<{ id: string; name: string } | null>(
+    null,
+  );
   const [reportReason, setReportReason] = useState<string>("fake_profile");
   const [reportDescription, setReportDescription] = useState("");
   const [submittingReport, setSubmittingReport] = useState(false);
@@ -117,6 +137,7 @@ function FreelancerDirectoryPage() {
       if (error) throw error;
       toast.success("Thank you. The report has been submitted for review.");
       setReportModalOpen(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Error submitting report:", err);
       toast.error(err.message || "Failed to submit report. Please try again.");
@@ -152,6 +173,7 @@ function FreelancerDirectoryPage() {
       } else {
         setFreelancers(MOCK_FREELANCERS);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Error fetching freelancers, falling back to mock data:", err);
       setFreelancers(MOCK_FREELANCERS);
@@ -221,11 +243,7 @@ function FreelancerDirectoryPage() {
       {/* Premium Dark Header */}
       <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-16 text-center select-none text-white">
         <div className="absolute inset-0 z-0 select-none pointer-events-none">
-          <img
-            src={IMG.heroLaptop}
-            className="w-full h-full object-cover opacity-35"
-            alt=""
-          />
+          <img src={IMG.heroLaptop} className="w-full h-full object-cover opacity-35" alt="" />
           <div className="absolute inset-0 bg-[#020b21]/75" />
         </div>
         <div className="relative mx-auto max-w-4xl px-4 lg:px-8 z-10">
@@ -350,7 +368,6 @@ function FreelancerDirectoryPage() {
                 key={free.id}
                 className="relative rounded-3xl border border-primary/20 bg-card p-6 shadow-[0_0_20px_rgba(6,182,212,0.08)] hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition duration-300 flex flex-col justify-between group hover:border-primary/40 overflow-hidden"
               >
-                
                 <div>
                   {/* Bio Info Header */}
                   <div className="flex items-start gap-4">
@@ -378,12 +395,18 @@ function FreelancerDirectoryPage() {
                       <h3 className="font-display font-bold text-foreground text-sm leading-snug truncate group-hover:text-primary transition-colors flex items-center gap-1.5 flex-wrap">
                         {free.full_name}
                         {free.is_verified && (
-                          <span className="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500" title="Verified Member">
+                          <span
+                            className="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500"
+                            title="Verified Member"
+                          >
                             ✅ Verified
                           </span>
                         )}
                         {free.is_supporter && (
-                          <span className="inline-flex items-center gap-0.5 rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-rose-500" title="LanceConnect Supporter">
+                          <span
+                            className="inline-flex items-center gap-0.5 rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-rose-500"
+                            title="LanceConnect Supporter"
+                          >
                             ❤️ Supporter
                           </span>
                         )}
@@ -486,7 +509,10 @@ function FreelancerDirectoryPage() {
       )}
 
       {/* Directory Grid */}
-      <section id="freelancer-results" className="mx-auto max-w-7xl px-4 py-12 lg:px-8 bg-background min-h-[400px] scroll-mt-24">
+      <section
+        id="freelancer-results"
+        className="mx-auto max-w-7xl px-4 py-12 lg:px-8 bg-background min-h-[400px] scroll-mt-24"
+      >
         {loading ? (
           /* Dynamic Skeleton Loaders */
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -560,17 +586,26 @@ function FreelancerDirectoryPage() {
                       <h3 className="font-display font-bold text-foreground text-sm leading-snug truncate group-hover:text-primary transition-colors flex items-center gap-1.5 flex-wrap">
                         {free.full_name}
                         {free.is_verified && (
-                          <span className="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500" title="Verified Member">
+                          <span
+                            className="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-500"
+                            title="Verified Member"
+                          >
                             ✅ Verified
                           </span>
                         )}
                         {free.is_supporter && (
-                          <span className="inline-flex items-center gap-0.5 rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-rose-500" title="LanceConnect Supporter">
+                          <span
+                            className="inline-flex items-center gap-0.5 rounded bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-rose-500"
+                            title="LanceConnect Supporter"
+                          >
                             ❤️ Supporter
                           </span>
                         )}
                         {free.is_flagged && (
-                          <span className="inline-flex items-center gap-0.5 rounded bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-500" title="Profile Under Review">
+                          <span
+                            className="inline-flex items-center gap-0.5 rounded bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-500"
+                            title="Profile Under Review"
+                          >
                             ⚠️ Under Review
                           </span>
                         )}
@@ -711,7 +746,8 @@ function FreelancerDirectoryPage() {
               <h3 className="text-lg font-bold text-foreground">Report Profile</h3>
             </div>
             <p className="text-xs text-muted-foreground mb-4">
-              You are reporting the profile of <strong>{reportedFreelancer.name}</strong>. Please provide details to help our moderation team review this account.
+              You are reporting the profile of <strong>{reportedFreelancer.name}</strong>. Please
+              provide details to help our moderation team review this account.
             </p>
             <form onSubmit={handleSubmitReport} className="space-y-4">
               <div>

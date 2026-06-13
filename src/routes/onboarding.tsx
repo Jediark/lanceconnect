@@ -23,6 +23,17 @@ import {
   Brain,
   Target,
   Mic,
+  Dumbbell,
+  Sprout,
+  Scissors,
+  Brush,
+  Calculator,
+  Wrench,
+  Heart,
+  Activity,
+  Music,
+  HeartHandshake,
+  Sparkles,
 } from "lucide-react";
 import { CATEGORIES, COUNTRIES } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
@@ -49,6 +60,19 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   human_capital: <Brain className="h-5 w-5 text-primary" />,
   training_recruitment: <Target className="h-5 w-5 text-primary" />,
   mc_events: <Mic className="h-5 w-5 text-primary" />,
+  translation: <Globe className="h-5 w-5 text-primary" />,
+  personal_trainer: <Dumbbell className="h-5 w-5 text-primary" />,
+  landscaping: <Sprout className="h-5 w-5 text-primary" />,
+  hairstylist: <Scissors className="h-5 w-5 text-primary" />,
+  makeup_artist: <Brush className="h-5 w-5 text-primary" />,
+  voiceover: <Mic className="h-5 w-5 text-primary" />,
+  accounting: <Calculator className="h-5 w-5 text-primary" />,
+  handyman: <Wrench className="h-5 w-5 text-primary" />,
+  wedding_planner: <Heart className="h-5 w-5 text-primary" />,
+  massage_therapist: <Activity className="h-5 w-5 text-primary" />,
+  music_teacher: <Music className="h-5 w-5 text-primary" />,
+  pet_care: <HeartHandshake className="h-5 w-5 text-primary" />,
+  house_cleaning: <Sparkles className="h-5 w-5 text-primary" />,
 };
 
 export const Route = createFileRoute("/onboarding")({
@@ -70,7 +94,7 @@ function Onboarding() {
   const [whatsapp, setWhatsapp] = useState(user?.contactPhone || "");
 
   const selectedCountryName = COUNTRIES.find((c) => c.code === country)?.name || "";
-  const suggestedCities = selectedCountryName ? (COUNTRY_CITIES[selectedCountryName] || []) : [];
+  const suggestedCities = selectedCountryName ? COUNTRY_CITIES[selectedCountryName] || [] : [];
 
   // Supplier-specific states
   const [companyName, setCompanyName] = useState("");
@@ -96,6 +120,7 @@ function Onboarding() {
       if (user.fullName && !name) setName(user.fullName);
       if (user.contactPhone && !whatsapp) setWhatsapp(user.contactPhone);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -113,7 +138,7 @@ function Onboarding() {
       const foundCountry = COUNTRIES.find(
         (c) =>
           c.code.toLowerCase() === savedCountry.toLowerCase() ||
-          c.name.toLowerCase() === savedCountry.toLowerCase()
+          c.name.toLowerCase() === savedCountry.toLowerCase(),
       );
       if (foundCountry) {
         setCountry(foundCountry.code);
@@ -126,18 +151,21 @@ function Onboarding() {
   const next = () => setStep((s) => s + 1);
 
   const handleComplete = () => {
-    const finalCategory = sessionStorage.getItem("lc_category") || category || user?.freelancerCategory || "web_dev";
+    const finalCategory =
+      sessionStorage.getItem("lc_category") || category || user?.freelancerCategory || "web_dev";
     const finalCity = sessionStorage.getItem("lc_city") || city || user?.city || "";
     const savedCountry = sessionStorage.getItem("lc_country") || country || user?.country || "";
-    
+
     // Resolve country code to name if possible, otherwise use name
-    const foundCountryName = COUNTRIES.find(
-      (c) =>
-        c.code.toLowerCase() === savedCountry.toLowerCase() ||
-        c.name.toLowerCase() === savedCountry.toLowerCase()
-    )?.name || savedCountry;
+    const foundCountryName =
+      COUNTRIES.find(
+        (c) =>
+          c.code.toLowerCase() === savedCountry.toLowerCase() ||
+          c.name.toLowerCase() === savedCountry.toLowerCase(),
+      )?.name || savedCountry;
 
     if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const supplierProfile: any = {};
       if (
         ["african_food_export", "restaurant_supplier", "product_export", "b2b_trade"].includes(
@@ -182,7 +210,7 @@ function Onboarding() {
 
     // Redirect to discover with search params
     nav({
-      to: `/app/discover?category=${finalCategory}&city=${finalCity}&country=${foundCountryName}&autoSearch=true`
+      to: `/app/discover?category=${finalCategory}&city=${finalCity}&country=${foundCountryName}&autoSearch=true`,
     });
   };
 
@@ -616,7 +644,15 @@ function Onboarding() {
               )}
 
               {/* Standard text inputs as fallback/regular */}
-              {!["african_food_export", "restaurant_supplier", "product_export", "b2b_trade", "parent_tutor", "human_capital", "training_recruitment"].includes(category || "") && (
+              {![
+                "african_food_export",
+                "restaurant_supplier",
+                "product_export",
+                "b2b_trade",
+                "parent_tutor",
+                "human_capital",
+                "training_recruitment",
+              ].includes(category || "") && (
                 <>
                   <div>
                     <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -650,7 +686,8 @@ function Onboarding() {
               <span className="text-base leading-none">⚠️</span>
               <div>
                 <strong className="font-semibold block mb-0.5">Quick Safety Reminder</strong>
-                Always use a written contract, request a 30-50% deposit before starting work, and keep all communications on record. Learn more in our Safety Guide in the footer.
+                Always use a written contract, request a 30-50% deposit before starting work, and
+                keep all communications on record. Learn more in our Safety Guide in the footer.
               </div>
             </div>
 
@@ -666,4 +703,3 @@ function Onboarding() {
     </div>
   );
 }
-
