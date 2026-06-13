@@ -1415,7 +1415,7 @@ function Dashboard() {
         >
           <div className="absolute inset-0 bg-slate-950/85" />
           <div
-            className="relative w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 animate-in fade-in zoom-in-95 duration-200 text-slate-100"
+            className="relative w-full max-w-md rounded-2xl border border-border bg-card animate-in fade-in zoom-in-95 duration-200 text-foreground shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -1574,7 +1574,7 @@ function Dashboard() {
                     {getScoreReasons(detail).map((r) => (
                       <div
                         key={r.label}
-                        className="flex items-center justify-between rounded-xl bg-[#0a2e1d] border border-emerald-800 px-3 py-2 text-xs text-emerald-400"
+                        className="flex items-center justify-between rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-300"
                       >
                         <span className="flex items-center gap-1.5">
                           <Check className="h-3 w-3" />
@@ -1620,14 +1620,14 @@ function Dashboard() {
                       return (
                         <div
                           key={index}
-                          className="rounded-xl border border-amber-800/40 bg-[#251a0c] p-3 text-xs"
+                          className="rounded-xl border border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10 p-3 text-xs"
                         >
-                          <div className="flex items-center gap-1.5 font-semibold text-amber-500 mb-1">
+                          <div className="flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-400 mb-1">
                             <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                             {gap}
                           </div>
-                          <p className="text-muted-foreground leading-relaxed pl-3">
-                            <span className="font-semibold text-slate-300">Pitch Tip: </span>
+                          <p className="text-slate-700 dark:text-slate-200 leading-relaxed pl-3">
+                            <span className="font-bold text-slate-900 dark:text-slate-100">Pitch Tip: </span>
                             {pitchTip}
                           </p>
                         </div>

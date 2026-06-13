@@ -1290,33 +1290,33 @@ function LeadDetailModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-slate-900 border border-slate-700 animate-in zoom-in-95 text-slate-100"
+        className="w-full max-w-xl overflow-y-auto max-h-[90vh] rounded-2xl bg-card border border-border animate-in zoom-in-95 text-foreground shadow-xl"
       >
         <div className="flex items-start justify-between border-b border-border p-6">
           <div>
-            <h3 className="font-display text-xl font-bold text-white">
+            <h3 className="font-display text-xl font-bold text-foreground">
               {currentLead.businessName}
             </h3>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-muted-foreground">
               {currentLead.businessType} · {currentLead.city}, {currentLead.country}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 hover:bg-accent text-slate-400 hover:text-white cursor-pointer"
+            className="rounded-lg p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground transition cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="flex border-b border-slate-800 px-6 select-none bg-slate-950">
+        <div className="flex border-b border-border px-6 select-none bg-muted/30">
           <button
             onClick={() => setActiveTab("overview")}
             className={cn(
               "px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 -mb-px transition cursor-pointer",
               activeTab === "overview"
                 ? "border-primary text-primary"
-                : "border-transparent text-slate-400 hover:text-slate-200",
+                : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
             Overview & Outreach
@@ -1330,7 +1330,7 @@ function LeadDetailModal({
               "px-4 py-3 text-xs font-semibold uppercase tracking-wider border-b-2 -mb-px transition cursor-pointer flex items-center gap-1.5",
               activeTab === "seo"
                 ? "border-primary text-primary"
-                : "border-transparent text-slate-400 hover:text-slate-200",
+                : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
             <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> SEO & Keywords
@@ -1375,12 +1375,12 @@ function LeadDetailModal({
             )}
             <div>
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold uppercase tracking-wide text-slate-400">
+                <span className="font-semibold uppercase tracking-wide text-muted-foreground">
                   Opportunity Score
                 </span>
                 <OpportunityScore score={currentLead.opportunityScore} />
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full bg-primary"
                   style={{ width: `${currentLead.opportunityScore}%` }}
@@ -1388,14 +1388,14 @@ function LeadDetailModal({
               </div>
             </div>
 
-            <div className="space-y-2 rounded-xl bg-slate-950 border border-slate-800 p-4 text-sm text-slate-200">
+            <div className="space-y-2 rounded-xl bg-background border border-border p-4 text-sm text-foreground">
               <p className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-slate-500 shrink-0" />{" "}
+                <MapPin className="h-4 w-4 text-muted-foreground/80 shrink-0" />{" "}
                 {currentLead.fullAddress || ""}
               </p>
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-2 font-mono text-xs">
-                  <Phone className="h-3.5 w-3.5 text-slate-500" />
+                  <Phone className="h-3.5 w-3.5 text-muted-foreground/80" />
                   {currentLead.phone ? (
                     isLocked ? (
                       <span className="text-slate-500 line-through font-mono text-xs" title="Outreach locked">
@@ -1419,14 +1419,14 @@ function LeadDetailModal({
                     ) : (
                       <span
                         onClick={() => handleContactAction(() => {})}
-                        className="cursor-pointer text-slate-400 hover:text-white"
+                        className="cursor-pointer text-muted-foreground hover:text-foreground"
                         title="Click to reveal details"
                       >
                         {maskPhone(currentLead.phone)}
                       </span>
                     )
                   ) : (
-                    <span className="italic text-slate-500">Not listed</span>
+                    <span className="italic text-muted-foreground/75">Not listed</span>
                   )}
                 </span>
                 {currentLead.phone && (
@@ -1440,8 +1440,8 @@ function LeadDetailModal({
                       });
                     }}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-[10px] text-slate-100 transition",
-                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-700 cursor-pointer"
+                      "inline-flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-0.5 text-[10px] text-foreground transition",
+                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
                     )}
                   >
                     <Copy className="h-2.5 w-2.5" /> Copy
@@ -1450,23 +1450,23 @@ function LeadDetailModal({
               </div>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-slate-500 shrink-0" />{" "}
+                  <Mail className="h-4 w-4 text-muted-foreground/80 shrink-0" />{" "}
                   {currentLead.email ? (
                     isLocked ? (
-                      <span className="text-slate-500 line-through font-mono text-xs" title="Outreach locked">
+                      <span className="text-muted-foreground line-through font-mono text-xs" title="Outreach locked">
                         {maskEmail(currentLead.email)}
                       </span>
                     ) : safetyPopupDismissed ? (
                       <a
                         href={`mailto:${currentLead.email}`}
-                        className="text-primary hover:underline font-mono text-xs"
+                        className="text-primary hover:underline font-mono text-xs font-semibold"
                       >
                         {currentLead.email}
                       </a>
                     ) : (
                       <span
                         onClick={() => handleContactAction(() => {})}
-                        className="cursor-pointer text-slate-400 hover:text-white font-mono text-xs"
+                        className="cursor-pointer text-muted-foreground hover:text-foreground font-mono text-xs"
                         title="Click to reveal details"
                       >
                         {maskEmail(currentLead.email)}
@@ -1478,7 +1478,7 @@ function LeadDetailModal({
                       Auto-crawling website for email...
                     </span>
                   ) : (
-                    <span className="italic text-slate-500">Not publicly listed</span>
+                    <span className="italic text-muted-foreground/75">Not publicly listed</span>
                   )}
                 </div>
                 {currentLead.email && (
@@ -1492,8 +1492,8 @@ function LeadDetailModal({
                       });
                     }}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md border border-slate-700 bg-slate-800 px-2 py-0.5 text-[10px] text-slate-100 transition",
-                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-700 cursor-pointer"
+                      "inline-flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-0.5 text-[10px] text-foreground transition",
+                      isLocked ? "opacity-50 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
                     )}
                   >
                     <Copy className="h-2.5 w-2.5" /> Copy
@@ -1510,26 +1510,35 @@ function LeadDetailModal({
                 )}
               </div>
               <p className="flex items-center gap-2">
-                <Globe className="h-4 w-4 text-slate-500 shrink-0" />{" "}
-                {currentLead.websiteUrl ?? (
-                  <span className="italic text-slate-500">No website</span>
+                <Globe className="h-4 w-4 text-muted-foreground/80 shrink-0" />{" "}
+                {currentLead.websiteUrl ? (
+                  <a
+                    href={currentLead.websiteUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary hover:underline text-xs truncate"
+                  >
+                    {currentLead.websiteUrl}
+                  </a>
+                ) : (
+                  <span className="italic text-muted-foreground/75">No website</span>
                 )}
               </p>
               <p className="flex items-center gap-2">
                 <Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" />{" "}
-                {currentLead.googleRating} · {currentLead.googleReviewCount} reviews
+                <span className="font-semibold">{currentLead.googleRating}</span> · {currentLead.googleReviewCount} reviews
               </p>
             </div>
 
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Opportunity Breakdown
               </p>
               <ul className="mt-2 space-y-1.5 text-sm">
                 {reasons.map((r) => (
                   <li
                     key={r.label}
-                    className="flex items-center justify-between rounded-md bg-[#0a2e1d] border border-emerald-850 px-3 py-1.5 text-emerald-450"
+                    className="flex items-center justify-between rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-emerald-700 dark:text-emerald-300"
                   >
                     <span className="inline-flex items-center gap-2">
                       <Check className="h-4 w-4" /> {r.label}
@@ -1543,7 +1552,7 @@ function LeadDetailModal({
             {/* GMB Opportunity Signals */}
             {currentLead.score_breakdown?.gmb_gaps?.length > 0 && (
               <div className="border-t border-border pt-4 animate-in fade-in duration-200">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2 flex items-center gap-1.5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2 flex items-center gap-1.5">
                   <span>📍 Google My Business Gaps</span>
                   <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-bold text-amber-500 border border-amber-500/25">
                     {currentLead.score_breakdown.gmb_gaps.length} detected
@@ -1567,14 +1576,14 @@ function LeadDetailModal({
                     return (
                       <div
                         key={index}
-                        className="rounded-xl border border-amber-800/40 bg-[#251a0c] p-3 text-xs"
+                        className="rounded-xl border border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10 p-3 text-xs"
                       >
-                        <div className="flex items-center gap-1.5 font-semibold text-amber-500 mb-1">
+                        <div className="flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-400 mb-1">
                           <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                           {gap}
                         </div>
-                        <p className="text-slate-400 leading-relaxed pl-3">
-                          <span className="font-semibold text-slate-300">Pitch Tip: </span>
+                        <p className="text-slate-700 dark:text-slate-200 leading-relaxed pl-3">
+                          <span className="font-bold text-slate-900 dark:text-slate-100">Pitch Tip: </span>
                           {pitchTip}
                         </p>
                       </div>
