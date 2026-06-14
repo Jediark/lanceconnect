@@ -21,6 +21,7 @@ const requestSchema = z.object({
   limit: z.number().optional().default(10),
   product: z.string().optional(),
   niche: z.string().optional(),
+  seen_lead_ids: z.array(z.string()).optional(),
 }).refine((data) => data.query || data.category, {
   message: "Either query or category is required",
 });
@@ -72,14 +73,14 @@ Deno.serve(async (req) => {
     const { data: profile } = await supabase
       .from("profiles")
       .select(
-        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit, supplier_profile, plan, device_fingerprint",
+        "email, full_name, welcome_email_sent, quota_warning_sent, leads_used_this_month, leads_limit, supplier_profile, plan, device_fingerprint, seen_lead_ids",
       )
       .eq("id", user.id)
       .single();
 
     // Map skill category IDs to target local business niches (potential clients)
     const categoryNiches: Record<string, string[]> = {
-      web_dev: ["restaurant", "bakery", "beauty salon", "plumber", "auto repair", "dry cleaner"],
+      web_dev: ["restaurant", "bakery", "plumber", "auto repair", "dry cleaner", "law firm", "medical clinic"],
       seo: ["dentist", "chiropractor", "gym", "law firm", "medical clinic", "pest control"],
       designer: ["cafe", "boutique", "bakery", "spa", "restaurant", "florist"],
       copywriter: ["lawyer", "clinic", "consultant", "accountant", "architect"],
@@ -303,55 +304,123 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 3. Query cached database first
-    const { data: cachedLeads, error: cacheError } = await supabase
-      .from("leads")
-      .select("*")
-      .eq("country", country)
-      .ilike("city", city)
-      .or(`industry.ilike.%${query}%,business_type.ilike.%${query}%,business_name.ilike.%${query}%`)
-      .gt("cache_expires_at", new Date().toISOString())
-      .limit(limit);
+    // Seen leads tracking (Requirement 1 & 2)
+    const clientSeenIds = parsed.data.seen_lead_ids || [];
+    const seenLeadIds = [...new Set([...(profile?.seen_lead_ids || []), ...clientSeenIds])];
 
-    if (cacheError) {
-      console.warn("Cache query failed, proceeding directly to scrape:", cacheError);
-    }
+    // Helper to query the cached database
+    const queryDatabase = async (targetCity: string, targetCountry: string, excludeIds: string[]) => {
+      let qb = supabase
+        .from("leads")
+        .select("*")
+        .eq("country", targetCountry)
+        .ilike("city", targetCity)
+        .eq("industry", query) // Match user's selected category (Requirement 7)
+        .gt("cache_expires_at", new Date().toISOString());
 
-    let finalLeads = cachedLeads || [];
-
-    // 4. Geocode using OpenCage API if provided (improves accuracy)
-    let lat: number | null = null;
-    let lng: number | null = null;
-
-    if (finalLeads.length < 3 && openCageApiKey) {
-      try {
-        console.log(`Geocoding city "${city}, ${country}" using OpenCage...`);
-        const geoRes = await fetch(
-          `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(`${city}, ${country}`)}&key=${openCageApiKey}`,
-          { signal: AbortSignal.timeout(5000) },
-        );
-        if (geoRes.ok) {
-          const geoData = await geoRes.json();
-          if (geoData.results && geoData.results.length > 0) {
-            lat = geoData.results[0].geometry.lat;
-            lng = geoData.results[0].geometry.lng;
-            console.log(`Geocoded to lat: ${lat}, lng: ${lng}`);
-          }
-        }
-      } catch (err) {
-        console.error("OpenCage geocoding failed:", err);
+      if (excludeIds.length > 0) {
+        // Exclude seen leads
+        qb = qb.not("id", "in", `(${excludeIds.join(",")})`);
       }
+
+      const { data, error } = await qb.limit(limit);
+      if (error) {
+        console.warn(`Cache query failed for ${targetCity}:`, error);
+        return [];
+      }
+      return data || [];
+    };
+
+    // Calculate total pool count for transparency banner (Requirement 11)
+    let totalPoolCount = 0;
+    try {
+      const { count } = await supabase
+        .from("leads")
+        .select("id", { count: "exact", head: true })
+        .eq("country", country)
+        .ilike("city", city)
+        .eq("industry", query);
+      totalPoolCount = count || 0;
+    } catch (countError) {
+      console.warn("Failed to get total pool count:", countError);
     }
 
-    // 5. Fallback to scrape if cache is empty or insufficient
-    if (finalLeads.length < 3) {
-      const apifyKeyword = `${searchKeyword} in ${city}, ${country}`;
-      console.log(
-        `Cache miss for category "${query}" (keyword "${apifyKeyword}") in ${city}, ${country}. Invoking Apify scraper...`,
-      );
+    // Define Geographic Expansion Lists (Requirement 3 & 6)
+    const NEARBY_CITIES_MAP: Record<string, string[]> = {
+      seattle: ["Tacoma", "Bellevue", "Kent", "Renton", "Everett", "Portland"],
+      tacoma: ["Seattle", "Bellevue", "Kent", "Renton", "Portland"],
+      bellevue: ["Seattle", "Tacoma", "Kent", "Renton", "Everett", "Portland"],
+      portland: ["Seattle", "Bellevue", "Tacoma", "Vancouver", "Salem", "Eugene"],
+      lagos: ["Ibadan", "Abeokuta", "Abuja", "Port Harcourt", "Benin City"],
+      london: ["Manchester", "Birmingham", "Leeds", "Liverpool", "Bristol", "Edinburgh"],
+      dubai: ["Abu Dhabi", "Sharjah", "Ajman", "Al Ain", "Ras Al Khaimah"],
+      "new york": ["Jersey City", "Brooklyn", "Queens", "Newark", "Philadelphia", "Boston"],
+      "los angeles": ["San Diego", "San Jose", "San Francisco", "Sacramento", "Phoenix"],
+      toronto: ["Mississauga", "Hamilton", "Ottawa", "Montreal", "Vancouver"],
+    };
+
+    const COUNTRY_CITIES_MAP: Record<string, string[]> = {
+      "nigeria": ["Lagos", "Abuja", "Kano", "Ibadan", "Port Harcourt", "Enugu", "Kaduna"],
+      "ghana": ["Accra", "Kumasi", "Cape Coast", "Tamale", "Sekondi"],
+      "kenya": ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret"],
+      "south africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth"],
+      "united kingdom": ["London", "Manchester", "Birmingham", "Leeds", "Glasgow", "Liverpool", "Bristol", "Edinburgh"],
+      "germany": ["Berlin", "Hamburg", "Munich", "Cologne", "Frankfurt", "Dusseldorf"],
+      "france": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes"],
+      "spain": ["Madrid", "Barcelona", "Valencia", "Seville", "Zaragoza"],
+      "canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa", "Edmonton"],
+      "australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
+      "uae": ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah"],
+    };
+
+    const US_STATE_CITIES: Record<string, { state: string, cities: string[] }> = {
+      seattle: { state: "Washington", cities: ["spokane", "tacoma", "vancouver", "bellevue", "kent"] },
+      spokane: { state: "Washington", cities: ["seattle", "tacoma", "vancouver", "bellevue", "kent"] },
+      tacoma: { state: "Washington", cities: ["seattle", "spokane", "vancouver", "bellevue", "kent"] },
+      bellevue: { state: "Washington", cities: ["seattle", "spokane", "tacoma", "vancouver", "kent"] },
+      kent: { state: "Washington", cities: ["seattle", "spokane", "tacoma", "vancouver", "bellevue"] },
+      "new york": { state: "New York", cities: ["buffalo", "rochester", "yonkers", "syracuse", "albany", "brooklyn", "queens"] },
+      "los angeles": { state: "California", cities: ["san francisco", "san diego", "sacramento", "san jose", "fresno", "oakland", "long beach"] },
+      "san francisco": { state: "California", cities: ["los angeles", "san diego", "sacramento", "san jose", "fresno", "oakland", "long beach"] },
+    };
+
+    let results: any[] = [];
+    let expansionMessage: string | null = null;
+    const cityKey = city.toLowerCase().trim();
+
+    // Query target city first
+    const initialLeads = await queryDatabase(city, country, seenLeadIds);
+    results = [...initialLeads];
+
+    // Helper function to call Apify scraping microservice
+    async function scrapeLiveLeads(targetCity: string, targetCountry: string) {
+      let lat: number | null = null;
+      let lng: number | null = null;
+
+      if (openCageApiKey) {
+        try {
+          console.log(`Geocoding city "${targetCity}, ${targetCountry}" using OpenCage...`);
+          const geoRes = await fetch(
+            `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(`${targetCity}, ${targetCountry}`)}&key=${openCageApiKey}`,
+            { signal: AbortSignal.timeout(5000) },
+          );
+          if (geoRes.ok) {
+            const geoData = await geoRes.json();
+            if (geoData.results && geoData.results.length > 0) {
+              lat = geoData.results[0].geometry.lat;
+              lng = geoData.results[0].geometry.lng;
+            }
+          }
+        } catch (err) {
+          console.error("OpenCage geocoding failed:", err);
+        }
+      }
+
+      const apifyKeyword = `${searchKeyword} in ${targetCity}, ${targetCountry}`;
+      console.log(`Invoking Apify scraper for "${apifyKeyword}"...`);
 
       try {
-        let scrapeUrl = `${apifyServiceUrl}/scrape?keyword=${encodeURIComponent(apifyKeyword)}&city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&limit=10`;
+        let scrapeUrl = `${apifyServiceUrl}/scrape?keyword=${encodeURIComponent(apifyKeyword)}&city=${encodeURIComponent(targetCity)}&country=${encodeURIComponent(targetCountry)}&limit=10`;
         if (lat !== null && lng !== null) {
           scrapeUrl += `&lat=${lat}&lng=${lng}`;
         }
@@ -365,7 +434,7 @@ Deno.serve(async (req) => {
         const scrapeRes = await fetch(scrapeUrl, {
           method: "GET",
           headers,
-          signal: AbortSignal.timeout(55000), // 55s timeout — Apify actor runs take 20-45s
+          signal: AbortSignal.timeout(55000),
         });
 
         if (scrapeRes.ok) {
@@ -382,8 +451,8 @@ Deno.serve(async (req) => {
                   ? `${item.description} (Product Interest: ${product})`
                   : `Product Interest: ${product}`
                 : item.description || null,
-              country,
-              city,
+              country: targetCountry,
+              city: targetCity,
               full_address: item.full_address || null,
               phone: item.phone || null,
               email: item.email || null,
@@ -394,10 +463,9 @@ Deno.serve(async (req) => {
               google_review_count: item.google_review_count || 0,
               google_maps_url: item.google_maps_url || null,
               source: "google_maps",
-              cache_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days cache
+              cache_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
             }));
 
-            // Batch upsert leads ignoring duplicates on google_place_id
             const { data: insertedLeads, error: upsertError } = await supabase
               .from("leads")
               .upsert(leadsToInsert, { onConflict: "google_place_id" })
@@ -406,7 +474,6 @@ Deno.serve(async (req) => {
             if (upsertError) {
               console.error("Failed to upsert scraped leads into database:", upsertError);
             } else if (insertedLeads) {
-              // Trigger socials lookup (which in turn triggers scoring) and contact enrichment for the newly scraped leads asynchronously
               for (const newLead of insertedLeads) {
                 fetch(`${supabaseUrl}/functions/v1/check-social`, {
                   method: "POST",
@@ -416,7 +483,7 @@ Deno.serve(async (req) => {
                   },
                   body: JSON.stringify({ leadId: newLead.id }),
                 }).catch((err) =>
-                  console.error("Async social check trigger failed for lead:", newLead.id, err),
+                  console.error("Async social check trigger failed:", newLead.id, err),
                 );
 
                 if (newLead.website_url) {
@@ -428,24 +495,122 @@ Deno.serve(async (req) => {
                     },
                     body: JSON.stringify({ leadId: newLead.id }),
                   }).catch((err) =>
-                    console.error("Async contact enrichment trigger failed for lead:", newLead.id, err),
+                    console.error("Async contact enrichment trigger failed:", newLead.id, err),
                   );
                 }
               }
-
-              // Append to final results
-              finalLeads = [...finalLeads, ...insertedLeads].slice(0, limit);
+              return insertedLeads;
             }
           }
-        } else {
-          console.warn(`Apify microservice returned status ${scrapeRes.status}`);
         }
       } catch (scrapeErr) {
         console.error("Apify service call failed:", scrapeErr);
       }
+      return [];
     }
 
-    // Trigger scoring for any unscored leads in final results (Fix null scores)
+    // Silently expand if we have fewer than 6 leads (Requirement 6)
+    if (results.length < 6) {
+      console.log(`Fewer than 6 leads in target city (${results.length}). Performing silent geographic expansion...`);
+
+      // Step 1: Metro area/Nearby
+      const metroCities = NEARBY_CITIES_MAP[cityKey] || [];
+      for (const metroCity of metroCities) {
+        if (results.length >= 6) break;
+        const metroLeads = await queryDatabase(metroCity, country, seenLeadIds);
+        const newLeads = metroLeads.filter(ml => !results.some(r => r.id === ml.id));
+        results = [...results, ...newLeads];
+      }
+    }
+
+    if (results.length < 6) {
+      // Step 2: State/Region
+      const countryKey = country.toLowerCase().trim();
+      const countryCities = COUNTRY_CITIES_MAP[countryKey] || [];
+      const stateCities = countryCities.filter(c => c.toLowerCase().trim() !== cityKey && !(NEARBY_CITIES_MAP[cityKey] || []).includes(c));
+      for (const stateCity of stateCities) {
+        if (results.length >= 6) break;
+        const stateLeads = await queryDatabase(stateCity, country, seenLeadIds);
+        const newLeads = stateLeads.filter(sl => !results.some(r => r.id === sl.id));
+        results = [...results, ...newLeads];
+      }
+    }
+
+    if (results.length < 6) {
+      // Step 3: National
+      const nationalCities = ["New York", "Los Angeles", "Chicago", "London", "Lagos", "Toronto", "Sydney", "Dubai", "Johannesburg", "Paris", "Berlin"];
+      const remainingCities = nationalCities.filter(c => c.toLowerCase().trim() !== cityKey && !results.some(r => r.city?.toLowerCase() === c.toLowerCase()));
+      for (const natCity of remainingCities) {
+        if (results.length >= 6) break;
+        const natLeads = await queryDatabase(natCity, country, seenLeadIds);
+        const newLeads = natLeads.filter(nl => !results.some(r => r.id === nl.id));
+        results = [...results, ...newLeads];
+      }
+    }
+
+    // If still fewer than 6, query live scrape for target city
+    if (results.length < 6) {
+      console.log(`Cache query yielded fewer than 6 results (${results.length}). Scraping target city live...`);
+      const scraped = await scrapeLiveLeads(city, country);
+      const unseenScraped = scraped.filter(l => !seenLeadIds.includes(l.id) && !results.some(r => r.id === l.id));
+      results = [...results, ...unseenScraped];
+
+      // If still fewer than 6, scrape the first nearby city
+      if (results.length < 6) {
+        const metroCities = NEARBY_CITIES_MAP[cityKey] || [];
+        if (metroCities.length > 0) {
+          const firstNearby = metroCities[0];
+          console.log(`Still fewer than 6 results (${results.length}). Scraping first nearby city: ${firstNearby}...`);
+          const scrapedNearby = await scrapeLiveLeads(firstNearby, country);
+          const unseenNearby = scrapedNearby.filter(l => !seenLeadIds.includes(l.id) && !results.some(r => r.id === l.id));
+          results = [...results, ...unseenNearby];
+        }
+      }
+    }
+
+    // Prioritize leads with complete contact information (Requirement 8)
+    const getCompletenessWeight = (l: any) => {
+      let weight = 0;
+      if (l.phone) weight += 1;
+      if (l.email) weight += 1;
+      if (l.website_url || l.has_website) weight += 1;
+      return weight;
+    };
+
+    results.sort((a, b) => {
+      const weightA = getCompletenessWeight(a);
+      const weightB = getCompletenessWeight(b);
+      if (weightA !== weightB) {
+        return weightB - weightA;
+      }
+      return (b.opportunity_score || 0) - (a.opportunity_score || 0);
+    });
+
+    const finalLeads = results.slice(0, limit);
+
+    // Save returned leads to seen_lead_ids (Requirement 1 & 2)
+    const returnedLeadIds = finalLeads.map(l => l.id);
+    if (returnedLeadIds.length > 0) {
+      const updatedSeen = [...new Set([...seenLeadIds, ...returnedLeadIds])];
+      await supabase
+        .from("profiles")
+        .update({ seen_lead_ids: updatedSeen })
+        .eq("id", user.id);
+    }
+
+    // Set expansion warning message if any lead is from a different city (Requirement 3 & 6)
+    const targetCityLower = city.toLowerCase().trim();
+    const otherCities = [...new Set(
+      finalLeads
+        .map(l => l.city)
+        .filter((c): c is string => !!c && c.toLowerCase().trim() !== targetCityLower)
+    )];
+
+    if (otherCities.length > 0) {
+      expansionMessage = `We've found all available leads in ${city} — here are additional results from nearby areas like ${otherCities.slice(0, 3).join(", ")}.`;
+    }
+
+    // Trigger scoring for any unscored leads in final results
     for (const lead of finalLeads) {
       if (lead.opportunity_score === null || lead.opportunity_score === undefined) {
         console.log(`[search-leads] Triggering scoring for unscored lead: ${lead.business_name} (${lead.id})`);
@@ -503,7 +668,12 @@ Deno.serve(async (req) => {
       console.warn("Failed to save search intelligence:", siErr);
     }
 
-    return new Response(JSON.stringify({ success: true, leads: finalLeads }), {
+    return new Response(JSON.stringify({ 
+      success: true, 
+      leads: finalLeads,
+      total_pool_count: totalPoolCount,
+      expansion_message: expansionMessage
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {

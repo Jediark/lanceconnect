@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bookmark, BookmarkCheck, Check, Copy, Globe, Linkedin, MapPin, Star, XCircle, Facebook, Instagram, Twitter, Lock, Clock } from "lucide-react";
+import { Bookmark, BookmarkCheck, Check, Copy, Globe, Linkedin, MapPin, Star, XCircle, Facebook, Instagram, Twitter, Lock, Clock, Flag } from "lucide-react";
 import { toast } from "sonner";
 import { OpportunityScore } from "./OpportunityScore";
 import { usePipeline } from "@/contexts/PipelineContext";
@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { Lead } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { supabase } from "@/lib/supabase";
 
 const WhatsAppIcon = ({ size = 14 }: { size?: number }) => (
   <svg
@@ -38,8 +39,37 @@ export function LeadCard({
   const { user } = useAuth();
   const isSaved = savedIds.has(lead.id);
   const [saving, setSaving] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [reported, setReported] = useState(false);
   const isLocked = !!(lead.claimStatus && lead.claimUserId !== user?.id);
   const isMyClaim = !!(lead.claimStatus && lead.claimUserId === user?.id);
+
+  const handleReport = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (reported) return;
+
+    const reason = window.prompt(
+      "Report this lead:\nPlease enter a reason (e.g. Inaccurate phone, Incorrect website, Duplicate, Closed):",
+      "Inaccurate information"
+    );
+    if (reason === null) return; // User cancelled
+
+    setReporting(true);
+    try {
+      const { error } = await supabase.rpc("report_lead", {
+        p_lead_id: lead.id,
+        p_reason: reason
+      });
+      if (error) throw error;
+      setReported(true);
+      toast.success("Thank you! Lead flagged for review.");
+    } catch (err) {
+      console.error("Failed to report lead:", err);
+      toast.error("Failed to report lead. Please try again.");
+    } finally {
+      setReporting(false);
+    }
+  };
 
   const isB2B = [
     "african_food_export",
@@ -131,8 +161,13 @@ export function LeadCard({
       <div className="mb-2 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-display text-lg font-semibold leading-tight">{lead.businessName}</h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            {lead.businessType} · {lead.city}, {lead.country}
+          <p className="mt-1 text-xs text-muted-foreground flex flex-wrap items-center gap-1.5">
+            <span className="font-semibold text-slate-300">{lead.businessType}</span>
+            <span className="text-slate-600">·</span>
+            <span className="inline-flex items-center gap-1 bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] font-semibold border border-slate-700">
+              <MapPin className="h-3 w-3 text-primary" />
+              {lead.city}, {lead.country}
+            </span>
           </p>
           <div className="flex flex-wrap gap-1.5 mt-1.5">
             {!lead.phoneVerified && (
@@ -423,6 +458,20 @@ export function LeadCard({
           title="Open in Maps"
         >
           <MapPin className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={handleReport}
+          disabled={reported || reporting}
+          className={cn(
+            "inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium transition",
+            reported
+              ? "text-rose-500 bg-rose-500/10 border-rose-500/20"
+              : "text-slate-400 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
+          )}
+          title={reported ? "Reported" : "Report this lead"}
+        >
+          <Flag className="h-3.5 w-3.5" />
         </button>
       </div>
     </div>

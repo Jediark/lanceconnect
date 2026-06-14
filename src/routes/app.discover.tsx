@@ -77,6 +77,8 @@ function Discover() {
   const [quickConnectLead, setQuickConnectLead] = useState<Lead | undefined>();
   const [quickConnectChannel, setQuickConnectChannel] = useState<"email" | "linkedin" | "whatsapp">("email");
   const [quickConnectMessage, setQuickConnectMessage] = useState("");
+  const [totalPoolCount, setTotalPoolCount] = useState(0);
+  const [expansionMessage, setExpansionMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -359,6 +361,14 @@ function Discover() {
       const supabaseUrl =
         import.meta.env.VITE_SUPABASE_URL || "https://rpaodsmwhmzyhopvkwjt.supabase.co";
 
+      const storedSeenKey = `lc_seen_lead_ids_${user?.id || "anon"}`;
+      let localSeen: string[] = [];
+      try {
+        localSeen = JSON.parse(localStorage.getItem(storedSeenKey) || "[]");
+      } catch (e) {
+        console.warn("Failed to parse local seen lead IDs:", e);
+      }
+
       const searchLeadsPromise = fetch(`${supabaseUrl}/functions/v1/search-leads`, {
         method: "POST",
         headers: {
@@ -370,6 +380,7 @@ function Discover() {
           city: cityName,
           country: countryName,
           limit: 20,
+          seen_lead_ids: localSeen,
           product: [
             "african_food_export",
             "b2b_trade",
@@ -410,7 +421,7 @@ function Discover() {
 
           throw new Error(errMsg || "Failed to search leads");
         }
-        return data?.leads || [];
+        return data;
       });
 
       const onlineEligible = ONLINE_ELIGIBLE.includes(queryTerm);
@@ -438,10 +449,28 @@ function Discover() {
           })
         : Promise.resolve([]);
 
-      const [rawLeads, rawJobs] = await Promise.all([
+      const [searchData, rawJobs] = await Promise.all([
         searchLeadsPromise,
         searchOnlinePromise,
       ]);
+
+      const rawLeads = searchData?.leads || [];
+      const poolCount = searchData?.total_pool_count || 0;
+      const expMsg = searchData?.expansion_message || null;
+
+      setTotalPoolCount(poolCount);
+      setExpansionMessage(expMsg);
+
+      // Save returned lead IDs to localStorage seen leads
+      const returnedIds = rawLeads.map((l: any) => l.id);
+      if (returnedIds.length > 0) {
+        try {
+          const updatedLocalSeen = [...new Set([...localSeen, ...returnedIds])];
+          localStorage.setItem(storedSeenKey, JSON.stringify(updatedLocalSeen));
+        } catch (e) {
+          console.warn("Failed to save local seen lead IDs:", e);
+        }
+      }
 
       const mapped = rawLeads.map((dbLead: any) => ({
         id: dbLead.id,
@@ -750,12 +779,31 @@ function Discover() {
         </div>
       )}
 
+      {expansionMessage && (
+        <div className="mx-4 lg:mx-8 mt-2 mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-500 flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
+          <Sparkles className="h-4 w-4 shrink-0 text-amber-500" />
+          <span>{expansionMessage}</span>
+        </div>
+      )}
+
       {activeTab === "local" ? (
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-4 lg:px-8">
           <div className="flex items-center gap-3">
             <p className="text-sm text-muted-foreground">
-              Showing <span className="font-semibold text-foreground">{filteredResults.length}</span>{" "}
-              leads
+              {totalPoolCount > 0 && category && city ? (
+                <>
+                  Showing <span className="font-semibold text-foreground">{filteredResults.length}</span> of{" "}
+                  <span className="font-semibold text-foreground">{totalPoolCount}</span> available{" "}
+                  <span className="font-semibold text-foreground">
+                    {CATEGORIES.find((c) => c.id === category)?.label || "Local Business"}
+                  </span>{" "}
+                  leads in <span className="font-semibold text-foreground">{city}</span>
+                </>
+              ) : (
+                <>
+                  Showing <span className="font-semibold text-foreground">{filteredResults.length}</span> leads
+                </>
+              )}
             </p>
             {filteredResults.length > 0 && (
               <button

@@ -323,6 +323,28 @@ Deno.serve(async (req) => {
     breakdown.gmb_gaps = gmbGaps;
     breakdown.gmb_bonus = gmbBonus;
 
+    // 5. Recency Bonus (Requirement 9)
+    let recencyBonus = 0;
+    const now = new Date();
+    const lastVerified = lead.last_verified_at ? new Date(lead.last_verified_at) : null;
+    const phoneVerified = lead.phone_verified_at ? new Date(lead.phone_verified_at) : null;
+    const emailVerified = lead.email_verified_at ? new Date(lead.email_verified_at) : null;
+    const updated = lead.updated_at ? new Date(lead.updated_at) : null;
+
+    const dates = [lastVerified, phoneVerified, emailVerified, updated].filter((d): d is Date => d !== null);
+    if (dates.length > 0) {
+      const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+      const ageDays = (now.getTime() - maxDate.getTime()) / (1000 * 60 * 60 * 24);
+      if (ageDays <= 7) {
+        recencyBonus = 15;
+        breakdown["recency_bonus_7d"] = 15;
+      } else if (ageDays <= 30) {
+        recencyBonus = 7;
+        breakdown["recency_bonus_30d"] = 7;
+      }
+    }
+    score += recencyBonus;
+
     // Clamp score to 100 max, 0 min
     const finalScore = Math.min(Math.max(score, 0), 100);
 
