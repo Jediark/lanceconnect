@@ -116,8 +116,9 @@ const OPENING_MESSAGE: Message = {
   ],
 };
 
-// Helper to render LC Wave Logo inside SVGs
+// LanceConnect "LC" Wave Logo — blue-to-teal gradient, used as chat bubble icon & assistant avatar
 function LCWaveLogo({ className, size = 24 }: { className?: string; size?: number }) {
+  const id = `lc-grad-${size}`;
   return (
     <svg
       width={size}
@@ -126,15 +127,28 @@ function LCWaveLogo({ className, size = 24 }: { className?: string; size?: numbe
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      aria-hidden="true"
+      focusable="false"
     >
-      <circle cx="14" cy="20" r="6" fill="#2D6CFF" />
-      <circle cx="26" cy="20" r="6" fill="#10B981" />
+      <defs>
+        <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#2D6CFF" />
+          <stop offset="100%" stopColor="#10B981" />
+        </linearGradient>
+      </defs>
+      {/* Left lobe */}
+      <circle cx="14" cy="20" r="7" fill={`url(#${id})`} />
+      {/* Right lobe */}
+      <circle cx="26" cy="20" r="7" fill={`url(#${id})`} opacity="0.85" />
+      {/* Connector line */}
       <path d="M14 20L26 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Wave accent */}
       <path
-        d="M17 20C18.5 18.5 19.5 18.5 22 20C24.5 21.5 25.5 21.5 27 20"
+        d="M16 20C17.8 17.8 19.2 17.8 22 20C24.8 22.2 26.2 22.2 28 20"
         stroke="white"
         strokeWidth="1.8"
         fill="none"
+        strokeLinecap="round"
       />
     </svg>
   );
@@ -1449,152 +1463,290 @@ I'll plug this into your search so you can start finding real, contactable leads
 
   return (
     <>
-      {/* Floating Toggle Button */}
+      {/* Floating Toggle Button — LC logo icon with glow ring */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? "Close LanceConnect Assistant" : "Open LanceConnect Assistant"}
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-gradient-to-br from-[#0B1220] to-[#2D6CFF] text-white flex items-center justify-center shadow-lg hover:shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        className={
+          cn(
+            "fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full text-white flex items-center justify-center",
+            "bg-gradient-to-br from-[#0B1220] via-[#101B30] to-[#2D6CFF]",
+            "shadow-[0_4px_20px_rgba(0,0,0,0.4),0_0_0_1px_rgba(45,108,255,0.35)]",
+            "hover:shadow-[0_4px_28px_rgba(45,108,255,0.5),0_0_0_2px_rgba(45,108,255,0.55)]",
+            "hover:scale-105 active:scale-95",
+            "transition-all duration-200 ease-out",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020b21]",
+          )
+        }
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
             <motion.div
               key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={{ rotate: -90, opacity: 0, scale: 0.7 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              exit={{ rotate: 90, opacity: 0, scale: 0.7 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             </motion.div>
           ) : (
             <motion.div
               key="chat"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={{ rotate: 90, opacity: 0, scale: 0.7 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              exit={{ rotate: -90, opacity: 0, scale: 0.7 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
               className="flex items-center justify-center"
             >
-              <LCWaveLogo size={32} />
+              <LCWaveLogo size={30} />
             </motion.div>
           )}
         </AnimatePresence>
       </button>
 
-      {/* Chat Panel */}
+      {/* Chat Panel — WCAG AA, 16px radius, 10px backdrop blur, 150-300ms ease-out */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            role="dialog"
+            aria-label="LanceConnect Assistant Chat"
+            aria-modal="true"
+            initial={{ opacity: 0, scale: 0.94, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 0.94, y: 24 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
             className={cn(
-              "fixed z-50 flex flex-col overflow-hidden bg-[#0B1220]/90 border border-slate-700/50 backdrop-blur-[10px] shadow-2xl",
-              "bottom-0 right-0 w-full h-full max-h-[100dvh] rounded-none sm:bottom-24 sm:right-6 sm:w-[360px] sm:h-[520px] sm:rounded-2xl",
+              "fixed z-50 flex flex-col overflow-hidden",
+              "bg-[#0B1220]/92 border border-[#1a2d5a]/70",
+              "backdrop-blur-[10px]",
+              "shadow-[0_4px_20px_rgba(0,0,0,0.45),0_0_0_1px_rgba(45,108,255,0.12)]",
+              "bottom-0 right-0 w-full h-full max-h-[100dvh] rounded-none",
+              "sm:bottom-24 sm:right-6 sm:w-[370px] sm:h-[540px] sm:rounded-2xl",
             )}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-[#101B30]/95 border-b border-slate-800/80">
+            {/* ── Header ───────────────────────────────────────────────────── */}
+            <div
+              className="flex items-center justify-between px-4 py-3"
+              style={{
+                background: "linear-gradient(135deg, #101B30 0%, #0d1b3a 100%)",
+                borderBottom: "1px solid rgba(45,108,255,0.18)",
+              }}
+            >
               <div className="flex items-center gap-2.5">
-                <div className="relative h-8 w-8 rounded-full bg-[#1E293B] border border-slate-700 flex items-center justify-center">
-                  <LCWaveLogo size={20} />
-                  <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 border border-[#101B30]" />
+                {/* LC Wave Logo avatar with online dot */}
+                <div
+                  className="relative h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: "linear-gradient(135deg, #101B30 0%, #0d1f4a 100%)",
+                    border: "1.5px solid rgba(45,108,255,0.4)",
+                    boxShadow: "0 0 12px rgba(45,108,255,0.25)",
+                  }}
+                >
+                  <LCWaveLogo size={22} />
+                  {/* Online status dot */}
+                  <span
+                    className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#22C55E]"
+                    style={{ border: "1.5px solid #101B30" }}
+                    aria-label="Online"
+                  />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-slate-100 tracking-wide">
-                    LanceConnect Assistant
+                  <h3
+                    className="text-[13px] font-bold tracking-wide"
+                    style={{ color: "#E5E7EB", fontFamily: "Inter, ui-sans-serif, sans-serif" }}
+                  >
+                    LanceConnect
                   </h3>
-                  <p className="text-[10px] text-emerald-400 font-medium flex items-center gap-1">
-                    Online
+                  <p
+                    className="text-[10px] font-semibold flex items-center gap-1"
+                    style={{ color: "#22C55E" }}
+                  >
+                    <span
+                      className="inline-block h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse"
+                      aria-hidden="true"
+                    />
+                    Assistant · Online
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                aria-label="Minimize Chat"
-                className="h-7 w-7 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center justify-center transition"
+                aria-label="Close LanceConnect Assistant chat"
+                className={
+                  cn(
+                    "h-7 w-7 rounded-lg flex items-center justify-center",
+                    "text-[#9CA3AF] hover:text-[#E5E7EB]",
+                    "hover:bg-[#2D6CFF]/15",
+                    "transition-all duration-150 ease-out",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6CFF]",
+                  )
+                }
               >
-                <X className="h-4.5 w-4.5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Messages Body */}
+            {/* ── Messages Body ─────────────────────────────────────────────── */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
+              role="log"
+              aria-live="polite"
+              aria-label="Conversation"
+              className="flex-1 overflow-y-auto p-4 space-y-3"
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#1a2d5a transparent" }}
             >
               {messages.map((msg) => (
-                <div key={msg.id} className="space-y-2.5">
+                <div key={msg.id} className="space-y-2">
                   <div
                     className={cn(
-                      "flex items-end gap-2.5 max-w-[85%]",
+                      "flex items-end gap-2.5 max-w-[88%]",
                       msg.sender === "user" ? "ml-auto flex-row-reverse" : "mr-auto",
                     )}
                   >
+                    {/* LC Wave Logo as assistant avatar */}
                     {msg.sender === "assistant" && (
-                      <div className="h-6 w-6 rounded-full bg-[#101B30] border border-slate-700 flex items-center justify-center flex-shrink-0">
-                        <LCWaveLogo size={18} />
+                      <div
+                        className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{
+                          background: "linear-gradient(135deg, #101B30 0%, #0d1f4a 100%)",
+                          border: "1.5px solid rgba(45,108,255,0.35)",
+                          boxShadow: "0 2px 8px rgba(45,108,255,0.2)",
+                        }}
+                        aria-hidden="true"
+                      >
+                        <LCWaveLogo size={17} />
                       </div>
                     )}
+
+                    {/* Message bubble */}
                     <div
                       className={cn(
-                        "text-xs px-3.5 py-2.5 shadow-sm leading-relaxed whitespace-pre-line",
+                        "text-[12.5px] leading-relaxed whitespace-pre-line px-3.5 py-2.5",
                         msg.sender === "assistant"
-                          ? "bg-[#101B30] text-slate-100 rounded-2xl rounded-bl-none border border-slate-800/50"
-                          : "bg-gradient-to-r from-[#2D6CFF] to-[#5B8CFF] text-white rounded-2xl rounded-br-none",
+                          ? "rounded-2xl rounded-bl-sm"
+                          : "rounded-2xl rounded-br-sm",
                       )}
+                      style={
+                        msg.sender === "assistant"
+                          ? {
+                              background: "#101B30",
+                              color: "#E5E7EB",
+                              border: "1px solid rgba(45,108,255,0.15)",
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+                              fontFamily: "Inter, ui-sans-serif, sans-serif",
+                            }
+                          : {
+                              background:
+                                "linear-gradient(135deg, #2D6CFF 0%, #4f8aff 100%)",
+                              color: "#ffffff",
+                              boxShadow: "0 2px 12px rgba(45,108,255,0.35)",
+                              fontFamily: "Inter, ui-sans-serif, sans-serif",
+                            }
+                      }
                     >
                       {msg.text}
                     </div>
                   </div>
 
-                  {/* Quick replies */}
+                  {/* Quick-reply chips */}
                   {msg.sender === "assistant" &&
                     msg.quickReplies &&
                     msg.quickReplies.length > 0 && (
-                      <div className="pl-8 flex flex-wrap gap-2 animate-in fade-in duration-300">
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="pl-9 flex flex-wrap gap-1.5"
+                        role="group"
+                        aria-label="Quick reply options"
+                      >
                         {msg.quickReplies.map((qr, i) => (
                           <button
                             key={i}
                             onClick={() => handleSend(qr)}
                             tabIndex={0}
-                            className="px-3 py-1.5 rounded-full border border-[#2D6CFF] text-[#2D6CFF] text-[11px] font-semibold hover:bg-[#2D6CFF]/10 focus:outline-none focus-visible:bg-[#2D6CFF]/15 active:scale-95 transition"
+                            aria-label={`Quick reply: ${qr}`}
+                            className={
+                              cn(
+                                "px-3 py-1.5 rounded-full text-[11px] font-semibold",
+                                "border border-[#2D6CFF]/60 text-[#2D6CFF]",
+                                "hover:bg-[#2D6CFF]/12 hover:border-[#2D6CFF] hover:text-[#5B8CFF]",
+                                "active:scale-95",
+                                "transition-all duration-150 ease-out",
+                                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6CFF] focus-visible:ring-offset-1 focus-visible:ring-offset-[#0B1220]",
+                              )
+                            }
                           >
                             {qr}
                           </button>
                         ))}
-                      </div>
+                      </motion.div>
                     )}
                 </div>
               ))}
 
-              {/* Typing Indicator */}
+              {/* Typing indicator */}
               {isThinking && <TypingIndicator />}
             </div>
 
-            {/* Chat Input Footer */}
+            {/* ── Chat Input Footer ─────────────────────────────────────────── */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSend(inputValue);
               }}
-              className="p-3 bg-[#101B30]/95 border-t border-slate-800/80 flex items-center gap-2"
+              className="px-3 py-3 flex items-center gap-2"
+              style={{
+                background: "linear-gradient(135deg, #101B30 0%, #0d1b3a 100%)",
+                borderTop: "1px solid rgba(45,108,255,0.15)",
+              }}
             >
+              <label htmlFor="lc-chat-input" className="sr-only">
+                Type a message to LanceConnect Assistant
+              </label>
               <input
+                id="lc-chat-input"
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Ask me anything..."
                 tabIndex={0}
-                className="flex-1 bg-[#1E293B] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#2D6CFF] focus-visible:ring-1 focus-visible:ring-[#2D6CFF] transition"
+                autoComplete="off"
+                className="flex-1 rounded-xl px-3.5 py-2 text-[12.5px] transition-all duration-150 ease-out focus:outline-none"
+                style={{
+                  background: "#0d1f42",
+                  border: "1px solid rgba(45,108,255,0.25)",
+                  color: "#E5E7EB",
+                  fontFamily: "Inter, ui-sans-serif, sans-serif",
+                  boxShadow: "inset 0 1px 3px rgba(0,0,0,0.3)",
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.border = "1px solid rgba(45,108,255,0.7)";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(45,108,255,0.12), inset 0 1px 3px rgba(0,0,0,0.3)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.border = "1px solid rgba(45,108,255,0.25)";
+                  e.currentTarget.style.boxShadow = "inset 0 1px 3px rgba(0,0,0,0.3)";
+                }}
               />
               <button
                 type="submit"
-                aria-label="Send Message"
+                aria-label="Send message"
                 tabIndex={0}
                 disabled={!inputValue.trim()}
-                className="h-8 w-8 bg-[#2D6CFF] hover:bg-[#2D6CFF]/90 disabled:opacity-50 text-white rounded-lg flex items-center justify-center transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#101B30] focus-visible:ring-[#2D6CFF]"
+                className={
+                  cn(
+                    "h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0",
+                    "transition-all duration-150 ease-out",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2D6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#101B30]",
+                    inputValue.trim()
+                      ? "bg-[#2D6CFF] hover:bg-[#3d7aff] text-white shadow-[0_2px_12px_rgba(45,108,255,0.4)] hover:shadow-[0_2px_18px_rgba(45,108,255,0.6)] hover:scale-105 active:scale-95"
+                      : "bg-[#1a2d5a] text-[#9CA3AF] cursor-not-allowed opacity-60",
+                  )
+                }
               >
                 <Send className="h-4 w-4" />
               </button>
@@ -1606,27 +1758,46 @@ I'll plug this into your search so you can start finding real, contactable leads
   );
 }
 
-// Typing Indicator Component
+// Typing Indicator — three pulsing LC-blue dots with avatar
 function TypingIndicator() {
   return (
-    <div className="flex items-end gap-2.5 max-w-[85%] mr-auto">
-      <div className="h-6 w-6 rounded-full bg-[#101B30] border border-slate-700 flex items-center justify-center flex-shrink-0">
-        <LCWaveLogo size={18} />
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="flex items-end gap-2.5 max-w-[85%] mr-auto"
+      aria-live="polite"
+      aria-label="Assistant is typing"
+    >
+      <div
+        className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0"
+        style={{
+          background: "linear-gradient(135deg, #101B30 0%, #0d1f4a 100%)",
+          border: "1.5px solid rgba(45,108,255,0.35)",
+          boxShadow: "0 2px 8px rgba(45,108,255,0.18)",
+        }}
+        aria-hidden="true"
+      >
+        <LCWaveLogo size={17} />
       </div>
-      <div className="bg-[#101B30] border border-slate-800/50 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex gap-1 items-center">
-        <span
-          className="h-1.5 w-1.5 rounded-full bg-[#2D6CFF] animate-bounce"
-          style={{ animationDelay: "0ms" }}
-        />
-        <span
-          className="h-1.5 w-1.5 rounded-full bg-[#2D6CFF] animate-bounce"
-          style={{ animationDelay: "150ms" }}
-        />
-        <span
-          className="h-1.5 w-1.5 rounded-full bg-[#2D6CFF] animate-bounce"
-          style={{ animationDelay: "300ms" }}
-        />
+      <div
+        className="rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5 items-center"
+        style={{
+          background: "#101B30",
+          border: "1px solid rgba(45,108,255,0.15)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+        }}
+      >
+        {[0, 150, 300].map((delay) => (
+          <span
+            key={delay}
+            className="h-1.5 w-1.5 rounded-full bg-[#2D6CFF] animate-bounce"
+            style={{ animationDelay: `${delay}ms` }}
+            aria-hidden="true"
+          />
+        ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
