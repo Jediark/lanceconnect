@@ -14,7 +14,6 @@ interface Message {
 }
 
 interface Slots {
-  goal: string | null;
   category: string | null;
   location: string | null;
   budget: string | null;
@@ -22,7 +21,6 @@ interface Slots {
 }
 
 const INITIAL_SLOTS: Slots = {
-  goal: null,
   category: null,
   location: null,
   budget: null,
@@ -325,17 +323,7 @@ const BUDGET_KEYWORDS = [
   "$", "dollar", "dollars", "usd", "gbp", "eur", "cad", "aud"
 ];
 
-const GOAL_FREELANCER_KEYWORDS = [
-  "find clients", "get clients", "looking for clients", "need clients", "want clients",
-  "find work", "get work", "find projects", "land projects", "more business",
-  "freelance", "freelancer"
-];
-
-const GOAL_CLIENT_KEYWORDS = [
-  "hire someone", "need a freelancer", "looking for help", "find a freelancer",
-  "need a designer", "need a developer", "need a writer", "need help with",
-  "outsource", "delegate", "build a team", "grow my team", "hire", "looking to hire"
-];
+// Goal tracking removed for direct freelancer flow
 
 const CHANGE_KEYWORDS = [
   "change", "update", "edit", "switch", "replace", "redo", "go back", "different",
@@ -1471,6 +1459,32 @@ const INTENT_EXAMPLES: IntentExample[] = [
   },
 ];
 
+const getConfirmationReply = (intent: IntentExample): string => {
+  if (!intent.slotToFill) return intent.reply;
+
+  const questionStarters = [
+    "are you", "where are", "let's find", "do you", "what city", "what location",
+    "what is", "is this", "want me", "what's your", "where should", "where is",
+    "what monthly", "do we need", "should i", "anything specific"
+  ];
+  let text = intent.reply;
+
+  if (text.includes("?")) {
+    const parts = text.split("?");
+    text = parts[0].trim();
+    
+    const lastPuncIndex = Math.max(text.lastIndexOf("."), text.lastIndexOf("!"), text.lastIndexOf(";"));
+    if (lastPuncIndex > 10) {
+      const lastSentence = text.substring(lastPuncIndex + 1).toLowerCase().trim();
+      if (questionStarters.some(starter => lastSentence.startsWith(starter) || lastSentence.includes(starter))) {
+        text = text.substring(0, lastPuncIndex + 1).trim();
+      }
+    }
+  }
+
+  return text;
+};
+
 function findBestMatchedIntent(text: string): IntentExample | null {
   const clean = (str: string) =>
     str
@@ -1583,6 +1597,13 @@ export function AssistantChatWidget() {
   const [currentUnfilledSlot, setCurrentUnfilledSlot] = useState<keyof Slots | null>("category");
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Auto-save slots to localStorage on change
+  useEffect(() => {
+    if (slots.category || slots.location || slots.budget || slots.experience_level) {
+      localStorage.setItem("lc_chat_slots", JSON.stringify(slots));
+    }
+  }, [slots]);
+
   // Auto-scroll to bottom
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -1599,12 +1620,7 @@ export function AssistantChatWidget() {
     const parsed: Partial<Slots> = {};
     const lower = text.toLowerCase().trim();
 
-    // 1. Goal extraction
-    if (GOAL_FREELANCER_KEYWORDS.some(k => lower.includes(k))) {
-      parsed.goal = "freelancer";
-    } else if (GOAL_CLIENT_KEYWORDS.some(k => lower.includes(k))) {
-      parsed.goal = "client";
-    }
+    // (goal extraction removed)
 
     // 2. Category extraction
     const sortedCatKeywords = Object.keys(KEYWORD_TO_CATEGORY).sort((a, b) => b.length - a.length);
@@ -1672,13 +1688,7 @@ export function AssistantChatWidget() {
     }
 
     // 6. Direct filling for current unfilled slot if parsing failed
-    if (expectedSlot === "goal" && !parsed.goal) {
-      if (lower.includes("client") || lower.includes("find")) {
-        parsed.goal = "freelancer";
-      } else if (lower.includes("hire") || lower.includes("business")) {
-        parsed.goal = "client";
-      }
-    } else if (expectedSlot === "category" && !parsed.category) {
+    if (expectedSlot === "category" && !parsed.category) {
       if (lower !== "something else") {
         parsed.category = text;
       }
@@ -1696,12 +1706,6 @@ export function AssistantChatWidget() {
   const getBotPromptForNextSlot = (
     currentSlots: Slots,
   ): { text: string; quickReplies?: string[] } => {
-    if (!currentSlots.goal) {
-      return {
-        text: "Are you looking to find clients for your freelance work, or are you a business looking to hire a freelancer?",
-        quickReplies: ["Find Clients", "Hire a Freelancer"],
-      };
-    }
     if (!currentSlots.category) {
       return {
         text: "What type of work do you do (your category or specialty)?",
@@ -2086,7 +2090,9 @@ I'll plug this into your search so you can start finding real, contactable leads
       let newSlots = { ...slots };
 
       if (matchedIntent) {
-        botText = matchedIntent.reply;
+        // Use helper to get a concise confirmation part of the matched intent reply
+        const confirmationReply = getConfirmationReply(matchedIntent);
+        botText = confirmationReply;
 
         if (matchedIntent.slotToFill && matchedIntent.slotValue) {
           newSlots[matchedIntent.slotToFill] = matchedIntent.slotValue;
@@ -2102,8 +2108,7 @@ I'll plug this into your search so you can start finding real, contactable leads
       setSlots(newSlots);
 
       let nextSlot: keyof Slots | null = null;
-      if (!newSlots.goal) nextSlot = "goal";
-      else if (!newSlots.category) nextSlot = "category";
+      if (!newSlots.category) nextSlot = "category";
       else if (!newSlots.location) nextSlot = "location";
       else if (!newSlots.budget) nextSlot = "budget";
       else if (!newSlots.experience_level) nextSlot = "experience_level";
@@ -2115,9 +2120,11 @@ I'll plug this into your search so you can start finding real, contactable leads
       if (matchedIntent) {
         botQuickReplies = nextPrompt.quickReplies;
 
-        if (!nextSlot) {
+        // If it's a slot-filling intent and there's a next slot, append it!
+        if (matchedIntent.slotToFill && nextPrompt.text) {
           botText += `\n\n${nextPrompt.text}`;
-          botQuickReplies = nextPrompt.quickReplies;
+        } else if (!nextSlot) {
+          botText += `\n\n${nextPrompt.text}`;
         }
       } else {
         botText = nextPrompt.text;
