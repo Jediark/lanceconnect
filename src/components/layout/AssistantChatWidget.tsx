@@ -1046,6 +1046,21 @@ const INTENT_EXAMPLES: IntentExample[] = [
     slotValue: "Los Angeles",
   },
   {
+    id: 265,
+    patterns: [
+      "i'm in lagos",
+      "i am in lagos",
+      "based in lagos",
+      "lagos",
+      "lagos nigeria",
+      "lagos, nigeria",
+    ],
+    reply:
+      "Lagos — got it, the tech and business hub of West Africa! I can prioritize leads in Lagos or look for opportunities across Nigeria. Are you targeting businesses in Ikeja, Lekki, or another specific area?",
+    slotToFill: "location",
+    slotValue: "Lagos",
+  },
+  {
     id: 28,
     patterns: [
       "i work remotely, no specific location",
@@ -1519,6 +1534,9 @@ function findBestMatchedIntent(text: string): IntentExample | null {
   };
 
   const isSimilarWord = (w1: string, w2: string) => {
+    if (w1.length <= 2 || w2.length <= 2) {
+      return w1 === w2;
+    }
     return (
       w1 === w2 || w1.startsWith(w2) || w2.startsWith(w1) || w1.includes(w2) || w2.includes(w1)
     );
