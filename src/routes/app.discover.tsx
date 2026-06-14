@@ -79,6 +79,7 @@ function Discover() {
   const [quickConnectMessage, setQuickConnectMessage] = useState("");
   const [totalPoolCount, setTotalPoolCount] = useState(0);
   const [expansionMessage, setExpansionMessage] = useState<string | null>(null);
+  const [searchIntelligence, setSearchIntelligence] = useState<any>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -460,6 +461,7 @@ function Discover() {
 
       setTotalPoolCount(poolCount);
       setExpansionMessage(expMsg);
+      setSearchIntelligence(searchData?.intelligence || null);
 
       // Save returned lead IDs to localStorage seen leads
       const returnedIds = rawLeads.map((l: any) => l.id);
@@ -547,6 +549,7 @@ function Discover() {
     setMinScore(0);
     setProduct("");
     setSelectedNiche("");
+    setSearchIntelligence(null);
   };
 
   const downloadCSV = () => {
@@ -779,6 +782,31 @@ function Discover() {
         </div>
       )}
 
+      {searchIntelligence && (
+        <div className="mx-4 lg:mx-8 mt-2 mb-4 p-3 bg-slate-900/40 border border-slate-800 rounded-xl text-xs text-slate-400 flex flex-wrap items-center gap-2 font-mono animate-in slide-in-from-top-2 duration-300">
+          <span className="text-indigo-400">📍</span>
+          <span>Searching <span className="font-semibold text-indigo-400">{searchIntelligence.niche_searched}</span> in <span className="font-semibold text-primary">{searchIntelligence.district_searched}</span></span>
+          <span className="text-slate-600">·</span>
+          <span>Area {searchIntelligence.district_number}/{searchIntelligence.total_districts}</span>
+          {searchIntelligence.leads_excluded > 0 && (
+            <>
+              <span className="text-slate-600">·</span>
+              <span className="text-slate-500">
+                {searchIntelligence.leads_excluded} already seen leads excluded
+              </span>
+            </>
+          )}
+          {searchIntelligence.personalized && (
+            <>
+              <span className="text-slate-600">·</span>
+              <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                ✨ Personalized Reranking Active
+              </span>
+            </>
+          )}
+        </div>
+      )}
+
       {expansionMessage && (
         <div className="mx-4 lg:mx-8 mt-2 mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-500 flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
           <Sparkles className="h-4 w-4 shrink-0 text-amber-500" />
@@ -902,6 +930,9 @@ function Discover() {
                       setQuickConnectChannel(channel || "email");
                       setQuickConnectMessage("");
                       setQuickConnectOpen(true);
+                    }}
+                    onDismiss={(leadId) => {
+                      setResults((prev) => prev.filter((item) => item.id !== leadId));
                     }}
                   />
                 </div>

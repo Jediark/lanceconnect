@@ -30,10 +30,12 @@ export function LeadCard({
   lead,
   onOpenDetail,
   onQuickConnect,
+  onDismiss,
 }: {
   lead: Lead;
   onOpenDetail?: (l: Lead) => void;
   onQuickConnect?: (lead: Lead, initialChannel?: "email" | "linkedin" | "whatsapp") => void;
+  onDismiss?: (leadId: string) => void;
 }) {
   const { saveLead, savedIds } = usePipeline();
   const { user } = useAuth();
@@ -41,8 +43,37 @@ export function LeadCard({
   const [saving, setSaving] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [reported, setReported] = useState(false);
+  const [dismissing, setDismissing] = useState(false);
   const isLocked = !!(lead.claimStatus && lead.claimUserId !== user?.id);
   const isMyClaim = !!(lead.claimStatus && lead.claimUserId === user?.id);
+
+  const handleDismiss = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      toast.error("Please log in to dismiss leads");
+      return;
+    }
+    setDismissing(true);
+    try {
+      const { error } = await supabase.from('user_seen_leads').upsert({
+        user_id: user.id,
+        lead_id: lead.id,
+        action: 'dismissed',
+        seen_at: new Date().toISOString()
+      }, { onConflict: 'user_id,lead_id' });
+
+      if (error) throw error;
+      toast.success("Lead removed — we'll show you different ones");
+      if (onDismiss) {
+        onDismiss(lead.id);
+      }
+    } catch (err) {
+      console.error("Failed to dismiss lead:", err);
+      toast.error("Failed to dismiss lead");
+    } finally {
+      setDismissing(false);
+    }
+  };
 
   const handleReport = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -472,6 +503,22 @@ export function LeadCard({
           title={reported ? "Reported" : "Report this lead"}
         >
           <Flag className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={handleDismiss}
+          disabled={dismissing || isLocked}
+          className={cn(
+            "inline-flex items-center justify-center gap-1 text-xs font-semibold px-3 py-2 rounded-lg border border-border bg-background text-slate-400 hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 transition cursor-pointer",
+            (dismissing || isLocked) && "opacity-40 cursor-not-allowed"
+          )}
+          title="Not interested — show me different leads"
+        >
+          {dismissing ? (
+            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-rose-500 border-t-transparent" />
+          ) : (
+            "✕ Not relevant"
+          )}
         </button>
       </div>
     </div>
