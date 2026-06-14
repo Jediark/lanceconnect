@@ -123,6 +123,12 @@ function AdminDashboard() {
   const [showPassword, setShowPassword] = useState(false);
   const [submittingAuth, setSubmittingAuth] = useState(false);
 
+  // OTP Verification State
+  const [pendingVerificationEmail, setPendingVerificationEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState<string[]>(Array(6).fill(""));
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [resendingOtp, setResendingOtp] = useState(false);
+
   // Elevation Form State
   const [elevationCode, setElevationCode] = useState("");
   const [submittingElevation, setSubmittingElevation] = useState(false);
@@ -132,6 +138,37 @@ function AdminDashboard() {
     // We stay on this page to show the custom auth flow inline.
     // If they are logged in but not admin, they can promote using the passcode.
   }, [currentUser, authLoading]);
+
+  // OTP input handlers
+  const handleOtpChange = (val: string, index: number) => {
+    if (val && isNaN(Number(val))) return; // numbers only
+
+    const newCode = [...verificationCode];
+    newCode[index] = val.substring(val.length - 1);
+    setVerificationCode(newCode);
+
+    // Auto-focus next input
+    if (val !== "" && index < 5) {
+      const nextInput = document.getElementById(`admin-otp-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === "Backspace" && verificationCode[index] === "" && index > 0) {
+      const prevInput = document.getElementById(`admin-otp-${index - 1}`);
+      prevInput?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim();
+    if (pastedData.length === 6 && !isNaN(Number(pastedData))) {
+      setVerificationCode(pastedData.split(""));
+      document.getElementById("admin-otp-5")?.focus();
+    }
+  };
 
   // Auth Operations
   const handleAdminSignIn = async (e: React.FormEvent) => {
@@ -176,28 +213,101 @@ function AdminDashboard() {
         return;
       }
 
-      // Automatically promote profile
-      const authUser = (await supabase.auth.getUser()).data.user;
-      if (authUser) {
-        const { error: promoError } = await supabase
-          .from("profiles")
-          .update({ is_admin: true })
-          .eq("id", authUser.id);
-
-        if (promoError) {
-          console.error("Administrative promotion failed:", promoError);
-          toast.error("Account created, but administrative promotion failed. Please use your security key to elevate upon login.");
-        } else {
-          updateUser({ isAdmin: true });
-          toast.success("Administrator account registered and activated!");
-        }
+      if (!session) {
+        // Email verification required, show the OTP entry screen
+        setPendingVerificationEmail(adminEmail.trim());
+        toast.success("Account registered! A verification code has been sent to your email.");
       } else {
-        toast.success("Account registered! Please check your email to verify and complete activation.");
+        // Automatically promote profile
+        const authUser = (await supabase.auth.getUser()).data.user;
+        if (authUser) {
+          const { error: promoError } = await supabase
+            .from("profiles")
+            .update({ is_admin: true })
+            .eq("id", authUser.id);
+
+          if (promoError) {
+            console.error("Administrative promotion failed:", promoError);
+            toast.error("Account created, but administrative promotion failed. Please use your security key to elevate upon login.");
+          } else {
+            updateUser({ isAdmin: true });
+            toast.success("Administrator account registered and activated!");
+          }
+        }
       }
     } catch (err: any) {
       toast.error(err.message || "Signup error.");
     } finally {
       setSubmittingAuth(false);
+    }
+  };
+
+  const handleVerifyAdminOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const enteredToken = verificationCode.join("");
+    if (!pendingVerificationEmail) return;
+    if (enteredToken.length < 6) {
+      toast.error("Please enter the 6-digit code.");
+      return;
+    }
+
+    setVerifyingOtp(true);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: pendingVerificationEmail,
+        token: enteredToken,
+        type: "signup",
+      });
+
+      if (error) {
+        toast.error(error.message || "Verification failed. Check the code.");
+      } else {
+        toast.success("Email verified successfully!");
+        
+        // Promote the profile immediately
+        const authUser = (await supabase.auth.getUser()).data.user;
+        if (authUser) {
+          const { error: promoError } = await supabase
+            .from("profiles")
+            .update({ is_admin: true })
+            .eq("id", authUser.id);
+
+          if (promoError) {
+            console.error("Administrative promotion failed:", promoError);
+            toast.error("Verified successfully, but administrative promotion failed. Please use your security key to elevate your account.");
+            updateUser({ isAdmin: false });
+          } else {
+            updateUser({ isAdmin: true });
+            toast.success("Welcome, Administrator!");
+            setPendingVerificationEmail("");
+          }
+        }
+      }
+    } catch (err: any) {
+      toast.error(err.message || "An unexpected error occurred.");
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
+
+  const handleResendAdminOtp = async () => {
+    if (!pendingVerificationEmail) return;
+    setResendingOtp(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: pendingVerificationEmail,
+      });
+
+      if (error) {
+        toast.error(error.message || "Failed to resend verification code.");
+      } else {
+        toast.success("Verification code resent to your inbox!");
+      }
+    } catch (err: any) {
+      toast.error("Failed to resend code.");
+    } finally {
+      setResendingOtp(false);
     }
   };
 
@@ -601,172 +711,240 @@ function AdminDashboard() {
 
             {/* Auth Glass Card */}
             <div className="bg-[#0B1220]/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
-              {/* Tab Selector */}
-              <div className="flex border-b border-slate-800/60 pb-4 mb-6">
-                <button
-                  onClick={() => setAuthTab("signin")}
-                  className={`flex-1 pb-2 text-sm font-bold text-center border-b-2 transition duration-200 cursor-pointer ${
-                    authTab === "signin"
-                      ? "border-cyan-500 text-cyan-400"
-                      : "border-transparent text-slate-400 hover:text-white"
-                  }`}
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => setAuthTab("signup")}
-                  className={`flex-1 pb-2 text-sm font-bold text-center border-b-2 transition duration-200 cursor-pointer ${
-                    authTab === "signup"
-                      ? "border-cyan-500 text-cyan-400"
-                      : "border-transparent text-slate-400 hover:text-white"
-                  }`}
-                >
-                  Create Admin
-                </button>
-              </div>
-
-              {authTab === "signin" ? (
-                <form onSubmit={handleAdminSignIn} className="space-y-4">
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
-                      Administrative Email
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                      <input
-                        type="email"
-                        required
-                        placeholder="admin@lanceconnect.com"
-                        value={adminEmail}
-                        onChange={(e) => setAdminEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
-                      />
-                    </div>
+              {pendingVerificationEmail ? (
+                <form onSubmit={handleVerifyAdminOtp} className="space-y-6">
+                  <div className="text-center">
+                    <h2 className="text-base font-bold text-cyan-400 uppercase tracking-wider">Confirm Verification Code</h2>
+                    <p className="mt-2 text-xs text-slate-400">
+                      Enter the 6-digit confirmation code sent to: <span className="text-white font-bold block mt-1">{pendingVerificationEmail}</span>
+                    </p>
                   </div>
 
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
-                      Password
+                  <div className="space-y-2">
+                    <label className="block text-[10px] uppercase font-black tracking-wider text-slate-400 text-center">
+                      Verification Code
                     </label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required
-                        placeholder="••••••••"
-                        value={adminPassword}
-                        onChange={(e) => setAdminPassword(e.target.value)}
-                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
+                    <div className="grid grid-cols-6 gap-2">
+                      {verificationCode.map((digit, idx) => (
+                        <input
+                          key={idx}
+                          id={`admin-otp-${idx}`}
+                          type="text"
+                          pattern="[0-9]*"
+                          maxLength={1}
+                          value={digit}
+                          onKeyDown={(e) => handleOtpKeyDown(e, idx)}
+                          onPaste={idx === 0 ? handleOtpPaste : undefined}
+                          onChange={(e) => handleOtpChange(e.target.value, idx)}
+                          className="w-full text-center aspect-square font-mono text-xl font-bold rounded-xl border border-slate-800 bg-slate-900/60 text-white focus:border-cyan-500 outline-none transition"
+                        />
+                      ))}
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    disabled={submittingAuth}
-                    className="w-full mt-2 inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
+                    disabled={verifyingOtp}
+                    className="w-full inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
                   >
-                    {submittingAuth ? (
+                    {verifyingOtp ? (
                       <Loader2 className="h-4.5 w-4.5 animate-spin" />
                     ) : (
-                      "Sign In to Console"
+                      "Confirm & Activate Admin"
                     )}
                   </button>
+
+                  <div className="text-center space-y-2.5 pt-4 border-t border-slate-850">
+                    <p className="text-xs text-slate-400 font-semibold">
+                      Didn't receive the code?{" "}
+                      <button
+                        type="button"
+                        disabled={resendingOtp}
+                        onClick={handleResendAdminOtp}
+                        className="text-cyan-400 hover:underline font-bold cursor-pointer"
+                      >
+                        {resendingOtp ? "Resending..." : "Resend OTP"}
+                      </button>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setPendingVerificationEmail("")}
+                      className="text-xs text-slate-500 hover:text-slate-350 font-bold block mx-auto cursor-pointer"
+                    >
+                      Back to sign up
+                    </button>
+                  </div>
                 </form>
               ) : (
-                <form onSubmit={handleAdminSignUp} className="space-y-4">
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Admin Name"
-                      value={adminFullName}
-                      onChange={(e) => setAdminFullName(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
-                    />
+                <>
+                  {/* Tab Selector */}
+                  <div className="flex border-b border-slate-800/60 pb-4 mb-6">
+                    <button
+                      onClick={() => setAuthTab("signin")}
+                      className={`flex-1 pb-2 text-sm font-bold text-center border-b-2 transition duration-200 cursor-pointer ${
+                        authTab === "signin"
+                          ? "border-cyan-500 text-cyan-400"
+                          : "border-transparent text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      onClick={() => setAuthTab("signup")}
+                      className={`flex-1 pb-2 text-sm font-bold text-center border-b-2 transition duration-200 cursor-pointer ${
+                        authTab === "signup"
+                          ? "border-cyan-500 text-cyan-400"
+                          : "border-transparent text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      Create Admin
+                    </button>
                   </div>
 
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
-                      Administrative Email
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                      <input
-                        type="email"
-                        required
-                        placeholder="name@company.com"
-                        value={adminEmail}
-                        onChange={(e) => setAdminEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
-                      />
-                    </div>
-                  </div>
+                  {authTab === "signin" ? (
+                    <form onSubmit={handleAdminSignIn} className="space-y-4">
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                          Administrative Email
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                          <input
+                            type="email"
+                            required
+                            placeholder="admin@lanceconnect.com"
+                            value={adminEmail}
+                            onChange={(e) => setAdminEmail(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                          />
+                        </div>
+                      </div>
 
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
-                      Secure Password
-                    </label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required
-                        placeholder="••••••••"
-                        value={adminPassword}
-                        onChange={(e) => setAdminPassword(e.target.value)}
-                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
-                      />
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                          Password
+                        </label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            required
+                            placeholder="••••••••"
+                            value={adminPassword}
+                            onChange={(e) => setAdminPassword(e.target.value)}
+                            className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+
                       <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
+                        type="submit"
+                        disabled={submittingAuth}
+                        className="w-full mt-2 inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {submittingAuth ? (
+                          <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                        ) : (
+                          "Sign In to Console"
+                        )}
                       </button>
-                    </div>
-                  </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleAdminSignUp} className="space-y-4">
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Admin Name"
+                          value={adminFullName}
+                          onChange={(e) => setAdminFullName(e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
-                      <span>Admin Security Key</span>
-                      <span className="text-cyan-400 lowercase">Required for authorization</span>
-                    </label>
-                    <div className="relative">
-                      <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                      <input
-                        type="password"
-                        required
-                        placeholder="Enter admin security code"
-                        value={adminCode}
-                        onChange={(e) => setAdminCode(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
-                      />
-                    </div>
-                  </div>
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                          Administrative Email
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                          <input
+                            type="email"
+                            required
+                            placeholder="name@company.com"
+                            value={adminEmail}
+                            onChange={(e) => setAdminEmail(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                          />
+                        </div>
+                      </div>
 
-                  <button
-                    type="submit"
-                    disabled={submittingAuth}
-                    className="w-full mt-2 inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
-                  >
-                    {submittingAuth ? (
-                      <Loader2 className="h-4.5 w-4.5 animate-spin" />
-                    ) : (
-                      "Create & Promote Account"
-                    )}
-                  </button>
-                </form>
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                          Secure Password
+                        </label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            required
+                            placeholder="••••••••"
+                            value={adminPassword}
+                            onChange={(e) => setAdminPassword(e.target.value)}
+                            className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
+                          <span>Admin Security Key</span>
+                          <span className="text-cyan-400 lowercase">Required for authorization</span>
+                        </label>
+                        <div className="relative">
+                          <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                          <input
+                            type="password"
+                            required
+                            placeholder="Enter admin security code"
+                            value={adminCode}
+                            onChange={(e) => setAdminCode(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={submittingAuth}
+                        className="w-full mt-2 inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
+                      >
+                        {submittingAuth ? (
+                          <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                        ) : (
+                          "Create & Promote Account"
+                        )}
+                      </button>
+                    </form>
+                  )}
+                </>
               )}
             </div>
 
