@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Bot, Check, Shield } from "lucide-react";
 import { getCountry } from "@/data/dynamicRouteData";
+import { US_STATES, GLOBAL_REGIONS } from "@/data/geography";
 
 interface Message {
   id: string;
@@ -391,9 +392,59 @@ function getCategoryParam(catLabel: string | null): string {
 
 function resolveCountryFromCity(city: string | null): string {
   if (!city) return "Nigeria";
-  const slug = city.trim().toLowerCase().replace(/\s+/g, "-");
+
+  const cleanVal = city.trim();
+  
+  // Check if user specified a country/state using comma notation (e.g. "Paris, France" or "Dallas, TX")
+  if (cleanVal.includes(",")) {
+    const parts = cleanVal.split(",");
+    const potentialRegion = parts[parts.length - 1].trim().toLowerCase();
+
+    // Check if US State/Abbreviation
+    const isUsState = US_STATES.some(state => 
+      state.state.toLowerCase() === potentialRegion || 
+      state.abbr.toLowerCase() === potentialRegion
+    );
+    if (isUsState || ["us", "usa", "united states"].includes(potentialRegion)) {
+      return "United States";
+    }
+
+    // Check if Global Country
+    for (const region of GLOBAL_REGIONS) {
+      for (const country of region.countries) {
+        if (country.country.toLowerCase() === potentialRegion || country.slug === potentialRegion) {
+          return country.country;
+        }
+      }
+    }
+
+    // Capitalize fallback
+    return potentialRegion.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+
+  const slug = cleanVal.toLowerCase().replace(/\s+/g, "-");
   const country = getCountry(slug);
-  return country || "Nigeria";
+  if (country) return country;
+
+  // Check if the input itself matches a country name directly
+  for (const region of GLOBAL_REGIONS) {
+    for (const country of region.countries) {
+      if (country.country.toLowerCase() === cleanVal.toLowerCase()) {
+        return country.country;
+      }
+    }
+  }
+
+  // Check if US State name directly
+  const isUsStateDirect = US_STATES.some(state => 
+    state.state.toLowerCase() === cleanVal.toLowerCase() || 
+    state.abbr.toLowerCase() === cleanVal.toLowerCase()
+  );
+  if (isUsStateDirect || ["us", "usa", "united states"].includes(cleanVal.toLowerCase())) {
+    return "United States";
+  }
+
+  return "Nigeria";
 }
 
 const OPENING_TEXT = `Hey there 👋 I'm the LanceConnect Assistant — here to help you find real clients, fast, with zero bidding wars and zero platform commissions.
