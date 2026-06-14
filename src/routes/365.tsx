@@ -24,6 +24,11 @@ import {
   DollarSign,
   Activity,
   Layers,
+  Eye,
+  EyeOff,
+  Key,
+  AlertCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -104,20 +109,125 @@ interface LeadDetails {
 }
 
 function AdminDashboard() {
-  const { user: currentUser, loading: authLoading } = useAuth();
+  const { user: currentUser, loading: authLoading, login, signup, logout, updateUser } = useAuth();
   const navigate = useNavigate();
+
+  // Tab State for Auth Screen
+  const [authTab, setAuthTab] = useState<"signin" | "signup">("signin");
+  
+  // Auth Form State
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminFullName, setAdminFullName] = useState("");
+  const [adminCode, setAdminCode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [submittingAuth, setSubmittingAuth] = useState(false);
+
+  // Elevation Form State
+  const [elevationCode, setElevationCode] = useState("");
+  const [submittingElevation, setSubmittingElevation] = useState(false);
 
   // Route Guard
   useEffect(() => {
-    if (!authLoading) {
-      if (!currentUser) {
-        navigate({ to: "/login", search: { redirectTo: "/365" } });
-      } else if (!currentUser.isAdmin) {
-        toast.error("Access denied. Administrators only.");
-        navigate({ to: "/app/dashboard" });
-      }
+    // We stay on this page to show the custom auth flow inline.
+    // If they are logged in but not admin, they can promote using the passcode.
+  }, [currentUser, authLoading]);
+
+  // Auth Operations
+  const handleAdminSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminEmail.trim() || !adminPassword.trim()) {
+      toast.error("Email and password are required.");
+      return;
     }
-  }, [currentUser, authLoading, navigate]);
+    setSubmittingAuth(true);
+    try {
+      const { error } = await login(adminEmail, adminPassword);
+      if (error) {
+        toast.error(error.message || "Failed to log in.");
+      } else {
+        toast.success("Welcome back!");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Authentication error.");
+    } finally {
+      setSubmittingAuth(false);
+    }
+  };
+
+  const handleAdminSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const code = adminCode.trim().toLowerCase();
+    if (code !== "lance365" && code !== "lance-365-admin" && code !== "akinola") {
+      toast.error("Invalid Admin Security Key. Privileged enrollment denied.");
+      return;
+    }
+    if (!adminEmail.trim() || !adminPassword.trim() || !adminFullName.trim()) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    setSubmittingAuth(true);
+    try {
+      const { error, session } = await signup(adminEmail, adminPassword, adminFullName);
+      if (error) {
+        toast.error(error.message || "Failed to create account.");
+        setSubmittingAuth(false);
+        return;
+      }
+
+      // Automatically promote profile
+      const authUser = (await supabase.auth.getUser()).data.user;
+      if (authUser) {
+        const { error: promoError } = await supabase
+          .from("profiles")
+          .update({ is_admin: true })
+          .eq("id", authUser.id);
+
+        if (promoError) {
+          console.error("Administrative promotion failed:", promoError);
+          toast.error("Account created, but administrative promotion failed. Please use your security key to elevate upon login.");
+        } else {
+          updateUser({ isAdmin: true });
+          toast.success("Administrator account registered and activated!");
+        }
+      } else {
+        toast.success("Account registered! Please check your email to verify and complete activation.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Signup error.");
+    } finally {
+      setSubmittingAuth(false);
+    }
+  };
+
+  const handleElevateAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const code = elevationCode.trim().toLowerCase();
+    if (code !== "lance365" && code !== "lance-365-admin" && code !== "akinola") {
+      toast.error("Invalid Admin Security Key. Elevation rejected.");
+      return;
+    }
+    if (!currentUser) return;
+
+    setSubmittingElevation(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ is_admin: true })
+        .eq("id", currentUser.id);
+
+      if (error) throw error;
+
+      updateUser({ isAdmin: true });
+      toast.success("Privilege elevated. Welcome, Administrator!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to elevate account privileges.");
+    } finally {
+      setSubmittingElevation(false);
+    }
+  };
 
   // Tab State
   const [activeTab, setActiveTab] = useState<TabType>("overview");
@@ -466,8 +576,296 @@ function AdminDashboard() {
     );
   }
 
-  if (!currentUser || !currentUser.isAdmin) {
-    return null; // Handled by useEffect redirect
+  if (!currentUser) {
+    return (
+      <div className="flex min-h-screen flex-col bg-[#070e1e] text-white">
+        <div className="flex flex-1 flex-col items-center justify-center p-6 relative overflow-hidden">
+          {/* Neon background grids and orbs */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0c172e_1px,transparent_1px),linear-gradient(to_bottom,#0c172e_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
+          <div className="absolute -top-[30%] -left-[20%] w-[60%] h-[60%] rounded-full bg-cyan-500/10 blur-[120px]" />
+          <div className="absolute -bottom-[30%] -right-[20%] w-[60%] h-[60%] rounded-full bg-violet-500/10 blur-[120px]" />
+
+          <div className="w-full max-w-md relative z-10">
+            {/* Header logo / title */}
+            <div className="text-center mb-8">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-500 to-violet-600 p-0.5 shadow-lg shadow-cyan-500/20 mb-4">
+                <Shield className="h-7 w-7 text-white" />
+              </div>
+              <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-violet-300 to-white bg-clip-text text-transparent">
+                LANCECONNECT
+              </h1>
+              <p className="mt-2 text-sm text-slate-400 font-bold uppercase tracking-wider">
+                🔒 Secure Administration Gateway
+              </p>
+            </div>
+
+            {/* Auth Glass Card */}
+            <div className="bg-[#0B1220]/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
+              {/* Tab Selector */}
+              <div className="flex border-b border-slate-800/60 pb-4 mb-6">
+                <button
+                  onClick={() => setAuthTab("signin")}
+                  className={`flex-1 pb-2 text-sm font-bold text-center border-b-2 transition duration-200 cursor-pointer ${
+                    authTab === "signin"
+                      ? "border-cyan-500 text-cyan-400"
+                      : "border-transparent text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setAuthTab("signup")}
+                  className={`flex-1 pb-2 text-sm font-bold text-center border-b-2 transition duration-200 cursor-pointer ${
+                    authTab === "signup"
+                      ? "border-cyan-500 text-cyan-400"
+                      : "border-transparent text-slate-400 hover:text-white"
+                  }`}
+                >
+                  Create Admin
+                </button>
+              </div>
+
+              {authTab === "signin" ? (
+                <form onSubmit={handleAdminSignIn} className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                      Administrative Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="admin@lanceconnect.com"
+                        value={adminEmail}
+                        onChange={(e) => setAdminEmail(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        placeholder="••••••••"
+                        value={adminPassword}
+                        onChange={(e) => setAdminPassword(e.target.value)}
+                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingAuth}
+                    className="w-full mt-2 inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
+                  >
+                    {submittingAuth ? (
+                      <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                    ) : (
+                      "Sign In to Console"
+                    )}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleAdminSignUp} className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Admin Name"
+                      value={adminFullName}
+                      onChange={(e) => setAdminFullName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                      Administrative Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="name@company.com"
+                        value={adminEmail}
+                        onChange={(e) => setAdminEmail(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                      Secure Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        placeholder="••••••••"
+                        value={adminPassword}
+                        onChange={(e) => setAdminPassword(e.target.value)}
+                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
+                      <span>Admin Security Key</span>
+                      <span className="text-cyan-400 lowercase">Required for authorization</span>
+                    </label>
+                    <div className="relative">
+                      <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                      <input
+                        type="password"
+                        required
+                        placeholder="Enter admin security code"
+                        value={adminCode}
+                        onChange={(e) => setAdminCode(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 transition duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingAuth}
+                    className="w-full mt-2 inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-cyan-500/10"
+                  >
+                    {submittingAuth ? (
+                      <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                    ) : (
+                      "Create & Promote Account"
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
+
+            {/* Back button */}
+            <div className="text-center mt-6">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 font-bold transition duration-200"
+              >
+                <ArrowLeft className="h-3 w-3" /> Back to home website
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentUser && !currentUser.isAdmin) {
+    return (
+      <div className="flex min-h-screen flex-col bg-[#070e1e] text-white">
+        <div className="flex flex-1 flex-col items-center justify-center p-6 relative overflow-hidden">
+          {/* Grid and orb backdrops */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0c172e_1px,transparent_1px),linear-gradient(to_bottom,#0c172e_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
+          <div className="absolute -top-[30%] -left-[20%] w-[60%] h-[60%] rounded-full bg-cyan-500/10 blur-[120px]" />
+          <div className="absolute -bottom-[30%] -right-[20%] w-[60%] h-[60%] rounded-full bg-violet-500/10 blur-[120px]" />
+
+          <div className="w-full max-w-md relative z-10">
+            <div className="text-center mb-8">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/20 border border-amber-500/30 p-0.5 shadow-lg shadow-amber-500/5 mb-4">
+                <ShieldAlert className="h-7 w-7 text-amber-400" />
+              </div>
+              <h1 className="text-2xl font-black tracking-tight text-white">
+                Administrative Elevation Required
+              </h1>
+              <p className="mt-2 text-xs text-slate-400 font-semibold max-w-xs mx-auto text-center">
+                Your account (<span className="text-slate-300 font-bold">{currentUser.email}</span>) is active but does not currently hold administrator privileges.
+              </p>
+            </div>
+
+            <div className="bg-[#0B1220]/80 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 shadow-2xl relative">
+              <form onSubmit={handleElevateAccount} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
+                    <span>Admin Security Key</span>
+                    <span className="text-amber-400 lowercase">Enter code to elevate</span>
+                  </label>
+                  <div className="relative">
+                    <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                    <input
+                      type="password"
+                      required
+                      placeholder="Enter admin security code"
+                      value={elevationCode}
+                      onChange={(e) => setElevationCode(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-sm text-white placeholder-slate-500 outline-none focus:border-amber-500 transition duration-200"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submittingElevation}
+                  className="w-full mt-2 inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:brightness-110 py-3 text-xs font-black text-white uppercase tracking-wider transition duration-250 disabled:opacity-50 cursor-pointer shadow-lg shadow-amber-500/10"
+                >
+                  {submittingElevation ? (
+                    <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                  ) : (
+                    "Authorize & Elevate Profile"
+                  )}
+                </button>
+              </form>
+
+              <div className="border-t border-slate-800/60 mt-6 pt-4 flex items-center justify-between">
+                <span className="text-[11px] text-slate-500 font-semibold">Logged in as {currentUser.fullName || "User"}</span>
+                <button
+                  onClick={async () => {
+                    await logout();
+                    toast.info("Logged out successfully.");
+                  }}
+                  className="text-xs text-rose-400 hover:text-rose-300 font-bold transition duration-200 cursor-pointer"
+                >
+                  Sign Out / Switch Account
+                </button>
+              </div>
+            </div>
+
+            <div className="text-center mt-6">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 font-bold transition duration-200"
+              >
+                <ArrowLeft className="h-3 w-3" /> Back to home website
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
