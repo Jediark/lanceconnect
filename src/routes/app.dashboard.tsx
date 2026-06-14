@@ -17,12 +17,14 @@ import {
   MessageSquare,
   ArrowRight,
   Shield,
+  ArrowLeft,
 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
 import { COUNTRY_CITIES } from "@/data/countriesData";
 import { usePipeline } from "@/contexts/PipelineContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { OutreachPreview } from "@/components/ui/OutreachPreview";
 import { useEffect, useState, useMemo } from "react";
@@ -48,6 +50,26 @@ type ActivityItem = {
   createdAt: string;
 };
 
+interface OutreachLog {
+  date: string;
+  channel: "email" | "linkedin" | "whatsapp";
+  subject?: string;
+  message: string;
+}
+
+const parseOutreachLogs = (notes: string): OutreachLog[] => {
+  if (!notes) return [];
+  const match = notes.match(/<!--OUTREACH_LOGS_START-->([\s\S]*?)<!--OUTREACH_LOGS_END-->/);
+  if (match) {
+    try {
+      return JSON.parse(match[1]).history;
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
 function ScoreBadge({ score }: { score: number }) {
   const color =
     score >= 70
@@ -64,9 +86,45 @@ function ScoreBadge({ score }: { score: number }) {
   );
 }
 
+function DealValueInput({ lead }: { lead: Lead }) {
+  const { updateStatus } = usePipeline();
+  const [val, setVal] = useState(lead.dealValue?.toString() || "");
+
+  useEffect(() => {
+    setVal(lead.dealValue?.toString() || "");
+  }, [lead.dealValue]);
+
+  const handleBlur = async () => {
+    const num = val === "" ? null : Number(val);
+    if (num !== lead.dealValue) {
+      try {
+        await updateStatus(lead.id, lead.status || "won", lead.notes, lead.followUpDate, num);
+        toast.success(`Updated deal value for ${lead.businessName}`);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to update deal value");
+      }
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+      <span className="text-[10px] text-muted-foreground">$</span>
+      <input
+        type="number"
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        onBlur={handleBlur}
+        placeholder="0"
+        className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-[10px] text-foreground focus:outline-none focus:border-primary font-semibold"
+      />
+    </div>
+  );
+}
+
 function Dashboard() {
   const { user } = useAuth();
-  const { pipeline, savedIds, saveLead } = usePipeline();
+  const { pipeline, savedIds, saveLead, removeLead, updateStatus } = usePipeline();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -82,6 +140,11 @@ function Dashboard() {
   const [results, setResults] = useState<Lead[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+
+  const [activeStatScreen, setActiveStatScreen] = useState<
+    "searches" | "saved" | "contacted" | "win_rate" | null
+  >(null);
+  const [searchHistory, setSearchHistory] = useState<any[]>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -220,6 +283,92 @@ function Dashboard() {
   const wonCount = pipeline.filter((l) => l.status === "won").length;
   const conversionRate = totalSaved > 0 ? Math.round((wonCount / totalSaved) * 100) : 0;
   const suggestedCities = COUNTRY_CITIES[quickCountry] || [];
+
+  const formatDateTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
+  const getCategoryLabel = (catId: string) => {
+    return CATEGORIES.find((c) => c.id === catId)?.label || catId;
+  };
+
+  const savedThisMonthList = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const prefix = `${year}-${month}`; // "2026-06"
+    return pipeline
+      .filter((lead) => lead.savedAt && lead.savedAt.startsWith(prefix))
+      .sort((a, b) => b.savedAt!.localeCompare(a.savedAt!));
+  }, [pipeline]);
+
+  const contactedLeadsSorted = useMemo(() => {
+    return pipeline
+      .filter((lead) => parseOutreachLogs(lead.notes || "").length > 0)
+      .map((lead) => {
+        const logs = parseOutreachLogs(lead.notes || "");
+        const lastOutreachDate = logs.length > 0 ? new Date(logs[0].date).getTime() : 0;
+        return { lead, lastOutreachDate, lastLog: logs[0] };
+      })
+      .sort((a, b) => b.lastOutreachDate - a.lastOutreachDate);
+  }, [pipeline]);
+
+  type TimelineItem = {
+    date: Date;
+    title: string;
+    description?: string;
+    type: "discovery" | "save" | "outreach" | "milestone";
+  };
+
+  const getLeadTimeline = (lead: Lead) => {
+    const items: TimelineItem[] = [];
+
+    if (lead.createdAt) {
+      items.push({
+        date: new Date(lead.createdAt),
+        title: "Lead Discovered",
+        description: `Discovered on LanceConnect via Google Maps in ${lead.city}.`,
+        type: "discovery",
+      });
+    }
+
+    if (lead.savedAt) {
+      items.push({
+        date: new Date(lead.savedAt),
+        title: "Saved to Pipeline",
+        description: "Saved to your prospects list for tracking.",
+        type: "save",
+      });
+    }
+
+    const logs = parseOutreachLogs(lead.notes || "");
+    logs.forEach((log) => {
+      items.push({
+        date: new Date(log.date),
+        title: `Outreach Sent (${log.channel === "email" ? "Email" : log.channel === "whatsapp" ? "WhatsApp" : "LinkedIn"})`,
+        description: log.subject ? `Subject: ${log.subject}` : undefined,
+        type: "outreach",
+      });
+    });
+
+    if (lead.status === "won") {
+      items.push({
+        date: new Date(),
+        title: "Lead Converted! 🎉",
+        description: lead.dealValue ? `Won deal worth $${lead.dealValue}` : "Successfully won this client.",
+        type: "milestone",
+      });
+    }
+
+    return items.sort((a, b) => a.date.getTime() - b.date.getTime());
+  };
 
   const funnelData = [
     { name: "New", value: pipeline.filter((l) => l.status === "new").length, color: "#7C3AED" },
@@ -461,10 +610,14 @@ function Dashboard() {
 
     supabase
       .from("search_history")
-      .select("id", { count: "exact" })
+      .select("id, query_params, results_count, created_at")
       .eq("user_id", user.id)
-      .then(({ count, error }) => {
-        if (!error && count !== null) setScansCount(count);
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setSearchHistory(data as any);
+          setScansCount(data.length);
+        }
       });
 
     if (!hasSavedSession) {
@@ -697,6 +850,14 @@ function Dashboard() {
       }));
       setResults(mapped);
       setScansCount((p) => p + 1); // Respect data integrity by showing real found data
+      supabase
+        .from("search_history")
+        .select("id, query_params, results_count, created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .then(({ data }) => {
+          if (data) setSearchHistory(data as any);
+        });
       const { data: logData } = await supabase
         .from("audit_log")
         .select("*")
@@ -733,6 +894,30 @@ function Dashboard() {
       toast.error("Failed to save");
     } finally {
       setSavingId(null);
+    }
+  };
+
+  const handleRemoveLead = async (id: string, name: string) => {
+    if (confirm(`Are you sure you want to remove ${name} from your pipeline?`)) {
+      try {
+        await removeLead(id);
+        setDetail(null);
+        toast.success(`Removed ${name} from pipeline.`);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to remove lead.");
+      }
+    }
+  };
+
+  const handleMarkAsWon = async (lead: Lead) => {
+    try {
+      await updateStatus(lead.id, "won", lead.notes, lead.followUpDate, lead.dealValue);
+      setDetail({ ...lead, status: "won" }); // update local modal state
+      toast.success(`${lead.businessName} marked as Won! 🎉`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update status.");
     }
   };
 
@@ -972,7 +1157,7 @@ function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
-              id: "all",
+              id: "searches",
               label: "Searches Performed",
               value: scansCount,
               icon: Search,
@@ -982,7 +1167,7 @@ function Dashboard() {
             {
               id: "saved",
               label: "Saved This Month",
-              value: savedThisMonth,
+              value: savedThisMonthList.length,
               icon: Users,
               bg: "bg-success",
               fg: "text-white",
@@ -990,13 +1175,13 @@ function Dashboard() {
             {
               id: "contacted",
               label: "Leads Contacted",
-              value: contactedCountFromDb,
+              value: contactedLeadsSorted.length,
               icon: MessageSquare,
               bg: "bg-warn",
               fg: "text-white",
             },
             {
-              id: "won",
+              id: "win_rate",
               label: "Win Rate",
               value: `${conversionRate}%`,
               icon: Target,
@@ -1006,12 +1191,8 @@ function Dashboard() {
           ].map((s) => (
             <div
               key={s.label}
-              onClick={() => setActiveFilter(s.id as any)}
-              className={`rounded-2xl border bg-card p-5 transition group cursor-pointer ${
-                activeFilter === s.id
-                  ? "border-primary ring-1 ring-primary"
-                  : "border-border hover:border-primary/50"
-              }`}
+              onClick={() => setActiveStatScreen(s.id as any)}
+              className="rounded-2xl border bg-card p-5 border-border hover:border-primary/50 transition group cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className={`grid h-9 w-9 place-items-center rounded-xl ${s.bg}`}>
@@ -1410,16 +1591,16 @@ function Dashboard() {
       {/* ═══ DETAIL MODAL ═══ */}
       {detail && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs"
           onClick={() => setDetail(null)}
         >
           <div className="absolute inset-0 bg-slate-950/85" />
           <div
-            className="relative w-full max-w-md rounded-2xl border border-border bg-card animate-in fade-in zoom-in-95 duration-200 text-foreground shadow-xl"
+            className="relative w-full max-w-md rounded-2xl border border-border bg-[#0B1220] animate-in fade-in zoom-in-95 duration-200 text-foreground shadow-2xl flex flex-col max-h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-start justify-between p-6 pb-0">
+            <div className="flex items-start justify-between p-6 pb-4 border-b border-border/80">
               <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-extrabold text-foreground truncate">
                   {detail.businessName}
@@ -1427,6 +1608,10 @@ function Dashboard() {
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {detail.businessType || "Local Business"}
                 </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">Quality Score:</span>
+                  <ScoreBadge score={detail.opportunityScore} />
+                </div>
               </div>
               <button
                 onClick={() => setDetail(null)}
@@ -1436,132 +1621,82 @@ function Dashboard() {
               </button>
             </div>
 
-            <div className="p-6 space-y-5 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto">
-              {/* Contact info container */}
-              <div className="space-y-2 rounded-xl bg-background border border-border p-4 text-sm text-foreground">
-                <p className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground/80 shrink-0" />{" "}
-                  {detail.fullAddress || `${detail.city}, ${detail.country}`}
-                </p>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-2 font-mono text-xs">
-                    <Phone className="h-3.5 w-3.5 text-muted-foreground/80" />
-                    {detail.phone ? (
-                      safetyPopupDismissed ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setQuickConnectLead(detail);
-                            setQuickConnectChannel("whatsapp");
-                            setQuickConnectMessage("");
-                            setQuickConnectOpen(true);
-                            setDetail(null);
-                          }}
-                          className="text-green-500 hover:text-green-400 font-semibold cursor-pointer text-left"
-                        >
-                          {detail.phone}
-                        </button>
-                      ) : (
-                        <span
-                          onClick={() => handleContactAction(() => {})}
-                          className="cursor-pointer text-muted-foreground hover:text-foreground"
-                          title="Click to reveal details"
-                        >
-                          {maskPhone(detail.phone)}
-                        </span>
-                      )
-                    ) : (
-                      <span className="italic text-muted-foreground/75">Not listed</span>
-                    )}
-                  </span>
-                  {detail.phone && (
-                    <button
-                      onClick={() => {
-                        handleContactAction(() => {
-                          navigator.clipboard?.writeText(detail.phone);
-                          toast.success("Copied phone number!");
-                        });
-                      }}
-                      className="inline-flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-0.5 text-[10px] text-foreground transition hover:bg-accent cursor-pointer"
-                    >
-                      <Copy className="h-2.5 w-2.5" /> Copy
-                    </button>
-                  )}
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground/80 shrink-0" />{" "}
-                    {detail.email ? (
-                      safetyPopupDismissed ? (
-                        <a
-                          href={`mailto:${detail.email}`}
-                          className="text-primary hover:underline font-mono text-xs font-semibold"
-                        >
-                          {detail.email}
-                        </a>
-                      ) : (
-                        <span
-                          onClick={() => handleContactAction(() => {})}
-                          className="cursor-pointer text-muted-foreground hover:text-foreground font-mono text-xs"
-                          title="Click to reveal details"
-                        >
-                          {maskEmail(detail.email)}
-                        </span>
-                      )
-                    ) : enriching ? (
-                      <span className="text-primary animate-pulse flex items-center gap-1.5 font-mono text-xs">
-                        <Loader2 className="h-3 w-3 animate-spin text-primary" />
-                        Auto-crawling website for email...
-                      </span>
-                    ) : (
-                      <span className="italic text-muted-foreground/75">Not publicly listed</span>
-                    )}
+            {/* Scrollable Content */}
+            <div className="p-6 space-y-6 overflow-y-auto flex-1">
+              
+              {/* Modern Grid of Interactive Contact Actions */}
+              <div className="grid grid-cols-3 gap-3">
+                {detail.phone ? (
+                  <button
+                    onClick={() => handleContactAction(() => window.open(`tel:${detail.phone}`, "_self"))}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 text-emerald-400 transition cursor-pointer"
+                  >
+                    <Phone className="h-4 w-4 mb-1.5" />
+                    <span className="text-[10px] font-bold">Call Client</span>
+                    <span className="text-[8px] text-muted-foreground truncate max-w-full mt-1 font-mono">{detail.phone}</span>
+                  </button>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                    <Phone className="h-4 w-4 mb-1.5" />
+                    <span className="text-[10px] font-bold">No Phone</span>
                   </div>
-                  {detail.email && (
-                    <button
-                      onClick={() => {
-                        handleContactAction(() => {
-                          navigator.clipboard?.writeText(detail.email || "");
-                          toast.success("Copied email address!");
-                        });
-                      }}
-                      className="inline-flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-0.5 text-[10px] text-foreground transition hover:bg-accent cursor-pointer"
-                    >
-                      <Copy className="h-2.5 w-2.5" /> Copy
-                    </button>
-                  )}
-                  {!detail.email && detail.websiteUrl && (
-                    <button
-                      onClick={handleEnrich}
-                      disabled={enriching}
-                      className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-50 transition cursor-pointer"
-                    >
-                      {enriching ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : "⚡ Find Email"}
-                    </button>
-                  )}
-                </div>
-                <p className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-muted-foreground/80 shrink-0" />{" "}
-                  {detail.websiteUrl ? (
-                    <a
-                      href={detail.websiteUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-primary hover:underline text-xs truncate"
-                    >
-                      {detail.websiteUrl}
-                    </a>
-                  ) : (
-                    <span className="italic text-muted-foreground/75">No website</span>
-                  )}
-                </p>
-                <p className="flex items-center gap-2">
-                  <Star className="h-4 w-4 fill-amber-500 text-amber-500 shrink-0" />{" "}
-                  <span className="font-semibold">{detail.googleRating}</span> · {detail.googleReviewCount} reviews
-                </p>
+                )}
+
+                {detail.email ? (
+                  <button
+                    onClick={() => handleContactAction(() => window.open(`mailto:${detail.email}`, "_self"))}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary transition cursor-pointer"
+                  >
+                    <Mail className="h-4 w-4 mb-1.5" />
+                    <span className="text-[10px] font-bold">Email Client</span>
+                    <span className="text-[8px] text-muted-foreground truncate max-w-full mt-1 font-mono">{maskEmail(detail.email)}</span>
+                  </button>
+                ) : detail.websiteUrl ? (
+                  <button
+                    onClick={handleEnrich}
+                    disabled={enriching}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary transition cursor-pointer"
+                  >
+                    {enriching ? (
+                      <Loader2 className="h-4 w-4 animate-spin mb-1.5" />
+                    ) : (
+                      <Mail className="h-4 w-4 mb-1.5" />
+                    )}
+                    <span className="text-[10px] font-bold">{enriching ? "Finding..." : "Find Email"}</span>
+                  </button>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                    <Mail className="h-4 w-4 mb-1.5" />
+                    <span className="text-[10px] font-bold">No Email</span>
+                  </div>
+                )}
+
+                {detail.websiteUrl ? (
+                  <a
+                    href={detail.websiteUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 hover:bg-cyan-500/10 text-cyan-400 transition text-center cursor-pointer"
+                  >
+                    <Globe className="h-4 w-4 mb-1.5" />
+                    <span className="text-[10px] font-bold">Website</span>
+                    <span className="text-[8px] text-muted-foreground truncate max-w-full mt-1 block">{detail.websiteUrl.replace(/https?:\/\/(www\.)?/, "")}</span>
+                  </a>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                    <Globe className="h-4 w-4 mb-1.5" />
+                    <span className="text-[10px] font-bold">No Site</span>
+                  </div>
+                )}
               </div>
 
-              {/* Opportunity */}
+              {/* Address details */}
+              <div className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2 bg-slate-950/40 p-3 rounded-xl border border-border/50">
+                <MapPin className="h-4 w-4 text-muted-foreground/80 shrink-0 mt-0.5" />
+                <span>{detail.fullAddress || `${detail.city}, ${detail.country}`}</span>
+              </div>
+
+              {/* Opportunity signals */}
               {getScoreReasons(detail).length > 0 && (
                 <div>
                   <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
@@ -1586,7 +1721,7 @@ function Dashboard() {
 
               {/* GMB Opportunity Signals */}
               {detail.score_breakdown?.gmb_gaps?.length > 0 && (
-                <div className="border-t border-border pt-4">
+                <div className="border-t border-border/80 pt-4">
                   <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <span>📍 Google My Business Gaps</span>
                     <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-bold text-amber-500 border border-amber-500/25">
@@ -1637,15 +1772,56 @@ function Dashboard() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-500 hover:text-amber-400 hover:underline"
                       >
-                        View GMB Optimization Guide & Outreach Script &rarr;
+                        GMB Optimization Guide & Script &rarr;
                       </a>
                     </div>
                   </div>
                 </div>
               )}
 
+              {/* Chronological Activity Timeline */}
+              {(() => {
+                const timeline = getLeadTimeline(detail);
+                return (
+                  <div className="border-t border-border/80 pt-4">
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                      Activity Timeline
+                    </p>
+                    <div className="relative border-l border-slate-800 pl-4 ml-2 space-y-4">
+                      {timeline.map((item, index) => (
+                        <div key={index} className="relative">
+                          {/* Timeline node dot */}
+                          <span className={`absolute -left-[21px] top-1.5 flex h-2.5 w-2.5 rounded-full border-2 border-[#0B1220] ${
+                            item.type === "milestone" 
+                              ? "bg-emerald-500 ring-2 ring-emerald-500/20" 
+                              : item.type === "outreach"
+                                ? "bg-primary"
+                                : item.type === "save"
+                                  ? "bg-success"
+                                  : "bg-slate-500"
+                          }`} />
+                          <div>
+                            <span className="text-[9px] text-muted-foreground font-mono block">
+                              {formatDateTime(item.date.toISOString())}
+                            </span>
+                            <span className="text-xs font-bold text-foreground block mt-0.5">
+                              {item.title}
+                            </span>
+                            {item.description && (
+                              <span className="text-[10px] text-muted-foreground block mt-0.5 leading-relaxed">
+                                {item.description}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* AI Generator */}
-              <div className="border-t border-border pt-4">
+              <div className="border-t border-border/80 pt-4">
                 <h4 className="text-sm font-bold text-foreground flex items-center gap-1.5 mb-3">
                   <Sparkles className="h-4 w-4 text-primary" /> AI Outreach
                 </h4>
@@ -1749,22 +1925,60 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="p-6 pt-0 flex gap-2">
-              <button
-                onClick={() => handleSaveLead(detail)}
-                disabled={savedIds.has(detail.id)}
-                className="flex-1 rounded-xl bg-primary py-2.5 text-sm font-bold text-white hover:brightness-110 transition disabled:opacity-40 cursor-pointer"
-              >
-                {savedIds.has(detail.id) ? "Already Saved" : "Save to Pipeline"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setLeadReportModalOpen(true)}
-                className="rounded-xl border border-destructive/30 text-destructive bg-destructive/10 px-4 py-2.5 text-sm font-semibold hover:bg-destructive/20 cursor-pointer transition"
-              >
-                Report ⚑
-              </button>
+            {/* Footer Buttons */}
+            <div className="p-6 border-t border-border bg-[#070e1e] flex flex-col gap-3">
+              <div className="flex gap-2">
+                {savedIds.has(detail.id) ? (
+                  <>
+                    {detail.status !== "won" ? (
+                      <button
+                        onClick={() => handleMarkAsWon(detail)}
+                        className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white py-2 text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                      >
+                        🏆 Mark as Won
+                      </button>
+                    ) : (
+                      <span className="flex-1 text-center py-2 text-xs font-extrabold uppercase text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                        🏆 Converted Client
+                      </span>
+                    )}
+                    <button
+                      onClick={() => handleRemoveLead(detail.id, detail.businessName)}
+                      className="flex-1 rounded-xl border border-rose-500/30 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 py-2 text-xs font-bold transition cursor-pointer"
+                    >
+                      Remove Lead
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => handleSaveLead(detail)}
+                    className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer"
+                  >
+                    Save to Pipeline
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setQuickConnectLead(detail);
+                    setQuickConnectChannel("email");
+                    setQuickConnectMessage("");
+                    setQuickConnectOpen(true);
+                    setDetail(null);
+                  }}
+                  className="flex-1 rounded-xl border border-border bg-background hover:bg-accent py-2 text-xs font-semibold text-foreground transition cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Mail className="h-3.5 w-3.5" /> Quick Connect
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLeadReportModalOpen(true)}
+                  className="rounded-xl border border-destructive/30 text-destructive bg-destructive/10 px-4 py-2 text-xs font-semibold hover:bg-destructive/20 cursor-pointer transition"
+                >
+                  Report ⚑
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1894,6 +2108,64 @@ function Dashboard() {
           )}
         </div>
       )}
+
+      {/* ═══ STATS DETAIL PANELS (SLIDE-IN DRAWERS) ═══ */}
+      <AnimatePresence>
+        {activeStatScreen && (
+          <div className="fixed inset-0 z-50 flex justify-end">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveStatScreen(null)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+            />
+            {/* Drawer Content */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-full sm:max-w-md h-full bg-[#0B1220] border-l border-border/80 shadow-2xl flex flex-col z-10 text-foreground"
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-border/80 flex items-center justify-between">
+                <button
+                  onClick={() => setActiveStatScreen(null)}
+                  className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition cursor-pointer"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </button>
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">
+                  {activeStatScreen === "searches"
+                    ? `Searches`
+                    : activeStatScreen === "saved"
+                      ? `Saved`
+                      : activeStatScreen === "contacted"
+                        ? `Contacted`
+                        : "Win Rate"}
+                </h3>
+                <button
+                  onClick={() => setActiveStatScreen(null)}
+                  className="grid h-8 w-8 place-items-center rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {activeStatScreen === "searches" && renderSearchesPanel()}
+                {activeStatScreen === "saved" && renderSavedPanel()}
+                {activeStatScreen === "contacted" && renderContactedPanel()}
+                {activeStatScreen === "win_rate" && renderWinRatePanel()}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* ═══ QUICK CONNECT MODAL ═══ */}
       <QuickConnectModal
