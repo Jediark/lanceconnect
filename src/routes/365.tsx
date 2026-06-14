@@ -111,7 +111,7 @@ function AdminDashboard() {
   useEffect(() => {
     if (!authLoading) {
       if (!currentUser) {
-        navigate({ to: "/login" });
+        navigate({ to: "/login", search: { redirectTo: "/365" } });
       } else if (!currentUser.isAdmin) {
         toast.error("Access denied. Administrators only.");
         navigate({ to: "/app/dashboard" });

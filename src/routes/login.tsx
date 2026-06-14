@@ -3,9 +3,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo, LanceConnectLogo } from "@/components/Logo";
+import { z } from "zod";
+
+const loginSearchSchema = z.object({
+  redirectTo: z.string().optional(),
+});
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Login — LanceConnect" }] }),
+  validateSearch: loginSearchSchema,
   component: LoginPage,
 });
 
@@ -98,6 +104,7 @@ import { toast } from "sonner";
 function LoginPage() {
   const { login } = useAuth();
   const nav = useNavigate();
+  const { redirectTo } = Route.useSearch();
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -112,7 +119,7 @@ function LoginPage() {
       toast.error(error.message || "Failed to log in.");
     } else {
       toast.success("Welcome back!");
-      nav({ to: "/app/dashboard" });
+      nav({ to: redirectTo || "/app/dashboard" });
     }
   };
 
