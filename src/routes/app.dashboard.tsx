@@ -1004,6 +1004,297 @@ function Dashboard() {
     return r;
   };
 
+  const handleReRunSearch = async (historyItem: any) => {
+    const q = historyItem.query_params || {};
+    setQuickCategory(q.category || "web_dev");
+    setQuickCountry(q.country || "Nigeria");
+    setQuickCity(q.city || "");
+    setActiveStatScreen(null);
+    handleSearch({
+      category: q.category || "web_dev",
+      country: q.country || "Nigeria",
+      city: q.city || "",
+      product: "",
+      niche: "",
+    });
+  };
+
+  const getOutreachStatus = (lead: Lead) => {
+    if (lead.status === "won" || lead.status === "interested") {
+      return { text: "Replied", style: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" };
+    }
+    if (lead.status === "proposal_sent") {
+      return { text: "Opened", style: "bg-blue-500/10 border-blue-500/20 text-blue-400" };
+    }
+    return { text: "Sent", style: "bg-slate-500/10 border-slate-500/20 text-slate-400" };
+  };
+
+  const handleResendClick = (e: React.MouseEvent, lead: Lead, lastLog?: OutreachLog) => {
+    e.stopPropagation();
+    setQuickConnectLead(lead);
+    setQuickConnectChannel(lastLog?.channel || "email");
+    setQuickConnectMessage(lastLog?.message || "");
+    setQuickConnectOpen(true);
+  };
+
+  const renderSearchesPanel = () => {
+    if (searchHistory.length === 0) {
+      return (
+        <div className="text-center py-12 text-muted-foreground text-xs font-semibold">
+          No searches performed yet.
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-4">
+        {searchHistory.map((item) => {
+          const q = item.query_params || {};
+          const catLabel = getCategoryLabel(q.category);
+          return (
+            <div key={item.id} className="rounded-xl border border-border bg-slate-900/60 p-4 space-y-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">
+                    {catLabel} in {q.city}, {q.country}
+                  </h4>
+                  <p className="text-[10px] text-muted-foreground mt-1 font-semibold">
+                    {formatDateTime(item.created_at)}
+                  </p>
+                </div>
+                <span className="rounded-full bg-primary/10 border border-primary/20 text-primary px-2.5 py-0.5 text-[10px] font-bold">
+                  {item.results_count || 0} leads
+                </span>
+              </div>
+              <button
+                onClick={() => handleReRunSearch(item)}
+                className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/25 px-3 py-1.5 text-[11px] font-bold text-primary transition cursor-pointer"
+              >
+                <Search className="h-3 w-3" /> Re-run Search
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderSavedPanel = () => {
+    if (savedThisMonthList.length === 0) {
+      return (
+        <div className="text-center py-12 text-muted-foreground text-xs font-semibold">
+          No leads saved this month.
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-3">
+        {savedThisMonthList.map((lead) => (
+          <div
+            key={lead.id}
+            onClick={() => {
+              setDetail(lead);
+              setOutreachDraft("");
+            }}
+            className="rounded-xl border border-border bg-slate-900/60 p-4 hover:border-primary/50 transition cursor-pointer space-y-2.5"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="text-xs font-bold text-foreground truncate max-w-[180px]">
+                  {lead.businessName}
+                </h4>
+                <p className="text-[10px] text-muted-foreground mt-0.5 font-semibold">
+                  {lead.businessType || "Local Business"}
+                </p>
+              </div>
+              <ScoreBadge score={lead.opportunityScore} />
+            </div>
+
+            <p className="text-[10px] text-muted-foreground flex items-center gap-1 font-semibold">
+              <MapPin className="h-3 w-3 shrink-0" /> {lead.city}, {lead.country}
+            </p>
+
+            <div className="flex items-center justify-between pt-2 border-t border-slate-800/40 text-[10px] text-muted-foreground font-semibold">
+              <span>Saved {lead.savedAt ? new Date(lead.savedAt).toLocaleDateString() : ""}</span>
+              <div className="flex items-center gap-2">
+                <Phone className={`h-3.5 w-3.5 ${lead.phone ? "text-emerald-400" : "text-slate-600"}`} />
+                <Mail className={`h-3.5 w-3.5 ${lead.email ? "text-emerald-400" : "text-slate-600"}`} />
+                <Globe className={`h-3.5 w-3.5 ${lead.websiteUrl ? "text-emerald-400" : "text-slate-600"}`} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderContactedPanel = () => {
+    if (contactedLeadsSorted.length === 0) {
+      return (
+        <div className="text-center py-12 text-muted-foreground text-xs font-semibold">
+          No leads contacted yet.
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-3">
+        {contactedLeadsSorted.map(({ lead, lastLog }) => {
+          const statusInfo = getOutreachStatus(lead);
+          return (
+            <div
+              key={lead.id}
+              onClick={() => {
+                setDetail(lead);
+                setOutreachDraft("");
+              }}
+              className="rounded-xl border border-border bg-slate-900/60 p-4 hover:border-primary/50 transition cursor-pointer space-y-3"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="text-xs font-bold text-foreground truncate max-w-[180px]">
+                    {lead.businessName}
+                  </h4>
+                  <p className="text-[10px] text-muted-foreground mt-0.5 font-semibold">
+                    {lead.businessType || "Local Business"}
+                  </p>
+                </div>
+                <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold ${statusInfo.style}`}>
+                  {statusInfo.text}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground font-semibold">
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 shrink-0" /> {lead.city}, {lead.country}
+                </span>
+                <span>
+                  {lastLog ? formatDateTime(lastLog.date) : ""}
+                </span>
+              </div>
+
+              <button
+                onClick={(e) => handleResendClick(e, lead, lastLog)}
+                className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/25 px-3 py-1.5 text-[11px] font-bold text-primary transition cursor-pointer"
+              >
+                <Mail className="h-3 w-3" /> Resend Outreach
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderWinRatePanel = () => {
+    const wonLeads = pipeline.filter((l) => l.status === "won");
+    const notConvertedLeads = pipeline.filter((l) => l.status !== "won");
+
+    return (
+      <div className="space-y-6 text-left">
+        {/* Summary Card */}
+        <div className="rounded-xl border border-border bg-slate-900/40 p-4 space-y-3">
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div>
+              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Contacted</span>
+              <p className="text-lg font-extrabold text-foreground mt-0.5">{contactedLeadsSorted.length}</p>
+            </div>
+            <div className="border-x border-border/40">
+              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Wins</span>
+              <p className="text-lg font-extrabold text-emerald-400 mt-0.5">{wonCount}</p>
+            </div>
+            <div>
+              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Win Rate</span>
+              <p className="text-lg font-extrabold text-cyan-400 mt-0.5">{conversionRate}%</p>
+            </div>
+          </div>
+          {/* Progress Bar */}
+          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full" style={{ width: `${conversionRate}%` }} />
+          </div>
+        </div>
+
+        {/* Won Leads Section */}
+        <div className="space-y-2.5">
+          <h4 className="text-[10px] font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+            🏆 Converted Clients ({wonLeads.length})
+          </h4>
+          {wonLeads.length === 0 ? (
+            <p className="text-[10px] text-muted-foreground italic py-2">No converted clients yet.</p>
+          ) : (
+            <div className="space-y-2.5">
+              {wonLeads.map((lead) => (
+                <div
+                  key={lead.id}
+                  onClick={() => {
+                    setDetail(lead);
+                    setOutreachDraft("");
+                  }}
+                  className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 hover:border-emerald-500/40 transition cursor-pointer space-y-2.5"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground truncate max-w-[180px]">{lead.businessName}</h4>
+                      <p className="text-[10px] text-muted-foreground mt-0.5 font-semibold">
+                        {lead.businessType || "Local Business"}
+                      </p>
+                    </div>
+                    <DealValueInput lead={lead} />
+                  </div>
+                  <div className="text-[10px] text-muted-foreground flex justify-between font-semibold">
+                    <span>Won {lead.claimUpdatedAt ? new Date(lead.claimUpdatedAt).toLocaleDateString() : (lead.savedAt ? new Date(lead.savedAt).toLocaleDateString() : "Recently")}</span>
+                    <span className="text-emerald-400 font-bold">{lead.dealValue ? `$${lead.dealValue}` : "Log value"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Not Yet Converted Section */}
+        <div className="space-y-2.5">
+          <h4 className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+            ⏳ Not Yet Converted ({notConvertedLeads.length})
+          </h4>
+          {notConvertedLeads.length === 0 ? (
+            <p className="text-[10px] text-muted-foreground italic py-2">All leads converted!</p>
+          ) : (
+            <div className="space-y-2.5">
+              {notConvertedLeads.map((lead) => {
+                const logs = parseOutreachLogs(lead.notes || "");
+                const lastLog = logs.length > 0 ? logs[0] : undefined;
+                return (
+                  <div
+                    key={lead.id}
+                    onClick={() => {
+                      setDetail(lead);
+                      setOutreachDraft("");
+                    }}
+                    className="rounded-xl border border-border bg-slate-900/60 p-4 hover:border-primary/50 transition cursor-pointer space-y-3"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-xs font-bold text-foreground truncate max-w-[180px]">{lead.businessName}</h4>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 font-semibold">
+                          {lead.businessType || "Local Business"}
+                        </p>
+                      </div>
+                      <ScoreBadge score={lead.opportunityScore} />
+                    </div>
+                    <button
+                      onClick={(e) => handleResendClick(e, lead, lastLog)}
+                      className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/25 px-3 py-1.5 text-[11px] font-bold text-primary transition cursor-pointer"
+                    >
+                      <Mail className="h-3 w-3" /> Resend Outreach
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <Header title="Dashboard" />
@@ -1591,7 +1882,7 @@ function Dashboard() {
       {/* ═══ DETAIL MODAL ═══ */}
       {detail && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs"
           onClick={() => setDetail(null)}
         >
           <div className="absolute inset-0 bg-slate-950/85" />
@@ -2139,13 +2430,10 @@ function Dashboard() {
                   Back
                 </button>
                 <h3 className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">
-                  {activeStatScreen === "searches"
-                    ? `Searches`
-                    : activeStatScreen === "saved"
-                      ? `Saved`
-                      : activeStatScreen === "contacted"
-                        ? `Contacted`
-                        : "Win Rate"}
+                  {activeStatScreen === "searches" && `Searches Performed — ${scansCount}`}
+                  {activeStatScreen === "saved" && `Saved This Month — ${savedThisMonthList.length}`}
+                  {activeStatScreen === "contacted" && `Leads Contacted — ${contactedLeadsSorted.length}`}
+                  {activeStatScreen === "win_rate" && `Win Rate — ${conversionRate}%`}
                 </h3>
                 <button
                   onClick={() => setActiveStatScreen(null)}
