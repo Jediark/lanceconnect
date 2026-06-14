@@ -219,5 +219,6 @@ export const CATEGORY_TO_PLACES_QUERY: Record<string, string[]> = {
   music_teacher: ["music school", "private school", "community center", "after school program"],
   pet_care: ["veterinary clinic", "pet shop", "dog kennel", "dog grooming salon"],
   house_cleaning: ["office cleaning", "property management company", "hotel", "cleaning agency"],
+  real_estate: ["real estate agency", "mortgage broker", "property management company", "real estate developer"],
 };
 

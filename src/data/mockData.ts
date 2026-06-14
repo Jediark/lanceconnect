@@ -552,6 +552,12 @@ export const CATEGORIES = [
     label: "House Cleaning",
     example: "Find residential homes, commercial offices needing cleaners",
   },
+  {
+    id: "real_estate",
+    emoji: "🏠",
+    label: "Real Estate",
+    example: "Find realtors, mortgage brokers, agencies",
+  },
 ];
 
 export const COUNTRIES = ALL_COUNTRIES;

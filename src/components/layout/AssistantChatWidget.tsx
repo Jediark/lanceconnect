@@ -46,7 +46,313 @@ const CATEGORY_MAP: Record<string, string> = {
   "Massage Therapy": "massage_therapist",
   "Music Lessons": "music_teacher",
   "House Cleaning": "house_cleaning",
+  "SEO": "seo",
+  "Social Media": "social_media",
+  "Video Production": "video",
+  "Photography": "photography",
+  "Digital Marketing": "marketing",
+  "App Development": "app_dev",
+  "Online Tutoring": "tutor",
+  "Training & Recruitment": "training_recruitment",
+  "Real Estate": "real_estate",
 };
+
+const KEYWORD_TO_CATEGORY: Record<string, string> = {
+  // Web Dev
+  "web developer": "Web Development",
+  "web dev": "Web Development",
+  "developer": "Web Development",
+  "coder": "Web Development",
+  "programmer": "Web Development",
+  "front end": "Web Development",
+  "frontend": "Web Development",
+  "back end": "Web Development",
+  "backend": "Web Development",
+  "full stack": "Web Development",
+  "fullstack": "Web Development",
+  "react developer": "Web Development",
+  "node developer": "Web Development",
+  "python developer": "Web Development",
+  "wordpress developer": "Web Development",
+  "shopify developer": "Web Development",
+  
+  // App Dev
+  "app developer": "App Development",
+  "mobile developer": "App Development",
+  "ios developer": "App Development",
+  "android developer": "App Development",
+  "flutter developer": "App Development",
+  
+  // Designer
+  "graphic designer": "Graphic Design",
+  "designer": "Graphic Design",
+  "logo designer": "Graphic Design",
+  "brand designer": "Graphic Design",
+  "branding": "Graphic Design",
+  "illustrator": "Graphic Design",
+  "ui designer": "Graphic Design",
+  "ux designer": "Graphic Design",
+  "ui/ux": "Graphic Design",
+  "product designer": "Graphic Design",
+  "web designer": "Graphic Design",
+  "landing page designer": "Graphic Design",
+  "website builder": "Graphic Design",
+
+  // Copywriting
+  "copywriter": "Content Writing",
+  "copy writer": "Content Writing",
+  "copies": "Content Writing",
+  "blog writer": "Content Writing",
+  "content creator": "Content Writing",
+  "content writer": "Content Writing",
+  "ghostwriter": "Content Writing",
+  "ghost writer": "Content Writing",
+  "technical writer": "Content Writing",
+  "article writer": "Content Writing",
+  "journalist": "Content Writing",
+  "scriptwriter": "Content Writing",
+  "script writer": "Content Writing",
+  "seo writer": "Content Writing",
+  "proofreader": "Content Writing",
+  "editor": "Content Writing",
+  "editor for hire": "Content Writing",
+
+  // VA
+  "virtual assistant": "Virtual Assistant",
+  "va": "Virtual Assistant",
+  "executive assistant": "Virtual Assistant",
+  "admin assistant": "Virtual Assistant",
+  "data entry": "Virtual Assistant",
+  "calendar management": "Virtual Assistant",
+  "email management": "Virtual Assistant",
+  "customer support": "Virtual Assistant",
+  "customer service": "Virtual Assistant",
+
+  // Accounting
+  "bookkeeper": "Accounting & CPA",
+  "bookkeeping": "Accounting & CPA",
+  "accountant": "Accounting & CPA",
+  "cpa": "Accounting & CPA",
+  "tax preparer": "Accounting & CPA",
+  "financial analyst": "Accounting & CPA",
+
+  // Photographer
+  "photographer": "Photography",
+  "photo editing": "Photography",
+  "product photography": "Photography",
+  "real estate photography": "Photography",
+  "event photographer": "Photography",
+  "portrait photographer": "Photography",
+  "headshots": "Photography",
+
+  // Personal Trainer
+  "personal trainer": "Personal Training",
+  "fitness coach": "Personal Training",
+  "online coach": "Personal Training",
+  "nutrition coach": "Personal Training",
+  "life coach": "Personal Training",
+  "business coach": "Personal Training",
+  "career coach": "Personal Training",
+
+  // Tutor
+  "tutor": "Online Tutoring",
+  "teacher": "Online Tutoring",
+  "online tutor": "Online Tutoring",
+  "math tutor": "Online Tutoring",
+  "english tutor": "Online Tutoring",
+  "science tutor": "Online Tutoring",
+
+  // Translator
+  "translator": "Translation",
+  "interpreter": "Translation",
+  "language services": "Translation",
+  "bilingual": "Translation",
+
+  // Voiceover
+  "voiceover": "Voiceover",
+  "voice actor": "Voiceover",
+  "voice over": "Voiceover",
+  "narrator": "Voiceover",
+  "audio production": "Voiceover",
+  "podcast editor": "Voiceover",
+
+  // SEO / Digital Marketing
+  "seo": "SEO",
+  "search engine optimization": "SEO",
+  "digital marketing": "Digital Marketing",
+  "email marketing": "Digital Marketing",
+  "marketing strategist": "Digital Marketing",
+  "growth hacker": "Digital Marketing",
+  "funnel builder": "Digital Marketing",
+  "lead generation": "Digital Marketing",
+  "facebook ads": "Digital Marketing",
+  "google ads": "Digital Marketing",
+  "paid ads": "Digital Marketing",
+
+  // Social Media
+  "social media manager": "Social Media",
+  "social media": "Social Media",
+  "instagram manager": "Social Media",
+  "tiktok manager": "Social Media",
+  "content scheduler": "Social Media",
+  "community manager": "Social Media",
+
+  // Video Editing
+  "video editor": "Video Production",
+  "video editing": "Video Production",
+  "youtube editor": "Video Production",
+  "reels editor": "Video Production",
+  "tiktok editor": "Video Production",
+  "short form video": "Video Production",
+  "long form video": "Video Production",
+  "motion graphics": "Video Production",
+  "animator": "Video Production",
+  "animation": "Video Production",
+
+  // House Cleaning
+  "house cleaner": "House Cleaning",
+  "cleaning services": "House Cleaning",
+  "maid service": "House Cleaning",
+  "janitorial": "House Cleaning",
+
+  // Handyman
+  "handyman": "Handyman Services",
+  "home repair": "Handyman Services",
+  "contractor": "Handyman Services",
+  "plumber": "Handyman Services",
+  "electrician": "Handyman Services",
+  "carpenter": "Handyman Services",
+
+  // Landscaping
+  "landscaper": "Landscaping & Lawn Care",
+  "lawn care": "Landscaping & Lawn Care",
+  "gardener": "Landscaping & Lawn Care",
+  "tree trimming": "Landscaping & Lawn Care",
+
+  // Pet Care
+  "pet sitter": "Pet Care",
+  "dog walker": "Pet Care",
+  "pet care": "Pet Care",
+  "animal care": "Pet Care",
+  "dog trainer": "Pet Care",
+
+  // Hairstylist
+  "hair stylist": "Hairstylist",
+  "hairstylist": "Hairstylist",
+  "barber": "Hairstylist",
+  "nail tech": "Hairstylist",
+
+  // Makeup Artistry
+  "makeup artist": "Makeup Artistry",
+  "mua": "Makeup Artistry",
+  "esthetician": "Makeup Artistry",
+  "skincare": "Makeup Artistry",
+
+  // Massage Therapy
+  "massage therapist": "Massage Therapy",
+
+  // Wedding Planning
+  "wedding planner": "Wedding Planning",
+  "event planner": "Wedding Planning",
+  "event coordinator": "Wedding Planning",
+
+  // Music Lessons
+  "music teacher": "Music Lessons",
+  "music lessons": "Music Lessons",
+  "guitar teacher": "Music Lessons",
+  "piano teacher": "Music Lessons",
+
+  // Real Estate
+  "real estate agent": "Real Estate",
+  "realtor": "Real Estate",
+  "mortgage broker": "Real Estate",
+
+  // Recruiter
+  "recruiter": "Training & Recruitment",
+  "hr consultant": "Training & Recruitment",
+  "staffing": "Training & Recruitment",
+};
+
+const LOCATION_PREFIXES = [
+  "i'm in",
+  "i am in",
+  "i'm based in",
+  "i am based in",
+  "i live in",
+  "located in",
+  "my city is",
+  "my area is",
+  "clients in",
+  "looking in",
+  "searching in",
+  "near",
+  "around",
+  "close to"
+];
+
+const LOCATION_KEYWORDS = [
+  "united states", "us", "uk", "canada", "australia", "worldwide", "remote", "online",
+  "anywhere", "globally", "international", "local", "nearby", "my neighborhood",
+  "east coast", "west coast", "midwest", "southeast", "northeast", "southwest",
+  "new york", "nyc", "los angeles", "la", "chicago", "houston", "phoenix", "philadelphia",
+  "san antonio", "san diego", "dallas", "san jose", "austin", "jacksonville", "san francisco",
+  "seattle", "denver", "nashville", "oklahoma city", "el paso", "washington dc", "boston",
+  "las vegas", "portland", "louisville", "memphis", "baltimore", "milwaukee", "albuquerque",
+  "tucson", "fresno", "sacramento", "kansas city", "atlanta", "omaha", "colorado springs",
+  "raleigh", "miami", "minneapolis", "tampa", "new orleans", "arlington", "cleveland",
+  "bakersfield", "aurora", "anaheim", "santa ana", "corpus christi", "riverside", "lexington",
+  "st. louis", "pittsburgh", "stockton", "cincinnati", "anchorage", "greensboro", "plano",
+  "london", "toronto", "sydney", "dubai", "lagos", "nairobi", "singapore", "berlin", "paris",
+  "mexico city", "são paulo", "mumbai", "manila", "johannesburg"
+];
+
+const normalizeLocation = (loc: string): string => {
+  const norm = loc.toLowerCase().trim();
+  if (norm === "us") return "United States";
+  if (norm === "uk") return "United Kingdom";
+  if (norm === "nyc") return "New York";
+  if (norm === "la") return "Los Angeles";
+  if (["remote", "online", "anywhere", "globally", "worldwide", "international"].includes(norm)) return "Remote";
+  return loc.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+};
+
+const BUDGET_KEYWORDS = [
+  "budget", "rate", "charge", "earn", "make", "pay", "cost", "fee", "pricing", "price",
+  "per hour", "an hour", "hourly", "per month", "monthly", "retainer", "per project",
+  "one time", "flat rate", "flat fee", "fixed price", "negotiable", "open to offers",
+  "affordable", "premium", "high end", "low budget", "tight budget", "flexible",
+  "$", "dollar", "dollars", "usd", "gbp", "eur", "cad", "aud"
+];
+
+const GOAL_FREELANCER_KEYWORDS = [
+  "find clients", "get clients", "looking for clients", "need clients", "want clients",
+  "find work", "get work", "find projects", "land projects", "more business",
+  "freelance", "freelancer"
+];
+
+const GOAL_CLIENT_KEYWORDS = [
+  "hire someone", "need a freelancer", "looking for help", "find a freelancer",
+  "need a designer", "need a developer", "need a writer", "need help with",
+  "outsource", "delegate", "build a team", "grow my team", "hire", "looking to hire"
+];
+
+const CHANGE_KEYWORDS = [
+  "change", "update", "edit", "switch", "replace", "redo", "go back", "different",
+  "not that", "wrong", "i meant", "actually", "let me change", "let me update",
+  "i changed my mind", "scratch that", "nevermind", "start over", "reset"
+];
+
+const AFFIRMATION_KEYWORDS = [
+  "yes", "yep", "yeah", "sure", "ok", "okay", "sounds good", "let's go", "go ahead",
+  "do it", "run it", "search now", "find them", "show me", "let's do it", "perfect",
+  "great", "awesome", "cool", "got it", "confirmed"
+];
+
+const NEGATION_KEYWORDS = [
+  "no", "nope", "not yet", "hold on", "wait", "actually no", "stop", "pause",
+  "let me think", "give me a second", "not sure", "i don't know", "skip that",
+  "maybe later", "not now", "skip", "i dont know"
+];
 
 function getCategoryParam(catLabel: string | null): string {
   if (!catLabel) return "local_business";
@@ -77,6 +383,8 @@ function getCategoryParam(catLabel: string | null): string {
   if (norm.includes("market")) return "marketing";
   if (norm.includes("app")) return "app_dev";
   if (norm.includes("tutor")) return "tutor";
+  if (norm.includes("recruit") || norm.includes("hr") || norm.includes("staff")) return "training_recruitment";
+  if (norm.includes("real estate") || norm.includes("realtor") || norm.includes("mortgage")) return "real_estate";
 
   return "local_business";
 }
@@ -172,9 +480,25 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "copywriting",
       "do copywriting",
       "write copy",
+      "copy writer",
+      "copies",
+      "blog writer",
+      "content creator",
+      "content writer",
+      "ghostwriter",
+      "ghost writer",
+      "technical writer",
+      "article writer",
+      "journalist",
+      "scriptwriter",
+      "script writer",
+      "seo writer",
+      "proofreader",
+      "editor",
+      "editor for hire"
     ],
     reply:
-      "Got it — copywriting! That's a high-demand category on LanceConnect. Are you focused on a specific niche, like sales pages, email sequences, or SEO blog content? And where are you (or your ideal clients) located?",
+      "Got it — copywriting and writing services! That's a high-demand category on LanceConnect. Are you focused on a specific niche, like sales pages, email sequences, or SEO blog content? And where are you (or your ideal clients) located?",
     slotToFill: "category",
     slotValue: "Content Writing",
   },
@@ -187,9 +511,22 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "website design",
       "designing websites",
       "ui/ux design",
+      "graphic designer",
+      "designer",
+      "logo designer",
+      "brand designer",
+      "branding",
+      "illustrator",
+      "ui designer",
+      "ux designer",
+      "ui/ux",
+      "product designer",
+      "web designer",
+      "landing page designer",
+      "website builder"
     ],
     reply:
-      "Awesome — web design is one of our most active categories. Are you more focused on UI/UX, full website builds, or platforms like Shopify/WordPress? Let's find clients near you — what city or region should I search?",
+      "Awesome — design is one of our most active categories. Are you more focused on UI/UX, branding/logos, or full web design builds? Let's find clients near you — what city or region should I search?",
     slotToFill: "category",
     slotValue: "Graphic Design",
   },
@@ -204,6 +541,19 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "software developer",
       "coder",
       "programmer",
+      "web dev",
+      "developer",
+      "front end",
+      "frontend",
+      "back end",
+      "backend",
+      "full stack",
+      "fullstack",
+      "react developer",
+      "node developer",
+      "python developer",
+      "wordpress developer",
+      "shopify developer"
     ],
     reply:
       "Web development — great choice. Do you specialize in front-end, back-end, or full-stack? I'll use that to fine-tune your client search. What's your target location?",
@@ -220,6 +570,13 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "admin support",
       "assistant work",
       "administrative assistant",
+      "executive assistant",
+      "admin assistant",
+      "data entry",
+      "calendar management",
+      "email management",
+      "customer support",
+      "customer service"
     ],
     reply:
       "Virtual assistants are in huge demand right now. Do you focus on admin support, email management, scheduling, or something more specialized like e-commerce VA work? Where are your ideal clients based?",
@@ -239,26 +596,12 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "pet sitter",
       "watch pets",
       "animal care",
+      "dog trainer"
     ],
     reply:
       "Pet care — love it! Local pet owners and small business owners (groomers, vets, boarding facilities) often need reliable help. What city should I search for pet care clients near you?",
     slotToFill: "category",
     slotValue: "Pet Care",
-  },
-  {
-    id: 6,
-    patterns: [
-      "i'm a graphic designer",
-      "i am a graphic designer",
-      "graphic designer",
-      "graphic design",
-      "create graphics",
-      "branding designer",
-    ],
-    reply:
-      "Graphic design — perfect. Are you focused on branding/logos, social media graphics, print design, or packaging? Let's narrow down a location to search.",
-    slotToFill: "category",
-    slotValue: "Graphic Design",
   },
   {
     id: 7,
@@ -269,11 +612,14 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "manage social media",
       "instagram manager",
       "tiktok manager",
+      "social media",
+      "content scheduler",
+      "community manager"
     ],
     reply:
       "Social media management is one of the fastest-growing categories on LanceConnect. Do you specialize in a platform (Instagram, TikTok, LinkedIn) or industry (restaurants, real estate, salons)? What's your target city?",
     slotToFill: "category",
-    slotValue: "Social Media Management",
+    slotValue: "Social Media",
   },
   {
     id: 8,
@@ -284,11 +630,16 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "video editing",
       "edit videos",
       "video maker",
+      "youtube editor",
+      "reels editor",
+      "tiktok editor",
+      "short form video",
+      "long form video"
     ],
     reply:
       "Video editing — great. Are you mainly doing YouTube content, short-form (Reels/TikTok), or corporate/commercial work? Where should I focus the client search?",
     slotToFill: "category",
-    slotValue: "Video Editing",
+    slotValue: "Video Production",
   },
   {
     id: 9,
@@ -299,11 +650,15 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "keep books",
       "accounting assistant",
       "quickbooks bookkeeping",
+      "accountant",
+      "cpa",
+      "tax preparer",
+      "financial analyst"
     ],
     reply:
-      "Bookkeeping is a steady, recurring-revenue category — nice pick. Do you work with a specific software (QuickBooks, Xero) or industry niche? What location are you targeting?",
+      "Bookkeeping and accounting is a steady, recurring-revenue category — nice pick. Do you work with a specific software (QuickBooks, Xero) or industry niche? What location are you targeting?",
     slotToFill: "category",
-    slotValue: "Bookkeeping",
+    slotValue: "Accounting & CPA",
   },
   {
     id: 10,
@@ -314,6 +669,12 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "photography",
       "take photos",
       "shoot photos",
+      "photo editing",
+      "product photography",
+      "real estate photography",
+      "event photographer",
+      "portrait photographer",
+      "headshots"
     ],
     reply:
       "Photography — got it. Are you focused on portraits, products, events, or real estate photography? Let's find clients in your area — what city are you in?",
@@ -329,6 +690,9 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "translate",
       "translating",
       "language translation",
+      "interpreter",
+      "language services",
+      "bilingual"
     ],
     reply:
       "Translation — excellent, that's a globally in-demand skill. What language pairs do you work with, and do you have a preferred region or are you open to remote clients worldwide?",
@@ -344,9 +708,14 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "personal training",
       "fitness coach",
       "gym trainer",
+      "online coach",
+      "nutrition coach",
+      "life coach",
+      "business coach",
+      "career coach"
     ],
     reply:
-      "Personal training — got it. Are you offering in-person sessions, online coaching, or both? What city or area should I focus the search on?",
+      "Coaching and personal training — got it. Are you offering fitness coaching, life coaching, or business/career development? What city or area should I focus the search on?",
     slotToFill: "category",
     slotValue: "Personal Training",
   },
@@ -360,9 +729,11 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "cleaner",
       "maid service",
       "commercial cleaning",
+      "house cleaner",
+      "janitorial"
     ],
     reply:
-      "House cleaning is a great local-service category with consistent demand. Are you looking for residential clients, commercial (offices), or both? What's your service area?",
+      "Cleaning services are a great local category with consistent demand. Are you looking for residential clients, commercial (offices), or both? What's your service area?",
     slotToFill: "category",
     slotValue: "House Cleaning",
   },
@@ -376,11 +747,13 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "gardening",
       "mow lawns",
       "landscaper",
+      "gardener",
+      "tree trimming"
     ],
     reply:
       "Landscaping and lawn care — perfect, very high local search volume. What's your service radius or target city?",
     slotToFill: "category",
-    slotValue: "Landscaping/Lawn Care",
+    slotValue: "Landscaping & Lawn Care",
   },
   {
     id: 15,
@@ -391,9 +764,11 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "hair stylist",
       "hair salon",
       "cut hair",
+      "barber",
+      "nail tech"
     ],
     reply:
-      "Hairstylist — got it! I noticed your dashboard already has some great salon leads in Las Vegas. Want me to pull similar salon leads in another city, or keep building out that region?",
+      "Hairstylist or beauty technician — got it! Salon services are in high demand. What city should I search for salon leads near you?",
     slotToFill: "category",
     slotValue: "Hairstylist",
   },
@@ -406,9 +781,11 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "mua",
       "makeup artistry",
       "apply makeup",
+      "esthetician",
+      "skincare"
     ],
     reply:
-      "Makeup artistry — love it. Are you focused on bridal, editorial, or everyday glam clients? What city should I search?",
+      "Makeup artistry and skincare — love it. Are you focused on bridal, editorial, or everyday glam clients? What city should I search?",
     slotToFill: "category",
     slotValue: "Makeup Artistry",
   },
@@ -422,11 +799,15 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "teach students",
       "teacher",
       "academic tutor",
+      "online tutor",
+      "math tutor",
+      "english tutor",
+      "science tutor"
     ],
     reply:
-      "Tutoring — great category. What subject(s) and grade level or age group do you specialize in, and are you looking for local or online students?",
+      "Tutoring and teaching — great category. What subject(s) and grade level or age group do you specialize in, and are you looking for local or online students?",
     slotToFill: "category",
-    slotValue: "Tutoring",
+    slotValue: "Online Tutoring",
   },
   {
     id: 18,
@@ -437,26 +818,15 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "voice acting",
       "voice artist",
       "vo work",
+      "voice over",
+      "narrator",
+      "audio production",
+      "podcast editor"
     ],
     reply:
-      "Voiceover — nice, fully remote-friendly category. What types of projects (commercials, audiobooks, e-learning)? Since this is remote, do you want me to search broadly or focus on a specific country/market?",
+      "Voiceover and audio production — nice, fully remote-friendly category. What types of projects (commercials, audiobooks, e-learning)? Since this is remote, do you want me to search broadly or focus on a specific timezone?",
     slotToFill: "category",
     slotValue: "Voiceover",
-  },
-  {
-    id: 19,
-    patterns: [
-      "i'm an accountant / cpa",
-      "i am an accountant",
-      "accountant",
-      "cpa",
-      "certified public accountant",
-      "accounting",
-    ],
-    reply:
-      "Accounting — great, high-trust category. Are you focused on individual tax prep, small business bookkeeping, or both? What region are your ideal clients in?",
-    slotToFill: "category",
-    slotValue: "Accounting",
   },
   {
     id: 20,
@@ -467,11 +837,16 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "home repairs",
       "general repairs",
       "fix things",
+      "home repair",
+      "contractor",
+      "plumber",
+      "electrician",
+      "carpenter"
     ],
     reply:
-      "Handyman services — perfect for local leads. What's your specialty (general repairs, electrical, plumbing, carpentry) and what's your service area?",
+      "Handyman and contractor services — perfect for local leads. What's your specialty (general repairs, electrical, plumbing, carpentry) and what's your service area?",
     slotToFill: "category",
-    slotValue: "Handyman",
+    slotValue: "Handyman Services",
   },
   {
     id: 21,
@@ -482,9 +857,10 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "wedding planning",
       "event planner",
       "coordinate weddings",
+      "event coordinator"
     ],
     reply:
-      "Wedding planning — exciting! Are you full-service or day-of coordination? What's your primary market city?",
+      "Wedding and event planning — exciting! Are you full-service or day-of coordination? What's your primary market city?",
     slotToFill: "category",
     slotValue: "Wedding Planning",
   },
@@ -497,6 +873,8 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "ios developer",
       "android developer",
       "mobile app developer",
+      "mobile developer",
+      "flutter developer"
     ],
     reply:
       "App development — strong demand category. iOS, Android, or cross-platform (Flutter/React Native)? Are you targeting local startups or open to remote clients?",
@@ -510,7 +888,7 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "i am a massage therapist",
       "massage therapist",
       "massage therapy",
-      "give massages",
+      "give massages"
     ],
     reply:
       "Massage therapy — got it. Are you mobile/in-home, or working from a studio? What city should I focus on?",
@@ -527,11 +905,19 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "seo marketing",
       "search engine optimization",
       "digital marketer",
+      "email marketing",
+      "marketing strategist",
+      "growth hacker",
+      "funnel builder",
+      "lead generation",
+      "facebook ads",
+      "google ads",
+      "paid ads"
     ],
     reply:
-      "SEO and digital marketing — that's actually built right into the LanceConnect mission! Do you focus on local SEO, e-commerce, or content marketing? What's your target market?",
+      "SEO and digital marketing — that's actually built right into the LanceConnect mission! Do you focus on local SEO, email marketing, paid ads, or content marketing? What's your target market?",
     slotToFill: "category",
-    slotValue: "SEO / Digital Marketing",
+    slotValue: "SEO",
   },
   {
     id: 25,
@@ -542,12 +928,48 @@ const INTENT_EXAMPLES: IntentExample[] = [
       "music lessons",
       "piano teacher",
       "guitar teacher",
-      "teach music",
+      "teach music"
     ],
     reply:
       "Music lessons — great, recurring-client category. What instrument(s) do you teach, and are lessons in-person or online?",
     slotToFill: "category",
     slotValue: "Music Lessons",
+  },
+  {
+    id: 60,
+    patterns: [
+      "recruiter",
+      "hr consultant",
+      "staffing"
+    ],
+    reply:
+      "Recruitment and HR consulting — excellent. We can search for companies that are expanding, opening new offices, or posting jobs to find your next staffing partner or corporate client. Where should I search?",
+    slotToFill: "category",
+    slotValue: "Training & Recruitment",
+  },
+  {
+    id: 61,
+    patterns: [
+      "real estate agent",
+      "realtor",
+      "mortgage broker"
+    ],
+    reply:
+      "Real estate and mortgage services — perfect. Local agencies, property developers, and buyers/sellers are always in need of help. What city or area should we target?",
+    slotToFill: "category",
+    slotValue: "Real Estate",
+  },
+  {
+    id: 62,
+    patterns: [
+      "motion graphics",
+      "animator",
+      "animation"
+    ],
+    reply:
+      "Animation and motion graphics are fantastic skills. Are you doing 2D/3D character animation, explainer videos, or social media motion graphics? What is your target city or area?",
+    slotToFill: "category",
+    slotValue: "Video Production",
   },
   {
     id: 26,
@@ -1109,93 +1531,78 @@ export function AssistantChatWidget() {
     const lower = text.toLowerCase().trim();
 
     // 1. Goal extraction
-    if (
-      lower.includes("find client") ||
-      lower.includes("looking for client") ||
-      lower.includes("get client") ||
-      lower.includes("find work") ||
-      lower.includes("freelance") ||
-      lower.includes("freelancer") ||
-      lower.includes("find clients") ||
-      lower === "find clients"
-    ) {
+    if (GOAL_FREELANCER_KEYWORDS.some(k => lower.includes(k))) {
       parsed.goal = "freelancer";
-    } else if (
-      lower.includes("hire") ||
-      lower.includes("looking for freelancer") ||
-      lower.includes("business looking") ||
-      lower.includes("looking to hire") ||
-      lower === "hire a freelancer"
-    ) {
+    } else if (GOAL_CLIENT_KEYWORDS.some(k => lower.includes(k))) {
       parsed.goal = "client";
     }
 
     // 2. Category extraction
-    if (
-      lower.includes("web dev") ||
-      lower.includes("web development") ||
-      lower.includes("website") ||
-      lower.includes("developer") ||
-      lower.includes("coding") ||
-      lower.includes("programmer")
-    ) {
-      parsed.category = "Web Development";
-    } else if (
-      lower.includes("design") ||
-      lower.includes("graphic design") ||
-      lower.includes("designer") ||
-      lower.includes("branding") ||
-      lower.includes("logo")
-    ) {
-      parsed.category = "Graphic Design";
-    } else if (
-      lower.includes("virtual assistant") ||
-      lower.includes("assistant") ||
-      lower.includes("va ") ||
-      lower === "va" ||
-      lower.includes("admin")
-    ) {
-      parsed.category = "Virtual Assistant";
-    } else if (
-      lower.includes("writing") ||
-      lower.includes("writer") ||
-      lower.includes("copywriter") ||
-      lower.includes("content writing")
-    ) {
-      parsed.category = "Content Writing";
-    } else if (
-      lower.includes("pet") ||
-      lower.includes("dog") ||
-      lower.includes("cat") ||
-      lower.includes("pet care") ||
-      lower.includes("animal")
-    ) {
-      parsed.category = "Pet Care";
+    const sortedCatKeywords = Object.keys(KEYWORD_TO_CATEGORY).sort((a, b) => b.length - a.length);
+    for (const kw of sortedCatKeywords) {
+      if (lower.includes(kw)) {
+        parsed.category = KEYWORD_TO_CATEGORY[kw];
+        break;
+      }
     }
 
-    // 3. Experience level extraction
-    if (lower.includes("beginner") || lower.includes("junior") || lower.includes("entry")) {
+    // 3. Location extraction
+    let locationCandidate = "";
+    for (const kw of LOCATION_KEYWORDS) {
+      if (lower === kw || lower.startsWith(kw + " ") || lower.endsWith(" " + kw) || lower.includes(" " + kw + " ")) {
+        locationCandidate = kw;
+        break;
+      }
+    }
+
+    if (!locationCandidate) {
+      for (const pref of LOCATION_PREFIXES) {
+        if (lower.startsWith(pref)) {
+          locationCandidate = text.substring(pref.length).trim();
+          break;
+        }
+      }
+    }
+
+    if (locationCandidate) {
+      parsed.location = normalizeLocation(locationCandidate);
+    } else if (expectedSlot === "location" && text.trim().length > 0) {
+      parsed.location = normalizeLocation(text);
+    }
+
+    // 4. Experience level extraction
+    const beginnerKeywords = ["beginner", "just starting", "new to this", "starting out", "no experience", "entry level", "junior", "fresh", "learning", "building my portfolio"];
+    const intermediateKeywords = ["intermediate", "some experience", "a few years", "2 years", "3 years", "mid level", "growing", "improving"];
+    const expertKeywords = ["expert", "senior", "experienced", "veteran", "professional", "specialist", "years of experience", "decade", "seasoned", "advanced", "certified", "licensed"];
+
+    if (beginnerKeywords.some(k => lower.includes(k))) {
       parsed.experience_level = "Beginner";
-    } else if (lower.includes("intermediate") || lower.includes("mid")) {
+    } else if (intermediateKeywords.some(k => lower.includes(k))) {
       parsed.experience_level = "Intermediate";
-    } else if (
-      lower.includes("expert") ||
-      lower.includes("senior") ||
-      lower.includes("advanced") ||
-      lower.includes("pro")
-    ) {
+    } else if (expertKeywords.some(k => lower.includes(k))) {
       parsed.experience_level = "Expert";
     }
 
-    // 4. Budget extraction
-    const budgetRegex =
-      /(\$\d+(?:,\d+)*(?:\/\w+)?|\d+\s*(?:usd|gbp|ngn|eur|dollars|pounds)|rate\s*of\s*\d+|budget\s*of\s*\d+)/gi;
+    // 5. Budget extraction
+    const budgetRegex = /(\$\d+(?:,\d+)*(?:\/\w+)?|\d+\s*(?:usd|gbp|ngn|eur|cad|aud|dollars|pounds|euros)|rate\s*of\s*\d+|budget\s*of\s*\d+)/gi;
     const match = lower.match(budgetRegex);
     if (match) {
       parsed.budget = match[0];
+    } else {
+      const hasBudgetKeyword = BUDGET_KEYWORDS.some(k => lower.includes(k));
+      if (hasBudgetKeyword) {
+        if (lower.includes("negotiable")) parsed.budget = "Negotiable";
+        else if (lower.includes("flexible")) parsed.budget = "Flexible";
+        else if (lower.includes("open to offers")) parsed.budget = "Open to offers";
+        else if (lower.includes("high end") || lower.includes("premium")) parsed.budget = "Premium / High End";
+        else if (lower.includes("tight budget") || lower.includes("low budget")) parsed.budget = "Flexible / Low Budget";
+        else if (expectedSlot === "budget") {
+          parsed.budget = text;
+        }
+      }
     }
 
-    // 5. Direct filling for current unfilled slot if parsing failed
+    // 6. Direct filling for current unfilled slot if parsing failed
     if (expectedSlot === "goal" && !parsed.goal) {
       if (lower.includes("client") || lower.includes("find")) {
         parsed.goal = "freelancer";
@@ -1207,15 +1614,11 @@ export function AssistantChatWidget() {
         parsed.category = text;
       }
     } else if (expectedSlot === "location" && !parsed.location) {
-      parsed.location = text;
+      parsed.location = normalizeLocation(text);
     } else if (expectedSlot === "budget" && !parsed.budget) {
       parsed.budget = text;
     } else if (expectedSlot === "experience_level" && !parsed.experience_level) {
-      if (lower === "beginner" || lower === "intermediate" || lower === "expert") {
-        parsed.experience_level = text;
-      } else {
-        parsed.experience_level = text;
-      }
+      parsed.experience_level = text;
     }
 
     return parsed;
@@ -1278,8 +1681,79 @@ I'll plug this into your search so you can start finding real, contactable leads
   const handleSend = (text: string) => {
     if (!text.trim()) return;
 
-    // 1. Check commands / special options
+    const lowerText = text.toLowerCase().trim();
+
+    // ── INTERCEPT COMMANDS / QUICK REPLIES ─────────────────────────────────
     if (text === "Edit Details") {
+      setSlots(INITIAL_SLOTS);
+      setMessages([OPENING_MESSAGE]);
+      setCurrentUnfilledSlot("category");
+      return;
+    }
+
+    if (text === "Category") {
+      setSlots(prev => ({ ...prev, category: null }));
+      setCurrentUnfilledSlot("category");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          sender: "assistant",
+          text: "What type of work do you do (your category or specialty)?",
+          timestamp: new Date(),
+          quickReplies: ["Web Development", "Graphic Design", "Virtual Assistant", "Content Writing", "Something Else"],
+        },
+      ]);
+      return;
+    }
+
+    if (text === "Location") {
+      setSlots(prev => ({ ...prev, location: null }));
+      setCurrentUnfilledSlot("location");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          sender: "assistant",
+          text: "Where are you (or your clients) located? Please type a city name.",
+          timestamp: new Date(),
+        },
+      ]);
+      return;
+    }
+
+    if (text === "Budget") {
+      setSlots(prev => ({ ...prev, budget: null }));
+      setCurrentUnfilledSlot("budget");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          sender: "assistant",
+          text: "What's your target budget or rate? (e.g. $50/hr or $2,000 project budget)",
+          timestamp: new Date(),
+        },
+      ]);
+      return;
+    }
+
+    if (text === "Experience") {
+      setSlots(prev => ({ ...prev, experience_level: null }));
+      setCurrentUnfilledSlot("experience_level");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          sender: "assistant",
+          text: "What's your experience level?",
+          timestamp: new Date(),
+          quickReplies: ["Beginner", "Intermediate", "Expert"],
+        },
+      ]);
+      return;
+    }
+
+    if (text === "Reset All") {
       setSlots(INITIAL_SLOTS);
       setMessages([OPENING_MESSAGE]);
       setCurrentUnfilledSlot("category");
@@ -1385,7 +1859,143 @@ I'll plug this into your search so you can start finding real, contactable leads
       return;
     }
 
-    // 2. Add user message
+    // ── INTERCEPT CHANGE / UPDATE PHRASES ──────────────────────────────────
+    const isChangeOrUpdate = CHANGE_KEYWORDS.some(k => lowerText === k || lowerText.includes(k));
+    if (isChangeOrUpdate) {
+      let botText = "";
+      let botQuickReplies: string[] | undefined = undefined;
+      const newSlots = { ...slots };
+
+      if (lowerText.includes("start over") || lowerText.includes("reset") || lowerText.includes("scratch that") || lowerText.includes("nevermind")) {
+        setSlots(INITIAL_SLOTS);
+        setCurrentUnfilledSlot("category");
+        botText = "Alright, let's start from the beginning! What type of work do you do (your category/service)?";
+        botQuickReplies = ["Web Development", "Graphic Design", "Virtual Assistant", "Content Writing", "Something Else"];
+      } else if (lowerText.includes("category") || lowerText.includes("service") || lowerText.includes("specialty") || lowerText.includes("work") || lowerText.includes("job")) {
+        newSlots.category = null;
+        setCurrentUnfilledSlot("category");
+        botText = "No problem! Let's update your service category. What type of work do you do?";
+        botQuickReplies = ["Web Development", "Graphic Design", "Virtual Assistant", "Content Writing", "Something Else"];
+      } else if (lowerText.includes("location") || lowerText.includes("city") || lowerText.includes("place") || lowerText.includes("where") || lowerText.includes("area")) {
+        newSlots.location = null;
+        setCurrentUnfilledSlot("location");
+        botText = "Got it. Let's change your target location. What city or area are you in (or looking for clients in)?";
+      } else if (lowerText.includes("budget") || lowerText.includes("rate") || lowerText.includes("pay") || lowerText.includes("price") || lowerText.includes("cost")) {
+        newSlots.budget = null;
+        setCurrentUnfilledSlot("budget");
+        botText = "Sure thing. Let's update your target rate or budget. What is your rate (e.g. $50/hr or $2,000 project)?";
+      } else if (lowerText.includes("experience") || lowerText.includes("level")) {
+        newSlots.experience_level = null;
+        setCurrentUnfilledSlot("experience_level");
+        botText = "Understood. Let's update your experience level. What is it?";
+        botQuickReplies = ["Beginner", "Intermediate", "Expert"];
+      } else {
+        botText = "Sure, let's edit your search criteria. Which part would you like to update?";
+        botQuickReplies = ["Category", "Location", "Budget", "Experience", "Reset All"];
+      }
+
+      setSlots(newSlots);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          sender: "user",
+          text,
+          timestamp: new Date(),
+        },
+      ]);
+      setIsThinking(true);
+      setTimeout(() => {
+        setIsThinking(false);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            sender: "assistant",
+            text: botText,
+            timestamp: new Date(),
+            quickReplies: botQuickReplies,
+          },
+        ]);
+      }, 800);
+      return;
+    }
+
+    // ── INTERCEPT AFFIRMATIONS / NEGATIONS ─────────────────────────────────
+    const allSlotsFilled = slots.category && slots.location && slots.budget && slots.experience_level;
+    const isAffirmation = AFFIRMATION_KEYWORDS.some(k => lowerText === k || lowerText.startsWith(k + " ") || lowerText.endsWith(" " + k));
+    const isNegation = NEGATION_KEYWORDS.some(k => lowerText === k || lowerText.startsWith(k + " ") || lowerText.endsWith(" " + k) || lowerText.includes(" " + k + " "));
+
+    if (isAffirmation && allSlotsFilled) {
+      handleSend("Run Search");
+      return;
+    }
+
+    if (isNegation) {
+      if (allSlotsFilled) {
+        handleSend("Save for Later");
+        return;
+      }
+
+      if (currentUnfilledSlot) {
+        let botText = "";
+        let botQuickReplies: string[] | undefined = undefined;
+        const newSlots = { ...slots };
+
+        if (currentUnfilledSlot === "budget") {
+          newSlots.budget = "Flexible";
+          const nextPrompt = getBotPromptForNextSlot({ ...newSlots, budget: "Flexible" });
+          botText = `No problem, we'll keep the budget flexible.\n\n${nextPrompt.text}`;
+          botQuickReplies = nextPrompt.quickReplies;
+          setSlots(newSlots);
+          setCurrentUnfilledSlot("experience_level");
+        } else if (currentUnfilledSlot === "experience_level") {
+          newSlots.experience_level = "Flexible";
+          const nextPrompt = getBotPromptForNextSlot({ ...newSlots, experience_level: "Flexible" });
+          botText = `No worries, experience level is set to flexible.\n\n${nextPrompt.text}`;
+          botQuickReplies = nextPrompt.quickReplies;
+          setSlots(newSlots);
+          setCurrentUnfilledSlot(null);
+        } else if (currentUnfilledSlot === "location") {
+          newSlots.location = "Remote";
+          const nextPrompt = getBotPromptForNextSlot({ ...newSlots, location: "Remote" });
+          botText = `Got it, we will search for remote opportunities.\n\n${nextPrompt.text}`;
+          botQuickReplies = nextPrompt.quickReplies;
+          setSlots(newSlots);
+          setCurrentUnfilledSlot("budget");
+        } else {
+          botText = "No problem. Let's try again. What is your primary service or specialty?";
+          botQuickReplies = ["Web Development", "Graphic Design", "Virtual Assistant", "Content Writing", "Something Else"];
+        }
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            sender: "user",
+            text,
+            timestamp: new Date(),
+          },
+        ]);
+        setIsThinking(true);
+        setTimeout(() => {
+          setIsThinking(false);
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now().toString(),
+              sender: "assistant",
+              text: botText,
+              timestamp: new Date(),
+              quickReplies: botQuickReplies,
+            },
+          ]);
+        }, 800);
+        return;
+      }
+    }
+
+    // ── STANDARD SLOT FILLING AND INTENT MATCHING ──────────────────────────
     const userMsg: Message = {
       id: Date.now().toString(),
       sender: "user",
@@ -1397,7 +2007,6 @@ I'll plug this into your search so you can start finding real, contactable leads
     setInputValue("");
     setIsThinking(true);
 
-    // 3. Process slot filling and intent matching
     setTimeout(() => {
       setIsThinking(false);
 
@@ -1410,7 +2019,6 @@ I'll plug this into your search so you can start finding real, contactable leads
       if (matchedIntent) {
         botText = matchedIntent.reply;
 
-        // If the intent fills a slot, update newSlots
         if (matchedIntent.slotToFill && matchedIntent.slotValue) {
           newSlots[matchedIntent.slotToFill] = matchedIntent.slotValue;
         } else {
@@ -1424,7 +2032,6 @@ I'll plug this into your search so you can start finding real, contactable leads
 
       setSlots(newSlots);
 
-      // Determine next slot
       let nextSlot: keyof Slots | null = null;
       if (!newSlots.goal) nextSlot = "goal";
       else if (!newSlots.category) nextSlot = "category";
@@ -1439,7 +2046,6 @@ I'll plug this into your search so you can start finding real, contactable leads
       if (matchedIntent) {
         botQuickReplies = nextPrompt.quickReplies;
 
-        // If all slots are now filled, append summary prompt to custom reply
         if (!nextSlot) {
           botText += `\n\n${nextPrompt.text}`;
           botQuickReplies = nextPrompt.quickReplies;
