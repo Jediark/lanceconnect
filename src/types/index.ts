@@ -78,6 +78,7 @@ export type User = {
   supplierProfile?: SupplierProfile | null;
   deviceFingerprint?: string | null;
   normalizedEmail?: string | null;
+  isAdmin?: boolean;
 };
 
 export type OutreachTemplate = {

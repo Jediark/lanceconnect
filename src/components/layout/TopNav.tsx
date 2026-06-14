@@ -19,6 +19,7 @@ import {
   Briefcase,
   Shield,
   Globe,
+  Lock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -138,6 +139,14 @@ export function TopNav() {
             label="Safety"
             active={pathname === "/app/safety"}
           />
+          {user?.isAdmin && (
+            <NavLink
+              to="/app/admin"
+              icon={Lock}
+              label="Admin Portal"
+              active={pathname.startsWith("/app/admin")}
+            />
+          )}
         </nav>
 
         {/* Right Side Actions */}
@@ -280,6 +289,15 @@ export function TopNav() {
                       >
                         <Briefcase className="h-4 w-4 text-muted-foreground" /> Billing & Plan
                       </Link>
+                      {user?.isAdmin && (
+                        <Link
+                          to="/app/admin"
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-accent transition font-semibold text-primary animate-pulse"
+                          onClick={() => setProfileDropdownOpen(false)}
+                        >
+                          <Lock className="h-4 w-4 text-primary" /> Admin Portal
+                        </Link>
+                      )}
                     </div>
                     <div className="p-2 border-t border-border flex items-center justify-between">
                       <button
@@ -414,6 +432,15 @@ export function TopNav() {
                 active={pathname.includes("/settings")}
                 onClick={() => setMobileMenuOpen(false)}
               />
+              {user?.isAdmin && (
+                <MobileNavLink
+                  to="/app/admin"
+                  icon={Lock}
+                  label="Admin Portal"
+                  active={pathname.startsWith("/app/admin")}
+                  onClick={() => setMobileMenuOpen(false)}
+                />
+              )}
             </div>
           </div>
         </div>

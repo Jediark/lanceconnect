@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           bio: null,
           websiteUrl: null,
           onboardingCompleted: false,
+          isAdmin: false,
         };
         setUser(fallbackUser);
         return;
@@ -93,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         supplierProfile: data.supplier_profile,
         deviceFingerprint: data.device_fingerprint,
         normalizedEmail: data.normalized_email,
+        isAdmin: data.is_admin || false,
       });
     } catch (err) {
       console.error("Error mapping profile:", err);
