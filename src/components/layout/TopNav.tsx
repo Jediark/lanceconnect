@@ -141,10 +141,10 @@ export function TopNav() {
           />
           {user?.isAdmin && (
             <NavLink
-              to="/app/admin"
+              to="/app/365"
               icon={Lock}
               label="Admin Portal"
-              active={pathname.startsWith("/app/admin")}
+              active={pathname.startsWith("/app/365")}
             />
           )}
         </nav>
@@ -291,7 +291,7 @@ export function TopNav() {
                       </Link>
                       {user?.isAdmin && (
                         <Link
-                          to="/app/admin"
+                          to="/app/365"
                           className="flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-accent transition font-semibold text-primary animate-pulse"
                           onClick={() => setProfileDropdownOpen(false)}
                         >
@@ -434,10 +434,10 @@ export function TopNav() {
               />
               {user?.isAdmin && (
                 <MobileNavLink
-                  to="/app/admin"
+                  to="/app/365"
                   icon={Lock}
                   label="Admin Portal"
-                  active={pathname.startsWith("/app/admin")}
+                  active={pathname.startsWith("/app/365")}
                   onClick={() => setMobileMenuOpen(false)}
                 />
               )}

@@ -60,7 +60,7 @@ import { Route as AppPipelineRouteImport } from './routes/app.pipeline'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppAiGeneratorRouteImport } from './routes/app.ai-generator'
-import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as App365RouteImport } from './routes/app.365'
 import { Route as AppSettingsIndexRouteImport } from './routes/app.settings.index'
 import { Route as FindClientsSkillCityRouteImport } from './routes/find-clients.$skill.$city'
 import { Route as AppSettingsSubscriptionRouteImport } from './routes/app.settings.subscription'
@@ -326,9 +326,9 @@ const AppAiGeneratorRoute = AppAiGeneratorRouteImport.update({
   path: '/ai-generator',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAdminRoute = AppAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const App365Route = App365RouteImport.update({
+  id: '/365',
+  path: '/365',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
@@ -389,7 +389,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/app/admin': typeof AppAdminRoute
+  '/app/365': typeof App365Route
   '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -448,7 +448,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/app/admin': typeof AppAdminRoute
+  '/app/365': typeof App365Route
   '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -508,7 +508,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/app/admin': typeof AppAdminRoute
+  '/app/365': typeof App365Route
   '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -570,7 +570,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/verify-email'
-    | '/app/admin'
+    | '/app/365'
     | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
@@ -629,7 +629,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/verify-email'
-    | '/app/admin'
+    | '/app/365'
     | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
@@ -688,7 +688,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/verify-email'
-    | '/app/admin'
+    | '/app/365'
     | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
@@ -1128,11 +1128,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAiGeneratorRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/admin': {
-      id: '/app/admin'
-      path: '/admin'
-      fullPath: '/app/admin'
-      preLoaderRoute: typeof AppAdminRouteImport
+    '/app/365': {
+      id: '/app/365'
+      path: '/365'
+      fullPath: '/app/365'
+      preLoaderRoute: typeof App365RouteImport
       parentRoute: typeof AppRoute
     }
     '/app/settings/': {
@@ -1201,7 +1201,7 @@ const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
-  AppAdminRoute: typeof AppAdminRoute
+  App365Route: typeof App365Route
   AppAiGeneratorRoute: typeof AppAiGeneratorRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
@@ -1214,7 +1214,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAdminRoute: AppAdminRoute,
+  App365Route: App365Route,
   AppAiGeneratorRoute: AppAiGeneratorRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDiscoverRoute: AppDiscoverRoute,

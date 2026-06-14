@@ -43,7 +43,7 @@ import {
   Pie,
 } from "recharts";
 
-export const Route = createFileRoute("/app/admin")({
+export const Route = createFileRoute("/app/365")({
   head: () => ({ meta: [{ title: "Admin Portal — LanceConnect" }] }),
   component: AdminDashboard,
 });
