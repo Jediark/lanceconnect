@@ -648,48 +648,467 @@ Deno.serve(async (req) => {
     // Silently expand if we have fewer than 6 leads
     const cityKey = city.toLowerCase().trim();
     const NEARBY_CITIES_MAP: Record<string, string[]> = {
+      // Pacific Northwest
       seattle: ["Tacoma", "Bellevue", "Kent", "Renton", "Everett", "Portland"],
-      tacoma: ["Seattle", "Bellevue", "Kent", "Renton", "Portland"],
-      bellevue: ["Seattle", "Tacoma", "Kent", "Renton", "Everett", "Portland"],
+      tacoma: ["Seattle", "Bellevue", "Kent", "Renton", "Olympia", "Portland"],
+      bellevue: ["Seattle", "Tacoma", "Kent", "Renton", "Everett", "Redmond"],
       portland: ["Seattle", "Bellevue", "Tacoma", "Vancouver", "Salem", "Eugene"],
+      boise: ["Nampa", "Meridian", "Caldwell", "Twin Falls", "Pocatello"],
+      // California
+      "san francisco": ["Oakland", "San Jose", "Berkeley", "Fremont", "Sacramento", "Palo Alto"],
+      "los angeles": ["San Diego", "San Jose", "San Francisco", "Sacramento", "Long Beach", "Anaheim"],
+      "san diego": ["Los Angeles", "Irvine", "Chula Vista", "Oceanside", "Carlsbad", "Tijuana"],
+      sacramento: ["San Francisco", "Oakland", "San Jose", "Stockton", "Roseville", "Elk Grove"],
+      "san jose": ["San Francisco", "Oakland", "Fremont", "Sunnyvale", "Santa Clara", "Palo Alto"],
+      fresno: ["Bakersfield", "Visalia", "Clovis", "Stockton", "Modesto"],
+      // Southwest
+      phoenix: ["Scottsdale", "Mesa", "Tempe", "Chandler", "Glendale", "Tucson"],
+      tucson: ["Phoenix", "Mesa", "Sierra Vista", "Nogales", "Casa Grande"],
+      mesa: ["Phoenix", "Scottsdale", "Tempe", "Chandler", "Gilbert"],
+      "las vegas": ["Henderson", "North Las Vegas", "Reno", "Phoenix", "Paradise"],
+      reno: ["Sparks", "Carson City", "Las Vegas", "Sacramento", "Truckee"],
+      "salt lake city": ["Provo", "Ogden", "West Valley City", "Sandy", "Orem", "Layton"],
+      provo: ["Salt Lake City", "Orem", "Sandy", "Ogden", "Lehi"],
+      albuquerque: ["Santa Fe", "Rio Rancho", "Las Cruces", "El Paso", "Lubbock"],
+      // Colorado
+      denver: ["Colorado Springs", "Aurora", "Boulder", "Fort Collins", "Lakewood", "Arvada"],
+      "colorado springs": ["Denver", "Aurora", "Pueblo", "Boulder", "Fort Collins"],
+      aurora: ["Denver", "Colorado Springs", "Boulder", "Lakewood", "Centennial"],
+      // Texas
+      dallas: ["Fort Worth", "Arlington", "Plano", "Irving", "Garland", "Frisco"],
+      "fort worth": ["Dallas", "Arlington", "Denton", "Weatherford", "Mansfield"],
+      houston: ["The Woodlands", "Sugar Land", "Katy", "Pasadena", "Pearland", "Baytown"],
+      austin: ["San Antonio", "Round Rock", "Georgetown", "Cedar Park", "San Marcos", "Pflugerville"],
+      "san antonio": ["Austin", "New Braunfels", "San Marcos", "Laredo", "Corpus Christi"],
+      "el paso": ["Las Cruces", "Ciudad Juarez", "Albuquerque", "Lubbock", "Midland"],
+      // Oklahoma
+      "oklahoma city": ["Tulsa", "Norman", "Edmond", "Moore", "Broken Arrow"],
+      tulsa: ["Oklahoma City", "Broken Arrow", "Owasso", "Muskogee", "Bartlesville"],
+      // Kansas
+      "kansas city": ["Overland Park", "Olathe", "Topeka", "Lawrence", "Wichita", "Independence"],
+      wichita: ["Kansas City", "Topeka", "Salina", "Hutchinson", "Newton"],
+      // Minnesota
+      minneapolis: ["Saint Paul", "Bloomington", "Plymouth", "Brooklyn Park", "Maple Grove"],
+      "saint paul": ["Minneapolis", "Bloomington", "Plymouth", "Eagan", "Woodbury"],
+      // Illinois / Midwest
+      chicago: ["Aurora", "Naperville", "Joliet", "Elgin", "Evanston", "Waukegan"],
+      milwaukee: ["Madison", "Racine", "Kenosha", "Green Bay", "Chicago", "Waukesha"],
+      indianapolis: ["Fort Wayne", "Carmel", "Fishers", "Bloomington", "Columbus"],
+      columbus: ["Cleveland", "Cincinnati", "Dayton", "Akron", "Toledo"],
+      cincinnati: ["Columbus", "Dayton", "Lexington", "Louisville", "Indianapolis"],
+      cleveland: ["Akron", "Columbus", "Toledo", "Canton", "Youngstown", "Pittsburgh"],
+      detroit: ["Ann Arbor", "Warren", "Dearborn", "Livonia", "Lansing", "Grand Rapids"],
+      "st louis": ["Kansas City", "Springfield", "Columbia", "Indianapolis", "Memphis"],
+      omaha: ["Lincoln", "Council Bluffs", "Kansas City", "Des Moines", "Sioux Falls"],
+      "des moines": ["Cedar Rapids", "Iowa City", "Omaha", "Kansas City", "Waterloo"],
+      // Tennessee / Kentucky
+      nashville: ["Memphis", "Knoxville", "Chattanooga", "Murfreesboro", "Clarksville"],
+      memphis: ["Nashville", "Jackson", "Little Rock", "Birmingham", "Tupelo"],
+      louisville: ["Lexington", "Cincinnati", "Indianapolis", "Nashville", "Bowling Green"],
+      // Southeast
+      atlanta: ["Marietta", "Alpharetta", "Decatur", "Sandy Springs", "Roswell", "Smyrna"],
+      charlotte: ["Raleigh", "Greensboro", "Durham", "Winston-Salem", "Rock Hill", "Concord"],
+      raleigh: ["Durham", "Charlotte", "Greensboro", "Cary", "Chapel Hill", "Fayetteville"],
+      jacksonville: ["Orlando", "Tampa", "St Augustine", "Gainesville", "Daytona Beach"],
+      tampa: ["St Petersburg", "Clearwater", "Orlando", "Sarasota", "Lakeland", "Brandon"],
+      orlando: ["Tampa", "Jacksonville", "Daytona Beach", "Kissimmee", "Melbourne"],
+      miami: ["Fort Lauderdale", "Hollywood", "Pompano Beach", "West Palm Beach", "Hialeah"],
+      "fort lauderdale": ["Miami", "West Palm Beach", "Hollywood", "Pompano Beach", "Boca Raton"],
+      // Gulf South
+      "new orleans": ["Baton Rouge", "Metairie", "Kenner", "Slidell", "Gulfport"],
+      birmingham: ["Montgomery", "Huntsville", "Tuscaloosa", "Hoover", "Mobile"],
+      charleston: ["Columbia", "North Charleston", "Savannah", "Myrtle Beach", "Hilton Head"],
+      // Mid-Atlantic / Northeast
+      "new york": ["Jersey City", "Brooklyn", "Queens", "Newark", "Philadelphia", "Boston"],
+      newark: ["New York", "Jersey City", "Elizabeth", "Paterson", "Philadelphia"],
+      "jersey city": ["New York", "Newark", "Hoboken", "Elizabeth", "Brooklyn"],
+      philadelphia: ["Wilmington", "Trenton", "Camden", "Allentown", "Reading", "New York"],
+      baltimore: ["Washington DC", "Annapolis", "Columbia", "Towson", "Philadelphia"],
+      "washington dc": ["Baltimore", "Arlington", "Alexandria", "Silver Spring", "Bethesda", "Tysons"],
+      boston: ["Cambridge", "Somerville", "Quincy", "Worcester", "Providence", "Lowell"],
+      providence: ["Boston", "Worcester", "Hartford", "New Haven", "Warwick"],
+      hartford: ["New Haven", "Providence", "Springfield", "Stamford", "Bridgeport"],
+      pittsburgh: ["Cleveland", "Philadelphia", "Allentown", "Erie", "Harrisburg"],
+      buffalo: ["Rochester", "Syracuse", "Erie", "Niagara Falls", "Hamilton"],
+      rochester: ["Buffalo", "Syracuse", "Albany", "Ithaca", "Binghamton"],
+      // Virginia
+      richmond: ["Virginia Beach", "Norfolk", "Charlottesville", "Newport News", "Hampton"],
+      "virginia beach": ["Norfolk", "Newport News", "Hampton", "Chesapeake", "Richmond"],
+      norfolk: ["Virginia Beach", "Newport News", "Hampton", "Chesapeake", "Richmond"],
+      // Hawaii / Alaska
+      honolulu: ["Pearl City", "Hilo", "Kailua", "Kaneohe", "Waipahu"],
+      anchorage: ["Fairbanks", "Juneau", "Wasilla", "Palmer", "Kenai"],
+      // International
       lagos: ["Ibadan", "Abeokuta", "Abuja", "Port Harcourt", "Benin City"],
+      abuja: ["Lagos", "Kaduna", "Jos", "Kano", "Lokoja", "Minna"],
       london: ["Manchester", "Birmingham", "Leeds", "Liverpool", "Bristol", "Edinburgh"],
       dubai: ["Abu Dhabi", "Sharjah", "Ajman", "Al Ain", "Ras Al Khaimah"],
-      "new york": ["Jersey City", "Brooklyn", "Queens", "Newark", "Philadelphia", "Boston"],
-      "los angeles": ["San Diego", "San Jose", "San Francisco", "Sacramento", "Phoenix"],
       toronto: ["Mississauga", "Hamilton", "Ottawa", "Montreal", "Vancouver"],
-      atlanta: ["Marietta", "Alpharetta", "Decatur", "Sandy Springs", "Roswell", "Smyrna", "Athens"],
-      miami: ["Fort Lauderdale", "Hollywood", "Pompano Beach", "West Palm Beach", "Hialeah"],
-      chicago: ["Aurora", "Naperville", "Joliet", "Elgin", "Evanston", "Waukegan"],
-      houston: ["The Woodlands", "Sugar Land", "Katy", "Pasadena", "Pearland"],
     };
 
     const COUNTRY_CITIES_MAP: Record<string, string[]> = {
+      // Africa
       "nigeria": ["Lagos", "Abuja", "Kano", "Ibadan", "Port Harcourt", "Enugu", "Kaduna"],
-      "ghana": ["Accra", "Kumasi", "Cape Coast", "Tamale", "Sekondi"],
-      "kenya": ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret"],
-      "south africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth"],
+      "ghana": ["Accra", "Kumasi", "Cape Coast", "Tamale", "Sekondi", "Tema"],
+      "kenya": ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Malindi"],
+      "south africa": ["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth", "Bloemfontein"],
+      "egypt": ["Cairo", "Alexandria", "Giza", "Sharm El Sheikh", "Luxor", "Aswan"],
+      "morocco": ["Casablanca", "Rabat", "Marrakech", "Fez", "Tangier", "Agadir"],
+      "ethiopia": ["Addis Ababa", "Dire Dawa", "Mekelle", "Gondar", "Hawassa", "Bahir Dar"],
+      "tanzania": ["Dar es Salaam", "Dodoma", "Arusha", "Mwanza", "Zanzibar City", "Mbeya"],
+      "senegal": ["Dakar", "Saint-Louis", "Thies", "Kaolack", "Ziguinchor"],
+      "cameroon": ["Douala", "Yaounde", "Bamenda", "Bafoussam", "Garoua", "Maroua"],
+      "ivory coast": ["Abidjan", "Yamoussoukro", "Bouake", "Daloa", "San Pedro"],
+      "cote d'ivoire": ["Abidjan", "Yamoussoukro", "Bouake", "Daloa", "San Pedro"],
+      "rwanda": ["Kigali", "Butare", "Gisenyi", "Ruhengeri", "Gitarama"],
+      "uganda": ["Kampala", "Entebbe", "Gulu", "Jinja", "Mbarara", "Fort Portal"],
+      // Europe
       "united kingdom": ["London", "Manchester", "Birmingham", "Leeds", "Glasgow", "Liverpool", "Bristol", "Edinburgh"],
-      "germany": ["Berlin", "Hamburg", "Munich", "Cologne", "Frankfurt", "Dusseldorf"],
-      "france": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes"],
-      "spain": ["Madrid", "Barcelona", "Valencia", "Seville", "Zaragoza"],
-      "canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa", "Edmonton"],
-      "australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
-      "uae": ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah"],
-      "united states": ["New York", "Houston", "Chicago", "Seattle", "Miami", "Atlanta", "Los Angeles", "Boston", "Dallas", "San Francisco"],
-      "usa": ["New York", "Houston", "Chicago", "Seattle", "Miami", "Atlanta", "Los Angeles", "Boston", "Dallas", "San Francisco"],
-      "us": ["New York", "Houston", "Chicago", "Seattle", "Miami", "Atlanta", "Los Angeles", "Boston", "Dallas", "San Francisco"],
+      "uk": ["London", "Manchester", "Birmingham", "Leeds", "Glasgow", "Liverpool", "Bristol", "Edinburgh"],
+      "germany": ["Berlin", "Hamburg", "Munich", "Cologne", "Frankfurt", "Dusseldorf", "Stuttgart"],
+      "france": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg"],
+      "spain": ["Madrid", "Barcelona", "Valencia", "Seville", "Zaragoza", "Malaga", "Bilbao"],
+      "italy": ["Rome", "Milan", "Naples", "Turin", "Florence", "Bologna", "Palermo"],
+      "netherlands": ["Amsterdam", "Rotterdam", "The Hague", "Utrecht", "Eindhoven", "Tilburg"],
+      "belgium": ["Brussels", "Antwerp", "Ghent", "Bruges", "Liege", "Leuven"],
+      "portugal": ["Lisbon", "Porto", "Braga", "Coimbra", "Faro", "Funchal"],
+      "switzerland": ["Zurich", "Geneva", "Basel", "Bern", "Lausanne", "Lucerne"],
+      "sweden": ["Stockholm", "Gothenburg", "Malmo", "Uppsala", "Linkoping", "Orebro"],
+      "norway": ["Oslo", "Bergen", "Trondheim", "Stavanger", "Tromso", "Kristiansand"],
+      "denmark": ["Copenhagen", "Aarhus", "Odense", "Aalborg", "Esbjerg"],
+      "finland": ["Helsinki", "Espoo", "Tampere", "Turku", "Oulu", "Vantaa"],
+      "poland": ["Warsaw", "Krakow", "Lodz", "Wroclaw", "Poznan", "Gdansk"],
+      "austria": ["Vienna", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt"],
+      "ireland": ["Dublin", "Cork", "Galway", "Limerick", "Waterford", "Kilkenny"],
+      "greece": ["Athens", "Thessaloniki", "Patras", "Heraklion", "Larissa", "Volos"],
+      "czech republic": ["Prague", "Brno", "Ostrava", "Plzen", "Liberec", "Olomouc"],
+      "czechia": ["Prague", "Brno", "Ostrava", "Plzen", "Liberec", "Olomouc"],
+      "romania": ["Bucharest", "Cluj-Napoca", "Timisoara", "Iasi", "Constanta", "Brasov"],
+      "hungary": ["Budapest", "Debrecen", "Szeged", "Miskolc", "Pecs", "Gyor"],
+      // Americas
+      "canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa", "Edmonton", "Winnipeg"],
+      "united states": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington DC", "Nashville", "Oklahoma City", "El Paso", "Boston", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Sacramento", "Mesa", "Kansas City", "Atlanta", "Omaha", "Colorado Springs", "Raleigh", "Miami", "Minneapolis", "Tampa", "New Orleans", "Cleveland", "Orlando", "Cincinnati", "Pittsburgh", "St Louis", "Detroit", "Honolulu", "Anchorage", "Salt Lake City", "Birmingham", "Richmond", "Virginia Beach", "Buffalo"],
+      "usa": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington DC", "Nashville", "Oklahoma City", "El Paso", "Boston", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Sacramento", "Mesa", "Kansas City", "Atlanta", "Omaha", "Colorado Springs", "Raleigh", "Miami", "Minneapolis", "Tampa", "New Orleans", "Cleveland", "Orlando", "Cincinnati", "Pittsburgh", "St Louis", "Detroit", "Honolulu", "Anchorage", "Salt Lake City", "Birmingham", "Richmond", "Virginia Beach", "Buffalo"],
+      "us": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington DC", "Nashville", "Oklahoma City", "El Paso", "Boston", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Sacramento", "Mesa", "Kansas City", "Atlanta", "Omaha", "Colorado Springs", "Raleigh", "Miami", "Minneapolis", "Tampa", "New Orleans", "Cleveland", "Orlando", "Cincinnati", "Pittsburgh", "St Louis", "Detroit", "Honolulu", "Anchorage", "Salt Lake City", "Birmingham", "Richmond", "Virginia Beach", "Buffalo"],
+      "mexico": ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana", "Leon", "Cancun"],
+      "brazil": ["Sao Paulo", "Rio de Janeiro", "Brasilia", "Salvador", "Fortaleza", "Belo Horizonte", "Curitiba"],
+      "argentina": ["Buenos Aires", "Cordoba", "Rosario", "Mendoza", "Tucuman", "Mar del Plata"],
+      "colombia": ["Bogota", "Medellin", "Cali", "Barranquilla", "Cartagena", "Bucaramanga"],
+      "chile": ["Santiago", "Valparaiso", "Concepcion", "Antofagasta", "Vina del Mar", "Temuco"],
+      "peru": ["Lima", "Arequipa", "Cusco", "Trujillo", "Chiclayo", "Piura"],
+      // Asia
+      "india": ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad"],
+      "china": ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu", "Hangzhou", "Nanjing"],
+      "japan": ["Tokyo", "Osaka", "Yokohama", "Nagoya", "Sapporo", "Kyoto", "Fukuoka"],
+      "south korea": ["Seoul", "Busan", "Incheon", "Daegu", "Daejeon", "Gwangju"],
+      "indonesia": ["Jakarta", "Surabaya", "Bandung", "Medan", "Semarang", "Makassar"],
+      "philippines": ["Manila", "Quezon City", "Cebu", "Davao", "Makati", "Taguig"],
+      "thailand": ["Bangkok", "Chiang Mai", "Phuket", "Pattaya", "Nonthaburi", "Hat Yai"],
+      "vietnam": ["Ho Chi Minh City", "Hanoi", "Da Nang", "Hai Phong", "Can Tho", "Nha Trang"],
+      "malaysia": ["Kuala Lumpur", "George Town", "Johor Bahru", "Ipoh", "Shah Alam", "Petaling Jaya"],
+      "singapore": ["Singapore"],
+      "pakistan": ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Peshawar"],
+      "bangladesh": ["Dhaka", "Chittagong", "Khulna", "Rajshahi", "Sylhet", "Comilla"],
+      "sri lanka": ["Colombo", "Kandy", "Galle", "Jaffna", "Negombo", "Batticaloa"],
+      "taiwan": ["Taipei", "Kaohsiung", "Taichung", "Tainan", "Hsinchu", "Keelung"],
+      // Middle East
+      "uae": ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah"],
+      "united arab emirates": ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah"],
+      "saudi arabia": ["Riyadh", "Jeddah", "Mecca", "Medina", "Dammam", "Khobar"],
+      "qatar": ["Doha", "Al Wakrah", "Al Khor", "Lusail", "Al Rayyan"],
+      "kuwait": ["Kuwait City", "Hawalli", "Salmiya", "Farwaniya", "Jahra"],
+      "bahrain": ["Manama", "Muharraq", "Riffa", "Hamad Town", "Isa Town"],
+      "oman": ["Muscat", "Salalah", "Sohar", "Nizwa", "Sur"],
+      "israel": ["Tel Aviv", "Jerusalem", "Haifa", "Beer Sheva", "Netanya", "Herzliya"],
+      "turkey": ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Adana", "Konya"],
+      "jordan": ["Amman", "Irbid", "Zarqa", "Aqaba", "Madaba"],
+      "lebanon": ["Beirut", "Tripoli", "Sidon", "Jounieh", "Byblos"],
+      // Oceania
+      "australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra", "Gold Coast"],
+      "new zealand": ["Auckland", "Wellington", "Christchurch", "Hamilton", "Tauranga", "Dunedin"],
+      // ── Eastern Europe & Central Asia ──
+      "russia": ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg", "Kazan", "Nizhny Novgorod", "Chelyabinsk", "Samara"],
+      "ukraine": ["Kyiv", "Kharkiv", "Odessa", "Dnipro", "Lviv", "Zaporizhzhia"],
+      "belarus": ["Minsk", "Gomel", "Mogilev", "Vitebsk", "Grodno", "Brest"],
+      "moldova": ["Chisinau", "Balti", "Tiraspol", "Bender", "Comrat"],
+      "georgia": ["Tbilisi", "Batumi", "Kutaisi", "Rustavi", "Zugdidi"],
+      "armenia": ["Yerevan", "Gyumri", "Vanadzor", "Vagharshapat", "Hrazdan"],
+      "azerbaijan": ["Baku", "Ganja", "Sumqayit", "Mingachevir", "Shirvan"],
+      "kazakhstan": ["Almaty", "Astana", "Shymkent", "Karaganda", "Aktobe", "Taraz"],
+      "uzbekistan": ["Tashkent", "Samarkand", "Namangan", "Bukhara", "Andijan", "Fergana"],
+      "kyrgyzstan": ["Bishkek", "Osh", "Jalal-Abad", "Karakol", "Tokmok"],
+      "tajikistan": ["Dushanbe", "Khujand", "Kulob", "Bokhtar", "Istaravshan"],
+      "turkmenistan": ["Ashgabat", "Turkmenabat", "Dashoguz", "Mary", "Balkanabat"],
+      "mongolia": ["Ulaanbaatar", "Erdenet", "Darkhan", "Choibalsan"],
+      // ── Remaining Europe ──
+      "croatia": ["Zagreb", "Split", "Rijeka", "Osijek", "Zadar"],
+      "serbia": ["Belgrade", "Novi Sad", "Nis", "Kragujevac", "Subotica"],
+      "bosnia and herzegovina": ["Sarajevo", "Banja Luka", "Tuzla", "Mostar", "Zenica"],
+      "montenegro": ["Podgorica", "Niksic", "Herceg Novi", "Budva", "Bar"],
+      "north macedonia": ["Skopje", "Bitola", "Kumanovo", "Prilep", "Ohrid"],
+      "albania": ["Tirana", "Durres", "Vlore", "Elbasan", "Shkoder"],
+      "bulgaria": ["Sofia", "Plovdiv", "Varna", "Burgas", "Ruse"],
+      "slovakia": ["Bratislava", "Kosice", "Presov", "Zilina", "Nitra"],
+      "slovenia": ["Ljubljana", "Maribor", "Celje", "Kranj", "Koper"],
+      "estonia": ["Tallinn", "Tartu", "Narva", "Parnu", "Kohtla-Jarve"],
+      "latvia": ["Riga", "Daugavpils", "Liepaja", "Jelgava", "Jurmala"],
+      "lithuania": ["Vilnius", "Kaunas", "Klaipeda", "Siauliai", "Panevezys"],
+      "iceland": ["Reykjavik", "Kopavogur", "Hafnarfjordur", "Akureyri"],
+      "luxembourg": ["Luxembourg City", "Esch-sur-Alzette", "Differdange", "Dudelange"],
+      "malta": ["Valletta", "Birkirkara", "Mosta", "Qormi", "Sliema"],
+      "cyprus": ["Nicosia", "Limassol", "Larnaca", "Paphos", "Famagusta"],
+      "andorra": ["Andorra la Vella", "Escaldes-Engordany", "Encamp"],
+      "liechtenstein": ["Vaduz", "Schaan", "Balzers"],
+      "monaco": ["Monaco", "Monte Carlo"],
+      "san marino": ["San Marino", "Serravalle", "Borgo Maggiore"],
+      "vatican city": ["Vatican City"],
+      // ── Central America & Caribbean ──
+      "mexico": ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana", "Leon", "Cancun", "Merida"],
+      "guatemala": ["Guatemala City", "Quetzaltenango", "Escuintla", "Mixco"],
+      "honduras": ["Tegucigalpa", "San Pedro Sula", "La Ceiba", "Choloma"],
+      "el salvador": ["San Salvador", "Santa Ana", "San Miguel", "Soyapango"],
+      "nicaragua": ["Managua", "Leon", "Masaya", "Chinandega", "Matagalpa"],
+      "costa rica": ["San Jose", "Limon", "Alajuela", "Heredia", "Cartago"],
+      "panama": ["Panama City", "Colon", "David", "La Chorrera", "Santiago"],
+      "belize": ["Belize City", "San Ignacio", "Belmopan", "Orange Walk"],
+      "cuba": ["Havana", "Santiago de Cuba", "Camaguey", "Holguin", "Santa Clara"],
+      "jamaica": ["Kingston", "Montego Bay", "Spanish Town", "Portmore", "Mandeville"],
+      "haiti": ["Port-au-Prince", "Cap-Haitien", "Gonaives", "Les Cayes"],
+      "dominican republic": ["Santo Domingo", "Santiago", "La Romana", "San Pedro de Macoris", "Puerto Plata"],
+      "trinidad and tobago": ["Port of Spain", "San Fernando", "Chaguanas", "Arima"],
+      "bahamas": ["Nassau", "Freeport", "Marsh Harbour"],
+      "barbados": ["Bridgetown", "Speightstown", "Oistins", "Holetown"],
+      "grenada": ["St. George's", "Gouyave", "Grenville"],
+      "saint lucia": ["Castries", "Vieux Fort", "Soufriere"],
+      "saint kitts and nevis": ["Basseterre", "Charlestown"],
+      "saint vincent": ["Kingstown", "Georgetown", "Barrouallie"],
+      "dominica": ["Roseau", "Portsmouth"],
+      "antigua and barbuda": ["St. John's", "All Saints", "Liberta"],
+      // ── South America ──
+      "venezuela": ["Caracas", "Maracaibo", "Valencia", "Barquisimeto", "Maracay", "Ciudad Guayana"],
+      "ecuador": ["Quito", "Guayaquil", "Cuenca", "Machala", "Ambato", "Portoviejo"],
+      "bolivia": ["La Paz", "Santa Cruz", "Cochabamba", "Sucre", "Oruro", "Tarija"],
+      "paraguay": ["Asuncion", "Ciudad del Este", "San Lorenzo", "Luque", "Capiata"],
+      "uruguay": ["Montevideo", "Salto", "Ciudad de la Costa", "Paysandu"],
+      "guyana": ["Georgetown", "Linden", "New Amsterdam", "Anna Regina"],
+      "suriname": ["Paramaribo", "Lelydorp", "Nieuw Nickerie"],
+      // ── West Africa ──
+      "mali": ["Bamako", "Sikasso", "Mopti", "Segou", "Koutiala"],
+      "burkina faso": ["Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Banfora"],
+      "niger": ["Niamey", "Zinder", "Maradi", "Agadez", "Tahoua"],
+      "guinea": ["Conakry", "Nzerekore", "Kankan", "Kindia"],
+      "guinea-bissau": ["Bissau", "Bafata", "Gabu"],
+      "sierra leone": ["Freetown", "Bo", "Kenema", "Makeni"],
+      "liberia": ["Monrovia", "Gbarnga", "Kakata", "Buchanan"],
+      "gambia": ["Banjul", "Serrekunda", "Brikama", "Bakau"],
+      "cabo verde": ["Praia", "Mindelo", "Santa Maria"],
+      "togo": ["Lome", "Sokode", "Kara", "Atakpame"],
+      "benin": ["Cotonou", "Porto-Novo", "Parakou", "Djougou", "Abomey-Calavi"],
+      // ── Central Africa ──
+      "dr congo": ["Kinshasa", "Lubumbashi", "Mbuji-Mayi", "Kisangani", "Goma", "Bukavu"],
+      "congo (brazzaville)": ["Brazzaville", "Pointe-Noire", "Dolisie", "Nkayi"],
+      "gabon": ["Libreville", "Port-Gentil", "Franceville", "Oyem"],
+      "equatorial guinea": ["Malabo", "Bata", "Ebebiyin"],
+      "central african republic": ["Bangui", "Bimbo", "Berberati", "Carnot"],
+      "chad": ["N'Djamena", "Moundou", "Sarh", "Abeche"],
+      "sao tome and principe": ["Sao Tome", "Santo Amaro"],
+      // ── East Africa ──
+      "sudan": ["Khartoum", "Omdurman", "Port Sudan", "Kassala", "El Obeid"],
+      "south sudan": ["Juba", "Malakal", "Wau", "Bor"],
+      "eritrea": ["Asmara", "Keren", "Massawa", "Assab"],
+      "djibouti": ["Djibouti City", "Ali Sabieh", "Tadjoura"],
+      "somalia": ["Mogadishu", "Hargeisa", "Kismayo", "Marka", "Berbera"],
+      "burundi": ["Bujumbura", "Gitega", "Muyinga", "Ngozi"],
+      "comoros": ["Moroni", "Mutsamudu", "Fomboni"],
+      "madagascar": ["Antananarivo", "Toamasina", "Antsirabe", "Fianarantsoa", "Mahajanga"],
+      "mauritius": ["Port Louis", "Beau Bassin-Rose Hill", "Vacoas-Phoenix", "Curepipe"],
+      "seychelles": ["Victoria", "Anse Boileau", "Bel Ombre"],
+      "mauritania": ["Nouakchott", "Nouadhibou", "Kaedi", "Zouerate"],
+      // ── Southern Africa ──
+      "mozambique": ["Maputo", "Beira", "Nampula", "Chimoio", "Quelimane"],
+      "zambia": ["Lusaka", "Kitwe", "Ndola", "Kabwe", "Livingstone"],
+      "zimbabwe": ["Harare", "Bulawayo", "Chitungwiza", "Mutare", "Gweru"],
+      "malawi": ["Lilongwe", "Blantyre", "Mzuzu", "Zomba"],
+      "namibia": ["Windhoek", "Walvis Bay", "Swakopmund", "Oshakati"],
+      "botswana": ["Gaborone", "Francistown", "Molepolole", "Maun"],
+      "lesotho": ["Maseru", "Teyateyaneng", "Mafeteng"],
+      "eswatini": ["Mbabane", "Manzini", "Big Bend", "Siteki"],
+      "angola": ["Luanda", "Huambo", "Lobito", "Benguela", "Lubango", "Malanje"],
+      // ── North Africa ──
+      "algeria": ["Algiers", "Oran", "Constantine", "Annaba", "Blida", "Setif"],
+      "tunisia": ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte"],
+      "libya": ["Tripoli", "Benghazi", "Misrata", "Tarhuna", "Zliten"],
+      // ── Middle East (remaining) ──
+      "iran": ["Tehran", "Isfahan", "Mashhad", "Shiraz", "Tabriz", "Karaj"],
+      "iraq": ["Baghdad", "Basra", "Erbil", "Sulaymaniyah", "Mosul", "Kirkuk"],
+      "syria": ["Damascus", "Aleppo", "Homs", "Latakia", "Hama"],
+      "yemen": ["Sana'a", "Aden", "Taiz", "Al Hudaydah", "Ibb"],
+      // ── South Asia (remaining) ──
+      "afghanistan": ["Kabul", "Kandahar", "Herat", "Mazar-i-Sharif", "Jalalabad"],
+      "nepal": ["Kathmandu", "Pokhara", "Lalitpur", "Bharatpur", "Biratnagar"],
+      "myanmar": ["Yangon", "Mandalay", "Naypyidaw", "Mawlamyine", "Bago"],
+      "maldives": ["Male", "Addu City", "Fuvahmulah"],
+      "bhutan": ["Thimphu", "Phuntsholing", "Paro"],
+      // ── Southeast Asia (remaining) ──
+      "cambodia": ["Phnom Penh", "Siem Reap", "Battambang", "Sihanoukville"],
+      "laos": ["Vientiane", "Luang Prabang", "Savannakhet", "Pakse"],
+      "brunei": ["Bandar Seri Begawan", "Seria", "Tutong"],
+      "timor-leste": ["Dili", "Baucau", "Maliana"],
+      // ── East Asia (remaining) ──
+      "north korea": ["Pyongyang", "Hamhung", "Chongjin", "Nampo"],
+      // ── Pacific Islands ──
+      "fiji": ["Suva", "Nadi", "Lautoka", "Labasa"],
+      "papua new guinea": ["Port Moresby", "Lae", "Mount Hagen", "Madang"],
+      "samoa": ["Apia", "Vaitele", "Faleula"],
+      "tonga": ["Nuku'alofa", "Neiafu", "Haveluloto"],
+      "vanuatu": ["Port Vila", "Luganville"],
+      "solomon islands": ["Honiara", "Auki", "Gizo"],
+      "kiribati": ["Tarawa", "Betio"],
+      "marshall islands": ["Majuro", "Ebeye"],
+      "micronesia": ["Palikir", "Weno", "Kolonia"],
+      "palau": ["Ngerulmud", "Koror"],
+      "tuvalu": ["Funafuti"],
+      "nauru": ["Yaren"],
     };
 
     const US_STATE_CITIES: Record<string, { state: string, cities: string[] }> = {
-      seattle: { state: "Washington", cities: ["spokane", "tacoma", "vancouver", "bellevue", "kent"] },
-      spokane: { state: "Washington", cities: ["seattle", "tacoma", "vancouver", "bellevue", "kent"] },
-      tacoma: { state: "Washington", cities: ["seattle", "spokane", "vancouver", "bellevue", "kent"] },
-      bellevue: { state: "Washington", cities: ["seattle", "spokane", "tacoma", "vancouver", "kent"] },
-      kent: { state: "Washington", cities: ["seattle", "spokane", "tacoma", "vancouver", "bellevue"] },
-      "new york": { state: "New York", cities: ["buffalo", "rochester", "yonkers", "syracuse", "albany", "brooklyn", "queens"] },
+      // Alabama
+      "birmingham": { state: "Alabama", cities: ["montgomery", "huntsville", "mobile", "tuscaloosa", "hoover"] },
+      "montgomery": { state: "Alabama", cities: ["birmingham", "huntsville", "mobile", "tuscaloosa", "hoover"] },
+      // Alaska
+      "anchorage": { state: "Alaska", cities: ["fairbanks", "juneau", "wasilla", "sitka"] },
+      // Arizona
+      "phoenix": { state: "Arizona", cities: ["tucson", "mesa", "scottsdale", "chandler", "glendale", "tempe", "gilbert"] },
+      "tucson": { state: "Arizona", cities: ["phoenix", "mesa", "scottsdale", "chandler", "glendale", "flagstaff"] },
+      "mesa": { state: "Arizona", cities: ["phoenix", "tucson", "scottsdale", "chandler", "glendale", "tempe", "gilbert"] },
+      // Arkansas
+      "little rock": { state: "Arkansas", cities: ["fort smith", "fayetteville", "springdale", "jonesboro", "conway"] },
+      // California
       "los angeles": { state: "California", cities: ["san francisco", "san diego", "sacramento", "san jose", "fresno", "oakland", "long beach"] },
       "san francisco": { state: "California", cities: ["los angeles", "san diego", "sacramento", "san jose", "fresno", "oakland", "long beach"] },
+      "san diego": { state: "California", cities: ["los angeles", "san francisco", "sacramento", "san jose", "fresno", "oakland"] },
+      "san jose": { state: "California", cities: ["los angeles", "san francisco", "san diego", "sacramento", "fresno", "oakland"] },
+      "sacramento": { state: "California", cities: ["los angeles", "san francisco", "san diego", "san jose", "fresno", "oakland"] },
+      "fresno": { state: "California", cities: ["los angeles", "san francisco", "san diego", "san jose", "sacramento", "bakersfield"] },
+      // Colorado
+      "denver": { state: "Colorado", cities: ["colorado springs", "aurora", "boulder", "fort collins", "lakewood", "pueblo"] },
+      "colorado springs": { state: "Colorado", cities: ["denver", "aurora", "boulder", "fort collins", "lakewood", "pueblo"] },
+      "aurora": { state: "Colorado", cities: ["denver", "colorado springs", "boulder", "fort collins", "lakewood"] },
+      // Connecticut
+      "hartford": { state: "Connecticut", cities: ["new haven", "stamford", "bridgeport", "waterbury", "norwalk"] },
+      // Delaware
+      "wilmington": { state: "Delaware", cities: ["dover", "newark", "middletown", "smyrna"] },
+      // Florida
+      "miami": { state: "Florida", cities: ["fort lauderdale", "orlando", "tampa", "jacksonville", "st petersburg", "hialeah"] },
+      "orlando": { state: "Florida", cities: ["miami", "fort lauderdale", "tampa", "jacksonville", "st petersburg"] },
+      "tampa": { state: "Florida", cities: ["miami", "fort lauderdale", "orlando", "jacksonville", "st petersburg"] },
+      "jacksonville": { state: "Florida", cities: ["miami", "fort lauderdale", "orlando", "tampa", "st petersburg", "tallahassee"] },
+      "fort lauderdale": { state: "Florida", cities: ["miami", "orlando", "tampa", "jacksonville", "west palm beach", "boca raton"] },
+      // Georgia
+      "atlanta": { state: "Georgia", cities: ["savannah", "augusta", "columbus", "macon", "athens", "roswell", "sandy springs"] },
+      // Hawaii
+      "honolulu": { state: "Hawaii", cities: ["pearl city", "hilo", "kailua", "kaneohe", "waipahu"] },
+      // Idaho
+      "boise": { state: "Idaho", cities: ["nampa", "meridian", "idaho falls", "pocatello", "caldwell", "twin falls"] },
+      // Illinois
+      "chicago": { state: "Illinois", cities: ["aurora", "naperville", "joliet", "rockford", "springfield", "elgin", "peoria"] },
+      // Indiana
+      "indianapolis": { state: "Indiana", cities: ["fort wayne", "evansville", "south bend", "carmel", "fishers", "bloomington"] },
+      // Iowa
+      "des moines": { state: "Iowa", cities: ["cedar rapids", "davenport", "sioux city", "iowa city", "waterloo"] },
+      // Kansas
+      "wichita": { state: "Kansas", cities: ["overland park", "kansas city", "olathe", "topeka", "lawrence"] },
+      "kansas city": { state: "Kansas", cities: ["wichita", "overland park", "olathe", "topeka", "lawrence"] },
+      // Kentucky
+      "louisville": { state: "Kentucky", cities: ["lexington", "bowling green", "owensboro", "covington", "richmond"] },
+      // Louisiana
+      "new orleans": { state: "Louisiana", cities: ["baton rouge", "shreveport", "lafayette", "lake charles", "kenner", "metairie"] },
+      // Maine
+      "portland me": { state: "Maine", cities: ["bangor", "lewiston", "auburn", "south portland", "biddeford"] },
+      // Maryland
+      "baltimore": { state: "Maryland", cities: ["columbia", "germantown", "silver spring", "waldorf", "frederick", "annapolis"] },
+      // Massachusetts
+      "boston": { state: "Massachusetts", cities: ["worcester", "springfield", "cambridge", "lowell", "brockton", "quincy"] },
+      // Michigan
+      "detroit": { state: "Michigan", cities: ["grand rapids", "warren", "sterling heights", "ann arbor", "lansing", "flint"] },
+      // Minnesota
+      "minneapolis": { state: "Minnesota", cities: ["saint paul", "rochester", "duluth", "bloomington", "brooklyn park", "plymouth"] },
+      "saint paul": { state: "Minnesota", cities: ["minneapolis", "rochester", "duluth", "bloomington", "brooklyn park"] },
+      // Mississippi
+      "jackson": { state: "Mississippi", cities: ["gulfport", "southaven", "hattiesburg", "biloxi", "meridian"] },
+      // Missouri
+      "st louis": { state: "Missouri", cities: ["kansas city", "springfield", "columbia", "independence", "jefferson city"] },
+      // Montana
+      "billings": { state: "Montana", cities: ["missoula", "great falls", "bozeman", "butte", "helena"] },
+      // Nebraska
+      "omaha": { state: "Nebraska", cities: ["lincoln", "bellevue", "grand island", "kearney", "fremont"] },
+      // Nevada
+      "las vegas": { state: "Nevada", cities: ["henderson", "reno", "north las vegas", "sparks", "carson city"] },
+      "reno": { state: "Nevada", cities: ["las vegas", "henderson", "north las vegas", "sparks", "carson city"] },
+      // New Hampshire
+      "manchester nh": { state: "New Hampshire", cities: ["nashua", "concord", "dover", "rochester", "keene"] },
+      // New Jersey
+      "newark": { state: "New Jersey", cities: ["jersey city", "paterson", "elizabeth", "trenton", "clifton", "camden"] },
+      "jersey city": { state: "New Jersey", cities: ["newark", "paterson", "elizabeth", "trenton", "clifton", "hoboken"] },
+      // New Mexico
+      "albuquerque": { state: "New Mexico", cities: ["las cruces", "rio rancho", "santa fe", "roswell", "farmington"] },
+      // New York
+      "new york": { state: "New York", cities: ["buffalo", "rochester", "yonkers", "syracuse", "albany", "brooklyn", "queens"] },
+      "buffalo": { state: "New York", cities: ["new york", "rochester", "yonkers", "syracuse", "albany"] },
+      "rochester": { state: "New York", cities: ["new york", "buffalo", "yonkers", "syracuse", "albany"] },
+      "syracuse": { state: "New York", cities: ["new york", "buffalo", "rochester", "yonkers", "albany"] },
+      // North Carolina
+      "charlotte": { state: "North Carolina", cities: ["raleigh", "greensboro", "durham", "winston-salem", "fayetteville", "asheville"] },
+      "raleigh": { state: "North Carolina", cities: ["charlotte", "greensboro", "durham", "winston-salem", "fayetteville", "cary"] },
+      // North Dakota
+      "fargo": { state: "North Dakota", cities: ["bismarck", "grand forks", "minot", "west fargo", "williston"] },
+      // Ohio
+      "columbus": { state: "Ohio", cities: ["cleveland", "cincinnati", "toledo", "akron", "dayton"] },
+      "cleveland": { state: "Ohio", cities: ["columbus", "cincinnati", "toledo", "akron", "dayton"] },
+      "cincinnati": { state: "Ohio", cities: ["columbus", "cleveland", "toledo", "akron", "dayton"] },
+      // Oklahoma
+      "oklahoma city": { state: "Oklahoma", cities: ["tulsa", "norman", "broken arrow", "edmond", "moore", "lawton"] },
+      "tulsa": { state: "Oklahoma", cities: ["oklahoma city", "norman", "broken arrow", "edmond", "moore"] },
+      // Oregon
+      "portland": { state: "Oregon", cities: ["salem", "eugene", "gresham", "hillsboro", "beaverton", "bend"] },
+      // Pennsylvania
+      "philadelphia": { state: "Pennsylvania", cities: ["pittsburgh", "allentown", "reading", "erie", "harrisburg", "scranton"] },
+      "pittsburgh": { state: "Pennsylvania", cities: ["philadelphia", "allentown", "reading", "erie", "harrisburg"] },
+      // Rhode Island
+      "providence": { state: "Rhode Island", cities: ["warwick", "cranston", "pawtucket", "east providence", "woonsocket"] },
+      // South Carolina
+      "charleston": { state: "South Carolina", cities: ["columbia", "north charleston", "greenville", "rock hill", "mount pleasant"] },
+      // South Dakota
+      "sioux falls": { state: "South Dakota", cities: ["rapid city", "aberdeen", "brookings", "watertown", "mitchell"] },
+      // Tennessee
+      "nashville": { state: "Tennessee", cities: ["memphis", "knoxville", "chattanooga", "clarksville", "murfreesboro"] },
+      "memphis": { state: "Tennessee", cities: ["nashville", "knoxville", "chattanooga", "clarksville", "murfreesboro"] },
+      // Texas
+      "houston": { state: "Texas", cities: ["dallas", "austin", "san antonio", "fort worth", "el paso", "arlington", "corpus christi"] },
+      "dallas": { state: "Texas", cities: ["houston", "austin", "san antonio", "fort worth", "el paso", "arlington", "plano"] },
+      "austin": { state: "Texas", cities: ["houston", "dallas", "san antonio", "fort worth", "el paso", "arlington"] },
+      "san antonio": { state: "Texas", cities: ["houston", "dallas", "austin", "fort worth", "el paso", "arlington", "corpus christi"] },
+      "fort worth": { state: "Texas", cities: ["houston", "dallas", "austin", "san antonio", "el paso", "arlington"] },
+      // Utah
+      "salt lake city": { state: "Utah", cities: ["provo", "west valley city", "ogden", "orem", "sandy", "layton", "st george"] },
+      // Vermont
+      "burlington": { state: "Vermont", cities: ["south burlington", "rutland", "essex", "bennington", "montpelier"] },
+      // Virginia
+      "richmond": { state: "Virginia", cities: ["virginia beach", "norfolk", "chesapeake", "arlington", "newport news", "hampton", "alexandria"] },
+      "virginia beach": { state: "Virginia", cities: ["richmond", "norfolk", "chesapeake", "arlington", "newport news", "hampton"] },
+      // Washington
+      "seattle": { state: "Washington", cities: ["spokane", "tacoma", "vancouver", "bellevue", "kent", "everett"] },
+      "spokane": { state: "Washington", cities: ["seattle", "tacoma", "vancouver", "bellevue", "kent"] },
+      "tacoma": { state: "Washington", cities: ["seattle", "spokane", "vancouver", "bellevue", "kent"] },
+      "bellevue": { state: "Washington", cities: ["seattle", "spokane", "tacoma", "vancouver", "kent"] },
+      // Washington DC
+      "washington dc": { state: "District of Columbia", cities: ["arlington", "alexandria", "silver spring", "bethesda", "tysons"] },
+      // West Virginia
+      "charleston wv": { state: "West Virginia", cities: ["huntington", "morgantown", "parkersburg", "wheeling", "weirton"] },
+      // Wisconsin
+      "milwaukee": { state: "Wisconsin", cities: ["madison", "green bay", "kenosha", "racine", "appleton", "waukesha"] },
+      // Wyoming
+      "cheyenne": { state: "Wyoming", cities: ["casper", "laramie", "gillette", "rock springs", "sheridan"] },
     };
 
     const queryDatabase = async (targetCity: string, targetCountry: string, excludeIds: string[]) => {
