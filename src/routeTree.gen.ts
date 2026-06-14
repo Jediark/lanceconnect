@@ -33,6 +33,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as R500RouteImport } from './routes/500'
 import { Route as R404RouteImport } from './routes/404'
+import { Route as R365RouteImport } from './routes/365'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FreelancersIndexRouteImport } from './routes/freelancers.index'
 import { Route as FindClientsIndexRouteImport } from './routes/find-clients.index'
@@ -60,7 +61,6 @@ import { Route as AppPipelineRouteImport } from './routes/app.pipeline'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppAiGeneratorRouteImport } from './routes/app.ai-generator'
-import { Route as App365RouteImport } from './routes/app.365'
 import { Route as AppSettingsIndexRouteImport } from './routes/app.settings.index'
 import { Route as FindClientsSkillCityRouteImport } from './routes/find-clients.$skill.$city'
 import { Route as AppSettingsSubscriptionRouteImport } from './routes/app.settings.subscription'
@@ -186,6 +186,11 @@ const R500Route = R500RouteImport.update({
 const R404Route = R404RouteImport.update({
   id: '/404',
   path: '/404',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R365Route = R365RouteImport.update({
+  id: '/365',
+  path: '/365',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -326,11 +331,6 @@ const AppAiGeneratorRoute = AppAiGeneratorRouteImport.update({
   path: '/ai-generator',
   getParentRoute: () => AppRoute,
 } as any)
-const App365Route = App365RouteImport.update({
-  id: '/365',
-  path: '/365',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -365,6 +365,7 @@ const AppSettingsDangerZoneRoute = AppSettingsDangerZoneRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/365': typeof R365Route
   '/404': typeof R404Route
   '/500': typeof R500Route
   '/about': typeof AboutRoute
@@ -389,7 +390,6 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/app/365': typeof App365Route
   '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -425,6 +425,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/365': typeof R365Route
   '/404': typeof R404Route
   '/500': typeof R500Route
   '/about': typeof AboutRoute
@@ -448,7 +449,6 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/app/365': typeof App365Route
   '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -484,6 +484,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/365': typeof R365Route
   '/404': typeof R404Route
   '/500': typeof R500Route
   '/about': typeof AboutRoute
@@ -508,7 +509,6 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/app/365': typeof App365Route
   '/app/ai-generator': typeof AppAiGeneratorRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -546,6 +546,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/365'
     | '/404'
     | '/500'
     | '/about'
@@ -570,7 +571,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/verify-email'
-    | '/app/365'
     | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
@@ -606,6 +606,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/365'
     | '/404'
     | '/500'
     | '/about'
@@ -629,7 +630,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/verify-email'
-    | '/app/365'
     | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
@@ -664,6 +664,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/365'
     | '/404'
     | '/500'
     | '/about'
@@ -688,7 +689,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/unsubscribe'
     | '/verify-email'
-    | '/app/365'
     | '/app/ai-generator'
     | '/app/dashboard'
     | '/app/discover'
@@ -725,6 +725,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R365Route: typeof R365Route
   R404Route: typeof R404Route
   R500Route: typeof R500Route
   AboutRoute: typeof AboutRoute
@@ -939,6 +940,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R404RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/365': {
+      id: '/365'
+      path: '/365'
+      fullPath: '/365'
+      preLoaderRoute: typeof R365RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -1128,13 +1136,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAiGeneratorRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/365': {
-      id: '/app/365'
-      path: '/365'
-      fullPath: '/app/365'
-      preLoaderRoute: typeof App365RouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/settings/': {
       id: '/app/settings/'
       path: '/'
@@ -1201,7 +1202,6 @@ const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
-  App365Route: typeof App365Route
   AppAiGeneratorRoute: typeof AppAiGeneratorRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
@@ -1214,7 +1214,6 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  App365Route: App365Route,
   AppAiGeneratorRoute: AppAiGeneratorRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDiscoverRoute: AppDiscoverRoute,
@@ -1230,6 +1229,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R365Route: R365Route,
   R404Route: R404Route,
   R500Route: R500Route,
   AboutRoute: AboutRoute,

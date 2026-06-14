@@ -29,6 +29,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
+import { TopNav } from "@/components/layout/TopNav";
+import { AssistantChatWidget } from "@/components/layout/AssistantChatWidget";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -43,7 +45,7 @@ import {
   Pie,
 } from "recharts";
 
-export const Route = createFileRoute("/app/365")({
+export const Route = createFileRoute("/365")({
   head: () => ({ meta: [{ title: "Admin Portal — LanceConnect" }] }),
   component: AdminDashboard,
 });
@@ -107,9 +109,13 @@ function AdminDashboard() {
 
   // Route Guard
   useEffect(() => {
-    if (!authLoading && (!currentUser || !currentUser.isAdmin)) {
-      toast.error("Access denied. Administrators only.");
-      navigate({ to: "/app/dashboard" });
+    if (!authLoading) {
+      if (!currentUser) {
+        navigate({ to: "/login" });
+      } else if (!currentUser.isAdmin) {
+        toast.error("Access denied. Administrators only.");
+        navigate({ to: "/app/dashboard" });
+      }
     }
   }, [currentUser, authLoading, navigate]);
 
@@ -465,9 +471,11 @@ function AdminDashboard() {
   }
 
   return (
-    <>
-      <Header title="Admin Portal" />
-      <div className="min-h-[calc(100vh-80px)] bg-[#070e1e] text-white flex flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
+      <TopNav />
+      <main className="flex-1 flex flex-col">
+        <Header title="Admin Portal" />
+        <div className="min-h-[calc(100vh-80px)] bg-[#070e1e] text-white flex flex-col">
         {/* Top summary banners */}
         <div className="border-b border-slate-800 bg-[#0B1220] px-4 py-6 lg:px-8">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 max-w-7xl mx-auto">
@@ -1248,7 +1256,9 @@ function AdminDashboard() {
           </div>
         </div>
       )}
-    </>
+      </main>
+      <AssistantChatWidget />
+    </div>
   );
 }
 
