@@ -533,29 +533,49 @@ Deno.serve(async (req) => {
       }
 
       const apifyKeyword = `${bType} in ${targetDistrict}, ${targetCity}, ${targetCountry}`;
-      console.log(`Invoking Apify scraper for "${apifyKeyword}"...`);
+      console.log(`Invoking Apify scraper directly for "${apifyKeyword}"...`);
 
       try {
-        let scrapeUrl = `${apifyServiceUrl}/scrape?keyword=${encodeURIComponent(apifyKeyword)}&city=${encodeURIComponent(targetCity)}&country=${encodeURIComponent(targetCountry)}&limit=10`;
-        if (lat !== null && lng !== null) {
-          scrapeUrl += `&lat=${lat}&lng=${lng}`;
-        }
-
         const apifyToken = Deno.env.get("APIFY_API_KEY_LANCECONNECT");
-        const headers: Record<string, string> = {};
-        if (apifyToken) {
-          headers["Authorization"] = `Bearer ${apifyToken}`;
+        if (!apifyToken) {
+          console.warn("APIFY_API_KEY_LANCECONNECT is not configured.");
+          return [];
         }
 
-        const scrapeRes = await fetch(scrapeUrl, {
-          method: "GET",
-          headers,
+        const apifyUrl = `https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token=${apifyToken}`;
+        
+        const actorInput = {
+          "searchString": apifyKeyword,
+          "maxCrawledPlaces": 10,
+          "proxyConfig": {
+            "useApifyProxy": true
+          }
+        };
+
+        const scrapeRes = await fetch(apifyUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(actorInput),
           signal: AbortSignal.timeout(55000),
         });
 
         if (scrapeRes.ok) {
-          const scrapedData = await scrapeRes.json();
-          const newLeads = scrapedData.leads || [];
+          const items = await scrapeRes.json();
+          const newLeads = (items || []).map((item: any) => ({
+            business_name: item.title || "",
+            business_type: item.categoryName || bType,
+            description: item.description || null,
+            full_address: item.address || null,
+            phone: item.phone || null,
+            email: item.email || null,
+            website_url: item.website || null,
+            google_place_id: item.placeId || null,
+            google_rating: item.totalScore || null,
+            google_review_count: item.reviewsCount || 0,
+            google_maps_url: item.url || null
+          }));
 
           if (newLeads.length > 0) {
             const leadsToInsert = newLeads.map((item: any) => ({
@@ -638,6 +658,10 @@ Deno.serve(async (req) => {
       "new york": ["Jersey City", "Brooklyn", "Queens", "Newark", "Philadelphia", "Boston"],
       "los angeles": ["San Diego", "San Jose", "San Francisco", "Sacramento", "Phoenix"],
       toronto: ["Mississauga", "Hamilton", "Ottawa", "Montreal", "Vancouver"],
+      atlanta: ["Marietta", "Alpharetta", "Decatur", "Sandy Springs", "Roswell", "Smyrna", "Athens"],
+      miami: ["Fort Lauderdale", "Hollywood", "Pompano Beach", "West Palm Beach", "Hialeah"],
+      chicago: ["Aurora", "Naperville", "Joliet", "Elgin", "Evanston", "Waukegan"],
+      houston: ["The Woodlands", "Sugar Land", "Katy", "Pasadena", "Pearland"],
     };
 
     const COUNTRY_CITIES_MAP: Record<string, string[]> = {
@@ -652,6 +676,9 @@ Deno.serve(async (req) => {
       "canada": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa", "Edmonton"],
       "australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
       "uae": ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah"],
+      "united states": ["New York", "Houston", "Chicago", "Seattle", "Miami", "Atlanta", "Los Angeles", "Boston", "Dallas", "San Francisco"],
+      "usa": ["New York", "Houston", "Chicago", "Seattle", "Miami", "Atlanta", "Los Angeles", "Boston", "Dallas", "San Francisco"],
+      "us": ["New York", "Houston", "Chicago", "Seattle", "Miami", "Atlanta", "Los Angeles", "Boston", "Dallas", "San Francisco"],
     };
 
     const US_STATE_CITIES: Record<string, { state: string, cities: string[] }> = {

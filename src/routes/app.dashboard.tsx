@@ -521,6 +521,19 @@ function Dashboard() {
       cairo: { lat: 30.0444, lon: 31.2357 },
       dubai: { lat: 25.2048, lon: 55.2708 },
       seattle: { lat: 47.6062, lon: -122.3321 },
+      atlanta: { lat: 33.7490, lon: -84.3880 },
+      dallas: { lat: 32.7767, lon: -96.7970 },
+      boston: { lat: 42.3601, lon: -71.0589 },
+      chicago: { lat: 41.8781, lon: -87.6298 },
+      miami: { lat: 25.7617, lon: -80.1918 },
+      houston: { lat: 29.7604, lon: -95.3698 },
+      philadelphia: { lat: 39.9526, lon: -75.1652 },
+      denver: { lat: 39.7392, lon: -104.9903 },
+      phoenix: { lat: 33.4484, lon: -112.0740 },
+      lasvegas: { lat: 36.1716, lon: -115.1398 },
+      washington: { lat: 38.9072, lon: -77.0369 },
+      austin: { lat: 30.2672, lon: -97.7431 },
+      sanfrancisco: { lat: 37.7749, lon: -122.4194 },
     };
 
     const result = Array.from(map.values());
@@ -563,16 +576,18 @@ function Dashboard() {
         const category = searchParams.get("category") || "";
         const city = searchParams.get("city") || "";
         const country = searchParams.get("country") || "";
+        const niche = searchParams.get("niche") || "";
         
         sessionStorage.setItem("lc_shared_category", category);
         sessionStorage.setItem("lc_shared_city", city);
         sessionStorage.setItem("lc_shared_country", country);
+        sessionStorage.setItem("lc_shared_niche", niche);
         sessionStorage.setItem("lc_shared_has_session", "true");
         
         toast.info("Scanned lead parameters synced! Routing to discover...");
         
         setTimeout(() => {
-          window.location.href = `/app/discover?autoSearch=true&category=${category}&city=${city}&country=${country}`;
+          window.location.href = `/app/discover?autoSearch=true&category=${category}&city=${city}&country=${country}&niche=${niche}`;
         }, 1200);
         return;
       }

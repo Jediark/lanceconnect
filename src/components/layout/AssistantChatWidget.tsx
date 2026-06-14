@@ -15,6 +15,7 @@ interface Message {
 
 interface Slots {
   category: string | null;
+  skills: string | null;
   location: string | null;
   budget: string | null;
   experience_level: string | null;
@@ -22,6 +23,7 @@ interface Slots {
 
 const INITIAL_SLOTS: Slots = {
   category: null,
+  skills: null,
   location: null,
   budget: null,
   experience_level: null,
@@ -435,23 +437,38 @@ function resolveCountryFromCity(city: string | null): string {
   return "Nigeria";
 }
 
-const OPENING_TEXT = `Hey there 👋 I'm the LanceConnect Assistant — here to help you find real clients, fast, with zero bidding wars and zero platform commissions.
+const OPENING_TEXTS = [
+  `Hey there 👋 I'm the LanceConnect Assistant — here to help you find real clients, fast, with zero bidding wars and zero platform commissions.
 
 LanceConnect connects freelancers directly with local and global clients across every category — web development, design, writing, virtual assistance, pet care, home services, and more.
 
 To get you matched with the right opportunities, I just need a few quick details:
 
 1. What type of work do you do (your category/service)?
-2. Where are you (or your clients) located?
-3. What's your target budget or rate?
-4. What's your experience level?
+2. What are your specific skills, niches, or tools?
+3. Where are you (or your clients) located?
+4. What's your target budget or rate?
+5. What's your experience level?
 
-Let's start — what's your main service or specialty?`;
+Let's start — what's your main service or specialty?`,
+
+  `Hi! I'm your LanceConnect AI Assistant 🤖 I help freelancers and agencies crawl the web to discover active, direct-client leads without paying platform fees.
+
+To set up a custom scan matching your target market, I just need a few quick details about your services.
+
+What is your primary freelance specialty or category?`,
+
+  `Welcome to LanceConnect! 🚀 I'm here to build your personalized pipeline of direct-contact leads. No commissions, no middle-men.
+
+Let's customize your client search parameters.
+
+To start, what service or category best describes your freelance work?`
+];
 
 const OPENING_MESSAGE: Message = {
   id: "opening",
   sender: "assistant",
-  text: OPENING_TEXT,
+  text: OPENING_TEXTS[0],
   timestamp: new Date(),
   quickReplies: [
     "Web Development",
@@ -1594,6 +1611,12 @@ const CATEGORY_PROMPTS = [
   "What's your main service or specialty? (Select a category below)"
 ];
 
+const SKILLS_PROMPTS = [
+  "What specific skills, tools, or niches do you specialize in? (e.g. React, UI/UX, SEO writing, translation, pet sitting, etc.)",
+  "Got it. What are your core skills, tools, or specific services? (e.g. WordPress, copywriting, branding, social media, etc.)",
+  "Awesome specialty. To help me narrow down, what specific tools or skills do you use? (e.g. Figma, Python, content marketing, etc.)"
+];
+
 const LOCATION_PROMPTS = [
   "Where are you (or your clients) located? Please type a city name (e.g. Lagos, London, or Austin).",
   "Got it. What's your target city or service area? (e.g., Lagos, London, or Austin)",
@@ -1614,7 +1637,7 @@ const EXPERIENCE_PROMPTS = [
 
 export function AssistantChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([OPENING_MESSAGE]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [slots, setSlots] = useState<Slots>(INITIAL_SLOTS);
@@ -1623,6 +1646,7 @@ export function AssistantChatWidget() {
 
   const promptIndices = useRef({
     category: 0,
+    skills: 0,
     location: 0,
     budget: 0,
     experience_level: 0,
@@ -1631,15 +1655,38 @@ export function AssistantChatWidget() {
   const randomizePrompts = () => {
     promptIndices.current = {
       category: Math.floor(Math.random() * CATEGORY_PROMPTS.length),
+      skills: Math.floor(Math.random() * SKILLS_PROMPTS.length),
       location: Math.floor(Math.random() * LOCATION_PROMPTS.length),
       budget: Math.floor(Math.random() * BUDGET_PROMPTS.length),
       experience_level: Math.floor(Math.random() * EXPERIENCE_PROMPTS.length),
     };
   };
 
+  // Set randomized opener on mount
+  useEffect(() => {
+    const randomOpener = OPENING_TEXTS[Math.floor(Math.random() * OPENING_TEXTS.length)];
+    setMessages([
+      {
+        id: "opening",
+        sender: "assistant",
+        text: randomOpener,
+        timestamp: new Date(),
+        quickReplies: [
+          "Web Development",
+          "Graphic Design",
+          "Virtual Assistant",
+          "Content Writing",
+          "Pet Care",
+          "Something Else",
+        ],
+      },
+    ]);
+    randomizePrompts();
+  }, []);
+
   // Auto-save slots to localStorage on change
   useEffect(() => {
-    if (slots.category || slots.location || slots.budget || slots.experience_level) {
+    if (slots.category || slots.skills || slots.location || slots.budget || slots.experience_level) {
       localStorage.setItem("lc_chat_slots", JSON.stringify(slots));
     }
   }, [slots]);
@@ -1736,6 +1783,8 @@ export function AssistantChatWidget() {
       if (lower !== "something else") {
         parsed.category = text;
       }
+    } else if (expectedSlot === "skills" && !parsed.skills) {
+      parsed.skills = text;
     } else if (expectedSlot === "location" && !parsed.location) {
       parsed.location = normalizeLocation(text);
     } else if (expectedSlot === "budget" && !parsed.budget) {
@@ -1763,6 +1812,11 @@ export function AssistantChatWidget() {
         ],
       };
     }
+    if (!currentSlots.skills) {
+      return {
+        text: SKILLS_PROMPTS[promptIndices.current.skills],
+      };
+    }
     if (!currentSlots.location) {
       return {
         text: LOCATION_PROMPTS[promptIndices.current.location],
@@ -1783,6 +1837,7 @@ export function AssistantChatWidget() {
     const summaryText = `Perfect — here's what I've got:
 
 📂 Category: ${currentSlots.category}
+🛠️ Skills/Niche: ${currentSlots.skills}
 📍 Location: ${currentSlots.location}
 💰 Target Budget: ${currentSlots.budget}
 ⭐ Experience Level: ${currentSlots.experience_level}
@@ -1819,6 +1874,21 @@ I'll plug this into your search so you can start finding real, contactable leads
           text: "What type of work do you do (your category or specialty)?",
           timestamp: new Date(),
           quickReplies: ["Web Development", "Graphic Design", "Virtual Assistant", "Content Writing", "Something Else"],
+        },
+      ]);
+      return;
+    }
+
+    if (text === "Skills") {
+      setSlots(prev => ({ ...prev, skills: null }));
+      setCurrentUnfilledSlot("skills");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          sender: "assistant",
+          text: "What specific skills or technologies do you specialize in?",
+          timestamp: new Date(),
         },
       ]);
       return;
@@ -1936,10 +2006,12 @@ I'll plug this into your search so you can start finding real, contactable leads
       const catId = getCategoryParam(slots.category);
       const cityVal = slots.location || "";
       const countryVal = resolveCountryFromCity(cityVal);
+      const nicheVal = slots.skills || "";
 
       sessionStorage.setItem("lc_shared_category", catId);
       sessionStorage.setItem("lc_shared_city", cityVal);
       sessionStorage.setItem("lc_shared_country", countryVal);
+      sessionStorage.setItem("lc_shared_niche", nicheVal);
       sessionStorage.setItem("lc_shared_has_session", "true");
 
       setMessages((prev) => [
@@ -1969,6 +2041,7 @@ I'll plug this into your search so you can start finding real, contactable leads
             category: catId,
             city: cityVal,
             country: countryVal,
+            niche: nicheVal,
           });
           window.location.href = `/app/dashboard?${queryParams.toString()}`;
         }, 800);
@@ -1993,6 +2066,10 @@ I'll plug this into your search so you can start finding real, contactable leads
         setCurrentUnfilledSlot("category");
         botText = "No problem! Let's update your service category. What type of work do you do?";
         botQuickReplies = ["Web Development", "Graphic Design", "Virtual Assistant", "Content Writing", "Something Else"];
+      } else if (lowerText.includes("skill") || lowerText.includes("niche") || lowerText.includes("tool")) {
+        newSlots.skills = null;
+        setCurrentUnfilledSlot("skills");
+        botText = "No problem! Let's update your skills. What specific skills or niches do you specialize in?";
       } else if (lowerText.includes("location") || lowerText.includes("city") || lowerText.includes("place") || lowerText.includes("where") || lowerText.includes("area")) {
         newSlots.location = null;
         setCurrentUnfilledSlot("location");
@@ -2008,7 +2085,7 @@ I'll plug this into your search so you can start finding real, contactable leads
         botQuickReplies = ["Beginner", "Intermediate", "Expert"];
       } else {
         botText = "Sure, let's edit your search criteria. Which part would you like to update?";
-        botQuickReplies = ["Category", "Location", "Budget", "Experience", "Reset All"];
+        botQuickReplies = ["Category", "Skills", "Location", "Budget", "Experience", "Reset All"];
       }
 
       setSlots(newSlots);
@@ -2039,7 +2116,7 @@ I'll plug this into your search so you can start finding real, contactable leads
     }
 
     // ── INTERCEPT AFFIRMATIONS / NEGATIONS ─────────────────────────────────
-    const allSlotsFilled = slots.category && slots.location && slots.budget && slots.experience_level;
+    const allSlotsFilled = slots.category && slots.skills && slots.location && slots.budget && slots.experience_level;
     const isAffirmation = AFFIRMATION_KEYWORDS.some(k => lowerText === k || lowerText.startsWith(k + " ") || lowerText.endsWith(" " + k));
     const isNegation = NEGATION_KEYWORDS.some(k => lowerText === k || lowerText.startsWith(k + " ") || lowerText.endsWith(" " + k) || lowerText.includes(" " + k + " "));
 
@@ -2059,7 +2136,21 @@ I'll plug this into your search so you can start finding real, contactable leads
         let botQuickReplies: string[] | undefined = undefined;
         const newSlots = { ...slots };
 
-        if (currentUnfilledSlot === "budget") {
+        if (currentUnfilledSlot === "skills") {
+          newSlots.skills = "General";
+          const nextPrompt = getBotPromptForNextSlot({ ...newSlots, skills: "General" });
+          botText = `No problem, we'll keep it general.\n\n${nextPrompt.text}`;
+          botQuickReplies = nextPrompt.quickReplies;
+          setSlots(newSlots);
+          setCurrentUnfilledSlot("location");
+        } else if (currentUnfilledSlot === "location") {
+          newSlots.location = "Remote";
+          const nextPrompt = getBotPromptForNextSlot({ ...newSlots, location: "Remote" });
+          botText = `Got it, we will search for remote opportunities.\n\n${nextPrompt.text}`;
+          botQuickReplies = nextPrompt.quickReplies;
+          setSlots(newSlots);
+          setCurrentUnfilledSlot("budget");
+        } else if (currentUnfilledSlot === "budget") {
           newSlots.budget = "Flexible";
           const nextPrompt = getBotPromptForNextSlot({ ...newSlots, budget: "Flexible" });
           botText = `No problem, we'll keep the budget flexible.\n\n${nextPrompt.text}`;
@@ -2073,13 +2164,6 @@ I'll plug this into your search so you can start finding real, contactable leads
           botQuickReplies = nextPrompt.quickReplies;
           setSlots(newSlots);
           setCurrentUnfilledSlot(null);
-        } else if (currentUnfilledSlot === "location") {
-          newSlots.location = "Remote";
-          const nextPrompt = getBotPromptForNextSlot({ ...newSlots, location: "Remote" });
-          botText = `Got it, we will search for remote opportunities.\n\n${nextPrompt.text}`;
-          botQuickReplies = nextPrompt.quickReplies;
-          setSlots(newSlots);
-          setCurrentUnfilledSlot("budget");
         } else {
           botText = "No problem. Let's try again. What is your primary service or specialty?";
           botQuickReplies = ["Web Development", "Graphic Design", "Virtual Assistant", "Content Writing", "Something Else"];
@@ -2153,6 +2237,7 @@ I'll plug this into your search so you can start finding real, contactable leads
 
       let nextSlot: keyof Slots | null = null;
       if (!newSlots.category) nextSlot = "category";
+      else if (!newSlots.skills) nextSlot = "skills";
       else if (!newSlots.location) nextSlot = "location";
       else if (!newSlots.budget) nextSlot = "budget";
       else if (!newSlots.experience_level) nextSlot = "experience_level";

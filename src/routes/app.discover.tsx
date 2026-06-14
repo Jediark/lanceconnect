@@ -86,12 +86,14 @@ function Discover() {
       const savedCategory = sessionStorage.getItem("lc_shared_category");
       const savedCountry = sessionStorage.getItem("lc_shared_country");
       const savedCity = sessionStorage.getItem("lc_shared_city");
+      const savedNiche = sessionStorage.getItem("lc_shared_niche");
       const savedResults = sessionStorage.getItem("lc_shared_results");
       const savedOnlineJobs = sessionStorage.getItem("lc_shared_online_jobs");
 
       if (savedCategory) setCategory(savedCategory);
       if (savedCountry) setCountry(savedCountry);
       if (savedCity) setCity(savedCity);
+      if (savedNiche) setSelectedNiche(savedNiche);
       if (savedResults) {
         try {
           setResults(JSON.parse(savedResults));
@@ -115,8 +117,9 @@ function Discover() {
       sessionStorage.setItem("lc_shared_category", category);
       sessionStorage.setItem("lc_shared_country", country);
       sessionStorage.setItem("lc_shared_city", city);
+      sessionStorage.setItem("lc_shared_niche", selectedNiche);
     }
-  }, [category, country, city, isMounted]);
+  }, [category, country, city, selectedNiche, isMounted]);
 
   useEffect(() => {
     if (isMounted && typeof window !== "undefined") {
@@ -267,16 +270,18 @@ function Discover() {
       const categoryParam = params.get("category") || "";
       const cityParam = params.get("city") || "";
       const countryParam = params.get("country") || "";
+      const nicheParam = params.get("niche") || "";
       if (categoryParam && cityParam) {
         setCategory(categoryParam);
         setCity(cityParam);
         setCountry(countryParam);
+        setSelectedNiche(nicheParam);
         handleSearch({
           category: categoryParam,
           country: countryParam,
           city: cityParam,
           product: "",
-          niche: "",
+          niche: nicheParam,
         });
         return;
       }
