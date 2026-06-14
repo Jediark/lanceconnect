@@ -152,25 +152,25 @@ export function OutreachPreview({
   // LinkedIn Style
   if (channel === "linkedin") {
     return (
-      <div className="w-full rounded-xl overflow-hidden border border-slate-700 bg-slate-900 font-sans text-left shadow-lg">
+      <div className="w-full rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 font-sans text-left shadow-lg">
         {/* LinkedIn Header */}
         <div className="bg-[#0a66c2] px-3.5 py-2.5 flex items-center gap-2">
           <span className="text-white font-bold text-xs uppercase tracking-wide">💬 LinkedIn Message</span>
         </div>
 
         {/* LinkedIn Chat Area */}
-        <div className="p-4 bg-slate-950 flex flex-col gap-2 min-h-[140px]">
+        <div className="p-4 bg-white dark:bg-slate-950 flex flex-col gap-2 min-h-[140px]">
           <div className="flex gap-2.5 max-w-[85%]">
-            <div className="h-7 w-7 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold text-[10px] shrink-0 mt-1">
+            <div className="h-7 w-7 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-800 dark:text-white font-bold text-[10px] shrink-0 mt-1">
               IN
             </div>
-            <div className="bg-slate-800 text-slate-200 p-3 rounded-xl rounded-tl-none shadow-sm flex flex-col w-full">
+            <div className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-3 rounded-xl rounded-tl-none shadow-sm flex flex-col w-full border border-slate-200 dark:border-slate-700/50">
               <textarea
                 value={cleanDisplayValue(value || placeholder)}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
                 rows={5}
-                className="w-full bg-transparent border-none outline-none resize-none text-[11px] font-sans p-0 m-0 leading-relaxed text-slate-200 placeholder-slate-500 focus:ring-0"
+                className="w-full bg-transparent border-none outline-none resize-none text-[11px] font-sans p-0 m-0 leading-relaxed text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-0"
               />
             </div>
           </div>
@@ -181,8 +181,8 @@ export function OutreachPreview({
 
   // Phone Script & Fallback Style
   return (
-    <div className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-[#241d0f] dark:bg-slate-950 p-4 font-mono text-left shadow-inner flex flex-col gap-2">
-      <div className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest border-b border-amber-500/20 pb-2 mb-1">
+    <div className="w-full rounded-xl border border-amber-200/50 dark:border-slate-700 bg-amber-50/20 dark:bg-slate-950 p-4 font-mono text-left shadow-inner flex flex-col gap-2">
+      <div className="text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-widest border-b border-amber-500/20 pb-2 mb-1">
         📞 Spoken Phone Script / Notes
       </div>
       <textarea
@@ -190,7 +190,7 @@ export function OutreachPreview({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={10}
-        className="w-full bg-transparent border-none outline-none resize-none text-[11px] leading-relaxed text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-0"
+        className="w-full bg-transparent border-none outline-none resize-none text-[11px] leading-relaxed text-slate-850 dark:text-slate-200 placeholder-slate-400 focus:ring-0"
       />
     </div>
   );

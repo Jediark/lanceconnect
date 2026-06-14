@@ -554,6 +554,30 @@ function Dashboard() {
 
   useEffect(() => {
     if (!isMounted || !user) return;
+
+    // Check if redirecting from chatbot search run
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const runSearchParam = searchParams.get("runSearch");
+      if (runSearchParam === "true") {
+        const category = searchParams.get("category") || "";
+        const city = searchParams.get("city") || "";
+        const country = searchParams.get("country") || "";
+        
+        sessionStorage.setItem("lc_shared_category", category);
+        sessionStorage.setItem("lc_shared_city", city);
+        sessionStorage.setItem("lc_shared_country", country);
+        sessionStorage.setItem("lc_shared_has_session", "true");
+        
+        toast.info("Scanned lead parameters synced! Routing to discover...");
+        
+        setTimeout(() => {
+          window.location.href = `/app/discover?autoSearch=true&category=${category}&city=${city}&country=${country}`;
+        }, 1200);
+        return;
+      }
+    }
+
     setLoading(true);
 
     // Prefill search parameters from user profile only if there is no session-saved search
@@ -1882,12 +1906,11 @@ function Dashboard() {
       {/* ═══ DETAIL MODAL ═══ */}
       {detail && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 dark:bg-black/85 backdrop-blur-sm"
           onClick={() => setDetail(null)}
         >
-          <div className="absolute inset-0 bg-slate-950/85" />
           <div
-            className="relative w-full max-w-md rounded-2xl border border-border bg-[#0B1220] animate-in fade-in zoom-in-95 duration-200 text-foreground shadow-2xl flex flex-col max-h-[85vh]"
+            className="relative w-full max-w-md rounded-2xl border border-border bg-card animate-in fade-in zoom-in-95 duration-200 text-foreground shadow-2xl flex flex-col max-h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -1927,7 +1950,7 @@ function Dashboard() {
                     <span className="text-[8px] text-muted-foreground truncate max-w-full mt-1 font-mono">{detail.phone}</span>
                   </button>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-slate-900/40 text-muted-foreground opacity-50 select-none">
                     <Phone className="h-4 w-4 mb-1.5" />
                     <span className="text-[10px] font-bold">No Phone</span>
                   </div>
@@ -1956,7 +1979,7 @@ function Dashboard() {
                     <span className="text-[10px] font-bold">{enriching ? "Finding..." : "Find Email"}</span>
                   </button>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-slate-900/40 text-muted-foreground opacity-50 select-none">
                     <Mail className="h-4 w-4 mb-1.5" />
                     <span className="text-[10px] font-bold">No Email</span>
                   </div>
@@ -1974,7 +1997,7 @@ function Dashboard() {
                     <span className="text-[8px] text-muted-foreground truncate max-w-full mt-1 block">{detail.websiteUrl.replace(/https?:\/\/(www\.)?/, "")}</span>
                   </a>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-slate-900/40 text-muted-foreground opacity-50 select-none">
                     <Globe className="h-4 w-4 mb-1.5" />
                     <span className="text-[10px] font-bold">No Site</span>
                   </div>
@@ -1982,7 +2005,7 @@ function Dashboard() {
               </div>
 
               {/* Address details */}
-              <div className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2 bg-slate-950/40 p-3 rounded-xl border border-border/50">
+              <div className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2 bg-muted/30 dark:bg-slate-950/40 p-3 rounded-xl border border-border/50">
                 <MapPin className="h-4 w-4 text-muted-foreground/80 shrink-0 mt-0.5" />
                 <span>{detail.fullAddress || `${detail.city}, ${detail.country}`}</span>
               </div>
@@ -2082,7 +2105,7 @@ function Dashboard() {
                       {timeline.map((item, index) => (
                         <div key={index} className="relative">
                           {/* Timeline node dot */}
-                          <span className={`absolute -left-[21px] top-1.5 flex h-2.5 w-2.5 rounded-full border-2 border-[#0B1220] ${
+                          <span className={`absolute -left-[21px] top-1.5 flex h-2.5 w-2.5 rounded-full border-2 border-card ${
                             item.type === "milestone" 
                               ? "bg-emerald-500 ring-2 ring-emerald-500/20" 
                               : item.type === "outreach"
@@ -2217,7 +2240,7 @@ function Dashboard() {
             </div>
 
             {/* Footer Buttons */}
-            <div className="p-6 border-t border-border bg-[#070e1e] flex flex-col gap-3">
+            <div className="p-6 border-t border-border bg-muted/10 dark:bg-[#070e1e]/20 flex flex-col gap-3">
               <div className="flex gap-2">
                 {savedIds.has(detail.id) ? (
                   <>

@@ -1588,6 +1588,30 @@ function findBestMatchedIntent(text: string): IntentExample | null {
   return null;
 }
 
+const CATEGORY_PROMPTS = [
+  "What type of work do you do (your category/service)?",
+  "To get started, what is your primary freelance skill or service category?",
+  "What's your main service or specialty? (Select a category below)"
+];
+
+const LOCATION_PROMPTS = [
+  "Where are you (or your clients) located? Please type a city name (e.g. Lagos, London, or Austin).",
+  "Got it. What's your target city or service area? (e.g., Lagos, London, or Austin)",
+  "Excellent. What city should we focus the search on? Please type a city name."
+];
+
+const BUDGET_PROMPTS = [
+  "What's your target budget or rate? (e.g. $50/hr or $2,000 project budget)",
+  "What is your target hourly rate or project budget?",
+  "Got it. What kind of rate or project size are you aiming for?"
+];
+
+const EXPERIENCE_PROMPTS = [
+  "What's your experience level?",
+  "How would you describe your experience level in this field?",
+  "And how long have you been doing this? (Select your level below)"
+];
+
 export function AssistantChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([OPENING_MESSAGE]);
@@ -1597,12 +1621,32 @@ export function AssistantChatWidget() {
   const [currentUnfilledSlot, setCurrentUnfilledSlot] = useState<keyof Slots | null>("category");
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const promptIndices = useRef({
+    category: 0,
+    location: 0,
+    budget: 0,
+    experience_level: 0,
+  });
+
+  const randomizePrompts = () => {
+    promptIndices.current = {
+      category: Math.floor(Math.random() * CATEGORY_PROMPTS.length),
+      location: Math.floor(Math.random() * LOCATION_PROMPTS.length),
+      budget: Math.floor(Math.random() * BUDGET_PROMPTS.length),
+      experience_level: Math.floor(Math.random() * EXPERIENCE_PROMPTS.length),
+    };
+  };
+
   // Auto-save slots to localStorage on change
   useEffect(() => {
     if (slots.category || slots.location || slots.budget || slots.experience_level) {
       localStorage.setItem("lc_chat_slots", JSON.stringify(slots));
     }
   }, [slots]);
+
+  useEffect(() => {
+    randomizePrompts();
+  }, [isOpen]);
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -1708,7 +1752,7 @@ export function AssistantChatWidget() {
   ): { text: string; quickReplies?: string[] } => {
     if (!currentSlots.category) {
       return {
-        text: "What type of work do you do (your category or specialty)?",
+        text: CATEGORY_PROMPTS[promptIndices.current.category],
         quickReplies: [
           "Web Development",
           "Graphic Design",
@@ -1721,17 +1765,17 @@ export function AssistantChatWidget() {
     }
     if (!currentSlots.location) {
       return {
-        text: "Where are you (or your clients) located? Please type a city name (e.g. Lagos, London, or Austin).",
+        text: LOCATION_PROMPTS[promptIndices.current.location],
       };
     }
     if (!currentSlots.budget) {
       return {
-        text: "What's your target budget or rate? (e.g. $50/hr or $2,000 project budget)",
+        text: BUDGET_PROMPTS[promptIndices.current.budget],
       };
     }
     if (!currentSlots.experience_level) {
       return {
-        text: "What's your experience level?",
+        text: EXPERIENCE_PROMPTS[promptIndices.current.experience_level],
         quickReplies: ["Beginner", "Intermediate", "Expert"],
       };
     }
@@ -1921,12 +1965,12 @@ I'll plug this into your search so you can start finding real, contactable leads
         ]);
         setTimeout(() => {
           const queryParams = new URLSearchParams({
-            autoSearch: "true",
+            runSearch: "true",
             category: catId,
             city: cityVal,
             country: countryVal,
           });
-          window.location.href = `/app/discover?${queryParams.toString()}`;
+          window.location.href = `/app/dashboard?${queryParams.toString()}`;
         }, 800);
       }, 1000);
       return;
