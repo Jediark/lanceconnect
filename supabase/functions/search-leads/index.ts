@@ -275,7 +275,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { city, country, limit, product, niche } = parsed.data;
+    const { city, country, limit, product, niche, seen_lead_ids } = parsed.data;
     const query = parsed.data.query || parsed.data.category || "";
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -370,14 +370,16 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 1. Get seen leads to exclude (Only dismissed ones)
+    // 1. Get seen leads to exclude (dismissed & viewed ones)
     const { data: seenLeads } = await supabase
       .from('user_seen_leads')
       .select('lead_id')
       .eq('user_id', user.id)
-      .eq('action', 'dismissed');
+      .in('action', ['dismissed', 'viewed']);
 
-    const seenIds = seenLeads?.map((s: any) => s.lead_id) || [];
+    const dbSeenIds = seenLeads?.map((s: any) => s.lead_id) || [];
+    const clientSeenIds = seen_lead_ids || [];
+    const seenIds = [...new Set([...dbSeenIds, ...clientSeenIds])];
 
     // 2. Geographic & Niche Rotation
     const districts = getSearchDistricts(city);
@@ -458,13 +460,21 @@ Deno.serve(async (req) => {
 
     const state = await getPaginationState(supabase, user.id, fingerprint);
 
-    // Main database query excluding dismissed seen leads
+    // Main database query excluding dismissed/viewed seen leads
     let dbQuery = supabase
       .from('leads')
       .select('*', { count: 'exact' })
       .eq('industry', query)
       .ilike('city', `%${city}%`)
       .eq('is_active', true);
+
+    if (searchKeyword) {
+      dbQuery = dbQuery.or(`business_type.ilike.%${searchKeyword}%,business_name.ilike.%${searchKeyword}%,description.ilike.%${searchKeyword}%`);
+    }
+
+    if (districts.length > 1 && searchDistrict) {
+      dbQuery = dbQuery.or(`district.ilike.%${searchDistrict}%,full_address.ilike.%${searchDistrict}%`);
+    }
 
     if (seenIds.length > 0) {
       dbQuery = dbQuery.not('id', 'in', `(${seenIds.join(',')})`);
@@ -492,6 +502,14 @@ Deno.serve(async (req) => {
         .eq('industry', query)
         .ilike('city', `%${city}%`)
         .eq('is_active', true);
+
+      if (searchKeyword) {
+        fallbackQuery = fallbackQuery.or(`business_type.ilike.%${searchKeyword}%,business_name.ilike.%${searchKeyword}%,description.ilike.%${searchKeyword}%`);
+      }
+
+      if (districts.length > 1 && searchDistrict) {
+        fallbackQuery = fallbackQuery.or(`district.ilike.%${searchDistrict}%,full_address.ilike.%${searchDistrict}%`);
+      }
 
       if (seenIds.length > 0) {
         fallbackQuery = fallbackQuery.not('id', 'in', `(${seenIds.join(',')})`);
@@ -1120,6 +1138,10 @@ Deno.serve(async (req) => {
         .eq("industry", query)
         .gt("cache_expires_at", new Date().toISOString());
 
+      if (searchKeyword) {
+        qb = qb.or(`business_type.ilike.%${searchKeyword}%,business_name.ilike.%${searchKeyword}%,description.ilike.%${searchKeyword}%`);
+      }
+
       if (excludeIds.length > 0) {
         qb = qb.not("id", "in", `(${excludeIds.join(",")})`);
       }
@@ -1159,7 +1181,7 @@ Deno.serve(async (req) => {
     // If still fewer than 6, scrape target city district live
     if (results.length < 6) {
       console.log(`Cache query yielded fewer than 6 results (${results.length}). Scraping target city live...`);
-      const scraped = await scrapeLiveLeads(city, country, searchDistrict, businessType);
+      const scraped = await scrapeLiveLeads(city, country, searchDistrict, searchKeyword);
       const unseenScraped = scraped.filter(l => !seenIds.includes(l.id) && !results.some(r => r.id === l.id));
       results = [...results, ...unseenScraped];
     }
