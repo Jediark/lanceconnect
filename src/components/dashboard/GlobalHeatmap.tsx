@@ -94,6 +94,7 @@ export function GlobalHeatmap({
   const [newCityKey, setNewCityKey] = useState<string | null>(null);
   const prevRegionsRef = useRef<string[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   // Zoom & Pan states
   const [zoom, setZoom] = useState(1);
@@ -101,6 +102,11 @@ export function GlobalHeatmap({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+
+  // Mobile & Transition states
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const dragDistance = useRef(0);
 
   // Mobile Pinch states
   const [touchStartDist, setTouchStartDist] = useState(0);
@@ -125,6 +131,16 @@ export function GlobalHeatmap({
     }
   }, []);
 
+  // Responsive mobile listener
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   // Filter out invalid/empty entries and deduplicate
   const validRegions = regions.filter((r) => r.city && r.city.trim() !== "");
   const uniqueRegions = Array.from(
@@ -135,6 +151,39 @@ export function GlobalHeatmap({
       ]),
     ).values(),
   );
+
+  // Helper to project coordinates dynamically
+  const getRegionCoords = (reg: RegionItem) => {
+    const cityNameOnly = reg.city.split(",")[0].trim();
+    const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
+
+    let leftPercent = 50;
+    let topPercent = 50;
+
+    if (reg.lat && reg.lng) {
+      leftPercent = ((reg.lng + 180) / 360) * 100;
+      topPercent = ((90 - reg.lat) / 180) * 100;
+    } else {
+      const dbItem = CITY_DB[key] || resolvedCoords[key];
+      if (dbItem) {
+        leftPercent = ((dbItem.lon + 180) / 360) * 100;
+        topPercent = ((90 - dbItem.lat) / 180) * 100;
+      } else {
+        let hash = 0;
+        for (let i = 0; i < reg.city.length; i++) {
+          hash = reg.city.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        topPercent = Math.abs(Math.sin(hash)) * 50 + 20;
+        leftPercent = Math.abs(Math.cos(hash)) * 70 + 15;
+      }
+    }
+    return {
+      leftPercent,
+      topPercent,
+      left: `${leftPercent.toFixed(2)}%`,
+      top: `${topPercent.toFixed(2)}%`,
+    };
+  };
 
   // Animate new markers dropping in
   useEffect(() => {
@@ -217,7 +266,7 @@ export function GlobalHeatmap({
 
   // Scroll to Zoom wheel handler
   useEffect(() => {
-    const container = document.getElementById("heatmap-viewport");
+    const container = viewportRef.current || document.getElementById("heatmap-viewport");
     if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
@@ -229,7 +278,7 @@ export function GlobalHeatmap({
 
       const zoomFactor = 1.15;
       const nextZoom =
-        e.deltaY < 0 ? Math.min(6, zoom * zoomFactor) : Math.max(1, zoom / zoomFactor);
+        e.deltaY < 0 ? Math.min(12, zoom * zoomFactor) : Math.max(1, zoom / zoomFactor);
 
       if (nextZoom === zoom) return;
 
@@ -246,6 +295,7 @@ export function GlobalHeatmap({
       const minY = H * (1 - nextZoom);
       const maxY = 0;
 
+      setIsTransitioning(false);
       setZoom(nextZoom);
       setPan({
         x: Math.max(minX, Math.min(maxX, newPanX)),
@@ -272,9 +322,11 @@ export function GlobalHeatmap({
       return;
     }
 
+    setIsTransitioning(false);
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
     setPanStart({ x: pan.x, y: pan.y });
+    dragDistance.current = 0;
     e.preventDefault();
   };
 
@@ -283,8 +335,9 @@ export function GlobalHeatmap({
 
     const dx = e.clientX - dragStart.x;
     const dy = e.clientY - dragStart.y;
+    dragDistance.current = Math.sqrt(dx * dx + dy * dy);
 
-    const container = document.getElementById("heatmap-viewport");
+    const container = viewportRef.current || document.getElementById("heatmap-viewport");
     if (container) {
       const W = container.offsetWidth;
       const H = container.offsetHeight;
@@ -301,8 +354,21 @@ export function GlobalHeatmap({
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent) => {
     setIsDragging(false);
+    
+    // Tap outside detection
+    if (dragDistance.current < 5) {
+      const target = e.target as HTMLElement;
+      if (
+        !target.closest("button") &&
+        !target.closest(".info-card") &&
+        !target.closest(".region-dropdown") &&
+        !target.closest(".lc-marker-container")
+      ) {
+        setSelectedRegion(null);
+      }
+    }
   };
 
   // Mobile Touch Pan / Pinch Zoom handlers
@@ -316,10 +382,12 @@ export function GlobalHeatmap({
       return;
     }
 
+    setIsTransitioning(false);
     if (e.touches.length === 1) {
       setIsDragging(true);
       setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
       setPanStart({ x: pan.x, y: pan.y });
+      dragDistance.current = 0;
     } else if (e.touches.length === 2) {
       setIsDragging(false);
       const dist = Math.hypot(
@@ -335,8 +403,9 @@ export function GlobalHeatmap({
     if (e.touches.length === 1 && isDragging) {
       const dx = e.touches[0].clientX - dragStart.x;
       const dy = e.touches[0].clientY - dragStart.y;
+      dragDistance.current = Math.sqrt(dx * dx + dy * dy);
 
-      const container = document.getElementById("heatmap-viewport");
+      const container = viewportRef.current || document.getElementById("heatmap-viewport");
       if (container) {
         const W = container.offsetWidth;
         const H = container.offsetHeight;
@@ -356,53 +425,43 @@ export function GlobalHeatmap({
         e.touches[0].clientY - e.touches[1].clientY,
       );
       const scale = dist / touchStartDist;
-      const nextZoom = Math.max(1, Math.min(6, touchStartZoom * scale));
+      const nextZoom = Math.max(1, Math.min(12, touchStartZoom * scale));
 
       setZoom(nextZoom);
     }
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
     setIsDragging(false);
     setTouchStartDist(0);
+
+    // Tap outside detection
+    if (dragDistance.current < 5) {
+      const target = e.target as HTMLElement;
+      if (
+        !target.closest("button") &&
+        !target.closest(".info-card") &&
+        !target.closest(".region-dropdown") &&
+        !target.closest(".lc-marker-container")
+      ) {
+        setSelectedRegion(null);
+      }
+    }
   };
 
   // Center/focus on a selected dropdown region
   const focusRegion = (reg: RegionItem) => {
-    const container = document.getElementById("heatmap-viewport");
+    const container = viewportRef.current || document.getElementById("heatmap-viewport");
     if (!container) return;
 
     const W = container.offsetWidth;
     const H = container.offsetHeight;
 
-    const cityNameOnly = reg.city.split(",")[0].trim();
-    const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
+    const coords = getRegionCoords(reg);
+    const px = (coords.leftPercent / 100) * W;
+    const py = (coords.topPercent / 100) * H;
 
-    let leftPercent = 50;
-    let topPercent = 50;
-
-    if (reg.lat && reg.lng) {
-      leftPercent = ((reg.lng + 180) / 360) * 100;
-      topPercent = ((90 - reg.lat) / 180) * 100;
-    } else {
-      const dbItem = CITY_DB[key] || resolvedCoords[key];
-      if (dbItem) {
-        leftPercent = ((dbItem.lon + 180) / 360) * 100;
-        topPercent = ((90 - dbItem.lat) / 180) * 100;
-      } else {
-        let hash = 0;
-        for (let i = 0; i < reg.city.length; i++) {
-          hash = reg.city.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        topPercent = Math.abs(Math.sin(hash)) * 50 + 20;
-        leftPercent = Math.abs(Math.cos(hash)) * 70 + 15;
-      }
-    }
-
-    const px = (leftPercent / 100) * W;
-    const py = (topPercent / 100) * H;
-
-    const targetZoom = 2.5;
+    const targetZoom = 10.0;
     const targetPanX = W / 2 - px * targetZoom;
     const targetPanY = H / 2 - py * targetZoom;
 
@@ -411,11 +470,14 @@ export function GlobalHeatmap({
     const minY = H * (1 - targetZoom);
     const maxY = 0;
 
+    setIsTransitioning(true);
     setZoom(targetZoom);
     setPan({
       x: Math.max(minX, Math.min(maxX, targetPanX)),
       y: Math.max(minY, Math.min(maxY, targetPanY)),
     });
+
+    setTimeout(() => setIsTransitioning(false), 400);
 
     setSelectedRegion(reg);
     setDropdownOpen(false);
@@ -463,6 +525,10 @@ export function GlobalHeatmap({
           80%  { transform: translateY(-4px) scale(0.95); }
           100% { transform: translateY(0) scale(1); }
         }
+        @keyframes slideUp {
+          from { transform: translateY(100%); opacity: 0.4; }
+          to { transform: translateY(0); opacity: 1; }
+        }
         .pulse-blue   { animation: softPulseBlue  2.2s infinite ease-in-out; }
         .pulse-green  { animation: softPulseGreen 2.2s infinite ease-in-out; }
         .pulse-amber  { animation: softPulseAmber 2.2s infinite ease-in-out; }
@@ -495,9 +561,11 @@ export function GlobalHeatmap({
         {(zoom > 1 || pan.x !== 0 || pan.y !== 0) && (
           <button
             onClick={() => {
+              setIsTransitioning(true);
               setZoom(1);
               setPan({ x: 0, y: 0 });
               setSelectedRegion(null);
+              setTimeout(() => setIsTransitioning(false), 400);
             }}
             className="lc-heatmap-reset flex items-center gap-1 rounded-lg px-2.5 py-1 text-[10px] font-bold transition-all duration-150 ease-out cursor-pointer"
             style={{
@@ -517,10 +585,11 @@ export function GlobalHeatmap({
       {/* ── Viewport (drag/wheel zoom) ────────────────────────────────── */}
       <div
         id="heatmap-viewport"
+        ref={viewportRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onMouseLeave={(e) => handleMouseUp(e)}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -540,7 +609,10 @@ export function GlobalHeatmap({
 
         {/* Dynamic Zoom & Pan Wrapper */}
         <div
-          className="w-full h-full relative origin-top-left transition-transform duration-100 ease-out"
+          className={cn(
+            "w-full h-full relative origin-top-left",
+            isTransitioning ? "transition-transform duration-[400ms] ease-out" : "transition-transform duration-75 ease-out"
+          )}
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
           }}
@@ -553,34 +625,10 @@ export function GlobalHeatmap({
           {uniqueRegions
             .filter((reg) => visibleStatuses[reg.status || "saved"])
             .map((reg) => {
-              const cityNameOnly = reg.city.split(",")[0].trim();
-              const key = cityNameOnly.toLowerCase().replace(/[^a-z]/g, "");
-
-              let coords;
-              if (reg.lat && reg.lng) {
-                coords = convertLatLngToPercent(reg.lat, reg.lng);
-              } else {
-                const dbItem = CITY_DB[key] || resolvedCoords[key];
-                if (dbItem) {
-                  coords = convertLatLngToPercent(dbItem.lat, dbItem.lon);
-                } else {
-                  let hash = 0;
-                  for (let i = 0; i < reg.city.length; i++) {
-                    hash = reg.city.charCodeAt(i) + ((hash << 5) - hash);
-                  }
-                  const seedTop = Math.abs(Math.sin(hash)) * 50 + 20;
-                  const seedLeft = Math.abs(Math.cos(hash)) * 70 + 15;
-                  coords = { top: `${seedTop.toFixed(1)}%`, left: `${seedLeft.toFixed(1)}%` };
-                }
-              }
-
+              const coords = getRegionCoords(reg);
               const status = reg.status || "saved";
               const isNewlyAdded =
                 newCityKey === `${reg.city.toLowerCase()}-${reg.country.toLowerCase()}`;
-
-              // Determine whether to show popover card below the marker (if marker is in top 35% of map)
-              const topVal = parseFloat(coords.top);
-              const showBelow = topVal < 35;
 
               // Color configs
               const colorMap = {
@@ -596,7 +644,7 @@ export function GlobalHeatmap({
                 <div
                   key={`${reg.city}-${status}`}
                   className={cn(
-                    "absolute flex flex-col items-center z-25 group/marker",
+                    "absolute flex flex-col items-center z-25 group/marker lc-marker-container",
                     isNewlyAdded ? "marker-drop" : "",
                   )}
                   style={{ top: coords.top, left: coords.left }}
@@ -611,134 +659,240 @@ export function GlobalHeatmap({
                       }
                     }}
                     className={cn(
-                      "h-3 w-3 rounded-full border-2 cursor-pointer transition duration-300 transform hover:scale-130 active:scale-95",
+                      "lc-marker-dot h-3 w-3 rounded-full border-2 cursor-pointer transition duration-300 transform hover:scale-130 active:scale-95",
                       colorMap[status],
                     )}
                   />
-
-                  {/* Inline Info Card — backdrop blur, navy bg, branded border */}
-                  {selectedRegion && selectedRegion.city === reg.city && (
-                    <div
-                      className={cn(
-                        "info-card absolute left-1/2 -translate-x-1/2 w-54 pointer-events-auto text-left z-40",
-                        "animate-in fade-in zoom-in-95 duration-200",
-                        showBelow ? "top-6 mt-2" : "bottom-6 mb-2",
-                      )}
-                      style={{
-                        width: "210px",
-                        background: "rgba(11,18,32,0.92)",
-                        backdropFilter: "blur(10px)",
-                        WebkitBackdropFilter: "blur(10px)",
-                        border: "1px solid rgba(45,108,255,0.28)",
-                        borderRadius: "14px",
-                        boxShadow: "0 4px 20px rgba(0,0,0,0.45), 0 0 0 1px rgba(45,108,255,0.1)",
-                        padding: "14px",
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {/* Card header */}
-                      <div
-                        className="flex items-center justify-between pb-1.5 mb-2"
-                        style={{ borderBottom: "1px solid rgba(45,108,255,0.18)" }}
-                      >
-                        <span
-                          className="text-[11px] font-bold truncate max-w-[130px] flex items-center gap-1"
-                          style={{ color: "#E5E7EB", fontFamily: "Inter, ui-sans-serif, sans-serif" }}
-                        >
-                          <MapPin className="h-3 w-3 flex-shrink-0" style={{ color: "#2D6CFF" }} aria-hidden="true" />
-                          {reg.city}
-                        </span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedRegion(null);
-                          }}
-                          aria-label={`Close details for ${reg.city}`}
-                          className="lc-heatmap-reset text-[10px] h-4 w-4 rounded-full flex items-center justify-center transition-all duration-150 ease-out"
-                          style={{
-                            color: "#9CA3AF",
-                            background: "rgba(45,108,255,0.1)",
-                            border: "1px solid rgba(45,108,255,0.2)",
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.color = "#E5E7EB";
-                            e.currentTarget.style.background = "rgba(45,108,255,0.25)";
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.color = "#9CA3AF";
-                            e.currentTarget.style.background = "rgba(45,108,255,0.1)";
-                          }}
-                        >
-                          ✕
-                        </button>
-                      </div>
-
-                      {/* Stats rows */}
-                      <div
-                        className="space-y-1.5 text-[10px] font-mono"
-                        style={{ color: "#9CA3AF" }}
-                      >
-                        <div className="flex justify-between">
-                          <span>Saved Leads:</span>
-                          <span className="font-bold" style={{ color: "#22C55E" }}>{reg.savedLeads || 0}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Active Searches:</span>
-                          <span className="font-bold" style={{ color: "#2D6CFF" }}>{reg.activeSearches || 0}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Top Skill:</span>
-                          <span className="font-bold truncate max-w-[90px]" style={{ color: "#F59E0B" }}>
-                            {getCategoryLabel(reg.topCategory || "web_dev")}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* View Leads CTA */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (onViewLeads) {
-                            onViewLeads(reg.city, reg.country, reg.topCategory || "web_dev");
-                          }
-                          setSelectedRegion(null);
-                        }}
-                        aria-label={`View leads for ${reg.city}`}
-                        className="lc-view-leads mt-3 w-full font-bold py-1.5 px-2 rounded-lg text-[10px] text-center transition-all duration-150 ease-out cursor-pointer"
-                        style={{
-                          background: "#2D6CFF",
-                          color: "#ffffff",
-                          boxShadow: "0 2px 10px rgba(45,108,255,0.4)",
-                        }}
-                        onMouseOver={(e) => { e.currentTarget.style.background = "#3d7aff"; e.currentTarget.style.boxShadow = "0 2px 14px rgba(45,108,255,0.6)"; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = "#2D6CFF"; e.currentTarget.style.boxShadow = "0 2px 10px rgba(45,108,255,0.4)"; }}
-                      >
-                        View Leads
-                      </button>
-
-                      {/* Directional arrow */}
-                      <div
-                        className={cn(
-                          "absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45",
-                          showBelow ? "top-[-6px]" : "bottom-[-6px]",
-                        )}
-                        style={{
-                          background: "rgba(11,18,32,0.92)",
-                          border: showBelow
-                            ? "1px solid rgba(45,108,255,0.28) transparent transparent rgba(45,108,255,0.28)"
-                            : "transparent rgba(45,108,255,0.28) rgba(45,108,255,0.28) transparent",
-                          borderTop: showBelow ? "1px solid rgba(45,108,255,0.28)" : "none",
-                          borderLeft: showBelow ? "1px solid rgba(45,108,255,0.28)" : "none",
-                          borderRight: showBelow ? "none" : "1px solid rgba(45,108,255,0.28)",
-                          borderBottom: showBelow ? "none" : "1px solid rgba(45,108,255,0.28)",
-                        }}
-                      />
-                    </div>
-                  )}
                 </div>
               );
             })}
         </div>
+
+        {/* Floating Tooltip (Non-Mobile) */}
+        {selectedRegion && !isMobile && (() => {
+          const coords = getRegionCoords(selectedRegion);
+          const W = viewportRef.current?.offsetWidth || 800;
+          const H = viewportRef.current?.offsetHeight || 380;
+          const markerX = (coords.leftPercent / 100) * W * zoom + pan.x;
+          const markerY = (coords.topPercent / 100) * H * zoom + pan.y;
+
+          const CARD_WIDTH = 220;
+          const CARD_HEIGHT = 175;
+          const offset = 12;
+
+          let left = markerX - CARD_WIDTH / 2;
+          if (left < 10) left = 10;
+          if (left + CARD_WIDTH > W - 10) left = W - CARD_WIDTH - 10;
+
+          const showBelow = markerY - CARD_HEIGHT - offset < 10;
+          let top = showBelow ? markerY + offset : markerY - CARD_HEIGHT - offset;
+          if (showBelow && top + CARD_HEIGHT > H - 10) {
+            top = H - CARD_HEIGHT - 10;
+          }
+
+          const arrowX = markerX - left;
+
+          return (
+            <div
+              className={cn(
+                "info-card absolute pointer-events-auto text-left z-40",
+                "animate-in fade-in zoom-in-95 duration-200"
+              )}
+              style={{
+                width: `${CARD_WIDTH}px`,
+                left: `${left}px`,
+                top: `${top}px`,
+                background: "rgba(11,18,32,0.92)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                border: "1px solid rgba(45,108,255,0.28)",
+                borderRadius: "14px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.45), 0 0 0 1px rgba(45,108,255,0.1)",
+                padding: "14px",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Card header */}
+              <div
+                className="flex items-center justify-between pb-1.5 mb-2"
+                style={{ borderBottom: "1px solid rgba(45,108,255,0.18)" }}
+              >
+                <span
+                  className="text-[11px] font-bold truncate max-w-[140px] flex items-center gap-1"
+                  style={{ color: "#E5E7EB", fontFamily: "Inter, ui-sans-serif, sans-serif" }}
+                >
+                  <MapPin className="h-3 w-3 flex-shrink-0" style={{ color: "#2D6CFF" }} aria-hidden="true" />
+                  {selectedRegion.city}
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedRegion(null);
+                  }}
+                  aria-label={`Close details for ${selectedRegion.city}`}
+                  className="lc-heatmap-reset text-[10px] h-4 w-4 rounded-full flex items-center justify-center transition-all duration-150 ease-out"
+                  style={{
+                    color: "#9CA3AF",
+                    background: "rgba(45,108,255,0.1)",
+                    border: "1px solid rgba(45,108,255,0.2)",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.color = "#E5E7EB";
+                    e.currentTarget.style.background = "rgba(45,108,255,0.25)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.color = "#9CA3AF";
+                    e.currentTarget.style.background = "rgba(45,108,255,0.1)";
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Stats rows */}
+              <div
+                className="space-y-1.5 text-[10px] font-mono"
+                style={{ color: "#9CA3AF" }}
+              >
+                <div className="flex justify-between">
+                  <span>Saved Leads:</span>
+                  <span className="font-bold" style={{ color: "#22C55E" }}>{selectedRegion.savedLeads || 0}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Active Searches:</span>
+                  <span className="font-bold" style={{ color: "#2D6CFF" }}>{selectedRegion.activeSearches || 0}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Top Skill:</span>
+                  <span className="font-bold truncate max-w-[100px]" style={{ color: "#F59E0B" }}>
+                    {getCategoryLabel(selectedRegion.topCategory || "web_dev")}
+                  </span>
+                </div>
+              </div>
+
+              {/* View Leads CTA */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onViewLeads) {
+                    onViewLeads(selectedRegion.city, selectedRegion.country, selectedRegion.topCategory || "web_dev");
+                  }
+                  setSelectedRegion(null);
+                }}
+                aria-label={`View leads for ${selectedRegion.city}`}
+                className="lc-view-leads mt-3 w-full font-bold py-1.5 px-2 rounded-lg text-[10px] text-center transition-all duration-150 ease-out cursor-pointer"
+                style={{
+                  background: "#2D6CFF",
+                  color: "#ffffff",
+                  boxShadow: "0 2px 10px rgba(45,108,255,0.4)",
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.background = "#3d7aff"; e.currentTarget.style.boxShadow = "0 2px 14px rgba(45,108,255,0.6)"; }}
+                onMouseOut={(e) => { e.currentTarget.style.background = "#2D6CFF"; e.currentTarget.style.boxShadow = "0 2px 10px rgba(45,108,255,0.4)"; }}
+              >
+                View Leads
+              </button>
+
+              {/* Directional arrow */}
+              <div
+                className="absolute w-2.5 h-2.5 rotate-45"
+                style={{
+                  left: `${Math.max(12, Math.min(CARD_WIDTH - 12, arrowX))}px`,
+                  transform: "translateX(-50%) rotate(45deg)",
+                  top: showBelow ? "-5px" : "auto",
+                  bottom: showBelow ? "auto" : "-5px",
+                  background: "rgba(11,18,32,0.92)",
+                  borderTop: showBelow ? "1px solid rgba(45,108,255,0.28)" : "none",
+                  borderLeft: showBelow ? "1px solid rgba(45,108,255,0.28)" : "none",
+                  borderRight: showBelow ? "none" : "1px solid rgba(45,108,255,0.28)",
+                  borderBottom: showBelow ? "none" : "1px solid rgba(45,108,255,0.28)",
+                }}
+              />
+            </div>
+          );
+        })()}
+
+        {/* Mobile Bottom Sheet rendering */}
+        {selectedRegion && isMobile && (
+          <div
+            className="info-card absolute bottom-0 left-0 right-0 z-40 pointer-events-auto"
+            style={{
+              background: "rgba(11,18,32,0.96)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderTop: "1px solid rgba(45,108,255,0.3)",
+              borderTopLeftRadius: "16px",
+              borderTopRightRadius: "16px",
+              boxShadow: "0 -4px 25px rgba(0,0,0,0.5)",
+              padding: "16px 20px 20px 20px",
+              animation: "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drag Handle */}
+            <div className="w-12 h-1 bg-slate-700 rounded-full mx-auto mb-3.5" />
+
+            <div className="flex items-center justify-between mb-3">
+              <span
+                className="text-xs font-bold truncate flex items-center gap-1.5"
+                style={{ color: "#E5E7EB", fontFamily: "Inter, ui-sans-serif, sans-serif" }}
+              >
+                <MapPin className="h-3.5 w-3.5" style={{ color: "#2D6CFF" }} aria-hidden="true" />
+                {selectedRegion.city}
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedRegion(null);
+                }}
+                aria-label="Dismiss details"
+                className="text-xs h-5.5 w-5.5 rounded-full flex items-center justify-center transition-all"
+                style={{
+                  color: "#9CA3AF",
+                  background: "rgba(45,108,255,0.1)",
+                  border: "1px solid rgba(45,108,255,0.2)",
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2.5 mb-4 text-[10px] font-mono text-center">
+              <div className="bg-[#101B30]/60 p-2 rounded-lg border border-emerald-500/15">
+                <span className="block text-slate-500 text-[9px] mb-0.5">Saved Leads</span>
+                <span className="font-bold text-emerald-400 text-xs">{selectedRegion.savedLeads || 0}</span>
+              </div>
+              <div className="bg-[#101B30]/60 p-2 rounded-lg border border-blue-500/15">
+                <span className="block text-slate-500 text-[9px] mb-0.5">Searches</span>
+                <span className="font-bold text-blue-400 text-xs">{selectedRegion.activeSearches || 0}</span>
+              </div>
+              <div className="bg-[#101B30]/60 p-2 rounded-lg border border-amber-500/15">
+                <span className="block text-slate-500 text-[9px] mb-0.5">Top Skill</span>
+                <span className="font-bold text-amber-400 text-[9px] truncate block mt-0.5">
+                  {getCategoryLabel(selectedRegion.topCategory || "web_dev")}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onViewLeads) {
+                  onViewLeads(selectedRegion.city, selectedRegion.country, selectedRegion.topCategory || "web_dev");
+                }
+                setSelectedRegion(null);
+              }}
+              aria-label={`View leads for ${selectedRegion.city}`}
+              className="lc-view-leads w-full font-bold py-2.5 px-4 rounded-xl text-xs text-center transition-all duration-150 ease-out cursor-pointer"
+              style={{
+                background: "#2D6CFF",
+                color: "#ffffff",
+                boxShadow: "0 2px 10px rgba(45,108,255,0.4)",
+              }}
+            >
+              View Leads
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Footer controls ─────────────────────────────────────────────── */}
