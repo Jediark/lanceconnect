@@ -1775,7 +1775,7 @@ export function AssistantChatWidget() {
   const randomizePrompts = () => {
     promptIndices.current = {
       category: Math.floor(Math.random() * CATEGORY_PROMPTS.length),
-      skills: Math.floor(Math.random() * SKILLS_PROMPTS.length),
+      skills: Math.floor(Math.random() * 3), // We have 3 variations in getSkillsPrompt
       location: Math.floor(Math.random() * LOCATION_PROMPTS.length),
       budget: Math.floor(Math.random() * BUDGET_PROMPTS.length),
       experience_level: Math.floor(Math.random() * EXPERIENCE_PROMPTS.length),
