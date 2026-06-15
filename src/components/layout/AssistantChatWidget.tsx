@@ -1687,6 +1687,12 @@ function findBestMatchedIntent(text: string): IntentExample | null {
   };
 
   const inputWords = getWords(cleanedInput);
+  const getNumbers = (str: string): number[] => {
+    const matches = str.match(/\d+/g);
+    return matches ? matches.map(Number) : [];
+  };
+
+  const inputNumbers = getNumbers(cleanedInput);
   if (inputWords.size === 0) return null;
 
   let bestIntent: IntentExample | null = null;
@@ -1694,7 +1700,18 @@ function findBestMatchedIntent(text: string): IntentExample | null {
 
   for (const intent of INTENT_EXAMPLES) {
     for (const pattern of intent.patterns) {
-      const patternWords = getWords(clean(pattern));
+      const cleanedPattern = clean(pattern);
+      
+      // Ensure that if pattern contains numbers, they must align with input numbers
+      const patternNumbers = getNumbers(cleanedPattern);
+      if (patternNumbers.length > 0) {
+        const hasMatchingNumber = patternNumbers.some(pn => inputNumbers.includes(pn));
+        if (!hasMatchingNumber) {
+          continue; // Numbers don't align, skip this pattern to avoid false matching
+        }
+      }
+
+      const patternWords = getWords(cleanedPattern);
       if (patternWords.size === 0) continue;
 
       const intersect = new Set(
@@ -2407,8 +2424,26 @@ I'll plug this into your search so you can start finding real, contactable leads
           botText += `\n\n${nextPrompt.text}`;
         }
       } else {
-        botText = nextPrompt.text;
         botQuickReplies = nextPrompt.quickReplies;
+        
+        let confirmationText = "";
+        if (currentUnfilledSlot === "category" && newSlots.category) {
+          confirmationText = `Got it — ${newSlots.category}! That's a great category on LanceConnect.`;
+        } else if (currentUnfilledSlot === "skills" && newSlots.skills) {
+          confirmationText = `Specialty set to: ${newSlots.skills}.`;
+        } else if (currentUnfilledSlot === "location" && newSlots.location) {
+          confirmationText = `Location set to: ${newSlots.location}.`;
+        } else if (currentUnfilledSlot === "budget" && newSlots.budget) {
+          confirmationText = `Rate set to: ${newSlots.budget}.`;
+        } else if (currentUnfilledSlot === "experience_level" && newSlots.experience_level) {
+          confirmationText = `Experience level set to: ${newSlots.experience_level}.`;
+        }
+
+        if (confirmationText) {
+          botText = `${confirmationText}\n\n${nextPrompt.text}`;
+        } else {
+          botText = nextPrompt.text;
+        }
       }
 
       const botMsg: Message = {
