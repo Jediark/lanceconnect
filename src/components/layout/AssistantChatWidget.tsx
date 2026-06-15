@@ -452,7 +452,7 @@ To get you matched with the right opportunities, I just need a few quick details
 
 Let's start — what's your main service or specialty?`,
 
-  `Hi! I'm your LanceConnect AI Assistant 🤖 I help freelancers and agencies crawl the web to discover active, direct-client leads without paying platform fees.
+  `Hi! I'm your LanceConnect AI Assistant 🤖 I help freelancers and agencies discover active, direct-client leads without paying platform fees.
 
 To set up a custom scan matching your target market, I just need a few quick details about your services.
 
@@ -1713,12 +1713,14 @@ export function AssistantChatWidget() {
 
     // (goal extraction removed)
 
-    // 2. Category extraction
-    const sortedCatKeywords = Object.keys(KEYWORD_TO_CATEGORY).sort((a, b) => b.length - a.length);
-    for (const kw of sortedCatKeywords) {
-      if (lower.includes(kw)) {
-        parsed.category = KEYWORD_TO_CATEGORY[kw];
-        break;
+    // 2. Category extraction (only if not already set)
+    if (!slots.category) {
+      const sortedCatKeywords = Object.keys(KEYWORD_TO_CATEGORY).sort((a, b) => b.length - a.length);
+      for (const kw of sortedCatKeywords) {
+        if (lower.includes(kw)) {
+          parsed.category = KEYWORD_TO_CATEGORY[kw];
+          break;
+        }
       }
     }
 
@@ -2211,7 +2213,10 @@ I'll plug this into your search so you can start finding real, contactable leads
     setTimeout(() => {
       setIsThinking(false);
 
-      const matchedIntent = findBestMatchedIntent(text);
+      let matchedIntent = findBestMatchedIntent(text);
+      if (matchedIntent && matchedIntent.slotToFill && slots[matchedIntent.slotToFill as keyof Slots]) {
+        matchedIntent = null; // Do not overwrite an already filled slot with a matched intent
+      }
 
       let botText = "";
       let botQuickReplies: string[] | undefined = undefined;
