@@ -274,6 +274,119 @@ const KEYWORD_TO_CATEGORY: Record<string, string> = {
   "staffing": "Training & Recruitment",
 };
 
+const CATEGORY_SKILLS_MAP: Record<string, { promptExamples: string; quickReplies: string[] }> = {
+  "Web Development": {
+    promptExamples: "React, Node.js, WordPress, Shopify, full stack",
+    quickReplies: ["React / Frontend", "WordPress / Shopify", "Full Stack", "Backend / APIs", "Something Else"]
+  },
+  "Graphic Design": {
+    promptExamples: "Figma, branding, logo design, UI/UX, print design",
+    quickReplies: ["UI/UX Design", "Logo & Branding", "Social Media Graphics", "Illustration / Print", "Something Else"]
+  },
+  "Virtual Assistant": {
+    promptExamples: "data entry, scheduling, customer support, email management",
+    quickReplies: ["Admin & Scheduling", "Customer Support", "Data Entry", "E-commerce VA", "Something Else"]
+  },
+  "Content Writing": {
+    promptExamples: "copywriting, SEO blog posts, technical writing, ghostwriting",
+    quickReplies: ["Copywriting", "SEO Blog Writing", "Technical Writing", "Ghostwriting", "Something Else"]
+  },
+  "Pet Care": {
+    promptExamples: "dog walking, pet sitting, grooming, training, veterinary assistant",
+    quickReplies: ["Dog Walking", "Pet Sitting", "Grooming", "Dog Training", "Something Else"]
+  },
+  "Translation": {
+    promptExamples: "Spanish translation, French interpreter, legal document translation",
+    quickReplies: ["Spanish Translation", "French Translation", "German Translation", "Document Translation", "Something Else"]
+  },
+  "Personal Training": {
+    promptExamples: "weight loss coaching, strength training, nutrition planning",
+    quickReplies: ["Fitness Coaching", "Strength Training", "Nutrition Planning", "Yoga / Pilates", "Something Else"]
+  },
+  "Landscaping & Lawn Care": {
+    promptExamples: "lawn mowing, tree trimming, garden design, weed control",
+    quickReplies: ["Lawn Mowing", "Gardening", "Tree Trimming", "Landscape Design", "Something Else"]
+  },
+  "Hairstylist": {
+    promptExamples: "hair cutting, coloring, bridal hair styling, barber services",
+    quickReplies: ["Hair Cuts & Styling", "Hair Coloring", "Barbering", "Bridal Hair", "Something Else"]
+  },
+  "Makeup Artistry": {
+    promptExamples: "bridal makeup, special effects, editorial glam, airbrush makeup",
+    quickReplies: ["Bridal Makeup", "Event & Glam Makeup", "Editorial / Fashion", "Special Effects", "Something Else"]
+  },
+  "Voiceover": {
+    promptExamples: "commercial VO, audiobook narration, podcast intro/outro, e-learning",
+    quickReplies: ["Commercial VO", "Audiobook Narration", "E-learning narration", "Animation / Character", "Something Else"]
+  },
+  "Accounting & CPA": {
+    promptExamples: "QuickBooks, bookkeeping, tax preparation, corporate tax, auditing",
+    quickReplies: ["Bookkeeping", "Tax Preparation", "Financial Auditing", "QuickBooks Setup", "Something Else"]
+  },
+  "Handyman Services": {
+    promptExamples: "general home repair, plumbing, carpentry, minor electrical work",
+    quickReplies: ["General Home Repair", "Plumbing", "Carpentry", "Minor Electrical", "Something Else"]
+  },
+  "Wedding Planning": {
+    promptExamples: "full-service planning, day-of coordination, destination weddings",
+    quickReplies: ["Full-service Planning", "Day-of Coordination", "Destination Weddings", "Corporate Events", "Something Else"]
+  },
+  "Massage Therapy": {
+    promptExamples: "deep tissue, Swedish, sports therapy, hot stone, prenatal",
+    quickReplies: ["Deep Tissue Massage", "Swedish Massage", "Sports Massage", "Prenatal Massage", "Something Else"]
+  },
+  "Music Lessons": {
+    promptExamples: "piano, guitar, vocal coaching, drums, music theory",
+    quickReplies: ["Piano Lessons", "Guitar Lessons", "Vocal Coaching", "Violin Lessons", "Something Else"]
+  },
+  "House Cleaning": {
+    promptExamples: "residential, deep cleaning, move-in/move-out, office cleaning",
+    quickReplies: ["Residential Cleaning", "Deep Cleaning", "Move-in / Move-out", "Office / Commercial", "Something Else"]
+  },
+  "SEO": {
+    promptExamples: "local SEO, technical audits, link building, keyword research",
+    quickReplies: ["Local SEO", "Technical SEO Audits", "Link Building", "On-Page SEO", "Something Else"]
+  },
+  "Social Media": {
+    promptExamples: "Instagram, TikTok content creation, social scheduling, community management",
+    quickReplies: ["Instagram & TikTok", "LinkedIn / B2B", "Paid Social Ads", "Community Management", "Something Else"]
+  },
+  "Video Production": {
+    promptExamples: "video editing, YouTube editing, explainer videos, color grading, animation",
+    quickReplies: ["Video Editing", "YouTube Video Editor", "TikTok & Reels Editing", "Corporate / Promo", "Something Else"]
+  },
+  "Photography": {
+    promptExamples: "portraits, products, real estate, event shoots, wedding photography",
+    quickReplies: ["Portrait Photography", "Product Photography", "Real Estate Photo", "Event & Wedding", "Something Else"]
+  },
+  "Digital Marketing": {
+    promptExamples: "Facebook Ads, Google Ads, email campaigns, sales funnels",
+    quickReplies: ["Facebook & Instagram Ads", "Google Ads (PPC)", "Email Marketing", "Sales Funnels", "Something Else"]
+  },
+  "App Development": {
+    promptExamples: "iOS dev, Android dev, Flutter, React Native, cross-platform",
+    quickReplies: ["iOS Dev (Swift)", "Android Dev (Kotlin)", "Flutter / Cross-platform", "React Native", "Something Else"]
+  },
+  "Online Tutoring": {
+    promptExamples: "math, English lessons, high school chemistry, SAT/ACT test prep",
+    quickReplies: ["Math / Science Tutoring", "English / Languages", "SAT/ACT Prep", "Primary School Help", "Something Else"]
+  },
+  "Training & Recruitment": {
+    promptExamples: "corporate recruitment, HR consulting, executive search, staffing",
+    quickReplies: ["Corporate Recruitment", "HR Consulting", "Executive Search", "Contract Staffing", "Something Else"]
+  },
+  "Real Estate": {
+    promptExamples: "home staging, buyer representation, rental listings, property management",
+    quickReplies: ["Buyer / Seller Agent", "Property Management", "Home Staging", "Rental Listings", "Something Else"]
+  },
+};
+
+const DEFAULT_SKILLS = {
+  promptExamples: "Figma, Python, copywriting, translation, pet sitting",
+  quickReplies: ["React / Coding", "UI/UX / Design", "Copywriting", "Virtual Assistant", "Something Else"]
+};
+
+
 const LOCATION_PREFIXES = [
   "i'm in",
   "i am in",
@@ -1611,11 +1724,18 @@ const CATEGORY_PROMPTS = [
   "What's your main service or specialty? (Select a category below)"
 ];
 
-const SKILLS_PROMPTS = [
-  "What specific skills, tools, or niches do you specialize in? (e.g. React, UI/UX, SEO writing, translation, pet sitting, etc.)",
-  "Got it. What are your core skills, tools, or specific services? (e.g. WordPress, copywriting, branding, social media, etc.)",
-  "Awesome specialty. To help me narrow down, what specific tools or skills do you use? (e.g. Figma, Python, content marketing, etc.)"
-];
+const getSkillsPrompt = (category: string | null, index: number): string => {
+  const info = category && CATEGORY_SKILLS_MAP[category]
+    ? CATEGORY_SKILLS_MAP[category]
+    : DEFAULT_SKILLS;
+
+  const prompts = [
+    `What specific skills, tools, or niches do you specialize in? (e.g. ${info.promptExamples}, etc.)`,
+    `Got it. What are your core skills, tools, or specific services? (e.g. ${info.promptExamples}, etc.)`,
+    `Awesome specialty. To help me narrow down, what specific tools or skills do you use? (e.g. ${info.promptExamples}, etc.)`
+  ];
+  return prompts[index] || prompts[0];
+};
 
 const LOCATION_PROMPTS = [
   "Where are you (or your clients) located? Please type a city name (e.g. Lagos, London, or Austin).",
@@ -1815,8 +1935,12 @@ export function AssistantChatWidget() {
       };
     }
     if (!currentSlots.skills) {
+      const info = currentSlots.category && CATEGORY_SKILLS_MAP[currentSlots.category]
+        ? CATEGORY_SKILLS_MAP[currentSlots.category]
+        : DEFAULT_SKILLS;
       return {
-        text: SKILLS_PROMPTS[promptIndices.current.skills],
+        text: getSkillsPrompt(currentSlots.category, promptIndices.current.skills),
+        quickReplies: info.quickReplies,
       };
     }
     if (!currentSlots.location) {
@@ -1962,16 +2086,38 @@ I'll plug this into your search so you can start finding real, contactable leads
       setIsThinking(true);
       setTimeout(() => {
         setIsThinking(false);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            sender: "assistant",
-            text: "No problem! What is your main service or specialty? Just type it below.",
-            timestamp: new Date(),
-          },
-        ]);
-        setCurrentUnfilledSlot("category");
+        if (currentUnfilledSlot === "category") {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now().toString(),
+              sender: "assistant",
+              text: "No problem! What is your main service or specialty? Just type it below.",
+              timestamp: new Date(),
+            },
+          ]);
+          setCurrentUnfilledSlot("category");
+        } else if (currentUnfilledSlot === "skills") {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now().toString(),
+              sender: "assistant",
+              text: "No problem! What specific skills or niches do you specialize in? Just type them below.",
+              timestamp: new Date(),
+            },
+          ]);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now().toString(),
+              sender: "assistant",
+              text: "No problem! Please type your response below.",
+              timestamp: new Date(),
+            },
+          ]);
+        }
       }, 800);
       return;
     }
