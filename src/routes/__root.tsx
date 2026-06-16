@@ -132,6 +132,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
             }),
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var c=document.createElement('link');c.rel='canonical';c.href=window.location.origin+window.location.pathname;document.head.appendChild(c)})()`,
+          }}
+        />
       </head>
       <body>
         <script

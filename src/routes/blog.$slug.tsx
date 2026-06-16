@@ -280,12 +280,41 @@ function BlogPost() {
     }
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://lanceconnect.vercel.app"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://lanceconnect.vercel.app/blog"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://lanceconnect.vercel.app/blog/${post.slug}`
+      }
+    ]
+  };
+
   return (
     <MarketingShell>
       {/* JSON-LD Schema Script */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       {/* Scroll Progress Bar */}
@@ -720,6 +749,55 @@ function BlogPost() {
             </div>
           </aside>
         </div>
+
+        {/* Related Posts — Full Width (all devices) */}
+        <section className="mx-auto max-w-5xl px-4 py-16 lg:px-8">
+          <div className="text-center mb-10">
+            <p className="text-[11px] font-mono font-bold uppercase tracking-widest text-primary">// keep.reading</p>
+            <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">More from the blog</h2>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((p) => (
+              <Link
+                key={p.slug}
+                to="/blog/$slug"
+                params={{ slug: p.slug }}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-card-hover"
+              >
+                <div className="overflow-hidden">
+                  <img
+                    src={p.cover}
+                    alt={p.title}
+                    className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">
+                    {p.category}
+                  </span>
+                  <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.excerpt}</p>
+                  <div className="mt-auto pt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                    <img src={p.authorAvatar} alt={p.author} className="h-6 w-6 rounded-full object-cover" />
+                    <span>{p.author} · {p.readMins} min</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          {/* Cross-link to find-clients */}
+          <div className="mt-12 text-center">
+            <p className="text-sm text-muted-foreground mb-4">Ready to put these strategies to work?</p>
+            <Link
+              to="/find-clients/$category"
+              params={{ category: 'web-developers' }}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition"
+            >
+              Find Freelance Clients Now <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
+
       </article>
     </MarketingShell>
   );

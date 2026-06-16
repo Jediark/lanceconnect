@@ -110,8 +110,27 @@ function HomepageComponent() {
     });
   };
 
+  // BreadcrumbList JSON-LD for homepage
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://lanceconnect.vercel.app",
+      },
+    ],
+  };
+
   return (
     <MarketingShell>
+      {/* BreadcrumbList Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <HeroWithMosaic />
       <div className="mx-auto max-w-7xl px-4 lg:px-8 -mt-6 mb-12 relative z-10 animate-in fade-in slide-in-from-bottom-3 duration-500">
         <TrendingSearches onSelectSearch={handleSelectSearch} />
@@ -332,7 +351,7 @@ function HeroWithMosaic() {
     {
       headline: (
         <>
-          Find <span className="text-primary font-black">clients.</span>
+          Find freelance <span className="text-primary font-black">clients.</span>
         </>
       ),
       subtitle:
@@ -1980,6 +1999,20 @@ function FAQ() {
   ];
   const [open, setOpen] = useState<number | null>(0);
 
+  // FAQPage JSON-LD schema for Google rich snippets
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.a,
+      },
+    })),
+  };
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -1992,6 +2025,11 @@ function FAQ() {
       ref={containerRef}
       className="relative overflow-hidden border-y border-border py-24 bg-[#020b21] transition-colors duration-300"
     >
+      {/* FAQPage JSON-LD for Google rich snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <motion.div
         className="absolute inset-0 z-0 bg-cover bg-center opacity-35 dark:opacity-55"
         style={{
