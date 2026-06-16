@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Bot, Check, Shield } from "lucide-react";
 import { getCountry } from "@/data/dynamicRouteData";
 import { US_STATES, GLOBAL_REGIONS } from "@/data/geography";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Message {
   id: string;
@@ -493,8 +494,9 @@ function getCategoryParam(catLabel: string | null): string {
   return "local_business";
 }
 
-function resolveCountryFromCity(city: string | null): string {
-  if (!city) return "United States";
+function resolveCountryFromCity(city: string | null, userCountry?: string | null): string {
+  const fallbackCountry = userCountry || "United States";
+  if (!city) return fallbackCountry;
 
   const cleanVal = city.trim();
   const lowerVal = cleanVal.toLowerCase();
@@ -573,7 +575,7 @@ function resolveCountryFromCity(city: string | null): string {
     return "United States";
   }
 
-  return "United States";
+  return fallbackCountry;
 }
 
 const OPENING_TEXTS = [
@@ -1799,6 +1801,7 @@ const EXPERIENCE_PROMPTS = [
 ];
 
 export function AssistantChatWidget() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -2196,7 +2199,7 @@ I'll plug this into your search so you can start finding real, contactable leads
     if (text === "Run Search") {
       const catId = getCategoryParam(slots.category);
       const cityVal = slots.location || "";
-      const countryVal = resolveCountryFromCity(cityVal);
+      const countryVal = resolveCountryFromCity(cityVal, user?.country);
       const nicheVal = slots.skills || "";
 
       sessionStorage.setItem("lc_shared_category", catId);
