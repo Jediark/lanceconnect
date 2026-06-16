@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { usePreferences, Language, Currency } from "@/contexts/PreferencesContext";
-import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useStats } from "@/contexts/StatsContext";
 
 export function MarketingNav() {
   const { user } = useAuth();
@@ -27,29 +27,7 @@ export function MarketingNav() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
   const { language, setLanguage, currency, setCurrency, theme, setTheme, t } = usePreferences();
-  const [totalLeads, setTotalLeads] = useState<number | null>(null);
-  const [citiesToday, setCitiesToday] = useState<number | null>(null);
-
-  useEffect(() => {
-    async function loadStats() {
-      try {
-        const { count: total } = await supabase
-          .from("leads")
-          .select("*", { count: "exact", head: true });
-        
-        const { count: today } = await supabase
-          .from("leads")
-          .select("*", { count: "exact", head: true })
-          .gte("created_at", new Date().toISOString().split("T")[0]);
-
-        setTotalLeads(total);
-        setCitiesToday(today);
-      } catch (err) {
-        console.error("Failed to load marketing banner stats:", err);
-      }
-    }
-    loadStats();
-  }, []);
+  const { stats } = useStats();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -123,7 +101,7 @@ export function MarketingNav() {
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
             </span>
             <span className="text-slate-700 dark:text-muted-foreground">
-              Active Lead Scanning: {citiesToday !== null ? citiesToday.toLocaleString() : "0"} cities checked today · {totalLeads !== null ? totalLeads.toLocaleString() : "0"} leads indexed today
+              Active Lead Scanning: {stats.citiesToday.toLocaleString()} cities checked today · {stats.leadsToday.toLocaleString()} leads indexed today
             </span>
           </div>
 

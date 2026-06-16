@@ -52,6 +52,7 @@ import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
 import { IMG, BLOG_POSTS } from "@/data/content";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { useStats } from "@/contexts/StatsContext";
 import useEmblaCarousel from "embla-carousel-react";
 import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 
@@ -525,10 +526,12 @@ function HeroWithMosaic() {
 }
 
 function StatsBar() {
+  const { stats: globalStats } = useStats();
+
   const stats = [
-    { number: "1,000+", label: "searches performed" },
-    { number: "228+", label: "leads found" },
-    { number: "150+", label: "countries" },
+    { number: `${globalStats.lifetimeSearches.toLocaleString()}+`, label: "searches performed" },
+    { number: `${globalStats.lifetimeLeads.toLocaleString()}+`, label: "leads found" },
+    { number: `${globalStats.lifetimeCountries}+`, label: "countries" },
     { number: "0%", label: "commission" },
   ];
 

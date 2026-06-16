@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PipelineProvider } from "@/contexts/PipelineContext";
 import { PreferencesProvider } from "@/contexts/PreferencesContext";
+import { StatsProvider } from "@/contexts/StatsContext";
 
 function NotFoundComponent() {
   return (
@@ -158,8 +159,10 @@ function RootComponent() {
       <PreferencesProvider>
         <AuthProvider>
           <PipelineProvider>
-            <Outlet />
-            <Toaster position="bottom-right" richColors closeButton />
+            <StatsProvider>
+              <Outlet />
+              <Toaster position="bottom-right" richColors closeButton />
+            </StatsProvider>
           </PipelineProvider>
         </AuthProvider>
       </PreferencesProvider>
