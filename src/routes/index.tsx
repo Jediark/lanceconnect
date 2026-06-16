@@ -140,7 +140,7 @@ function HomepageComponent() {
       <ValuePropositionCards />
       <LogoStrip />
       <PlatformManifesto />
-      <TutorialVideoSection />
+      {/* <TutorialVideoSection /> */}
       <HeroCarousel />
       <ProductShowcase />
       <Stats />
