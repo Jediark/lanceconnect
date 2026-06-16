@@ -36,6 +36,7 @@ import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Shield } from "lucide-react";
+import { getCountry } from "@/data/dynamicRouteData";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
@@ -345,8 +346,22 @@ function Discover() {
     const params = searchParams && !isEvent ? (searchParams as any) : null;
 
     const queryTerm = params ? params.category : (category || "local business");
-    const countryName = params ? params.country : (country || "Nigeria");
     const cityName = params ? params.city : city;
+
+    let countryName = params ? params.country : country;
+    if (cityName) {
+      const resolved = getCountry(cityName.toLowerCase().replace(/\s+/g, "-"));
+      if (resolved) {
+        countryName = resolved;
+        if (!params) {
+          setCountry(resolved);
+        }
+      }
+    }
+    if (!countryName) {
+      countryName = user?.country || "United States";
+    }
+
     const productTerm = params ? params.product : product;
     const nicheTerm = params ? params.niche : selectedNiche;
 

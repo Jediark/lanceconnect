@@ -10,8 +10,8 @@ interface FilterState {
 
 const initialFilters: SearchFilters = {
   category: "web_dev",
-  country: "Nigeria",
-  city: "Lagos",
+  country: "United States",
+  city: "New York",
   hasWebsite: false,
   minScore: 0,
   minRating: null,

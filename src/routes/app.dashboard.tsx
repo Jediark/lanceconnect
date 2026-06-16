@@ -30,6 +30,7 @@ import { OutreachPreview } from "@/components/ui/OutreachPreview";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { getCountry } from "@/data/dynamicRouteData";
 import { LeadsOverTimeChart, PipelineFunnelChart } from "@/components/dashboard/AnalyticsCharts";
 import { LiveEventsTicker } from "@/components/dashboard/LiveEventsTicker";
 import { GoalTracker } from "@/components/dashboard/GoalTracker";
@@ -136,7 +137,7 @@ function Dashboard() {
 
   const [quickCity, setQuickCity] = useState("");
   const [quickCategory, setQuickCategory] = useState("web_dev");
-  const [quickCountry, setQuickCountry] = useState("Nigeria");
+  const [quickCountry, setQuickCountry] = useState("United States");
   const [results, setResults] = useState<Lead[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -813,6 +814,15 @@ function Dashboard() {
       toast.error("Please enter a city name.");
       return;
     }
+
+    // Resolve country dynamically from city if possible
+    if (searchCity) {
+      const resolved = getCountry(searchCity.toLowerCase().replace(/\s+/g, "-"));
+      if (resolved) {
+        searchCountry = resolved;
+        setQuickCountry(resolved);
+      }
+    }
     setSearchLoading(true);
     if (!user) {
       setSearchLoading(false);
@@ -1046,12 +1056,12 @@ function Dashboard() {
   const handleReRunSearch = async (historyItem: any) => {
     const q = historyItem.query_params || {};
     setQuickCategory(q.category || "web_dev");
-    setQuickCountry(q.country || "Nigeria");
+    setQuickCountry(q.country || "United States");
     setQuickCity(q.city || "");
     setActiveStatScreen(null);
     handleSearch({
       category: q.category || "web_dev",
-      country: q.country || "Nigeria",
+      country: q.country || "United States",
       city: q.city || "",
       product: "",
       niche: "",

@@ -494,11 +494,28 @@ function getCategoryParam(catLabel: string | null): string {
 }
 
 function resolveCountryFromCity(city: string | null): string {
-  if (!city) return "Nigeria";
+  if (!city) return "United States";
 
   const cleanVal = city.trim();
-  
-  // Check if user specified a country/state using comma notation (e.g. "Paris, France" or "Dallas, TX")
+  const lowerVal = cleanVal.toLowerCase();
+
+  // If the user entered USA or US related terms directly
+  if (["us", "usa", "united states", "u.s.", "u.s.a."].includes(lowerVal)) {
+    return "United States";
+  }
+
+  // Check if user specified a country/state using comma or space notation
+  // e.g. "Paris, France", "Dallas, TX", "Houston TX", "Chicago Illinois"
+  for (const state of US_STATES) {
+    const stateName = state.state.toLowerCase();
+    const stateAbbr = state.abbr.toLowerCase();
+    
+    if (lowerVal.endsWith(`, ${stateAbbr}`) || lowerVal.endsWith(` ${stateAbbr}`) ||
+        lowerVal.endsWith(`, ${stateName}`) || lowerVal.endsWith(` ${stateName}`)) {
+      return "United States";
+    }
+  }
+
   if (cleanVal.includes(",")) {
     const parts = cleanVal.split(",");
     const potentialRegion = parts[parts.length - 1].trim().toLowerCase();
@@ -508,7 +525,7 @@ function resolveCountryFromCity(city: string | null): string {
       state.state.toLowerCase() === potentialRegion || 
       state.abbr.toLowerCase() === potentialRegion
     );
-    if (isUsState || ["us", "usa", "united states"].includes(potentialRegion)) {
+    if (isUsState || ["us", "usa", "united states", "u.s.", "u.s.a."].includes(potentialRegion)) {
       return "United States";
     }
 
@@ -525,14 +542,23 @@ function resolveCountryFromCity(city: string | null): string {
     return potentialRegion.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   }
 
-  const slug = cleanVal.toLowerCase().replace(/\s+/g, "-");
+  const slug = lowerVal.replace(/\s+/g, "-");
   const country = getCountry(slug);
   if (country) return country;
+
+  // Check if the input contains or matches a US city name slug
+  for (const state of US_STATES) {
+    for (const c of state.cities) {
+      if (slug === c || slug.startsWith(c + "-") || slug.endsWith("-" + c) || slug.includes("-" + c + "-")) {
+        return "United States";
+      }
+    }
+  }
 
   // Check if the input itself matches a country name directly
   for (const region of GLOBAL_REGIONS) {
     for (const country of region.countries) {
-      if (country.country.toLowerCase() === cleanVal.toLowerCase()) {
+      if (country.country.toLowerCase() === lowerVal) {
         return country.country;
       }
     }
@@ -540,14 +566,14 @@ function resolveCountryFromCity(city: string | null): string {
 
   // Check if US State name directly
   const isUsStateDirect = US_STATES.some(state => 
-    state.state.toLowerCase() === cleanVal.toLowerCase() || 
-    state.abbr.toLowerCase() === cleanVal.toLowerCase()
+    state.state.toLowerCase() === lowerVal || 
+    state.abbr.toLowerCase() === lowerVal
   );
-  if (isUsStateDirect || ["us", "usa", "united states"].includes(cleanVal.toLowerCase())) {
+  if (isUsStateDirect) {
     return "United States";
   }
 
-  return "Nigeria";
+  return "United States";
 }
 
 const OPENING_TEXTS = [
