@@ -824,7 +824,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    async function fetchSerpApiLeads(targetCity: string, targetCountry: string, bType: string, lat: number | null, lng: number | null, limit: number) {
+    async function fetchSerpApiLeads(targetCity: string, targetCountry: string, targetDistrict: string, bType: string, lat: number | null, lng: number | null, limit: number) {
       const serpApiKey = Deno.env.get("SERPAPI_API_KEY");
       if (!serpApiKey) {
         console.warn("[search-leads] SERPAPI_API_KEY is not configured.");
@@ -832,8 +832,11 @@ Deno.serve(async (req) => {
       }
 
       try {
-        console.log(`[search-leads] Querying SerpApi Google Maps for "${bType}" in "${targetCity}, ${targetCountry}"...`);
-        let serpApiUrl = `https://serpapi.com/search.json?engine=google_maps&q=${encodeURIComponent(`${bType} in ${targetCity}, ${targetCountry}`)}&api_key=${serpApiKey}`;
+        const queryTerm = targetDistrict 
+          ? `${bType} in ${targetDistrict}, ${targetCity}, ${targetCountry}` 
+          : `${bType} in ${targetCity}, ${targetCountry}`;
+        console.log(`[search-leads] Querying SerpApi Google Maps for "${queryTerm}"...`);
+        let serpApiUrl = `https://serpapi.com/search.json?engine=google_maps&q=${encodeURIComponent(queryTerm)}&api_key=${serpApiKey}`;
         
         if (lat && lng) {
           serpApiUrl += `&ll=@${lat},${lng},13z`;
@@ -893,11 +896,15 @@ Deno.serve(async (req) => {
       let lat: number | null = null;
       let lng: number | null = null;
 
+      const geocodeQuery = targetDistrict 
+        ? `${targetDistrict}, ${targetCity}, ${targetCountry}` 
+        : `${targetCity}, ${targetCountry}`;
+
       if (openCageApiKey) {
         try {
-          console.log(`Geocoding city "${targetCity}, ${targetCountry}" using OpenCage...`);
+          console.log(`Geocoding location "${geocodeQuery}" using OpenCage...`);
           const geoRes = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(`${targetCity}, ${targetCountry}`)}&key=${openCageApiKey}`,
+            `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(geocodeQuery)}&key=${openCageApiKey}`,
             { signal: AbortSignal.timeout(5000) },
           );
           if (geoRes.ok) {
@@ -946,9 +953,9 @@ Deno.serve(async (req) => {
       // Nominatim keyless geocoding fallback
       if (!lat || !lng) {
         try {
-          console.log(`[search-leads] OpenCage geocoding missing/failed, trying Nominatim for "${targetCity}, ${targetCountry}"...`);
+          console.log(`[search-leads] OpenCage geocoding missing/failed, trying Nominatim for "${geocodeQuery}"...`);
           const nominatimRes = await fetch(
-            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${targetCity}, ${targetCountry}`)}&format=json&limit=1`,
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(geocodeQuery)}&format=json&limit=1`,
             {
               headers: {
                 "User-Agent": "LanceConnect/1.0 (contact@lanceconnect.vercel.app)"
@@ -1042,7 +1049,7 @@ Deno.serve(async (req) => {
       if (rawLeads.length === 0 && serpApiKey) {
         console.log(`[search-leads] Apify returned 0 — trying SerpApi fallback...`);
         try {
-          rawLeads = await fetchSerpApiLeads(targetCity, targetCountry, bType, lat, lng, 20);
+          rawLeads = await fetchSerpApiLeads(targetCity, targetCountry, targetDistrict, bType, lat, lng, 20);
           console.log(`[search-leads] SerpApi fallback returned ${rawLeads.length} leads.`);
         } catch (serpErr) {
           console.error("[search-leads] SerpApi fallback failed:", serpErr);
