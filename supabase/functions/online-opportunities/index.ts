@@ -20,16 +20,20 @@ const requestSchema = z.object({
 });
 
 interface UnifiedJob {
-  id: string;
+  id?: string;
   title: string;
-  company: string;
-  location: string;
-  description: string;
-  url: string;
+  company?: string;
+  location?: string;
+  description?: string;
+  url?: string;
+  link?: string;
   category: string;
-  published_at: string;
+  published_at?: string;
+  published?: string;
   source: "themuse" | "arbeitnow" | "indeed" | "linkedin";
-  tags: string[];
+  tags?: string[];
+  city?: string;
+  country?: string;
 }
 
 const CATEGORY_SKILL_MAP: Record<string, string> = {
@@ -131,10 +135,14 @@ async function searchIndeed(skill: string, city: string, country: string): Promi
           title,
           company: "Indeed Employer",
           location: `${city}, ${country}`,
+          city,
+          country,
           description: description.slice(0, 300),
           url: link,
+          link,
           category: skill,
           published_at: pubDate || new Date().toISOString(),
+          published: pubDate || new Date().toISOString(),
           source: "indeed",
           tags: ["Freelance", "Indeed"],
         });
@@ -151,10 +159,12 @@ async function searchLinkedInHiring(skill: string, city: string): Promise<Unifie
   try {
     const query = encodeURIComponent(`freelance ${skill}`);
     const location = encodeURIComponent(city);
-    const url = `https://www.linkedin.com/jobs/search/?keywords=${query}&location=${location}&f_TP=1&f_JT=C,P,T`;
-
-    console.log(`Querying LinkedIn public jobs: ${url}`);
-    const res = await fetch(url, {
+    
+    // Attempt 1: Try with Contract/Part-time/Temp filters (more relevant but sometimes restricted)
+    let url = `https://www.linkedin.com/jobs/search/?keywords=${query}&location=${location}&f_JT=C,P,T`;
+    console.log(`Querying LinkedIn public jobs (Attempt 1): ${url}`);
+    
+    let res = await fetch(url, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html",
@@ -162,11 +172,32 @@ async function searchLinkedInHiring(skill: string, city: string): Promise<Unifie
       signal: AbortSignal.timeout(8000),
     });
 
-    if (!res.ok) return [];
+    let html = "";
+    if (res.ok) {
+      html = await res.text();
+    }
 
-    const html = await res.text();
+    // Check if we got zero results (or page got redirected / no base-search-cards)
+    const cardMatches = html.match(/base-search-card/g) || [];
+    if (!res.ok || cardMatches.length === 0) {
+      // Attempt 2: Relax filters completely to get at least some job postings
+      url = `https://www.linkedin.com/jobs/search/?keywords=${query}&location=${location}`;
+      console.log(`Querying LinkedIn public jobs (Attempt 2 - Relaxed): ${url}`);
+      res = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "text/html",
+        },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (res.ok) {
+        html = await res.text();
+      } else {
+        return [];
+      }
+    }
+
     const jobs: UnifiedJob[] = [];
-
     const titleRegex = /<h3[^>]*class="[^"]*base-search-card__title[^"]*"[^>]*>([\s\S]*?)<\/h3>/g;
     const companyRegex = /<h4[^>]*class="[^"]*base-search-card__subtitle[^"]*"[^>]*>([\s\S]*?)<\/h4>/g;
     const linkRegex = /<a[^>]*class="[^"]*base-search-card__title-link[^"]*"[^>]*href="([^"]+)"/g;
@@ -197,10 +228,13 @@ async function searchLinkedInHiring(skill: string, city: string): Promise<Unifie
         title,
         company,
         location: city,
+        city,
         description: `Freelance / contract role for ${title} at ${company}.`,
         url: link,
+        link,
         category: skill,
         published_at: new Date().toISOString(),
+        published: new Date().toISOString(),
         source: "linkedin",
         tags: ["Freelance", "LinkedIn"],
       });
@@ -212,7 +246,7 @@ async function searchLinkedInHiring(skill: string, city: string): Promise<Unifie
   }
 }
 
-async function fetchTheMuse(category: string, page: number): Promise<UnifiedJob[]> {
+async function searchTheMuse(category: string, page = 1): Promise<UnifiedJob[]> {
   const museCategories = category !== "all" ? mapCategoryToMuse(category) : [];
   let museUrl = `https://www.themuse.com/api/public/jobs?page=${page}`;
   if (museCategories.length > 0) {
@@ -229,21 +263,29 @@ async function fetchTheMuse(category: string, page: number): Promise<UnifiedJob[
 
   const data = await museRes.json();
   const results = data.results || [];
-  return results.map((item: any) => ({
-    id: `themuse-${item.id}`,
-    title: item.name,
-    company: item.company?.name || "Unknown Company",
-    location: item.locations?.map((loc: any) => loc.name).join(", ") || "Remote",
-    description: item.contents || "",
-    url: item.refs?.landing_page || "",
-    category: item.categories?.[0]?.name || "General",
-    published_at: item.publication_date || new Date().toISOString(),
-    source: "themuse",
-    tags: item.categories?.map((cat: any) => cat.name) || [],
-  }));
+  return results.map((item: any) => {
+    const link = item.refs?.landing_page || "";
+    const published = item.publication_date || new Date().toISOString();
+    return {
+      id: `themuse-${item.id}`,
+      title: item.name,
+      company: item.company?.name || "Unknown Company",
+      location: item.locations?.map((loc: any) => loc.name).join(", ") || "Remote",
+      city: item.locations?.[0]?.name || "Remote",
+      country: "",
+      description: item.contents || "",
+      url: link,
+      link: link,
+      category: item.categories?.[0]?.name || "General",
+      published_at: published,
+      published: published,
+      source: "themuse",
+      tags: item.categories?.map((cat: any) => cat.name) || [],
+    };
+  });
 }
 
-async function fetchArbeitnow(category: string): Promise<UnifiedJob[]> {
+async function searchArbeitnow(category: string): Promise<UnifiedJob[]> {
   console.log("Querying Arbeitnow: https://www.arbeitnow.com/api/job-board-api");
   const arbeitRes = await fetch("https://www.arbeitnow.com/api/job-board-api", {
     signal: AbortSignal.timeout(6000),
@@ -269,10 +311,14 @@ async function fetchArbeitnow(category: string): Promise<UnifiedJob[]> {
       title: item.title,
       company: item.company_name,
       location: item.location || "Remote (Europe)",
+      city: item.location || "Remote (Europe)",
+      country: "",
       description: item.description || "",
       url: item.url,
+      link: item.url,
       category: "Tech / Remote",
       published_at: new Date().toISOString(),
+      published: new Date().toISOString(),
       source: "arbeitnow",
       tags: item.tags || [],
     });
@@ -331,8 +377,8 @@ Deno.serve(async (req) => {
     const results = await Promise.allSettled([
       searchIndeed(skill, city, country),
       searchLinkedInHiring(skill, city),
-      fetchTheMuse(category, page),
-      fetchArbeitnow(category),
+      searchTheMuse(category, page),
+      searchArbeitnow(category),
     ]);
 
     const allJobs: UnifiedJob[] = [];
@@ -346,7 +392,7 @@ Deno.serve(async (req) => {
     const seen = new Set<string>();
     const deduplicatedJobs = allJobs.filter((job) => {
       const uniqueKey =
-        job.url || `${job.title.toLowerCase().trim()}-${job.company.toLowerCase().trim()}`;
+        job.url || job.link || `${job.title.toLowerCase().trim()}-${(job.company || "").toLowerCase().trim()}`;
       if (seen.has(uniqueKey)) {
         return false;
       }
@@ -354,8 +400,20 @@ Deno.serve(async (req) => {
       return true;
     });
 
+    // Map to ensure full compatibility with both frontend and tests
+    const finalJobs = deduplicatedJobs.map((job) => ({
+      ...job,
+      link: job.link || job.url || "",
+      url: job.url || job.link || "",
+      published: job.published || job.published_at || new Date().toISOString(),
+      published_at: job.published_at || job.published || new Date().toISOString(),
+      city: job.city || job.location || city || "",
+      country: job.country || country || "",
+      location: job.location || job.city || `${city}, ${country}` || "Remote",
+    }));
+
     // Sort jobs: latest first
-    deduplicatedJobs.sort((a, b) => {
+    finalJobs.sort((a, b) => {
       const timeA = new Date(a.published_at).getTime();
       const timeB = new Date(b.published_at).getTime();
       return timeB - timeA;
@@ -367,7 +425,7 @@ Deno.serve(async (req) => {
         user_id: user.id,
         action: "jobs.searched",
         entity_type: "jobs",
-        metadata: { category, city, country, page, results_count: deduplicatedJobs.length },
+        metadata: { category, city, country, page, results_count: finalJobs.length },
         ip_address: ipAddress,
         user_agent: req.headers.get("user-agent") || null,
       });
@@ -375,8 +433,25 @@ Deno.serve(async (req) => {
       console.warn("Failed to insert audit log:", auditErr);
     }
 
+    const getCountForSource = (index: number) => {
+      const resVal = results[index];
+      return resVal.status === "fulfilled" ? resVal.value.length : 0;
+    };
+
     return new Response(
-      JSON.stringify({ success: true, count: deduplicatedJobs.length, jobs: deduplicatedJobs }),
+      JSON.stringify({
+        success: true,
+        count: finalJobs.length,
+        total: finalJobs.length,
+        jobs: finalJobs,
+        opportunities: finalJobs,
+        sources: {
+          indeed: getCountForSource(0),
+          linkedin: getCountForSource(1),
+          the_muse: getCountForSource(2),
+          arbeitnow: getCountForSource(3),
+        }
+      }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
