@@ -824,6 +824,70 @@ Deno.serve(async (req) => {
       }
     }
 
+    async function fetchSerpApiLeads(targetCity: string, targetCountry: string, bType: string, lat: number | null, lng: number | null, limit: number) {
+      const serpApiKey = Deno.env.get("SERPAPI_API_KEY");
+      if (!serpApiKey) {
+        console.warn("[search-leads] SERPAPI_API_KEY is not configured.");
+        return [];
+      }
+
+      try {
+        console.log(`[search-leads] Querying SerpApi Google Maps for "${bType}" in "${targetCity}, ${targetCountry}"...`);
+        let serpApiUrl = `https://serpapi.com/search.json?engine=google_maps&q=${encodeURIComponent(`${bType} in ${targetCity}, ${targetCountry}`)}&api_key=${serpApiKey}`;
+        
+        if (lat && lng) {
+          serpApiUrl += `&ll=@${lat},${lng},13z`;
+        }
+
+        const res = await fetch(serpApiUrl, {
+          signal: AbortSignal.timeout(10000)
+        });
+
+        if (!res.ok) {
+          console.error(`[search-leads] SerpApi returned status ${res.status}`);
+          return [];
+        }
+
+        const data = await res.json();
+        const results = data.local_results || [];
+        console.log(`[search-leads] SerpApi returned ${results.length} local results.`);
+
+        const leads: any[] = [];
+        for (const item of results.slice(0, limit)) {
+          const rating = item.rating || 4.2;
+          const reviewCount = item.reviews || 10;
+          const hasWebsite = !!item.website;
+          
+          let oppScore = 55;
+          if (!hasWebsite) oppScore += 35;
+          if (rating < 4.0) oppScore += 15;
+          if (reviewCount < 20) oppScore += 10;
+          if (!item.phone) oppScore += 10;
+          oppScore = Math.min(100, oppScore);
+
+          leads.push({
+            business_name: item.title || `${bType.charAt(0).toUpperCase() + bType.slice(1)} in ${targetCity}`,
+            business_type: item.type || bType,
+            description: item.description || null,
+            full_address: item.address || `${targetCity}, ${targetCountry}`,
+            phone: item.phone || null,
+            email: null,
+            website_url: item.website || null,
+            google_place_id: item.place_id || `serpapi-${Math.random().toString(36).substr(2, 9)}`,
+            google_rating: rating,
+            google_review_count: reviewCount,
+            google_maps_url: item.link || null,
+            opportunity_score: oppScore
+          });
+        }
+
+        return leads;
+      } catch (err) {
+        console.error("[search-leads] SerpApi search failed:", err);
+        return [];
+      }
+    }
+
     // Helper function to call Apify scraping microservice with Yelp fallback
     async function scrapeLiveLeads(targetCity: string, targetCountry: string, targetDistrict: string, bType: string) {
       let lat: number | null = null;
@@ -971,6 +1035,18 @@ Deno.serve(async (req) => {
         }
       } catch (scrapeErr) {
         console.error("Apify service call failed:", scrapeErr);
+      }
+
+      // 1b. Try SerpApi Google Maps API (If Apify is disabled/failed/empty)
+      const serpApiKey = Deno.env.get("SERPAPI_API_KEY");
+      if (rawLeads.length === 0 && serpApiKey) {
+        console.log(`[search-leads] Apify returned 0 — trying SerpApi fallback...`);
+        try {
+          rawLeads = await fetchSerpApiLeads(targetCity, targetCountry, bType, lat, lng, 20);
+          console.log(`[search-leads] SerpApi fallback returned ${rawLeads.length} leads.`);
+        } catch (serpErr) {
+          console.error("[search-leads] SerpApi fallback failed:", serpErr);
+        }
       }
 
       // 2. Yelp Fallback (for US search if Apify key is missing or failed)
