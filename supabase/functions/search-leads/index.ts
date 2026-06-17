@@ -732,7 +732,9 @@ Deno.serve(async (req) => {
 
       // 1. Try Apify Live Google Maps Crawl
       try {
-        const apifyToken = Deno.env.get("APIFY_API_KEY_LANCECONNECT");
+        const apifyToken = req.headers.get("x-test-disable-apify") === "true"
+          ? null
+          : Deno.env.get("APIFY_API_KEY_LANCECONNECT");
         if (!apifyToken) {
           console.warn("APIFY_API_KEY_LANCECONNECT is not configured.");
         } else {

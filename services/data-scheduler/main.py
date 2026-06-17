@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import logging
 import xml.etree.ElementTree as ET
 from urllib.parse import quote_plus
+import schedule
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -402,30 +403,24 @@ async def run_hiring_detection():
       else:
         logger.error(f"Failed to store hiring page leads: {upsert_response.text}")
 
-async def run_hiring_detection_loop():
-  logger.info("Hiring page detection loop started")
+async def run_schedule_loop():
+  logger.info("Scheduler task checker loop started")
   while True:
     try:
-      # Calculate time until next 6 AM
-      now = datetime.utcnow()
-      next_run = now.replace(hour=6, minute=0, second=0, microsecond=0)
-      if next_run <= now:
-        next_run += timedelta(days=1)
-      
-      sleep_seconds = (next_run - now).total_seconds()
-      logger.info(f"Hiring detector will run in {sleep_seconds} seconds (at 6 AM UTC)")
-      await asyncio.sleep(sleep_seconds)
-      
-      await run_hiring_detection()
+      schedule.run_pending()
     except Exception as e:
-      logger.error(f"Error in hiring detection loop: {e}")
-      await asyncio.sleep(60 * 60) # Retry in 1 hour on failure
+      logger.error(f"Error checking schedule: {e}")
+    await asyncio.sleep(1)
 
 async def main():
+  # Schedule hiring page detection at 06:00
+  schedule.every().day.at("06:00").do(lambda: asyncio.create_task(run_hiring_detection()))
+  logger.info("Hiring page detection scheduled for 06:00 daily")
+
   # Start both loops concurrently
   await asyncio.gather(
     run_scheduled_fetches(),
-    run_hiring_detection_loop()
+    run_schedule_loop()
   )
 
 if __name__ == '__main__':

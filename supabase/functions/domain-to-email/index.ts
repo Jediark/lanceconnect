@@ -48,29 +48,60 @@ Deno.serve(async (req) => {
       social_links: {},
     };
 
-    // LAYER 1: Prospeo Domain Search
+    // LAYER 1: Prospeo Search + Enrichment
     const prospeoKey = Deno.env.get("PROSPEO_LANCECONNECT_API_KEY");
     if (prospeoKey) {
-      console.log(`[domain-to-email] Querying Prospeo for ${cleanDomain}...`);
+      console.log(`[domain-to-email] Querying Prospeo search-person for ${cleanDomain}...`);
       try {
-        const prospeoRes = await fetch("https://api.prospeo.io/domain-search", {
+        const searchRes = await fetch("https://api.prospeo.io/search-person", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "X-KEY": prospeoKey,
           },
-          body: JSON.stringify({ domain: cleanDomain }),
+          body: JSON.stringify({
+            filters: {
+              company: {
+                websites: {
+                  include: [cleanDomain]
+                }
+              }
+            }
+          }),
           signal: AbortSignal.timeout(8000),
         });
 
-        if (prospeoRes.ok) {
-          const data = await prospeoRes.json();
-          const email = data.response?.emails?.[0]?.email;
-          if (email) {
-            results.email = email;
-            results.email_confidence = "verified";
-            results.email_source = "prospeo";
-            console.log(`[domain-to-email] Prospeo found email: ${email}`);
+        if (searchRes.ok) {
+          const searchData = await searchRes.json();
+          const firstResult = searchData.results?.[0];
+          const linkedinUrl = firstResult?.person?.linkedin_url;
+
+          if (linkedinUrl) {
+            console.log(`[domain-to-email] Prospeo search found contact: ${firstResult.person.full_name} (${linkedinUrl}). Enriching...`);
+            const enrichRes = await fetch("https://api.prospeo.io/enrich-person", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-KEY": prospeoKey,
+              },
+              body: JSON.stringify({
+                data: {
+                  linkedin_url: linkedinUrl
+                }
+              }),
+              signal: AbortSignal.timeout(8000),
+            });
+
+            if (enrichRes.ok) {
+              const enrichData = await enrichRes.json();
+              const email = enrichData.person?.email?.email;
+              if (email && !email.includes("*")) {
+                results.email = email;
+                results.email_confidence = "verified";
+                results.email_source = "prospeo";
+                console.log(`[domain-to-email] Prospeo found email: ${email}`);
+              }
+            }
           }
         }
       } catch (e) {
