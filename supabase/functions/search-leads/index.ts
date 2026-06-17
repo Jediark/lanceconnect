@@ -643,7 +643,53 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Helper function to call Apify scraping microservice
+    const US_CITY_STATE_MAP: Record<string, string> = {
+      'los angeles': 'California',
+      'new york': 'New York',
+      'chicago': 'Illinois',
+      'houston': 'Texas',
+      'phoenix': 'Arizona',
+      'philadelphia': 'Pennsylvania',
+      'san antonio': 'Texas',
+      'san diego': 'California',
+      'dallas': 'Texas',
+      'san jose': 'California',
+      'austin': 'Texas',
+      'jacksonville': 'Florida',
+      'san francisco': 'California',
+      'columbus': 'Ohio',
+      'charlotte': 'North Carolina',
+      'fort worth': 'Texas',
+      'indianapolis': 'Indiana',
+      'seattle': 'Washington',
+      'denver': 'Colorado',
+      'boston': 'Massachusetts',
+      'nashville': 'Tennessee',
+      'miami': 'Florida',
+      'atlanta': 'Georgia',
+      'las vegas': 'Nevada',
+      'portland': 'Oregon',
+      'memphis': 'Tennessee',
+      'louisville': 'Kentucky',
+      'baltimore': 'Maryland',
+      'milwaukee': 'Wisconsin',
+      'albuquerque': 'New Mexico',
+      'tucson': 'Arizona',
+      'fresno': 'California',
+      'sacramento': 'California',
+      'kansas city': 'Missouri',
+      'mesa': 'Arizona',
+      'omaha': 'Nebraska',
+      'raleigh': 'North Carolina',
+      'minneapolis': 'Minnesota',
+      'cleveland': 'Ohio',
+      'tampa': 'Florida',
+      'new orleans': 'Louisiana',
+      'honolulu': 'Hawaii',
+      'detroit': 'Michigan',
+    };
+
+    // Helper function to call Apify scraping microservice with Yelp fallback
     async function scrapeLiveLeads(targetCity: string, targetCountry: string, targetDistrict: string, bType: string) {
       let lat: number | null = null;
       let lng: number | null = null;
@@ -667,86 +713,175 @@ Deno.serve(async (req) => {
         }
       }
 
-      const apifyKeyword = `${bType} in ${targetDistrict}, ${targetCity}, ${targetCountry}`;
+      let apifyKeyword = `${bType} in ${targetDistrict}, ${targetCity}, ${targetCountry}`;
+      
+      const isUS = targetCountry.toLowerCase().includes("united states") || 
+                   targetCountry.toLowerCase() === "usa" || 
+                   targetCountry.toLowerCase() === "us";
+
+      if (isUS) {
+        const state = US_CITY_STATE_MAP[targetCity.toLowerCase().trim()];
+        if (state) {
+          apifyKeyword = `${bType} in ${targetDistrict}, ${targetCity}, ${state}`;
+        }
+      }
+      
       console.log(`Invoking Apify scraper directly for "${apifyKeyword}"...`);
 
+      let rawLeads: any[] = [];
+
+      // 1. Try Apify Live Google Maps Crawl
       try {
         const apifyToken = Deno.env.get("APIFY_API_KEY_LANCECONNECT");
         if (!apifyToken) {
           console.warn("APIFY_API_KEY_LANCECONNECT is not configured.");
-          return [];
-        }
+        } else {
+          const apifyUrl = `https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token=${apifyToken}`;
+          
+          const actorInput = {
+            "searchString": apifyKeyword,
+            "maxCrawledPlaces": 10,
+            "proxyConfig": {
+              "useApifyProxy": true
+            }
+          };
 
-        const apifyUrl = `https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token=${apifyToken}`;
-        
-        const actorInput = {
-          "searchString": apifyKeyword,
-          "maxCrawledPlaces": 10,
-          "proxyConfig": {
-            "useApifyProxy": true
-          }
-        };
+          const scrapeRes = await fetch(apifyUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(actorInput),
+            signal: AbortSignal.timeout(55000),
+          });
 
-        const scrapeRes = await fetch(apifyUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(actorInput),
-          signal: AbortSignal.timeout(55000),
-        });
-
-        if (scrapeRes.ok) {
-          const items = await scrapeRes.json();
-          const newLeads = (items || []).map((item: any) => ({
-            business_name: item.title || "",
-            business_type: item.categoryName || bType,
-            description: item.description || null,
-            full_address: item.address || null,
-            phone: item.phone || null,
-            email: item.email || null,
-            website_url: item.website || null,
-            google_place_id: item.placeId || null,
-            google_rating: item.totalScore || null,
-            google_review_count: item.reviewsCount || 0,
-            google_maps_url: item.url || null
-          }));
-
-          if (newLeads.length > 0) {
-            const leadsToInsert = newLeads.map((item: any) => ({
-              business_name: item.business_name,
-              business_type: item.business_type || bType,
-              industry: query,
-              description: product
-                ? item.description
-                  ? `${item.description} (Product Interest: ${product})`
-                  : `Product Interest: ${product}`
-                : item.description || null,
-              country: targetCountry,
-              city: targetCity,
-              full_address: item.full_address || null,
+          if (scrapeRes.ok) {
+            const items = await scrapeRes.json();
+            rawLeads = (items || []).map((item: any) => ({
+              business_name: item.title || "",
+              business_type: item.categoryName || bType,
+              description: item.description || null,
+              full_address: item.address || null,
               phone: item.phone || null,
               email: item.email || null,
-              website_url: item.website_url || null,
-              has_website: !!item.website_url,
-              google_place_id: item.google_place_id || null,
-              google_rating: item.google_rating || null,
-              google_review_count: item.google_review_count || 0,
-              google_maps_url: item.google_maps_url || null,
-              source: "google_maps",
-              cache_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+              website_url: item.website || null,
+              google_place_id: item.placeId || null,
+              google_rating: item.totalScore || null,
+              google_review_count: item.reviewsCount || 0,
+              google_maps_url: item.url || null
             }));
+            console.log(`Apify scraper returned ${rawLeads.length} leads.`);
+          } else {
+            console.error(`Apify scraper API request failed: ${scrapeRes.status}`);
+          }
+        }
+      } catch (scrapeErr) {
+        console.error("Apify service call failed:", scrapeErr);
+      }
 
-            const { data: insertedLeads, error: upsertError } = await supabase
-              .from("leads")
-              .upsert(leadsToInsert, { onConflict: "google_place_id" })
-              .select();
+      // 2. Yelp Fallback (for US search if Apify key is missing or failed)
+      const yelpApiKey = Deno.env.get("YELP_API_KEY");
+      if (isUS && rawLeads.length === 0 && yelpApiKey) {
+        console.log(`[search-leads] Apify returned 0 for US city ${targetCity} — trying Yelp fallback...`);
+        try {
+          const state = US_CITY_STATE_MAP[targetCity.toLowerCase().trim()] || "United States";
+          const yelpUrl = `https://api.yelp.com/v3/businesses/search?location=${encodeURIComponent(`${targetCity}, ${state}`)}&term=${encodeURIComponent(bType)}&limit=20`;
+          
+          const yelpRes = await fetch(yelpUrl, {
+            headers: {
+              "Authorization": `Bearer ${yelpApiKey}`,
+              "Accept": "application/json"
+            },
+            signal: AbortSignal.timeout(10000)
+          });
+          
+          if (yelpRes.ok) {
+            const yelpData = await yelpRes.json();
+            rawLeads = (yelpData.businesses || []).map((biz: any) => {
+              const rating = biz.rating || 4.0;
+              const reviewCount = biz.review_count || 5;
+              const hasWebsite = !!biz.url;
+              
+              // Calculate opportunity score criteria
+              let oppScore = 50;
+              if (!hasWebsite) oppScore += 40;
+              if (rating < 3.5) oppScore += 25;
+              if (reviewCount < 15) oppScore += 15;
+              if (!biz.phone) oppScore += 10;
+              oppScore = Math.min(100, oppScore);
 
-            if (upsertError) {
-              console.error("Failed to upsert scraped leads into database:", upsertError);
-            } else if (insertedLeads) {
-              for (const newLead of insertedLeads) {
-                fetch(`${supabaseUrl}/functions/v1/check-social`, {
+              return {
+                business_name: biz.name || "",
+                business_type: biz.categories?.[0]?.title || bType,
+                description: null,
+                full_address: biz.location?.display_address?.join(", ") || biz.location?.address1 || null,
+                phone: biz.phone || null,
+                email: null,
+                website_url: biz.url || null,
+                google_place_id: biz.id ? `yelp-${biz.id}` : null,
+                google_rating: rating,
+                google_review_count: reviewCount,
+                google_maps_url: biz.url || null
+              };
+            });
+            console.log(`[search-leads] Yelp fallback returned ${rawLeads.length} leads.`);
+          } else {
+            console.error(`[search-leads] Yelp API call failed: ${yelpRes.status}`);
+          }
+        } catch (yelpErr) {
+          console.error("[search-leads] Yelp fallback failed:", yelpErr);
+        }
+      }
+
+      // 3. Database Ingestion & Post-processing
+      if (rawLeads.length > 0) {
+        const leadsToInsert = rawLeads.map((item: any) => ({
+          business_name: item.business_name,
+          business_type: item.business_type || bType,
+          industry: query,
+          description: product
+            ? item.description
+              ? `${item.description} (Product Interest: ${product})`
+              : `Product Interest: ${product}`
+            : item.description || null,
+          country: targetCountry,
+          city: targetCity,
+          full_address: item.full_address || null,
+          phone: item.phone || null,
+          email: item.email || null,
+          website_url: item.website_url || null,
+          has_website: !!item.website_url,
+          google_place_id: item.google_place_id || null,
+          google_rating: item.google_rating || null,
+          google_review_count: item.google_review_count || 0,
+          google_maps_url: item.google_maps_url || null,
+          source: item.google_place_id && item.google_place_id.startsWith("yelp-") ? "yelp" : "google_maps",
+          cache_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        }));
+
+        try {
+          const { data: insertedLeads, error: upsertError } = await supabase
+            .from("leads")
+            .upsert(leadsToInsert, { onConflict: "google_place_id" })
+            .select();
+
+          if (upsertError) {
+            console.error("Failed to upsert scraped leads into database:", upsertError);
+          } else if (insertedLeads) {
+            for (const newLead of insertedLeads) {
+              fetch(`${supabaseUrl}/functions/v1/check-social`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: req.headers.get("Authorization") || "",
+                },
+                body: JSON.stringify({ leadId: newLead.id }),
+              }).catch((err) =>
+                console.error("Async social check trigger failed:", newLead.id, err),
+              );
+
+              if (newLead.website_url) {
+                fetch(`${supabaseUrl}/functions/v1/enrich-contact`, {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -754,28 +889,15 @@ Deno.serve(async (req) => {
                   },
                   body: JSON.stringify({ leadId: newLead.id }),
                 }).catch((err) =>
-                  console.error("Async social check trigger failed:", newLead.id, err),
+                  console.error("Async contact enrichment trigger failed:", newLead.id, err),
                 );
-
-                if (newLead.website_url) {
-                  fetch(`${supabaseUrl}/functions/v1/enrich-contact`, {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: req.headers.get("Authorization") || "",
-                    },
-                    body: JSON.stringify({ leadId: newLead.id }),
-                  }).catch((err) =>
-                    console.error("Async contact enrichment trigger failed:", newLead.id, err),
-                  );
-                }
               }
-              return insertedLeads;
             }
+            return insertedLeads;
           }
+        } catch (dbErr) {
+          console.error("Database upsert failed:", dbErr);
         }
-      } catch (scrapeErr) {
-        console.error("Apify service call failed:", scrapeErr);
       }
       return [];
     }
@@ -925,7 +1047,6 @@ Deno.serve(async (req) => {
       "united states": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington DC", "Nashville", "Oklahoma City", "El Paso", "Boston", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Sacramento", "Mesa", "Kansas City", "Atlanta", "Omaha", "Colorado Springs", "Raleigh", "Miami", "Minneapolis", "Tampa", "New Orleans", "Cleveland", "Orlando", "Cincinnati", "Pittsburgh", "St Louis", "Detroit", "Honolulu", "Anchorage", "Salt Lake City", "Birmingham", "Richmond", "Virginia Beach", "Buffalo"],
       "usa": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington DC", "Nashville", "Oklahoma City", "El Paso", "Boston", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Sacramento", "Mesa", "Kansas City", "Atlanta", "Omaha", "Colorado Springs", "Raleigh", "Miami", "Minneapolis", "Tampa", "New Orleans", "Cleveland", "Orlando", "Cincinnati", "Pittsburgh", "St Louis", "Detroit", "Honolulu", "Anchorage", "Salt Lake City", "Birmingham", "Richmond", "Virginia Beach", "Buffalo"],
       "us": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "Indianapolis", "San Francisco", "Seattle", "Denver", "Washington DC", "Nashville", "Oklahoma City", "El Paso", "Boston", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Sacramento", "Mesa", "Kansas City", "Atlanta", "Omaha", "Colorado Springs", "Raleigh", "Miami", "Minneapolis", "Tampa", "New Orleans", "Cleveland", "Orlando", "Cincinnati", "Pittsburgh", "St Louis", "Detroit", "Honolulu", "Anchorage", "Salt Lake City", "Birmingham", "Richmond", "Virginia Beach", "Buffalo"],
-      "mexico": ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana", "Leon", "Cancun"],
       "brazil": ["Sao Paulo", "Rio de Janeiro", "Brasilia", "Salvador", "Fortaleza", "Belo Horizonte", "Curitiba"],
       "argentina": ["Buenos Aires", "Cordoba", "Rosario", "Mendoza", "Tucuman", "Mar del Plata"],
       "colombia": ["Bogota", "Medellin", "Cali", "Barranquilla", "Cartagena", "Bucaramanga"],

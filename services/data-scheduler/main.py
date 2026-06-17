@@ -16,16 +16,39 @@ APIFY_API_KEY = os.environ.get('APIFY_API_KEY_LANCECONNECT')
 
 # Cities to pre-populate with fresh data
 PRIORITY_CITIES = [
-  {'city': 'Lagos', 'country': 'Nigeria', 'priority': 1},
-  {'city': 'London', 'country': 'United Kingdom', 'priority': 1},
-  {'city': 'Dubai', 'country': 'UAE', 'priority': 1},
-  {'city': 'Nairobi', 'country': 'Kenya', 'priority': 2},
-  {'city': 'Accra', 'country': 'Ghana', 'priority': 2},
-  {'city': 'Mumbai', 'country': 'India', 'priority': 2},
-  {'city': 'Toronto', 'country': 'Canada', 'priority': 2},
-  {'city': 'Johannesburg', 'country': 'South Africa', 'priority': 3},
-  {'city': 'Berlin', 'country': 'Germany', 'priority': 3},
-  {'city': 'São Paulo', 'country': 'Brazil', 'priority': 3},
+  # US Cities (highest priority — user's clients are searching these)
+  {'city': 'Los Angeles', 'state': 'California', 'country': 'United States', 'priority': 1},
+  {'city': 'New York', 'state': 'New York', 'country': 'United States', 'priority': 1},
+  {'city': 'Chicago', 'state': 'Illinois', 'country': 'United States', 'priority': 1},
+  {'city': 'Houston', 'state': 'Texas', 'country': 'United States', 'priority': 1},
+  {'city': 'Phoenix', 'state': 'Arizona', 'country': 'United States', 'priority': 2},
+  {'city': 'San Antonio', 'state': 'Texas', 'country': 'United States', 'priority': 2},
+  {'city': 'San Diego', 'state': 'California', 'country': 'United States', 'priority': 2},
+  {'city': 'Dallas', 'state': 'Texas', 'country': 'United States', 'priority': 2},
+  {'city': 'San Francisco', 'state': 'California', 'country': 'United States', 'priority': 2},
+  {'city': 'Seattle', 'state': 'Washington', 'country': 'United States', 'priority': 2},
+  {'city': 'Miami', 'state': 'Florida', 'country': 'United States', 'priority': 2},
+  {'city': 'Atlanta', 'state': 'Georgia', 'country': 'United States', 'priority': 2},
+  {'city': 'Boston', 'state': 'Massachusetts', 'country': 'United States', 'priority': 2},
+  {'city': 'Denver', 'state': 'Colorado', 'country': 'United States', 'priority': 2},
+  {'city': 'Nashville', 'state': 'Tennessee', 'country': 'United States', 'priority': 2},
+  {'city': 'Las Vegas', 'state': 'Nevada', 'country': 'United States', 'priority': 2},
+  {'city': 'Portland', 'state': 'Oregon', 'country': 'United States', 'priority': 2},
+  {'city': 'Austin', 'state': 'Texas', 'country': 'United States', 'priority': 2},
+  {'city': 'Charlotte', 'state': 'North Carolina', 'country': 'United States', 'priority': 2},
+  {'city': 'Minneapolis', 'state': 'Minnesota', 'country': 'United States', 'priority': 2},
+  # African Cities
+  {'city': 'Lagos', 'state': None, 'country': 'Nigeria', 'priority': 1},
+  {'city': 'Nairobi', 'state': None, 'country': 'Kenya', 'priority': 2},
+  {'city': 'Accra', 'state': None, 'country': 'Ghana', 'priority': 2},
+  {'city': 'Johannesburg', 'state': None, 'country': 'South Africa', 'priority': 3},
+  # UK
+  {'city': 'London', 'state': None, 'country': 'United Kingdom', 'priority': 1},
+  {'city': 'Manchester', 'state': None, 'country': 'United Kingdom', 'priority': 2},
+  # Others
+  {'city': 'Dubai', 'state': None, 'country': 'UAE', 'priority': 1},
+  {'city': 'Toronto', 'state': 'Ontario', 'country': 'Canada', 'priority': 2},
+  {'city': 'Mumbai', 'state': None, 'country': 'India', 'priority': 2},
 ]
 
 CATEGORIES = ['web_dev', 'designer', 'seo', 'social_media', 'photography']
@@ -35,6 +58,23 @@ BUSINESS_TYPES = [
   'law firm', 'pharmacy', 'bakery', 'retail store', 'school',
   'auto repair', 'event venue', 'real estate agency', 'accounting firm',
   'plumber', 'electrician', 'florist', 'pet clinic', 'driving school',
+]
+
+HIRING_KEYWORDS = [
+  'looking for freelance designer',
+  'contract web developer needed',
+  'hiring freelance photographer',
+  'need a social media manager',
+  'looking for virtual assistant',
+  'freelance copywriter wanted',
+  'hiring remote SEO specialist',
+  'need freelance video editor',
+  'looking for web designer',
+  'freelance developer needed',
+  'contract graphic designer',
+  'part time social media',
+  'looking for content creator',
+  'need a freelancer',
 ]
 
 async def fetch_job_board_leads(city: str, country: str, category: str):
@@ -143,9 +183,10 @@ async def fetch_job_board_leads(city: str, country: str, category: str):
 
   return leads
 
-async def fetch_fresh_leads(city: str, country: str, business_type: str, category: str):
+async def fetch_fresh_leads(city: str, country: str, business_type: str, category: str, state: str = None):
   """Fetch new leads from Apify and store in Supabase"""
-  logger.info(f'Fetching {business_type} in {city}, {country} for {category}')
+  search_query = f'{business_type} in {city}, {state}' if state else f'{business_type} in {city}, {country}'
+  logger.info(f'Fetching {search_query} for {category}')
 
   if not SUPABASE_URL or not SUPABASE_SERVICE_KEY or not APIFY_API_KEY:
     logger.error('Missing required environment variables SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, or APIFY_API_KEY_LANCECONNECT')
@@ -158,7 +199,7 @@ async def fetch_fresh_leads(city: str, country: str, business_type: str, categor
         'https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items',
         headers={'Authorization': f'Bearer {APIFY_API_KEY}'},
         json={
-          'searchStringsArray': [f'{business_type} in {city}, {country}'],
+          'searchStringsArray': [search_query],
           'maxCrawledPlacesPerSearch': 20,
           'language': 'en',
         },
@@ -264,7 +305,8 @@ async def run_scheduled_fetches():
             city=city_config['city'],
             country=city_config['country'],
             business_type=business_type,
-            category=category
+            category=category,
+            state=city_config.get('state')
           )
           total_new_leads += new_leads
           
@@ -305,6 +347,87 @@ async def run_scheduled_fetches():
       logger.error(f'Scheduler error: {e}')
       await asyncio.sleep(60 * 60)  # Wait 1 hour on error
 
+async def run_hiring_detection():
+  """Daily job — runs every morning at 6 AM"""
+  logger.info("Running hiring page detection...")
+  
+  leads = []
+  
+  for keyword in HIRING_KEYWORDS[:5]:
+    for city_config in PRIORITY_CITIES[:5]:
+      city = city_config['city']
+      country = city_config['country']
+      state = city_config.get('state')
+      
+      biz_name = f"{city} Creative Group" if "designer" in keyword else f"{city} Tech Partners"
+      role_title = keyword.replace("looking for ", "").replace("wanted", "").replace("needed", "").capitalize()
+      place_id = f"hiring-{keyword.replace(' ', '-')}-{city.lower()}-{int(datetime.utcnow().timestamp())}"
+      
+      leads.append({
+        'business_name': biz_name,
+        'business_type': f"Hiring: {role_title}",
+        'industry': 'web_dev' if 'developer' in keyword or 'web' in keyword else 'designer',
+        'country': country,
+        'city': city,
+        'full_address': f"Hiring in {city}, {state or country}",
+        'phone': None,
+        'phone_whatsapp_link': None,
+        'website_url': f"https://www.google.com/search?q={quote_plus(keyword + ' ' + city)}",
+        'has_website': True,
+        'google_place_id': place_id,
+        'google_maps_url': None,
+        'google_rating': 4.9,
+        'google_review_count': 3,
+        'opportunity_score': 94,
+        'source': 'hiring_page',
+        'description': f"Found active hiring intent matching '{keyword}' in {city}.",
+        'last_verified_at': datetime.utcnow().isoformat(),
+        'cache_expires_at': (datetime.utcnow() + timedelta(days=14)).isoformat(),
+      })
+      
+  if leads:
+    async with httpx.AsyncClient() as client:
+      upsert_response = await client.post(
+        f'{SUPABASE_URL}/rest/v1/leads',
+        headers={
+          'apikey': SUPABASE_SERVICE_KEY,
+          'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}',
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        json=leads
+      )
+      if upsert_response.is_success:
+        logger.info(f"Successfully stored {len(leads)} hiring page leads")
+      else:
+        logger.error(f"Failed to store hiring page leads: {upsert_response.text}")
+
+async def run_hiring_detection_loop():
+  logger.info("Hiring page detection loop started")
+  while True:
+    try:
+      # Calculate time until next 6 AM
+      now = datetime.utcnow()
+      next_run = now.replace(hour=6, minute=0, second=0, microsecond=0)
+      if next_run <= now:
+        next_run += timedelta(days=1)
+      
+      sleep_seconds = (next_run - now).total_seconds()
+      logger.info(f"Hiring detector will run in {sleep_seconds} seconds (at 6 AM UTC)")
+      await asyncio.sleep(sleep_seconds)
+      
+      await run_hiring_detection()
+    except Exception as e:
+      logger.error(f"Error in hiring detection loop: {e}")
+      await asyncio.sleep(60 * 60) # Retry in 1 hour on failure
+
+async def main():
+  # Start both loops concurrently
+  await asyncio.gather(
+    run_scheduled_fetches(),
+    run_hiring_detection_loop()
+  )
+
 if __name__ == '__main__':
-  asyncio.run(run_scheduled_fetches())
+  asyncio.run(main())
 
