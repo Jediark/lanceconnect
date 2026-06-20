@@ -92,112 +92,6 @@ export function MarketingNav() {
           </button>
         </div>
       )}
-      <div className="relative bg-card py-1.5 border-b border-border/40 select-none transition-colors duration-300">
-        <div className="max-w-7xl mx-auto w-full px-4 lg:px-8 flex items-center justify-between gap-3 text-xs font-mono text-foreground">
-          {/* Active Lead Scanning Stats */}
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-            </span>
-            <span className="text-slate-700 dark:text-muted-foreground">
-              Active Lead Scanning: {stats.citiesToday.toLocaleString()} cities checked today · {stats.leadsToday.toLocaleString()} leads indexed today
-            </span>
-          </div>
-
-          {/* Search, Language & Currency preferences (Desktop only) */}
-          <div className="hidden lg:flex items-center gap-3">
-          {/* CMD+K Search Icon Button */}
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
-            className="p-1 text-slate-800 dark:text-slate-300 hover:text-primary transition cursor-pointer flex items-center gap-1.5 hover:bg-accent rounded-lg px-2"
-            aria-label="Search"
-            title="Search (⌘K)"
-          >
-            <Search className="h-4 w-4" />
-            <span className="text-xs font-bold">Search (⌘K)</span>
-          </button>
-
-          <div className="h-3 w-px bg-border" />
-
-          {/* Globe Settings Dropdown */}
-          <div className="relative" ref={settingsRef}>
-            <button
-              onClick={() => setSettingsOpen(!settingsOpen)}
-              className="flex items-center gap-1.5 p-1 text-slate-800 dark:text-slate-300 hover:text-primary transition cursor-pointer text-xs font-bold hover:bg-accent rounded-lg px-2"
-              aria-label="Settings"
-            >
-              <Globe className="h-4 w-4" />
-              <span>
-                {language.toUpperCase()} · {currency}
-              </span>
-            </button>
-
-            {settingsOpen && (
-              <div className="absolute right-0 mt-2 w-52 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 font-sans">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-                  Preferences
-                </p>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-1 font-semibold">
-                      Language
-                    </label>
-                    <select
-                      value={language}
-                      onChange={(e) => setLanguage(e.target.value as Language)}
-                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-slate-950 dark:text-white focus:outline-none transition cursor-pointer"
-                    >
-                      <option value="en" className="bg-background text-slate-950 dark:text-white">
-                        English (EN)
-                      </option>
-                      <option value="fr" className="bg-background text-slate-950 dark:text-white">
-                        Français (FR)
-                      </option>
-                      <option value="it" className="bg-background text-slate-950 dark:text-white">
-                        Italiano (IT)
-                      </option>
-                      <option value="es" className="bg-background text-slate-950 dark:text-white">
-                        Español (ES)
-                      </option>
-                      <option value="pt" className="bg-background text-slate-950 dark:text-white">
-                        Português (PT)
-                      </option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-1 font-semibold">
-                      Currency
-                    </label>
-                    <select
-                      value={currency}
-                      onChange={(e) => setCurrency(e.target.value as Currency)}
-                      className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-slate-950 dark:text-white focus:outline-none transition cursor-pointer"
-                    >
-                      <option value="USD" className="bg-background text-slate-950 dark:text-white">
-                        USD ($)
-                      </option>
-                      <option value="EUR" className="bg-background text-slate-950 dark:text-white">
-                        EUR (€)
-                      </option>
-                      <option value="GBP" className="bg-background text-slate-950 dark:text-white">
-                        GBP (£)
-                      </option>
-                      <option value="NGN" className="bg-background text-slate-950 dark:text-white">
-                        NGN (₦)
-                      </option>
-                      <option value="BRL" className="bg-background text-slate-950 dark:text-white">
-                        BRL (R$)
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      </div>
       <header className="border-b border-border bg-background w-full py-3">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center group">
@@ -266,7 +160,95 @@ export function MarketingNav() {
 
             <div className="h-4 w-px bg-border/40" />
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              {/* CMD+K Search Icon Button */}
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("toggle-cmd-palette"))}
+                className="p-2 text-slate-500 dark:text-slate-400 hover:text-foreground hover:bg-accent transition cursor-pointer rounded-lg"
+                aria-label="Search"
+                title="Search (⌘K)"
+              >
+                <Search className="h-4.5 w-4.5" />
+              </button>
+
+              {/* Globe Settings Dropdown */}
+              <div className="relative" ref={settingsRef}>
+                <button
+                  onClick={() => setSettingsOpen(!settingsOpen)}
+                  className="flex items-center gap-1.5 p-2 text-slate-500 dark:text-slate-400 hover:text-foreground hover:bg-accent transition cursor-pointer rounded-lg text-xs font-semibold"
+                  aria-label="Settings"
+                  title="Preferences"
+                >
+                  <Globe className="h-4.5 w-4.5" />
+                  <span>
+                    {language.toUpperCase()} · {currency}
+                  </span>
+                  <ChevronDown className="h-3 w-3 text-slate-400" />
+                </button>
+
+                {settingsOpen && (
+                  <div className="absolute right-0 mt-2 w-52 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 font-sans text-foreground">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                      Preferences
+                    </p>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-1 font-semibold">
+                          Language
+                        </label>
+                        <select
+                          value={language}
+                          onChange={(e) => setLanguage(e.target.value as Language)}
+                          className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-slate-950 dark:text-white focus:outline-none transition cursor-pointer"
+                        >
+                          <option value="en" className="bg-background text-slate-950 dark:text-white">
+                            English (EN)
+                          </option>
+                          <option value="fr" className="bg-background text-slate-950 dark:text-white">
+                            Français (FR)
+                          </option>
+                          <option value="it" className="bg-background text-slate-950 dark:text-white">
+                            Italiano (IT)
+                          </option>
+                          <option value="es" className="bg-background text-slate-950 dark:text-white">
+                            Español (ES)
+                          </option>
+                          <option value="pt" className="bg-background text-slate-950 dark:text-white">
+                            Português (PT)
+                          </option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-1 font-semibold">
+                          Currency
+                        </label>
+                        <select
+                          value={currency}
+                          onChange={(e) => setCurrency(e.target.value as Currency)}
+                          className="w-full bg-background border border-border/60 hover:border-border rounded-lg px-2.5 py-1.5 text-xs text-slate-950 dark:text-white focus:outline-none transition cursor-pointer"
+                        >
+                          <option value="USD" className="bg-background text-slate-950 dark:text-white">
+                            USD ($)
+                          </option>
+                          <option value="EUR" className="bg-background text-slate-950 dark:text-white">
+                            EUR (€)
+                          </option>
+                          <option value="GBP" className="bg-background text-slate-950 dark:text-white">
+                            GBP (£)
+                          </option>
+                          <option value="NGN" className="bg-background text-slate-950 dark:text-white">
+                            NGN (₦)
+                          </option>
+                          <option value="BRL" className="bg-background text-slate-950 dark:text-white">
+                            BRL (R$)
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="p-2 rounded-lg text-slate-400 hover:text-foreground hover:bg-accent transition cursor-pointer"

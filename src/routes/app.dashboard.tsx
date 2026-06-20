@@ -18,6 +18,14 @@ import {
   ArrowRight,
   Shield,
   ArrowLeft,
+  Home,
+  Heart,
+  Briefcase,
+  Utensils,
+  Activity,
+  Car,
+  Laptop,
+  LayoutGrid,
 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { CATEGORIES, COUNTRIES, MOCK_LEADS, type Lead } from "@/data/mockData";
@@ -123,6 +131,63 @@ function DealValueInput({ lead }: { lead: Lead }) {
   );
 }
 
+const PARENT_CATEGORIES = [
+  { id: "all", label: "All Industries" },
+  { id: "home_services", label: "Home Services" },
+  { id: "health_wellness", label: "Health & Wellness" },
+  { id: "professional_services", label: "Professional Services" },
+  { id: "food_hospitality", label: "Food & Hospitality" },
+  { id: "fitness_sports", label: "Fitness & Sports" },
+  { id: "automotive_energy", label: "Automotive & Energy" },
+  { id: "ecommerce_tech", label: "Ecommerce & Tech" },
+];
+
+const MICRO_NICHES = [
+  // Home Services
+  { name: "Landscaping", category: "home_services" },
+  { name: "Roofing", category: "home_services" },
+  { name: "HVAC", category: "home_services" },
+  { name: "Carpentry", category: "home_services" },
+  { name: "Snow removal", category: "home_services" },
+  { name: "Pool services", category: "home_services" },
+  { name: "Plumbers", category: "home_services" },
+  { name: "Electricians", category: "home_services" },
+  { name: "Pest Control", category: "home_services" },
+  { name: "Handyman Services", category: "home_services" },
+  { name: "Moving Companies", category: "home_services" },
+  { name: "Water & Fire Restoration", category: "home_services" },
+  // Health & Wellness
+  { name: "Med spa", category: "health_wellness" },
+  { name: "Dentistry", category: "health_wellness" },
+  { name: "Massage therapist", category: "health_wellness" },
+  { name: "Barber shops", category: "health_wellness" },
+  { name: "Nail salons", category: "health_wellness" },
+  // Professional Services
+  { name: "Real estate", category: "professional_services" },
+  { name: "Vet services", category: "professional_services" },
+  { name: "Law", category: "professional_services" },
+  { name: "Accountants / CPAs", category: "professional_services" },
+  { name: "Bookkeepers", category: "professional_services" },
+  { name: "Insurance Agencies", category: "professional_services" },
+  { name: "Marketing Agencies", category: "professional_services" },
+  // Food & Hospitality
+  { name: "Restaurants", category: "food_hospitality" },
+  { name: "Coffee shops", category: "food_hospitality" },
+  { name: "Bakeries", category: "food_hospitality" },
+  { name: "Catering Services", category: "food_hospitality" },
+  // Fitness & Sports
+  { name: "Boxing gyms", category: "fitness_sports" },
+  { name: "MMA gyms", category: "fitness_sports" },
+  { name: "Coaching", category: "fitness_sports" },
+  { name: "Physical Trainer", category: "fitness_sports" },
+  // Automotive & Energy
+  { name: "Car dealerships", category: "automotive_energy" },
+  { name: "Mobile car detailer", category: "automotive_energy" },
+  { name: "Solar companies", category: "automotive_energy" },
+  // Ecommerce & Tech
+  { name: "Ecommerce", category: "ecommerce_tech" },
+];
+
 function Dashboard() {
   const { user } = useAuth();
   const { pipeline, savedIds, saveLead, removeLead, updateStatus } = usePipeline();
@@ -138,6 +203,8 @@ function Dashboard() {
   const [quickCity, setQuickCity] = useState("");
   const [quickCategory, setQuickCategory] = useState("web_dev");
   const [quickCountry, setQuickCountry] = useState("United States");
+  const [selectedNiche, setSelectedNiche] = useState("");
+  const [activeParentCategory, setActiveParentCategory] = useState("all");
   const [results, setResults] = useState<Lead[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -152,11 +219,13 @@ function Dashboard() {
       const savedCity = sessionStorage.getItem("lc_shared_city");
       const savedCategory = sessionStorage.getItem("lc_shared_category");
       const savedCountry = sessionStorage.getItem("lc_shared_country");
+      const savedNiche = sessionStorage.getItem("lc_shared_niche");
       const savedResults = sessionStorage.getItem("lc_shared_results");
 
       if (savedCity) setQuickCity(savedCity);
       if (savedCategory) setQuickCategory(savedCategory);
       if (savedCountry) setQuickCountry(savedCountry);
+      if (savedNiche) setSelectedNiche(savedNiche);
       if (savedResults) {
         try {
           setResults(JSON.parse(savedResults));
@@ -183,8 +252,9 @@ function Dashboard() {
       sessionStorage.setItem("lc_shared_city", quickCity);
       sessionStorage.setItem("lc_shared_category", quickCategory);
       sessionStorage.setItem("lc_shared_country", quickCountry);
+      sessionStorage.setItem("lc_shared_niche", selectedNiche);
     }
-  }, [quickCity, quickCategory, quickCountry, isMounted]);
+  }, [quickCity, quickCategory, quickCountry, selectedNiche, isMounted]);
 
   useEffect(() => {
     if (isMounted && typeof window !== "undefined") {
@@ -802,12 +872,16 @@ function Dashboard() {
     let searchCategory = quickCategory;
     let searchCity = quickCity;
     let searchCountry = quickCountry;
+    let searchNiche = selectedNiche;
 
     if (e && !isEvent) {
-      const params = e as { category: string; country: string; city: string };
+      const params = e as { category: string; country: string; city: string; niche?: string };
       searchCategory = params.category;
       searchCity = params.city;
       searchCountry = params.country;
+      if (params.niche !== undefined) {
+        searchNiche = params.niche;
+      }
     }
 
     if (!searchCity.trim()) {
@@ -830,7 +904,13 @@ function Dashboard() {
     }
     try {
       const { data, error } = await supabase.functions.invoke("search-leads", {
-        body: { query: searchCategory, city: searchCity, country: searchCountry, limit: 12 },
+        body: {
+          query: searchCategory,
+          city: searchCity,
+          country: searchCountry,
+          niche: searchNiche || undefined,
+          limit: 12,
+        },
       });
       if (error) {
         let errMsg = error.message || "Failed to search leads";
@@ -1491,6 +1571,91 @@ function Dashboard() {
               </div>
             )}
           </form>
+
+          {/* B2B Freelance Niche Filters */}
+          <div className="relative z-10 mt-6 pt-6 border-t border-border/40 select-none">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+              <div>
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <span>Target B2B Freelance Niches</span>
+                  <span className="text-xs font-normal text-muted-foreground">(Direct business outreach, not job listings)</span>
+                </h3>
+              </div>
+              {selectedNiche && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedNiche("");
+                    toast.success("Cleared niche filter");
+                  }}
+                  className="text-xs font-medium text-amber-500 hover:text-amber-600 transition flex items-center gap-1 cursor-pointer bg-transparent border-none outline-none self-start"
+                >
+                  <X className="h-3.5 w-3.5" /> Clear niche filter: <strong className="underline">{selectedNiche}</strong>
+                </button>
+              )}
+            </div>
+
+            {/* Parent Category Pills */}
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {PARENT_CATEGORIES.map((pc) => {
+                const isActive = activeParentCategory === pc.id;
+                return (
+                  <button
+                    key={pc.id}
+                    type="button"
+                    onClick={() => setActiveParentCategory(pc.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer flex items-center gap-1.5
+                      ${isActive
+                        ? "bg-primary border-primary text-white shadow-md shadow-primary/10"
+                        : "bg-muted/40 border-border/80 hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                  >
+                    {pc.id === "all" && <LayoutGrid className="h-3.5 w-3.5" />}
+                    {pc.id === "home_services" && <Home className="h-3.5 w-3.5" />}
+                    {pc.id === "health_wellness" && <Heart className="h-3.5 w-3.5" />}
+                    {pc.id === "professional_services" && <Briefcase className="h-3.5 w-3.5" />}
+                    {pc.id === "food_hospitality" && <Utensils className="h-3.5 w-3.5" />}
+                    {pc.id === "fitness_sports" && <Activity className="h-3.5 w-3.5" />}
+                    {pc.id === "automotive_energy" && <Car className="h-3.5 w-3.5" />}
+                    {pc.id === "ecommerce_tech" && <Laptop className="h-3.5 w-3.5" />}
+                    <span>{pc.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Micro Niches Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-40 overflow-y-auto pr-1">
+              {MICRO_NICHES.filter(
+                (n) => activeParentCategory === "all" || n.category === activeParentCategory,
+              ).map((n) => {
+                const isSelected = selectedNiche === n.name;
+                return (
+                  <button
+                    key={n.name}
+                    type="button"
+                    onClick={() => {
+                      const newNiche = isSelected ? "" : n.name;
+                      setSelectedNiche(newNiche);
+                      if (newNiche) {
+                        toast.success(`Niche filter set to: ${newNiche}`);
+                      } else {
+                        toast.success("Cleared niche filter");
+                      }
+                    }}
+                    className={`px-3 py-2 rounded-xl text-xs font-medium border text-left truncate transition cursor-pointer
+                      ${isSelected
+                        ? "bg-amber-500/10 border-amber-500/80 text-amber-500 font-bold dark:bg-amber-500/15"
+                        : "bg-background border-border/80 hover:bg-muted text-foreground/80 hover:text-foreground"
+                      }`}
+                    title={n.name}
+                  >
+                    {n.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </section>
 
         {/* ═══ STATS ROW ═══ */}
