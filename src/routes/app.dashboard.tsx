@@ -1515,7 +1515,7 @@ function Dashboard() {
                                   setQuickCity(c);
                                   setShowCitySuggestions(false);
                                 }}
-                                className="rounded bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 px-2 py-0.5 font-bold text-slate-850 dark:text-white hover:bg-slate-200 dark:hover:bg-white/15 transition cursor-pointer text-[10px]"
+                                className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700"
                               >
                                 {c}
                               </button>
