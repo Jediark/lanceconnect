@@ -1688,7 +1688,7 @@ function Dashboard() {
         </div>
 
         {/* ═══ STATS ROW ═══ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
               id: "searches",
@@ -1726,7 +1726,7 @@ function Dashboard() {
             <div
               key={s.label}
               onClick={() => setActiveStatScreen(s.id as any)}
-              className="rounded-2xl border bg-card p-5 border-border hover:border-primary/50 transition group cursor-pointer"
+              className="rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50/30 dark:bg-white/[0.02] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] hover:border-primary/50 dark:hover:border-primary/50 transition group cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className={`grid h-9 w-9 place-items-center rounded-xl ${s.bg}`}>
