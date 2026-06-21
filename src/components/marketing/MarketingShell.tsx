@@ -119,41 +119,83 @@ export function MarketingNav() {
                   <span>Resources</span>
                   <ChevronDown className="h-3 w-3 transition-transform duration-250 group-hover:rotate-180" />
                 </button>
-                <div className="absolute left-0 mt-1.5 w-64 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 hidden group-hover:block animate-in fade-in slide-in-from-top-1 duration-150 font-sans before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 before:content-['']">
-                  {resourcesLinks.map((r) => (
-                    <Link
-                      key={r.to}
-                      to={r.to}
-                      className="block rounded-lg px-3 py-2 text-xs text-foreground/85 hover:bg-accent hover:text-foreground transition-colors font-medium"
-                    >
-                      {r.label}
+                <div className="absolute left-1/2 -translate-x-[40%] mt-1.5 w-[560px] rounded-2xl border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-[#0b1220]/95 backdrop-blur-lg shadow-2xl z-50 hidden group-hover:grid grid-cols-12 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 font-sans before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 before:content-['']">
+                  
+                  {/* Left Column: Guides & Docs */}
+                  <div className="col-span-5 bg-slate-50/40 dark:bg-white/[0.01] p-4 flex flex-col gap-3 border-r border-slate-100 dark:border-white/5">
+                    <span className="px-2.5 text-[9px] uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500 mb-0.5">Guides & Formulas</span>
+                    
+                    <Link to="/resources/google-my-business" className="group/item block p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-left">
+                      <span className="block text-[11px] font-bold text-slate-900 dark:text-white group-hover/item:text-primary transition-colors mb-0.5">
+                        Google Maps Guide
+                      </span>
+                      <span className="block text-[10px] leading-normal text-slate-500 dark:text-slate-400 font-semibold">
+                        Optimize local business listings to win active leads.
+                      </span>
                     </Link>
-                  ))}
-                  <div className="border-t border-border/40 my-1.5 pt-1.5">
-                    <p className="px-3 py-1 text-[9px] uppercase font-mono tracking-wider text-muted-foreground">Cities</p>
-                    {cityLinks.map((c) => (
-                      <Link key={c.to} to={c.to} className="block rounded-lg px-3 py-1.5 text-xs text-foreground/85 hover:bg-accent hover:text-foreground transition-colors font-medium">
-                        {c.label}
+
+                    <Link to="/resources/outreach-templates" className="group/item block p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-left">
+                      <span className="block text-[11px] font-bold text-slate-900 dark:text-white group-hover/item:text-primary transition-colors mb-0.5">
+                        Outreach Templates
+                      </span>
+                      <span className="block text-[10px] leading-normal text-slate-500 dark:text-slate-400 font-semibold">
+                        Proven pitch formulas to convert cold map directory leads.
+                      </span>
+                    </Link>
+                  </div>
+
+                  {/* Middle Column: Platform Links */}
+                  <div className="col-span-4 p-4 flex flex-col gap-1.5 text-left">
+                    <span className="px-2 text-[9px] uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500 mb-0.5">Platform Pages</span>
+                    {[
+                      { to: "/how-it-works", label: "How It Works" },
+                      { to: "/portfolio", label: "Portfolio Showcase" },
+                      { to: "/about", label: "About Us" },
+                      { to: "/safety", label: "Safety Guidelines" },
+                      { to: "/resources/export-guide", label: "Export Guide" },
+                    ].map((item) => (
+                      <Link key={item.to} to={item.to} className="group/sub flex items-center justify-between px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-950 dark:hover:text-white transition">
+                        <span>{item.label}</span>
+                        <ArrowRight className="h-3 w-3 opacity-0 group-hover/sub:opacity-100 transition-opacity text-primary shrink-0 ml-1" />
                       </Link>
                     ))}
                   </div>
-                  <div className="border-t border-border/40 my-1.5 pt-1.5">
-                    <p className="px-3 py-1 text-[9px] uppercase font-mono tracking-wider text-muted-foreground">By Skill</p>
-                    {skillLinks.map((s) => (
-                      <Link key={s.to} to={s.to} className="block rounded-lg px-3 py-1.5 text-xs text-foreground/85 hover:bg-accent hover:text-foreground transition-colors font-medium">
-                        {s.label}
-                      </Link>
-                    ))}
+
+                  {/* Right Column: Shortcuts */}
+                  <div className="col-span-3 p-4 flex flex-col gap-4 text-left border-l border-slate-100 dark:border-white/5">
+                    <div>
+                      <span className="px-2 text-[9px] uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500 mb-1 block">Cities</span>
+                      <div className="flex flex-col gap-0.5">
+                        {cityLinks.map((c) => (
+                          <Link key={c.to} to={c.to} className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition block">
+                            {c.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="px-2 text-[9px] uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500 mb-1 block">By Skill</span>
+                      <div className="flex flex-col gap-0.5">
+                        {skillLinks.map((s) => (
+                          <Link key={s.to} to={s.to} className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition block truncate">
+                            {s.label.split(" ")[0]}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="border-t border-border/40 mt-1.5 pt-1.5">
+
+                  {/* Bottom Footer Row */}
+                  <div className="col-span-12 border-t border-slate-100 dark:border-white/5 bg-slate-50/40 dark:bg-white/[0.02] p-3 text-center">
                     <Link
                       to="/find-clients"
-                      className="flex items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold text-primary hover:bg-accent hover:text-primary transition-colors"
+                      className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-primary hover:brightness-110 transition"
                     >
-                      <span>Explore All Cities & Skills</span>
-                      <ArrowRight className="h-3 w-3" />
+                      <span>Explore All Cities & Skills Directory</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
                   </div>
+
                 </div>
               </div>
             </nav>
