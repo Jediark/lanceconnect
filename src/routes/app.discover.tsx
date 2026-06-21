@@ -39,6 +39,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Shield } from "lucide-react";
 import { getCountry } from "@/data/dynamicRouteData";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({ meta: [{ title: "Discover Leads — LanceConnect" }] }),
@@ -646,22 +647,20 @@ function Discover() {
             <div className="flex-1 flex flex-col justify-center relative px-3 py-2 md:py-0 min-w-0">
               <div className="flex items-center w-full">
                 <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
-                <select
+                <CustomSelect
                   value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
+                  onChange={(val) => {
+                    setCategory(val);
                     setShowNicheSuggestions(true);
                   }}
-                  onFocus={() => setShowNicheSuggestions(true)}
-                  className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none cursor-pointer py-2"
-                >
-                  <option value="">All Categories (Niche)</option>
-                  {CATEGORIES.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-card text-foreground">
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
+                  options={[
+                    { value: "", label: "All Categories (Niche)" },
+                    ...CATEGORIES.map((c) => ({ value: c.id, label: c.label }))
+                  ]}
+                  placeholder="All Categories (Niche)"
+                  variant="ghost"
+                  title="Select Category / Niche"
+                />
               </div>
 
               {/* Dynamic Niche Suggestions Overlay */}
@@ -732,21 +731,20 @@ function Discover() {
             {/* Country Selection */}
             <div className="flex-1 flex items-center px-3 py-2 md:py-0 min-w-0">
               <Globe className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
-              <select
-                value={country}
-                onChange={(e) => {
-                  setCountry(e.target.value);
-                  setCity("");
-                }}
-                className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none cursor-pointer py-2"
-              >
-                <option value="">All Countries</option>
-                {COUNTRIES.map((c) => (
-                  <option key={c.code} value={c.name} className="bg-card text-foreground">
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                <CustomSelect
+                  value={country}
+                  onChange={(val) => {
+                    setCountry(val);
+                    setCity("");
+                  }}
+                  options={[
+                    { value: "", label: "All Countries" },
+                    ...COUNTRIES.map((c) => ({ value: c.name, label: c.name }))
+                  ]}
+                  placeholder="All Countries"
+                  variant="ghost"
+                  title="Select Country"
+                />
             </div>
 
             {/* City Input (Location) */}

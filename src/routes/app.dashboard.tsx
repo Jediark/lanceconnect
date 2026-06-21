@@ -45,6 +45,7 @@ import { GoalTracker } from "@/components/dashboard/GoalTracker";
 import { GlobalHeatmap } from "@/components/dashboard/GlobalHeatmap";
 import { QuickConnectModal } from "@/components/dashboard/QuickConnectModal";
 import { TrendingSearches } from "@/components/ui/TrendingSearches";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LanceConnect" }] }),
@@ -1441,36 +1442,28 @@ function Dashboard() {
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                   My Category / Service
                 </label>
-                <select
+                <CustomSelect
                   value={quickCategory}
-                  onChange={(e) => setQuickCategory(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(val) => setQuickCategory(val)}
+                  options={CATEGORIES.map((c) => ({ value: c.id, label: c.label }))}
+                  placeholder="Select category"
+                  title="Select Category / Service"
+                />
               </div>
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                   Country
                 </label>
-                <select
+                <CustomSelect
                   value={quickCountry}
-                  onChange={(e) => {
-                    setQuickCountry(e.target.value);
+                  onChange={(val) => {
+                    setQuickCountry(val);
                     setQuickCity("");
                   }}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition"
-                >
-                  {COUNTRIES.map((c) => (
-                    <option key={c.code} value={c.name}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  options={COUNTRIES.map((c) => ({ value: c.name, label: c.name }))}
+                  placeholder="Select country"
+                  title="Select Country"
+                />
               </div>
               <div className="relative">
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
