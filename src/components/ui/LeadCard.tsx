@@ -114,7 +114,7 @@ export function LeadCard({
   const getBuyerSignal = (score: number) => {
     if (score >= 80) return { label: "Hot Lead", color: "text-rose-400 bg-rose-500/10 border-rose-500/20" };
     if (score >= 50) return { label: "Warm Prospect", color: "text-amber-400 bg-amber-500/10 border-amber-500/20" };
-    return { label: "Cold Prospect", color: "text-slate-400 bg-slate-500/10 border-slate-500/20" };
+    return { label: "Cold Prospect", color: "text-muted-foreground bg-muted border-border/60" };
   };
   const signalInfo = getBuyerSignal(lead.opportunityScore);
 
@@ -122,7 +122,7 @@ export function LeadCard({
     if (reviewCount > 500) return { label: "Large Enterprise", color: "text-purple-400 bg-purple-500/10 border-purple-500/20" };
     if (reviewCount > 100) return { label: "Medium Company", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" };
     if (reviewCount > 20) return { label: "Small Business", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" };
-    return { label: "Micro Business", color: "text-slate-400 bg-slate-500/10 border-slate-500/20" };
+    return { label: "Micro Business", color: "text-muted-foreground bg-muted border-border/60" };
   };
   const sizeInfo = getCompanySize(lead.googleReviewCount);
 
@@ -193,9 +193,9 @@ export function LeadCard({
         <div className="min-w-0">
           <h3 className="font-display text-lg font-semibold leading-tight">{lead.businessName}</h3>
           <p className="mt-1 text-xs text-muted-foreground flex flex-wrap items-center gap-1.5">
-            <span className="font-semibold text-slate-300">{lead.businessType}</span>
-            <span className="text-slate-600">·</span>
-            <span className="inline-flex items-center gap-1 bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] font-semibold border border-slate-700">
+            <span className="font-semibold text-muted-foreground">{lead.businessType}</span>
+            <span className="text-white/20">·</span>
+            <span className="inline-flex items-center gap-1 bg-muted text-muted-foreground px-2 py-0.5 rounded text-[10px] font-semibold border border-border/60">
               <MapPin className="h-3 w-3 text-primary" />
               {lead.city}, {lead.country}
             </span>
@@ -209,7 +209,7 @@ export function LeadCard({
                       ⚠️ Unverified phone
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-xs bg-slate-900 border border-slate-700 text-slate-200 p-2 text-xs">
+                  <TooltipContent className="max-w-xs bg-card border border-border text-foreground p-2 text-xs">
                     <p>
                       This number could not be verified by our system. It may still be correct — try calling or WhatsApp first.
                       {(lead.country?.toLowerCase() === "nigeria" || lead.phone?.startsWith("+234") || lead.phone?.startsWith("234")) && (
@@ -284,7 +284,7 @@ export function LeadCard({
         {lead.phone && (
           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
             {isLocked ? (
-              <span className="flex items-center gap-1 text-slate-500 font-mono text-sm line-through" title="Outreach locked">
+              <span className="flex items-center gap-1 text-muted-foreground/50 font-mono text-sm line-through" title="Outreach locked">
                 <WhatsAppIcon size={14} />
                 {lead.phone.slice(0, 6) + " ••• ••••"}
               </span>
@@ -316,7 +316,7 @@ export function LeadCard({
               disabled={isLocked}
               className={cn(
                 "rounded p-1 transition",
-                isLocked ? "text-slate-600 cursor-not-allowed" : "text-slate-400 hover:bg-accent hover:text-foreground"
+                isLocked ? "text-muted-foreground/30 cursor-not-allowed" : "text-muted-foreground hover:bg-accent hover:text-foreground"
               )}
               title="Copy Phone Number"
             >
@@ -331,7 +331,7 @@ export function LeadCard({
           </p>
         ) : (
           <div className="space-y-1" onClick={(e) => e.stopPropagation()}>
-            <span className="text-slate-500 text-xs italic">
+            <span className="text-muted-foreground/80 text-xs italic">
               📧 Email not publicly listed
             </span>
             <div className="flex flex-wrap gap-2 mt-1">
@@ -448,10 +448,10 @@ export function LeadCard({
           className={cn(
             "inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition",
             isLocked
-              ? "bg-slate-800 text-slate-500 cursor-not-allowed"
+              ? "bg-muted text-muted-foreground/30 cursor-not-allowed"
               : isSaved
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60",
+                ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold"
+                : "bg-foreground text-background hover:opacity-90 font-bold disabled:opacity-60",
           )}
         >
           {isLocked ? (
@@ -498,7 +498,7 @@ export function LeadCard({
             "inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium transition",
             reported
               ? "text-rose-500 bg-rose-500/10 border-rose-500/20"
-              : "text-slate-400 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
+              : "text-muted-foreground hover:bg-rose-500/10 hover:text-rose-450 hover:border-rose-500/20"
           )}
           title={reported ? "Reported" : "Report this lead"}
         >
@@ -509,7 +509,7 @@ export function LeadCard({
           onClick={handleDismiss}
           disabled={dismissing || isLocked}
           className={cn(
-            "inline-flex items-center justify-center gap-1 text-xs font-semibold px-3 py-2 rounded-lg border border-border bg-background text-slate-400 hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 transition cursor-pointer",
+            "inline-flex items-center justify-center gap-1 text-xs font-semibold px-3 py-2 rounded-lg border border-border bg-background text-muted-foreground hover:bg-rose-500/10 hover:text-rose-450 hover:border-rose-500/20 transition cursor-pointer",
             (dismissing || isLocked) && "opacity-40 cursor-not-allowed"
           )}
           title="Not interested — show me different leads"

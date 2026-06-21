@@ -699,8 +699,8 @@ function Discover() {
                               className={cn(
                                 "rounded px-2.5 py-0.5 font-bold border transition cursor-pointer text-[10px]",
                                 selectedNiche === n
-                                  ? "bg-primary text-white border-primary shadow-sm"
-                                  : "bg-primary/5 border-primary/20 text-primary hover:bg-primary/10",
+                                  ? "bg-white/10 border-white/20 text-white font-bold shadow-sm"
+                                  : "bg-white/5 border border-white/10 text-white/90 hover:bg-white/10",
                               )}
                             >
                               {n}
@@ -802,7 +802,7 @@ function Discover() {
                                 toast.success(`Selected city: ${c}`);
                                 setShowCitySuggestions(false);
                               }}
-                              className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-bold text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
+                              className="rounded bg-white/5 border border-white/10 px-2 py-0.5 font-bold text-white hover:bg-white/15 transition cursor-pointer text-[10px]"
                             >
                               {c}
                             </button>
@@ -825,13 +825,13 @@ function Discover() {
                 onClick={() => setShowFilters(!showFilters)}
                 className={cn(
                   "inline-flex items-center justify-center gap-1.5 rounded-xl border border-input bg-background px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-accent transition-all cursor-pointer shadow-sm h-11",
-                  (showFilters || website !== "" || minScore !== 0) && "border-primary bg-primary/5 text-primary"
+                  (showFilters || website !== "" || minScore !== 0) && "border-white/40 bg-white/5 text-white"
                 )}
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 <span>Filters</span>
                 {(website !== "" || minScore !== 0) && (
-                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 )}
               </button>
 
@@ -935,15 +935,15 @@ function Discover() {
 
       {(ONLINE_ELIGIBLE.includes(category) || onlineJobs.length > 0) && (
         <div className="px-4 lg:px-8 mb-2">
-          <div className="inline-flex gap-1 border border-border bg-card p-1 rounded-xl shadow-sm">
+          <div className="inline-flex gap-1 border border-border bg-muted/60 p-1 rounded-xl shadow-inner">
             <button
               type="button"
               onClick={() => setActiveTab("local")}
               className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer",
                 activeTab === "local"
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  ? "bg-card text-foreground shadow border border-border/40"
+                  : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
               )}
             >
               🏪 Local Businesses ({filteredResults.length})
@@ -954,8 +954,8 @@ function Discover() {
               className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer",
                 activeTab === "online"
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  ? "bg-card text-foreground shadow border border-border/40"
+                  : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
               )}
             >
               🌐 Online Opportunities ({onlineJobs.length})
@@ -965,22 +965,22 @@ function Discover() {
       )}
 
       {searchIntelligence && (
-        <div className="mx-4 lg:mx-8 mt-2 mb-4 p-3 bg-slate-900/40 border border-slate-800 rounded-xl text-xs text-slate-400 flex flex-wrap items-center gap-2 font-mono animate-in slide-in-from-top-2 duration-300">
+        <div className="mx-4 lg:mx-8 mt-2 mb-4 p-3 bg-card/40 border border-border rounded-xl text-xs text-white/70 flex flex-wrap items-center gap-2 font-mono animate-in slide-in-from-top-2 duration-300">
           <span className="text-indigo-400">📍</span>
-          <span>Searching <span className="font-semibold text-indigo-400">{searchIntelligence.niche_searched}</span> in <span className="font-semibold text-primary">{searchIntelligence.district_searched}</span></span>
-          <span className="text-slate-600">·</span>
+          <span>Searching <span className="font-semibold text-indigo-400">{searchIntelligence.niche_searched}</span> in <span className="font-semibold text-cyan-400">{searchIntelligence.district_searched}</span></span>
+          <span className="text-white/30">·</span>
           <span>Area {searchIntelligence.district_number}/{searchIntelligence.total_districts}</span>
           {searchIntelligence.leads_excluded > 0 && (
             <>
-              <span className="text-slate-600">·</span>
-              <span className="text-slate-500">
+              <span className="text-white/30">·</span>
+              <span className="text-white/60">
                 {searchIntelligence.leads_excluded} already seen leads excluded
               </span>
             </>
           )}
           {searchIntelligence.personalized && (
             <>
-              <span className="text-slate-600">·</span>
+              <span className="text-white/30">·</span>
               <span className="text-emerald-400 font-semibold flex items-center gap-1">
                 ✨ Personalized Reranking Active
               </span>
@@ -1546,7 +1546,7 @@ function LeadDetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#020b21]/80 backdrop-blur-sm p-4 animate-in fade-in"
       onClick={onClose}
     >
       <div
@@ -1891,7 +1891,7 @@ function LeadDetailModal({
                       </button>
                       <button
                         onClick={copyDraft}
-                        className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary/90 cursor-pointer"
+                        className="rounded-lg bg-foreground text-background px-3 py-1 text-xs font-bold hover:opacity-90 cursor-pointer transition"
                       >
                         Copy Pitch
                       </button>
@@ -1906,13 +1906,13 @@ function LeadDetailModal({
                             }
                           }}
                           className={cn(
-                            "rounded-lg px-3 py-1 text-xs font-semibold text-white flex items-center gap-1 transition",
+                            "rounded-lg px-3 py-1 text-xs font-bold text-white flex items-center gap-1 transition",
                             isLocked ? "bg-muted text-muted-foreground cursor-not-allowed" : "cursor-pointer",
                             !isLocked && (selectedChannel === "whatsapp"
                               ? "bg-emerald-600 hover:bg-emerald-700"
                               : selectedChannel === "linkedin"
                                 ? "bg-[#0A66C2] hover:bg-[#084e96]"
-                                : "bg-primary hover:brightness-110")
+                                : "bg-foreground text-background hover:opacity-90")
                           )}
                         >
                           {isLocked ? "🔒 Closed" : `Send via ${selectedChannel === "whatsapp" ? "WhatsApp" : selectedChannel === "linkedin" ? "LinkedIn" : "Email"}`}
@@ -1973,7 +1973,7 @@ function LeadDetailModal({
                   <button
                     onClick={handleGenerate}
                     disabled={generating || isLocked}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary hover:bg-primary/95 py-2 text-xs font-semibold text-white cursor-pointer transition disabled:opacity-40"
+                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-foreground text-background py-2 text-xs font-bold cursor-pointer transition hover:opacity-90 disabled:opacity-40"
                   >
                     {generating ? (
                       <>
@@ -1999,7 +1999,7 @@ function LeadDetailModal({
                   toast.success("Saved to pipeline");
                 }}
                 disabled={savedIds.has(currentLead.id) || isLocked}
-                className="flex-1 rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
+                className="flex-1 rounded-lg bg-foreground text-background py-2.5 text-sm font-bold hover:opacity-90 disabled:opacity-50 cursor-pointer transition"
               >
                 {isLocked ? "🔒 Locked" : savedIds.has(currentLead.id) ? "✓ Saved in CRM" : "Save to Pipeline"}
               </button>
@@ -2140,7 +2140,7 @@ function LeadDetailModal({
 
       {/* Safety Reminder Modal */}
       {safetyReminderOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#020b21]/80 backdrop-blur-sm">
           <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
             <div className="flex items-center gap-2 text-amber-500 mb-4">
               <Shield className="h-6 w-6" />
@@ -2173,7 +2173,7 @@ function LeadDetailModal({
                 setSafetyReminderOpen(false);
                 toast.success("Contact revealed!");
               }}
-              className="w-full rounded-xl bg-primary hover:bg-primary/95 text-white py-3 text-xs font-bold shadow-md transition text-center cursor-pointer"
+              className="w-full rounded-xl bg-foreground text-background py-3 text-xs font-bold hover:opacity-90 transition text-center cursor-pointer"
             >
               Reveal Contact Details
             </button>
@@ -2183,11 +2183,11 @@ function LeadDetailModal({
 
       {/* Lead Report Modal */}
       {leadReportModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#020b21]/80 backdrop-blur-sm">
           <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
             <button
               onClick={() => setLeadReportModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-500 hover:text-slate-300"
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
             >
               <X className="h-5 w-5" />
             </button>

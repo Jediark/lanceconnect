@@ -125,7 +125,7 @@ function DealValueInput({ lead }: { lead: Lead }) {
         onChange={(e) => setVal(e.target.value)}
         onBlur={handleBlur}
         placeholder="0"
-        className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-[10px] text-foreground focus:outline-none focus:border-primary font-semibold"
+        className="w-16 bg-muted border border-border rounded px-1.5 py-0.5 text-[10px] text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-semibold"
       />
     </div>
   );
@@ -1181,7 +1181,7 @@ function Dashboard() {
           const q = item.query_params || {};
           const catLabel = getCategoryLabel(q.category);
           return (
-            <div key={item.id} className="rounded-xl border border-border bg-slate-900/60 p-4 space-y-3">
+            <div key={item.id} className="rounded-xl border border-border bg-card/70 p-4 space-y-3">
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="text-xs font-bold text-foreground">
@@ -1191,13 +1191,13 @@ function Dashboard() {
                     {formatDateTime(item.created_at)}
                   </p>
                 </div>
-                <span className="rounded-full bg-primary/10 border border-primary/20 text-primary px-2.5 py-0.5 text-[10px] font-bold">
+                <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-0.5 text-[10px] font-bold">
                   {item.results_count || 0} leads
                 </span>
               </div>
               <button
                 onClick={() => handleReRunSearch(item)}
-                className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/25 px-3 py-1.5 text-[11px] font-bold text-primary transition cursor-pointer"
+                className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-1.5 text-[11px] font-bold text-white transition cursor-pointer"
               >
                 <Search className="h-3 w-3" /> Re-run Search
               </button>
@@ -1225,7 +1225,7 @@ function Dashboard() {
               setDetail(lead);
               setOutreachDraft("");
             }}
-            className="rounded-xl border border-border bg-slate-900/60 p-4 hover:border-primary/50 transition cursor-pointer space-y-2.5"
+            className="rounded-xl border border-border bg-card/70 p-4 hover:border-white/30 transition cursor-pointer space-y-2.5"
           >
             <div className="flex justify-between items-start">
               <div>
@@ -1243,12 +1243,12 @@ function Dashboard() {
               <MapPin className="h-3 w-3 shrink-0" /> {lead.city}, {lead.country}
             </p>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800/40 text-[10px] text-muted-foreground font-semibold">
+            <div className="flex items-center justify-between pt-2 border-t border-border/40 text-[10px] text-muted-foreground font-semibold">
               <span>Saved {lead.savedAt ? new Date(lead.savedAt).toLocaleDateString() : ""}</span>
               <div className="flex items-center gap-2">
-                <Phone className={`h-3.5 w-3.5 ${lead.phone ? "text-emerald-400" : "text-slate-600"}`} />
-                <Mail className={`h-3.5 w-3.5 ${lead.email ? "text-emerald-400" : "text-slate-600"}`} />
-                <Globe className={`h-3.5 w-3.5 ${lead.websiteUrl ? "text-emerald-400" : "text-slate-600"}`} />
+                <Phone className={`h-3.5 w-3.5 ${lead.phone ? "text-emerald-400" : "text-white/20"}`} />
+                <Mail className={`h-3.5 w-3.5 ${lead.email ? "text-emerald-400" : "text-white/20"}`} />
+                <Globe className={`h-3.5 w-3.5 ${lead.websiteUrl ? "text-emerald-400" : "text-white/20"}`} />
               </div>
             </div>
           </div>
@@ -1276,7 +1276,7 @@ function Dashboard() {
                 setDetail(lead);
                 setOutreachDraft("");
               }}
-              className="rounded-xl border border-border bg-slate-900/60 p-4 hover:border-primary/50 transition cursor-pointer space-y-3"
+              className="rounded-xl border border-border bg-card/70 p-4 hover:border-white/30 transition cursor-pointer space-y-3"
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -1303,7 +1303,7 @@ function Dashboard() {
 
               <button
                 onClick={(e) => handleResendClick(e, lead, lastLog)}
-                className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/25 px-3 py-1.5 text-[11px] font-bold text-primary transition cursor-pointer"
+                className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-1.5 text-[11px] font-bold text-white transition cursor-pointer"
               >
                 <Mail className="h-3 w-3" /> Resend Outreach
               </button>
@@ -1321,23 +1321,23 @@ function Dashboard() {
     return (
       <div className="space-y-6 text-left">
         {/* Summary Card */}
-        <div className="rounded-xl border border-border bg-slate-900/40 p-4 space-y-3">
+        <div className="rounded-xl border border-border bg-card/40 p-4 space-y-3">
           <div className="grid grid-cols-3 gap-2 text-center">
             <div>
-              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Contacted</span>
+              <span className="text-[9px] uppercase font-bold text-white/50 tracking-wider">Contacted</span>
               <p className="text-lg font-extrabold text-foreground mt-0.5">{contactedLeadsSorted.length}</p>
             </div>
             <div className="border-x border-border/40">
-              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Wins</span>
+              <span className="text-[9px] uppercase font-bold text-white/50 tracking-wider">Wins</span>
               <p className="text-lg font-extrabold text-emerald-400 mt-0.5">{wonCount}</p>
             </div>
             <div>
-              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Win Rate</span>
+              <span className="text-[9px] uppercase font-bold text-white/50 tracking-wider">Win Rate</span>
               <p className="text-lg font-extrabold text-cyan-400 mt-0.5">{conversionRate}%</p>
             </div>
           </div>
           {/* Progress Bar */}
-          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
             <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full" style={{ width: `${conversionRate}%` }} />
           </div>
         </div>
@@ -1381,7 +1381,7 @@ function Dashboard() {
 
         {/* Not Yet Converted Section */}
         <div className="space-y-2.5">
-          <h4 className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+          <h4 className="text-[10px] font-black uppercase tracking-wider text-white/50">
             ⏳ Not Yet Converted ({notConvertedLeads.length})
           </h4>
           {notConvertedLeads.length === 0 ? (
@@ -1398,7 +1398,7 @@ function Dashboard() {
                       setDetail(lead);
                       setOutreachDraft("");
                     }}
-                    className="rounded-xl border border-border bg-slate-900/60 p-4 hover:border-primary/50 transition cursor-pointer space-y-3"
+                    className="rounded-xl border border-border bg-card/70 p-4 hover:border-white/30 transition cursor-pointer space-y-3"
                   >
                     <div className="flex justify-between items-start">
                       <div>
@@ -1411,7 +1411,7 @@ function Dashboard() {
                     </div>
                     <button
                       onClick={(e) => handleResendClick(e, lead, lastLog)}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/25 px-3 py-1.5 text-[11px] font-bold text-primary transition cursor-pointer"
+                      className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-1.5 text-[11px] font-bold text-white transition cursor-pointer"
                     >
                       <Mail className="h-3 w-3" /> Resend Outreach
                     </button>
@@ -1522,7 +1522,7 @@ function Dashboard() {
                                   setQuickCity(c);
                                   setShowCitySuggestions(false);
                                 }}
-                                className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-bold text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
+                                className="rounded bg-white/5 border border-white/10 px-2 py-0.5 font-bold text-white hover:bg-white/15 transition cursor-pointer text-[10px]"
                               >
                                 {c}
                               </button>
@@ -1599,7 +1599,7 @@ function Dashboard() {
                     onClick={() => setActiveParentCategory(pc.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer flex items-center gap-1.5
                       ${isActive
-                        ? "bg-primary border-primary text-white shadow-md shadow-primary/10"
+                        ? "bg-white/10 border-white/20 text-white font-bold shadow-sm"
                         : "bg-muted/40 border-border/80 hover:bg-muted text-muted-foreground hover:text-foreground"
                       }`}
                   >
@@ -1663,9 +1663,9 @@ function Dashboard() {
         />
 
         {/* Platform Philosophy Notice */}
-        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
+        <div className="rounded-2xl border border-border bg-card p-4 flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500">
               <Sparkles className="h-5 w-5 animate-pulse" />
             </div>
             <div>
@@ -1681,7 +1681,7 @@ function Dashboard() {
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto justify-center sm:justify-start">
             <Link
               to="/freelancers"
-              className="w-full sm:w-auto text-center shrink-0 rounded-lg border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition"
+              className="w-full sm:w-auto text-center shrink-0 rounded-lg border border-border bg-muted px-3.5 py-1.5 text-[11px] font-bold text-foreground hover:bg-accent transition"
             >
               Browse Public Directory
             </Link>
@@ -1702,7 +1702,7 @@ function Dashboard() {
               label: "Searches Performed",
               value: scansCount,
               icon: Search,
-              bg: "bg-primary",
+              bg: "bg-indigo-600",
               fg: "text-white",
             },
             {
@@ -2073,7 +2073,7 @@ function Dashboard() {
                 />
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer"
+                  className="w-full rounded-xl bg-foreground text-background py-2 text-xs font-bold hover:opacity-90 transition cursor-pointer"
                 >
                   Subscribe
                 </button>
@@ -2165,7 +2165,7 @@ function Dashboard() {
                     <span className="text-[8px] text-muted-foreground truncate max-w-full mt-1 font-mono">{detail.phone}</span>
                   </button>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-card/40 text-muted-foreground opacity-50 select-none">
                     <Phone className="h-4 w-4 mb-1.5" />
                     <span className="text-[10px] font-bold">No Phone</span>
                   </div>
@@ -2174,7 +2174,7 @@ function Dashboard() {
                 {detail.email ? (
                   <button
                     onClick={() => handleContactAction(() => window.open(`mailto:${detail.email}`, "_self"))}
-                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary transition cursor-pointer"
+                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-muted/40 hover:bg-muted/65 text-foreground transition cursor-pointer"
                   >
                     <Mail className="h-4 w-4 mb-1.5" />
                     <span className="text-[10px] font-bold">Email Client</span>
@@ -2184,7 +2184,7 @@ function Dashboard() {
                   <button
                     onClick={handleEnrich}
                     disabled={enriching}
-                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary transition cursor-pointer"
+                    className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-muted/40 hover:bg-muted/65 text-foreground transition cursor-pointer"
                   >
                     {enriching ? (
                       <Loader2 className="h-4 w-4 animate-spin mb-1.5" />
@@ -2194,7 +2194,7 @@ function Dashboard() {
                     <span className="text-[10px] font-bold">{enriching ? "Finding..." : "Find Email"}</span>
                   </button>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-card/40 text-muted-foreground opacity-50 select-none">
                     <Mail className="h-4 w-4 mb-1.5" />
                     <span className="text-[10px] font-bold">No Email</span>
                   </div>
@@ -2212,7 +2212,7 @@ function Dashboard() {
                     <span className="text-[8px] text-muted-foreground truncate max-w-full mt-1 block">{detail.websiteUrl.replace(/https?:\/\/(www\.)?/, "")}</span>
                   </a>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-slate-900/40 text-muted-foreground opacity-50 select-none">
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border/60 bg-muted/10 dark:bg-card/40 text-muted-foreground opacity-50 select-none">
                     <Globe className="h-4 w-4 mb-1.5" />
                     <span className="text-[10px] font-bold">No Site</span>
                   </div>
@@ -2220,7 +2220,7 @@ function Dashboard() {
               </div>
 
               {/* Address details */}
-              <div className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2 bg-muted/30 dark:bg-slate-950/40 p-3 rounded-xl border border-border/50">
+              <div className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2 bg-muted/30 dark:bg-background/40 p-3 rounded-xl border border-border/50">
                 <MapPin className="h-4 w-4 text-muted-foreground/80 shrink-0 mt-0.5" />
                 <span>{detail.fullAddress || `${detail.city}, ${detail.country}`}</span>
               </div>
@@ -2316,7 +2316,7 @@ function Dashboard() {
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                       Activity Timeline
                     </p>
-                    <div className="relative border-l border-slate-800 pl-4 ml-2 space-y-4">
+                    <div className="relative border-l border-border/60 pl-4 ml-2 space-y-4">
                       {timeline.map((item, index) => (
                         <div key={index} className="relative">
                           {/* Timeline node dot */}
@@ -2324,10 +2324,10 @@ function Dashboard() {
                             item.type === "milestone" 
                               ? "bg-emerald-500 ring-2 ring-emerald-500/20" 
                               : item.type === "outreach"
-                                ? "bg-primary"
+                                ? "bg-indigo-500"
                                 : item.type === "save"
                                   ? "bg-success"
-                                  : "bg-slate-500"
+                                  : "bg-muted-foreground"
                           }`} />
                           <div>
                             <span className="text-[9px] text-muted-foreground font-mono block">
@@ -2375,7 +2375,7 @@ function Dashboard() {
                         </button>
                         <button
                           onClick={copyDraft}
-                          className="rounded-lg bg-primary px-3 py-1.5 text-[11px] font-bold text-white hover:brightness-110 cursor-pointer transition"
+                          className="rounded-lg bg-foreground text-background px-3 py-1.5 text-[11px] font-bold hover:opacity-90 cursor-pointer transition"
                         >
                           Copy
                         </button>
@@ -2390,12 +2390,12 @@ function Dashboard() {
                               setQuickConnectOpen(true);
                               setDetail(null);
                             }}
-                            className={`rounded-lg px-3 py-1.5 text-[11px] font-bold text-white cursor-pointer transition flex items-center gap-1 ${
+                            className={`rounded-lg px-3 py-1.5 text-[11px] font-bold cursor-pointer transition flex items-center gap-1 ${
                               selectedChannel === "whatsapp"
-                                ? "bg-emerald-600 hover:bg-emerald-700"
+                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                                 : selectedChannel === "linkedin"
-                                  ? "bg-[#0A66C2] hover:bg-[#084e96]"
-                                  : "bg-primary hover:brightness-110"
+                                  ? "bg-[#0A66C2] hover:bg-[#084e96] text-white"
+                                  : "bg-foreground text-background hover:opacity-90"
                             }`}
                           >
                             Send via{" "}
@@ -2435,7 +2435,7 @@ function Dashboard() {
                     <button
                       onClick={handleGenerate}
                       disabled={generating}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-bold text-white hover:brightness-110 transition disabled:opacity-50 cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-foreground text-background py-2.5 text-sm font-bold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
                     >
                       {generating ? (
                         <>
@@ -2481,7 +2481,7 @@ function Dashboard() {
                 ) : (
                   <button
                     onClick={() => handleSaveLead(detail)}
-                    className="w-full rounded-xl bg-primary py-2 text-xs font-bold text-white hover:brightness-110 transition cursor-pointer"
+                    className="w-full rounded-xl bg-foreground text-background py-2 text-xs font-bold hover:opacity-90 transition cursor-pointer"
                   >
                     Save to Pipeline
                   </button>
@@ -2513,7 +2513,7 @@ function Dashboard() {
 
           {/* Safety Reminder Modal */}
           {safetyReminderOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#020b21]/80 backdrop-blur-sm">
               <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
                 <div className="flex items-center gap-2 text-amber-500 mb-4">
                   <Shield className="h-6 w-6" />
@@ -2560,7 +2560,7 @@ function Dashboard() {
                     setSafetyReminderOpen(false);
                     toast.success("Contact revealed!");
                   }}
-                  className="w-full rounded-xl bg-primary hover:bg-primary/95 text-white py-3 text-xs font-bold shadow-md transition text-center cursor-pointer"
+                  className="w-full rounded-xl bg-foreground text-background py-3 text-xs font-bold hover:opacity-90 transition text-center cursor-pointer"
                 >
                   Reveal Contact Details
                 </button>
@@ -2570,7 +2570,7 @@ function Dashboard() {
 
           {/* Lead Report Modal */}
           {leadReportModalOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#020b21]/80 backdrop-blur-sm">
               <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-left">
                 <button
                   onClick={() => setLeadReportModalOpen(false)}
@@ -2648,7 +2648,7 @@ function Dashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setActiveStatScreen(null)}
-              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-[#020b21]/60 backdrop-blur-sm"
             />
             {/* Drawer Content */}
             <motion.div
@@ -2656,7 +2656,7 @@ function Dashboard() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="relative w-full sm:max-w-md h-full bg-[#0B1220] border-l border-border/80 shadow-2xl flex flex-col z-10 text-foreground"
+              className="relative w-full sm:max-w-md h-full bg-card border-l border-border/80 shadow-2xl flex flex-col z-10 text-foreground"
             >
               {/* Header */}
               <div className="p-6 border-b border-border/80 flex items-center justify-between">
