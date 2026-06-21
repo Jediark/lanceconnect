@@ -72,14 +72,14 @@ export function CustomSelect({
               setOpen(false);
             }}
             className={cn(
-              "w-full flex items-center justify-between px-3.5 py-3 text-sm text-left rounded-lg transition-all duration-200 cursor-pointer",
+              "w-full flex items-center justify-between px-3.5 py-3 text-sm text-left rounded-xl transition-all duration-200 cursor-pointer border border-transparent",
               isSelected
-                ? "bg-primary text-primary-foreground font-bold"
-                : "hover:bg-accent text-foreground"
+                ? "bg-blue-500/20 text-white border-blue-500/50 font-bold shadow-[0_0_12px_rgba(59,130,246,0.2)]"
+                : "text-slate-300 hover:bg-white/5 hover:text-white"
             )}
           >
             <span className="truncate mr-2">{opt.label}</span>
-            {isSelected && <Check className="h-4 w-4 shrink-0" />}
+            {isSelected && <Check className="h-4 w-4 shrink-0 text-blue-400" />}
           </button>
         );
       })}
@@ -92,9 +92,9 @@ export function CustomSelect({
         <DrawerTrigger asChild>
           <TriggerButton className={className} />
         </DrawerTrigger>
-        <DrawerContent className="max-h-[85vh] outline-none">
-          <DrawerHeader className="border-b border-border/50 pb-3">
-            <DrawerTitle className="text-center text-sm font-bold tracking-wide uppercase text-muted-foreground">
+        <DrawerContent className="max-h-[85vh] outline-none bg-slate-950/80 backdrop-blur-xl border-t border-white/10 rounded-t-3xl text-white shadow-2xl">
+          <DrawerHeader className="border-b border-white/5 pb-3">
+            <DrawerTitle className="text-center text-xs font-bold tracking-widest uppercase text-slate-400">
               {title}
             </DrawerTitle>
           </DrawerHeader>
@@ -111,7 +111,7 @@ export function CustomSelect({
       <PopoverTrigger asChild>
         <TriggerButton className={className} />
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-1 max-h-[300px] overflow-y-auto bg-card border-border shadow-xl rounded-xl z-50">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-1.5 max-h-[300px] overflow-y-auto bg-slate-950/80 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl z-50 text-white">
         <OptionsList />
       </PopoverContent>
     </Popover>
