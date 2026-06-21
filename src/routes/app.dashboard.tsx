@@ -910,7 +910,7 @@ function Dashboard() {
           city: searchCity,
           country: searchCountry,
           niche: searchNiche || undefined,
-          limit: 12,
+          limit: 50,
         },
       });
       if (error) {
@@ -1920,85 +1920,87 @@ function Dashboard() {
                 </p>
               </div>
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {displayedLeads.map((lead) => {
-                  const isSaved = savedIds.has(lead.id);
-                  return (
-                    <div
-                      key={lead.id}
-                      className="group rounded-2xl border border-border bg-card p-5 hover:border-primary transition-all duration-200 cursor-pointer"
-                      onClick={() => {
-                        setDetail(lead);
-                        setOutreachDraft("");
-                      }}
-                    >
-                      {/* Top row */}
-                      <div className="flex items-start justify-between gap-2 mb-3">
-                        <div className="min-w-0 flex-1">
-                          <h4 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition">
-                            {lead.businessName}
-                          </h4>
-                          <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-                            {lead.businessType}
-                          </p>
-                        </div>
-                        <ScoreBadge score={lead.opportunityScore} />
-                      </div>
-
-                      {/* Location */}
-                      <p className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
-                        <MapPin className="h-3 w-3 shrink-0" /> {lead.city}, {lead.country}
-                      </p>
-
-                      {/* Contact icons */}
-                      <div className="flex items-center gap-3 mb-4">
-                        <span
-                          className={`flex items-center gap-1 text-[11px] ${lead.phone ? "text-emerald-400" : "text-muted-foreground/40"}`}
-                        >
-                          <Phone className="h-3 w-3" /> {lead.phone ? "Phone" : "No phone"}
-                        </span>
-                        <span
-                          className={`flex items-center gap-1 text-[11px] ${lead.email ? "text-emerald-400" : "text-muted-foreground/40"}`}
-                        >
-                          <Mail className="h-3 w-3" /> {lead.email ? "Email" : "No email"}
-                        </span>
-                        <span
-                          className={`flex items-center gap-1 text-[11px] ${lead.websiteUrl ? "text-emerald-400" : "text-muted-foreground/40"}`}
-                        >
-                          <Globe className="h-3 w-3" /> {lead.websiteUrl ? "Site" : "No site"}
-                        </span>
-                      </div>
-
-                      {/* Actions */}
+              <div className="max-h-[750px] overflow-y-auto pr-1">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {displayedLeads.map((lead) => {
+                    const isSaved = savedIds.has(lead.id);
+                    return (
                       <div
-                        className="flex flex-col sm:flex-row gap-2"
-                        onClick={(e) => e.stopPropagation()}
+                        key={lead.id}
+                        className="group rounded-2xl border border-border bg-card p-5 hover:border-primary transition-all duration-200 cursor-pointer"
+                        onClick={() => {
+                          setDetail(lead);
+                          setOutreachDraft("");
+                        }}
                       >
-                        <button
-                          onClick={() => {
-                            setQuickConnectLead(lead);
-                            setQuickConnectOpen(true);
-                          }}
-                          className="w-full sm:flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-muted border border-border py-1.5 text-[11px] font-bold text-foreground hover:bg-accent transition cursor-pointer"
+                        {/* Top row */}
+                        <div className="flex items-start justify-between gap-2 mb-3">
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition">
+                              {lead.businessName}
+                            </h4>
+                            <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                              {lead.businessType}
+                            </p>
+                          </div>
+                          <ScoreBadge score={lead.opportunityScore} />
+                        </div>
+
+                        {/* Location */}
+                        <p className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+                          <MapPin className="h-3 w-3 shrink-0" /> {lead.city}, {lead.country}
+                        </p>
+
+                        {/* Contact icons */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <span
+                            className={`flex items-center gap-1 text-[11px] ${lead.phone ? "text-emerald-400" : "text-muted-foreground/40"}`}
+                          >
+                            <Phone className="h-3 w-3" /> {lead.phone ? "Phone" : "No phone"}
+                          </span>
+                          <span
+                            className={`flex items-center gap-1 text-[11px] ${lead.email ? "text-emerald-400" : "text-muted-foreground/40"}`}
+                          >
+                            <Mail className="h-3 w-3" /> {lead.email ? "Email" : "No email"}
+                          </span>
+                          <span
+                            className={`flex items-center gap-1 text-[11px] ${lead.websiteUrl ? "text-emerald-400" : "text-muted-foreground/40"}`}
+                          >
+                            <Globe className="h-3 w-3" /> {lead.websiteUrl ? "Site" : "No site"}
+                          </span>
+                        </div>
+
+                        {/* Actions */}
+                        <div
+                          className="flex flex-col sm:flex-row gap-2"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <Mail className="h-3 w-3" /> Quick Connect
-                        </button>
-                        <button
-                          onClick={() => handleSaveLead(lead)}
-                          disabled={isSaved || savingId === lead.id}
-                          className="w-full sm:flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-success border border-success py-1.5 text-[11px] font-bold text-white hover:brightness-110 transition disabled:opacity-40 cursor-pointer"
-                        >
-                          {savingId === lead.id ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <Check className="h-3 w-3" />
-                          )}
-                          {isSaved ? "Saved" : "Save Lead"}
-                        </button>
+                          <button
+                            onClick={() => {
+                              setQuickConnectLead(lead);
+                              setQuickConnectOpen(true);
+                            }}
+                            className="w-full sm:flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-muted border border-border py-1.5 text-[11px] font-bold text-foreground hover:bg-accent transition cursor-pointer"
+                          >
+                            <Mail className="h-3 w-3" /> Quick Connect
+                          </button>
+                          <button
+                            onClick={() => handleSaveLead(lead)}
+                            disabled={isSaved || savingId === lead.id}
+                            className="w-full sm:flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-success border border-success py-1.5 text-[11px] font-bold text-white hover:brightness-110 transition disabled:opacity-40 cursor-pointer"
+                          >
+                            {savingId === lead.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Check className="h-3 w-3" />
+                            )}
+                            {isSaved ? "Saved" : "Save Lead"}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

@@ -261,6 +261,7 @@ function generateFallbackLeads(
   category: string,
   bType: string,
   product?: string,
+  limit?: number,
 ) {
   const areaCodes: Record<string, string> = {
     "new york": "212",
@@ -314,7 +315,7 @@ function generateFallbackLeads(
   const streetNames = ["Main St", "Broadway", "Oak Ave", "Pine St", "Maple Dr", "Washington St", "Market St", "Ocean Dr", "Biscayne Blvd", "Peachtree St"];
   
   const leads = [];
-  const count = 12;
+  const count = limit || 50;
 
   for (let i = 0; i < count; i++) {
     const pattern = businessNamesPatterns[i % businessNamesPatterns.length];
@@ -1723,7 +1724,7 @@ Deno.serve(async (req) => {
           "b2b_trade",
           "restaurant_supplier",
           "product_export",
-        ].includes(query) ? product : undefined);
+        ].includes(query) ? product : undefined, limit);
 
         // Upsert fallback leads into Supabase to cache them
         const { data: insertedLeads, error: upsertError } = await supabase

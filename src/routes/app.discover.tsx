@@ -302,7 +302,7 @@ function Discover() {
       }
       queryBuilder
         .order("created_at", { ascending: false })
-        .limit(12)
+        .limit(50)
         .then(({ data, error }) => {
           setLoading(false);
           if (error) console.error("Error fetching initial leads:", error);
