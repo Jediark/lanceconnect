@@ -208,6 +208,7 @@ function Dashboard() {
   const [results, setResults] = useState<Lead[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
 
   const [activeStatScreen, setActiveStatScreen] = useState<
     "searches" | "saved" | "contacted" | "win_rate" | null
@@ -1471,7 +1472,7 @@ function Dashboard() {
                   ))}
                 </select>
               </div>
-              <div>
+              <div className="relative">
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                   City
                 </label>
@@ -1483,7 +1484,11 @@ function Dashboard() {
                   list="dashboard-cities-list"
                   placeholder="e.g. Lagos, London..."
                   value={quickCity}
-                  onChange={(e) => setQuickCity(e.target.value)}
+                  onChange={(e) => {
+                    setQuickCity(e.target.value);
+                    setShowCitySuggestions(true);
+                  }}
+                  onFocus={() => setShowCitySuggestions(true)}
                   className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition"
                 />
                 <datalist id="dashboard-cities-list">
@@ -1491,6 +1496,43 @@ function Dashboard() {
                     <option key={c} value={c} />
                   ))}
                 </datalist>
+
+                {/* Dynamic City Suggestions Overlay */}
+                <AnimatePresence>
+                  {showCitySuggestions && suggestedCities.length > 0 && (
+                    <>
+                      <div className="fixed inset-0 z-30" onClick={() => setShowCitySuggestions(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl border border-border bg-card p-3 shadow-lg text-left"
+                      >
+                        <div className="flex flex-col gap-2">
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                            Suggested Cities
+                          </span>
+                          <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto pr-1">
+                            {suggestedCities.map((c) => (
+                              <button
+                                key={c}
+                                type="button"
+                                onClick={() => {
+                                  setQuickCity(c);
+                                  setShowCitySuggestions(false);
+                                }}
+                                className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-bold text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
+                              >
+                                {c}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
               <div className="flex items-end">
                 <button
@@ -1507,24 +1549,6 @@ function Dashboard() {
                 </button>
               </div>
             </div>
-
-            {suggestedCities.length > 0 && (
-              <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] text-muted-foreground">Popular:</span>
-                {suggestedCities.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => {
-                      setQuickCity(c);
-                    }}
-                    className="rounded-full border border-primary bg-muted px-2.5 py-0.5 text-[11px] font-medium text-foreground hover:bg-primary hover:text-white transition cursor-pointer"
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            )}
           </form>
 
           <div className="relative z-10 max-w-2xl mt-6 pt-6 border-t border-border/40">

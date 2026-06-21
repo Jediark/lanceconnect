@@ -70,6 +70,8 @@ function Discover() {
   const [website, setWebsite] = useState("");
   const [minScore, setMinScore] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
+  const [showNicheSuggestions, setShowNicheSuggestions] = useState(false);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [view, setView] = useState<"grid" | "table">("grid");
   const [sort, setSort] = useState<"score" | "rating">("score");
   const [detail, setDetail] = useState<Lead | null>(null);
@@ -639,21 +641,77 @@ function Discover() {
         <div className="flex flex-col lg:flex-row gap-3">
           {/* Main consolidated search bar */}
           <div className="flex-1 flex flex-col md:flex-row items-stretch md:items-center bg-background rounded-xl border border-input divide-y md:divide-y-0 md:divide-x divide-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all duration-200">
+            
             {/* Category selection (Niche) */}
-            <div className="flex-1 flex items-center px-3 py-2 md:py-0 min-w-0">
-              <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none cursor-pointer py-2"
-              >
-                <option value="">All Categories (Niche)</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-card text-foreground">
-                    {c.label}
-                  </option>
-                ))}
-              </select>
+            <div className="flex-1 flex flex-col justify-center relative px-3 py-2 md:py-0 min-w-0">
+              <div className="flex items-center w-full">
+                <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
+                <select
+                  value={category}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setShowNicheSuggestions(true);
+                  }}
+                  onFocus={() => setShowNicheSuggestions(true)}
+                  className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none cursor-pointer py-2"
+                >
+                  <option value="">All Categories (Niche)</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c.id} value={c.id} className="bg-card text-foreground">
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Dynamic Niche Suggestions Overlay */}
+              <AnimatePresence>
+                {showNicheSuggestions && category && (CATEGORY_TO_PLACES_QUERY[category] || []).length > 0 && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-30 bg-transparent"
+                      onClick={() => setShowNicheSuggestions(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl border border-border bg-card p-3 shadow-lg text-left"
+                    >
+                      <div className="flex flex-col gap-2">
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                          Niche Suggestions
+                        </span>
+                        <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto pr-1">
+                          {(CATEGORY_TO_PLACES_QUERY[category] || []).map((n) => (
+                            <button
+                              key={n}
+                              type="button"
+                              onClick={() => {
+                                setSelectedNiche(selectedNiche === n ? "" : n);
+                                toast.info(
+                                  selectedNiche === n
+                                    ? "Cleared niche filter"
+                                    : `Filtered search niche to: "${n}"`,
+                                );
+                              }}
+                              className={cn(
+                                "rounded px-2.5 py-0.5 font-bold border transition cursor-pointer text-[10px]",
+                                selectedNiche === n
+                                  ? "bg-primary text-white border-primary shadow-sm"
+                                  : "bg-primary/5 border-primary/20 text-primary hover:bg-primary/10",
+                              )}
+                            >
+                              {n}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Supply-based product field if category requires it */}
@@ -692,22 +750,69 @@ function Discover() {
             </div>
 
             {/* City Input (Location) */}
-            <div className="flex-1 flex items-center px-3 py-2 md:py-0 min-w-0">
-              <MapPin className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
-              <input
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                id="discover-city-input"
-                autoComplete="off"
-                list="discover-cities-list"
-                placeholder="Enter city (Location)..."
-                className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none py-2.5"
-              />
-              <datalist id="discover-cities-list">
-                {suggestedCities.map((c) => (
-                  <option key={c} value={c} />
-                ))}
-              </datalist>
+            <div className="flex-1 flex flex-col justify-center relative px-3 py-2 md:py-0 min-w-0">
+              <div className="flex items-center w-full">
+                <MapPin className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
+                <input
+                  value={city}
+                  onChange={(e) => {
+                    setCity(e.target.value);
+                    setShowCitySuggestions(true);
+                  }}
+                  onFocus={() => setShowCitySuggestions(true)}
+                  id="discover-city-input"
+                  autoComplete="off"
+                  list="discover-cities-list"
+                  placeholder="Enter city (Location)..."
+                  className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none py-2.5"
+                />
+                <datalist id="discover-cities-list">
+                  {suggestedCities.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
+              </div>
+
+              {/* Dynamic City Suggestions Overlay */}
+              <AnimatePresence>
+                {showCitySuggestions && suggestedCities.length > 0 && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-30 bg-transparent"
+                      onClick={() => setShowCitySuggestions(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl border border-border bg-card p-3 shadow-lg text-left"
+                    >
+                      <div className="flex flex-col gap-2">
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                          Suggested Cities
+                        </span>
+                        <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto pr-1">
+                          {suggestedCities.map((c) => (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => {
+                                setCity(c);
+                                toast.success(`Selected city: ${c}`);
+                                setShowCitySuggestions(false);
+                              }}
+                              className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-bold text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
+                            >
+                              {c}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -826,55 +931,6 @@ function Discover() {
             </button>
           </div>
         </div>
-
-        {/* Niche Keyword Suggestions */}
-        {category && (CATEGORY_TO_PLACES_QUERY[category] || []).length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-2.5 pt-2.5 border-t border-border/10 select-none">
-            <span className="text-slate-500 font-medium">Niche suggestions:</span>
-            {(CATEGORY_TO_PLACES_QUERY[category] || []).map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => {
-                  setSelectedNiche(selectedNiche === n ? "" : n);
-                  toast.info(
-                    selectedNiche === n
-                      ? "Cleared niche filter"
-                      : `Filtered search niche to: "${n}"`,
-                  );
-                }}
-                className={cn(
-                  "rounded px-2.5 py-0.5 font-medium border transition cursor-pointer text-[10px]",
-                  selectedNiche === n
-                    ? "bg-primary text-white border-primary"
-                    : "bg-primary/5 border-primary/20 text-primary hover:bg-primary/10",
-                )}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Suggested Cities */}
-        {suggestedCities.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-2.5 pt-2.5 border-t border-border/20">
-            <span className="text-slate-500 font-medium">Suggested cities:</span>
-            {suggestedCities.map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => {
-                  setCity(c);
-                  toast.success(`Selected city: ${c}`);
-                }}
-                className="rounded bg-primary/10 border border-primary/20 px-2 py-0.5 font-medium text-primary hover:bg-primary/20 transition cursor-pointer text-[10px]"
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {(ONLINE_ELIGIBLE.includes(category) || onlineJobs.length > 0) && (
