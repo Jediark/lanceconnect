@@ -1592,8 +1592,8 @@ function Dashboard() {
                     onClick={() => setActiveParentCategory(pc.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer flex items-center gap-1.5
                       ${isActive
-                        ? "bg-white/10 border-white/20 text-white font-bold shadow-sm"
-                        : "bg-muted/40 border-border/80 hover:bg-muted text-muted-foreground hover:text-foreground"
+                        ? "bg-blue-600 border-blue-500 text-white font-bold shadow-[0_0_12px_rgba(59,130,246,0.3)]"
+                        : "bg-transparent border-border/80 hover:bg-white/5 text-slate-400 hover:text-white"
                       }`}
                   >
                     {pc.id === "all" && <LayoutGrid className="h-3.5 w-3.5" />}
@@ -1631,8 +1631,8 @@ function Dashboard() {
                     }}
                     className={`px-3 py-2 rounded-xl text-xs font-medium border text-left truncate transition cursor-pointer
                       ${isSelected
-                        ? "bg-amber-500/10 border-amber-500/80 text-amber-500 font-bold dark:bg-amber-500/15"
-                        : "bg-background border-border/80 hover:bg-muted text-foreground/80 hover:text-foreground"
+                        ? "bg-emerald-600 border-emerald-500 text-white font-bold shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                        : "bg-transparent border-border/80 hover:bg-white/5 text-slate-400 hover:text-white"
                       }`}
                     title={n.name}
                   >
