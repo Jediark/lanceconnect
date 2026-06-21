@@ -1439,7 +1439,7 @@ function Dashboard() {
           <form onSubmit={handleSearch} className="relative z-10">
             <div className="grid gap-3 sm:grid-cols-4">
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <label className="mb-1.5 block text-[10px] font-semibold text-muted-foreground/75">
                   My Category / Service
                 </label>
                 <CustomSelect
@@ -1451,7 +1451,7 @@ function Dashboard() {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <label className="mb-1.5 block text-[10px] font-semibold text-muted-foreground/75">
                   Country
                 </label>
                 <CustomSelect
@@ -1466,7 +1466,7 @@ function Dashboard() {
                 />
               </div>
               <div className="relative">
-                <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <label className="mb-1.5 block text-[10px] font-semibold text-muted-foreground/75">
                   City
                 </label>
                 <input
