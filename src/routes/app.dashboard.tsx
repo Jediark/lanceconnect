@@ -1434,20 +1434,7 @@ function Dashboard() {
           {/* decorative dots */}
           <div className="absolute inset-0 bg-dot-pattern pointer-events-none opacity-40" />
 
-          <div className="relative z-10 max-w-2xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
-              {greeting},{" "}
-              <span className="text-gradient-brand">
-                {(user?.fullName || "Freelancer").split(" ")[0]}
-              </span>
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-md">
-              Type any business type and any city. Get real contacts with phone numbers, emails, and
-              websites in seconds.
-            </p>
-          </div>
-
-          <form onSubmit={handleSearch} className="relative z-10 mt-6">
+          <form onSubmit={handleSearch} className="relative z-10">
             <div className="grid gap-3 sm:grid-cols-4">
               <div>
                 <label className="mb-1.5 block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
@@ -1516,7 +1503,7 @@ function Dashboard() {
                   ) : (
                     <Search className="h-4 w-4" />
                   )}
-                  {searchLoading ? "Scanning..." : "Find Clients"}
+                  {searchLoading ? "Scanning..." : "Search Leads"}
                 </button>
               </div>
             </div>
@@ -1539,6 +1526,20 @@ function Dashboard() {
               </div>
             )}
           </form>
+
+          <div className="relative z-10 max-w-2xl mt-6 pt-6 border-t border-border/40">
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
+              {greeting},{" "}
+              <span className="text-gradient-brand">
+                {(user?.fullName || "Freelancer").split(" ")[0]}
+              </span>
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-md">
+              Type any business type and any city. Get real contacts with phone numbers, emails, and
+              websites in seconds.
+            </p>
+          </div>
+
 
           {/* B2B Freelance Niche Filters */}
           <div className="relative z-10 mt-6 pt-6 border-t border-border/40 select-none">

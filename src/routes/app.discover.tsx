@@ -16,7 +16,9 @@ import {
   Sparkles,
   Loader2,
   Download,
+  SlidersHorizontal,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { LeadCard } from "@/components/ui/LeadCard";
@@ -67,6 +69,7 @@ function Discover() {
   const [isMounted, setIsMounted] = useState(false);
   const [website, setWebsite] = useState("");
   const [minScore, setMinScore] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
   const [view, setView] = useState<"grid" | "table">("grid");
   const [sort, setSort] = useState<"score" | "rating">("score");
   const [detail, setDetail] = useState<Lead | null>(null);
@@ -632,93 +635,196 @@ function Discover() {
         className="mx-4 lg:mx-8 mt-4"
       />
 
-      <div className="border-b border-border bg-card px-4 py-3 lg:px-8">
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Categories</option>
-            {CATEGORIES.map((c) => (
-              <option key={c.id} value={c.id} className="bg-background text-foreground">
-                {c.label}
-              </option>
-            ))}
-          </select>
-          {["african_food_export", "b2b_trade", "restaurant_supplier", "product_export"].includes(
-            category,
-          ) && (
-            <input
-              value={product}
-              onChange={(e) => setProduct(e.target.value)}
-              placeholder="What product do you supply? (e.g. palm oil)"
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary w-56 animate-in slide-in-from-left-2 duration-200"
-            />
-          )}
-          <select
-            value={country}
-            onChange={(e) => {
-              setCountry(e.target.value);
-              setCity("");
-            }}
-            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Countries</option>
-            {COUNTRIES.map((c) => (
-              <option key={c.code} value={c.name} className="bg-background text-foreground">
-                {c.name}
-              </option>
-            ))}
-          </select>
-          <input
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            id="discover-city-input"
-            autoComplete="off"
-            list="discover-cities-list"
-            placeholder="Enter city..."
-            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
-          />
-          <datalist id="discover-cities-list">
-            {suggestedCities.map((c) => (
-              <option key={c} value={c} />
-            ))}
-          </datalist>
-          <select
-            value={website}
-            onChange={(e) => setWebsite(e.target.value)}
-            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
-          >
-            <option value="">All Websites</option>
-            <option value="no">No Website Only</option>
-            <option value="yes">Has Website</option>
-          </select>
-          <select
-            value={minScore}
-            onChange={(e) => setMinScore(Number(e.target.value))}
-            className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
-          >
-            <option value={0}>Any Score</option>
-            <option value={50}>50+</option>
-            <option value={70}>70+</option>
-            <option value={85}>85+</option>
-          </select>
-          <button
-            onClick={() => handleSearch()}
-            disabled={loading}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50 cursor-pointer"
-          >
-            {loading ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Search className="h-3.5 w-3.5" />
-            )}{" "}
-            Search Leads
-          </button>
-          <button onClick={clear} className="text-xs text-muted-foreground hover:text-foreground">
-            Clear filters
-          </button>
+      <div className="border-b border-border bg-card px-4 py-4 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-3">
+          {/* Main consolidated search bar */}
+          <div className="flex-1 flex flex-col md:flex-row items-stretch md:items-center bg-background rounded-xl border border-input divide-y md:divide-y-0 md:divide-x divide-border shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all duration-200">
+            {/* Category selection (Niche) */}
+            <div className="flex-1 flex items-center px-3 py-2 md:py-0 min-w-0">
+              <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none cursor-pointer py-2"
+              >
+                <option value="">All Categories (Niche)</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-card text-foreground">
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Supply-based product field if category requires it */}
+            {["african_food_export", "b2b_trade", "restaurant_supplier", "product_export"].includes(
+              category
+            ) && (
+              <div className="flex-1 flex items-center px-3 py-2 md:py-0 min-w-0 bg-primary/5">
+                <Sparkles className="h-4 w-4 text-primary mr-2 shrink-0 animate-pulse" />
+                <input
+                  value={product}
+                  onChange={(e) => setProduct(e.target.value)}
+                  placeholder="Product (e.g. palm oil)..."
+                  className="w-full bg-transparent border-none text-sm text-foreground outline-none py-2"
+                />
+              </div>
+            )}
+
+            {/* Country Selection */}
+            <div className="flex-1 flex items-center px-3 py-2 md:py-0 min-w-0">
+              <Globe className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
+              <select
+                value={country}
+                onChange={(e) => {
+                  setCountry(e.target.value);
+                  setCity("");
+                }}
+                className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none cursor-pointer py-2"
+              >
+                <option value="">All Countries</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.name} className="bg-card text-foreground">
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* City Input (Location) */}
+            <div className="flex-1 flex items-center px-3 py-2 md:py-0 min-w-0">
+              <MapPin className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
+              <input
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                id="discover-city-input"
+                autoComplete="off"
+                list="discover-cities-list"
+                placeholder="Enter city (Location)..."
+                className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none py-2.5"
+              />
+              <datalist id="discover-cities-list">
+                {suggestedCities.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
+            </div>
+          </div>
+
+          {/* Action buttons (Filters + Search) */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Filters Toggle and Popover */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowFilters(!showFilters)}
+                className={cn(
+                  "inline-flex items-center justify-center gap-1.5 rounded-xl border border-input bg-background px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-accent transition-all cursor-pointer shadow-sm h-11",
+                  (showFilters || website !== "" || minScore !== 0) && "border-primary bg-primary/5 text-primary"
+                )}
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                <span>Filters</span>
+                {(website !== "" || minScore !== 0) && (
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showFilters && (
+                  <>
+                    {/* Click-outside backdrop to close popover */}
+                    <div
+                      className="fixed inset-0 z-40 bg-transparent"
+                      onClick={() => setShowFilters(false)}
+                    />
+                    
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 z-50 w-72 rounded-2xl border border-border bg-card p-4 shadow-xl text-left"
+                    >
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                          <span className="text-xs font-bold text-foreground">Filter Leads</span>
+                          {(website !== "" || minScore !== 0) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setWebsite("");
+                                setMinScore(0);
+                                toast.success("Filters cleared");
+                              }}
+                              className="text-[10px] font-bold text-primary hover:underline"
+                            >
+                              Reset
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Website Presence Filter */}
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                            Website Presence
+                          </label>
+                          <select
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                          >
+                            <option value="">All Websites</option>
+                            <option value="no">No Website Only</option>
+                            <option value="yes">Has Website</option>
+                          </select>
+                        </div>
+
+                        {/* Score Filter */}
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                            Minimum Opportunity Score
+                          </label>
+                          <select
+                            value={minScore}
+                            onChange={(e) => setMinScore(Number(e.target.value))}
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                          >
+                            <option value={0}>Any Score</option>
+                            <option value={50}>50+</option>
+                            <option value={70}>70+</option>
+                            <option value={85}>85+</option>
+                          </select>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Search Leads Button */}
+            <button
+              onClick={() => handleSearch()}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white hover:brightness-110 disabled:opacity-50 cursor-pointer shadow-md shadow-primary/10 h-11 shrink-0"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+              <span>Search Leads</span>
+            </button>
+
+            {/* Clear Button */}
+            <button
+              onClick={clear}
+              className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 transition ml-1"
+            >
+              Clear
+            </button>
+          </div>
         </div>
 
         {/* Niche Keyword Suggestions */}
