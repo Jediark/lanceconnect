@@ -67,16 +67,18 @@ export function TrendingSearches({ onSelectSearch, className }: TrendingSearches
           <Sparkles className="h-3.5 w-3.5 text-yellow-500" />
         </h3>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col">
         {trends.map((trend, idx) => (
           <button
             key={idx}
             onClick={() => onSelectSearch(trend.query)}
-            className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:shadow-sm"
+            className="group w-full flex items-center justify-between py-2.5 border-b border-slate-200 dark:border-white/5 last:border-b-0 text-left text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all"
           >
-            <Search className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span>{trend.label}</span>
-            <span className="ml-1 rounded-full bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary transition-colors">
+            <div className="flex items-center gap-2">
+              <Search className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors" />
+              <span className="font-medium">{trend.label}</span>
+            </div>
+            <span className="rounded bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all">
               {trend.count}
             </span>
           </button>
