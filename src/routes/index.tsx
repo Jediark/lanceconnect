@@ -93,7 +93,6 @@ import { HeroCarousel } from "@/components/marketing/HeroCarousel";
 import { CATEGORIES } from "@/data/mockData";
 import { IMG, BLOG_POSTS } from "@/data/content";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useStats } from "@/contexts/StatsContext";
 import useEmblaCarousel from "embla-carousel-react";
 import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 
@@ -220,7 +219,6 @@ function HomepageComponent() {
       <div className="mx-auto max-w-7xl px-4 lg:px-8 -mt-6 mb-12 relative z-10 animate-in fade-in slide-in-from-bottom-3 duration-500">
         <TrendingSearches onSelectSearch={handleSelectSearch} />
       </div>
-      <StatsBar />
       <ValuePropositionCards />
       <LogoStrip />
       <PlatformManifesto />
@@ -723,35 +721,6 @@ function HeroWithMosaic() {
   );
 }
 
-function StatsBar() {
-  const { stats: globalStats } = useStats();
-
-  const stats = [
-    { number: `${globalStats.lifetimeSearches.toLocaleString()}+`, label: "searches performed" },
-    { number: `${globalStats.lifetimeLeads.toLocaleString()}+`, label: "leads found" },
-    { number: `${globalStats.lifetimeCountries}+`, label: "countries" },
-    { number: "0%", label: "commission" },
-  ];
-
-  return (
-    <div className="bg-sidebar border-b border-sidebar-border select-none py-8">
-      <div className="mx-auto max-w-5xl px-4 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {stats.map((s, idx) => (
-            <div key={idx} className="space-y-1">
-              <p className="text-4xl md:text-5xl font-black text-primary tracking-tight">
-                {s.number}
-              </p>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider font-sans">
-                {s.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function BlogTeaser() {
   const posts = BLOG_POSTS.slice(0, 3);
@@ -827,37 +796,42 @@ function ValuePropositionCards() {
     {
       icon: Zap,
       title: "10 FREE SCANS",
-      subtitle: "Get 10 verified, high-scoring client leads monthly.",
+      subtitle: "10 scored, verified leads in your dashboard every month — free.",
     },
     {
       icon: Globe,
       title: "GLOBAL COVERAGE",
-      subtitle: "Target and find leads in over 150+ countries instantly.",
+      subtitle: "Search and find leads across 150+ countries instantly.",
     },
     {
-      icon: CheckCircle2,
+      icon: Phone,
       title: "DIRECT REACH",
-      subtitle: "Verified phone lines and email addresses ready to copy.",
+      subtitle: "Phone numbers and emails verified and ready to copy.",
     },
   ];
 
   return (
-    <section className="bg-background py-8 select-none border-b border-border transition-colors duration-300">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="grid gap-6 md:grid-cols-3">
+    <section className="bg-background py-16 select-none border-b border-border transition-colors duration-300">
+      <div className="mx-auto max-w-4xl px-4 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center mb-10">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Everything you need to find freelance clients faster.
+          </h2>
+        </div>
+        <div className="flex flex-col gap-3">
           {items.map((item, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-card hover:shadow-card-hover transition duration-300 group"
+              className="flex items-center gap-4 py-4 pl-4 pr-5 rounded-[40px] bg-gradient-to-r from-[#0a1628] to-[#0f1e38] shadow-lg transition duration-300 group"
             >
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-muted group-hover:scale-105 transition duration-300">
-                <item.icon className="h-5 w-5 text-primary" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-white">
+                <item.icon className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <h3 className="font-display text-xs font-black uppercase tracking-wider text-foreground">
+                <h3 className="font-display text-[14px] font-bold uppercase tracking-wider text-white">
                   {item.title}
                 </h3>
-                <p className="mt-1 text-xs text-muted-foreground leading-snug">{item.subtitle}</p>
+                <p className="mt-0.5 text-sm text-white/65 leading-snug">{item.subtitle}</p>
               </div>
             </div>
           ))}
