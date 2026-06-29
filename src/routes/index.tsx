@@ -1196,7 +1196,7 @@ function ProductShowcase() {
 function HowItWorks() {
   const [selectedSkill, setSelectedSkill] = useState("Web Developer");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("Lagos, NG");
+  const [selectedCity, setSelectedCity] = useState("Search any city worldwide");
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
 
   const skills = ["Web Developer", "Designer", "SEO Specialist", "Copywriter", "Photographer", "App Developer"];
@@ -1257,6 +1257,10 @@ function HowItWorks() {
       }
     };
 
+    if (cityName.toLowerCase().includes("any")) {
+      return { name: "Metro Coffee Co.", emoji: "☕", score: 94 };
+    }
+
     const skillLeads = leadsDb[skill] || leadsDb["Web Developer"];
     return skillLeads[cityName] || { name: `${cityName} Business`, emoji: "🏢", score: 90 };
   };
@@ -1271,7 +1275,7 @@ function HowItWorks() {
             // workflow
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">
-            From zero to outreach in minutes
+            Find freelance clients from search to outreach in minutes.
           </h2>
         </div>
 
