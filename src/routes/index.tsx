@@ -1182,7 +1182,7 @@ function ProductShowcase() {
                 className="flex items-start gap-3 border-l-2 border-primary pl-3 py-1.5"
               >
                 <Icon className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <span className="text-[15px] text-white/90 font-normal leading-relaxed">
+                <span className="text-[15px] text-foreground/90 font-normal leading-relaxed">
                   {item.text}
                 </span>
               </div>
