@@ -1599,23 +1599,57 @@ const FEATURES_LIST = [
 
 function Features() {
   const features = [
-    { icon: Globe2, text: "150+ countries covered", color: "text-blue-500 bg-blue-500/10 border-blue-500/20" },
-    { icon: Phone, text: "Verified phone numbers", color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" },
-    { icon: Mail, text: "Email finder included", color: "text-amber-500 bg-amber-500/10 border-amber-500/20" },
-    { icon: BarChart3, text: "Opportunity score 1-100", color: "text-sky-500 bg-sky-500/10 border-sky-500/20" },
-    { icon: Bot, text: "AI outreach generator", color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20" },
-    { icon: FolderKanban, text: "Built-in CRM pipeline", color: "text-violet-500 bg-violet-500/10 border-violet-500/20" },
+    { 
+      icon: Globe2, 
+      text: "150+ countries covered", 
+      desc: "Search for client leads in any country, city, or region.",
+      color: "text-blue-500 bg-blue-500/10 border-blue-500/20" 
+    },
+    { 
+      icon: Phone, 
+      text: "Verified phone numbers", 
+      desc: "Direct lines confirmed active — no dead numbers wasting your time.",
+      color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" 
+    },
+    { 
+      icon: Mail, 
+      text: "Email finder included", 
+      desc: "Business emails surfaced alongside every lead automatically.",
+      color: "text-amber-500 bg-amber-500/10 border-amber-500/20" 
+    },
+    { 
+      icon: BarChart3, 
+      text: "Opportunity score 1-100", 
+      desc: "Every business scored on digital need, visibility, and contact availability.",
+      color: "text-sky-500 bg-sky-500/10 border-sky-500/20" 
+    },
+    { 
+      icon: Bot, 
+      text: "AI outreach generator", 
+      desc: "Write outreach messages in seconds based on specific lead gaps.",
+      color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20" 
+    },
+    { 
+      icon: FolderKanban, 
+      text: "Built-in CRM pipeline", 
+      desc: "Track every lead from first contact to signed client.",
+      color: "text-violet-500 bg-violet-500/10 border-violet-500/20" 
+    },
   ];
 
   return (
-    <section id="features" className="border-y border-border bg-background py-20 select-none">
+    <section 
+      id="features" 
+      className="border-y border-border bg-background py-20 select-none"
+      aria-label="LanceConnect features — tools to find and contact freelance clients worldwide"
+    >
       <div className="mx-auto max-w-5xl px-4 lg:px-8">
         <div className="mx-auto max-w-2xl text-center mb-16">
           <p className="text-xs font-mono text-[#64748B] mb-2 tracking-widest uppercase">
             // features
           </p>
           <h2 className="font-display text-4xl font-extrabold text-foreground">
-            Everything you need to get clients
+            Everything you need to find freelance clients.
           </h2>
         </div>
 
@@ -1625,14 +1659,19 @@ function Features() {
             return (
               <div
                 key={idx}
-                className="rounded-2xl border bg-card p-6 flex items-center gap-4 hover:scale-[1.02] hover:border-primary/30 transition-all duration-300 shadow-sm"
+                className="rounded-2xl border bg-card p-6 flex items-start gap-4 hover:scale-[1.02] hover:border-primary/30 transition-all duration-300 shadow-sm"
               >
                 <div className={cn("shrink-0 p-3 rounded-xl border", f.color)}>
                   <Icon className="h-6 w-6" />
                 </div>
-                <p className="font-display text-base font-bold text-foreground">
-                  {f.text}
-                </p>
+                <div className="flex flex-col gap-1.5">
+                  <h3 className="font-display text-base font-bold text-foreground leading-tight">
+                    {f.text}
+                  </h3>
+                  <p className="text-xs text-foreground/70 leading-relaxed">
+                    {f.desc}
+                  </p>
+                </div>
               </div>
             );
           })}
