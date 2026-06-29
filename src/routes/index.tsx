@@ -1,3 +1,44 @@
+/**
+ * QA REVIEW: SEO <Head> Metadata and structured JSON-LD data
+ * 
+ * Title Tag (50 chars): Freelancer Lead Generation Platform | LanceConnect
+ * Meta Description (153 chars): Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!
+ * 
+ * Open Graph Meta Tags:
+ * - og:title: Freelancer Lead Generation Platform | LanceConnect
+ * - og:description: Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!
+ * - og:image: /og-image.png
+ * - og:url: https://lanceconnect.vercel.app
+ * - og:type: website
+ * - og:site_name: LanceConnect
+ * 
+ * Twitter Card Meta Tags:
+ * - twitter:card: summary_large_image
+ * - twitter:title: Freelancer Lead Generation Platform | LanceConnect
+ * - twitter:description: Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!
+ * - twitter:image: /og-image.png
+ * 
+ * JSON-LD structured data (WebApplication):
+ * {
+ *   "@context": "https://schema.org",
+ *   "@type": "WebApplication",
+ *   "name": "LanceConnect",
+ *   "url": "https://lanceconnect.vercel.app",
+ *   "description": "Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!",
+ *   "applicationCategory": "BusinessApplication",
+ *   "operatingSystem": "Web",
+ *   "offers": {
+ *     "@type": "Offer",
+ *     "price": "0",
+ *     "priceCurrency": "USD",
+ *     "description": "Free tier with zero commissions and free signup"
+ *   },
+ *   "audience": {
+ *     "@type": "Audience",
+ *     "audienceType": "Freelancer"
+ *   }
+ * }
+ */
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { TrendingSearches } from "@/components/ui/TrendingSearches";
@@ -59,20 +100,37 @@ import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LanceConnect — The Meeting Point for Freelancers and Clients" },
+      { title: "Freelancer Lead Generation Platform | LanceConnect" },
       {
         name: "description",
         content:
-          "LanceConnect finds businesses that need your skills anywhere in the world, and hands you their contact details.",
+          "Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!",
       },
       {
         name: "keywords",
         content:
           "find freelance clients, freelancer leads, get clients as freelancer, find web design clients, SEO clients, find businesses without websites, African food export leads, B2B trade leads, find tutoring students, freelance client finder, business leads Nigeria, business leads UK, business leads globally, lanceconnect, meeting point freelancers clients",
       },
-      { property: "og:title", content: "LanceConnect" },
-      { property: "og:description", content: "The Meeting Point for Freelancers and Clients" },
-      { property: "og:image", content: IMG.heroFreelancer },
+      // Open Graph Meta Tags
+      { property: "og:title", content: "Freelancer Lead Generation Platform | LanceConnect" },
+      {
+        property: "og:description",
+        content:
+          "Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!",
+      },
+      { property: "og:image", content: "/og-image.png" },
+      { property: "og:url", content: "https://lanceconnect.vercel.app" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "LanceConnect" },
+      // Twitter Card Meta Tags
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Freelancer Lead Generation Platform | LanceConnect" },
+      {
+        name: "twitter:description",
+        content:
+          "Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!",
+      },
+      { name: "twitter:image", content: "/og-image.png" },
     ],
   }),
   component: HomepageComponent,
@@ -125,12 +183,38 @@ function HomepageComponent() {
     ],
   };
 
+  // WebApplication JSON-LD for homepage
+  const webApplicationSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "LanceConnect",
+    "url": "https://lanceconnect.vercel.app",
+    "description": "Get clients as a freelancer with our freelancer lead generation platform. Scan global opportunities, find freelance clients online, and start free today!",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free tier with zero commissions and free signup"
+    },
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "Freelancer"
+    }
+  };
+
   return (
     <MarketingShell>
       {/* BreadcrumbList Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {/* WebApplication Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationSchema) }}
       />
       <HeroWithMosaic />
       <div className="mx-auto max-w-7xl px-4 lg:px-8 -mt-6 mb-12 relative z-10 animate-in fade-in slide-in-from-bottom-3 duration-500">
@@ -417,7 +501,7 @@ function HeroWithMosaic() {
     {
       headline: (
         <>
-          Land premium global <span className="text-primary font-black">clients.</span>
+          Land premium <span className="text-primary font-black">freelance clients.</span>
         </>
       ),
       subtitle:
