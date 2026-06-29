@@ -26,32 +26,32 @@ export const Route = createFileRoute("/how-it-works")({
 const steps = [
   {
     n: "01",
-    title: "Set your craft",
-    desc: "Select your freelance specialty to find matching client opportunities.",
+    title: "Define your freelance craft",
+    desc: "Select your specialty to align your profile with matching freelance opportunities.",
     icon: Briefcase,
   },
   {
     n: "02",
     title: "Define your ideal client",
-    desc: "Filter by location, industry, and project needs to target perfect fits.",
+    desc: "Target perfect business clients by location, industry, and specific project signals.",
     icon: Target,
   },
   {
     n: "03",
     title: "Discover scored leads",
-    desc: "Access verified lead lists with custom scores indicating hire readiness.",
+    desc: "Unlock high-scoring, verified leads automatically prioritized by hire readiness.",
     icon: Flame,
   },
   {
     n: "04",
-    title: "Reach out directly",
-    desc: "Pitch instantly using verified contact details and personalized templates.",
+    title: "Launch direct outreach",
+    desc: "Pitch instantly using verified contact details and personalized, conversion-focused templates.",
     icon: Send,
   },
   {
     n: "05",
-    title: "Track replies in your pipeline",
-    desc: "Manage your active deals from introduction to closed contract.",
+    title: "Track replies in your freelance pipeline",
+    desc: "Manage active conversations from initial contact to winning the contract.",
     icon: FolderKanban,
   },
 ];
@@ -66,17 +66,26 @@ function HowPage() {
         image={IMG.heroLaptop}
       />
       
-      <div className="mx-auto max-w-4xl px-4 py-20 lg:px-8">
+      <section 
+        className="mx-auto max-w-4xl px-4 py-20 lg:px-8"
+        aria-label="How freelancers find clients and manage leads with LanceConnect"
+      >
+        <div className="text-center mb-12">
+          <h2 className="font-display text-3xl font-bold text-white tracking-tight md:text-4xl">
+            How to find freelance clients online
+          </h2>
+        </div>
+
         <div className="flex flex-col gap-8">
           {steps.map((s, i) => {
             const Icon = s.icon;
             return (
-              <section 
+              <div 
                 key={s.n}
                 className="rounded-3xl border border-white/[0.06] bg-[#09132e] p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8 shadow-xl transition-all duration-300 hover:border-primary/35 hover:shadow-2xl hover:shadow-primary/5"
               >
                 <div className="p-4.5 rounded-2xl bg-[#020b21] border border-[#11204c] text-primary flex items-center justify-center shrink-0">
-                  <Icon className="h-16 w-16 text-primary" />
+                  <Icon className="h-16 w-16 text-primary" aria-hidden="true" />
                 </div>
                 <div className="space-y-2 flex-1 text-left">
                   <p className="font-mono text-xs text-primary font-bold tracking-widest">
@@ -89,11 +98,11 @@ function HowPage() {
                     {s.desc}
                   </p>
                 </div>
-              </section>
+              </div>
             );
           })}
         </div>
-      </div>
+      </section>
 
       <section className="px-4 pb-20 lg:px-8">
         <div className="mx-auto max-w-5xl rounded-3xl bg-primary p-12 text-center text-primary-foreground">
@@ -105,7 +114,7 @@ function HowPage() {
             to="/register"
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-card px-6 py-3 text-sm font-semibold text-primary hover:scale-105 transition"
           >
-            Start finding leads <ArrowRight className="h-4 w-4" />
+            Start finding leads <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
       </section>
