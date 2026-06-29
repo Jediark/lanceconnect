@@ -352,7 +352,7 @@ function HeroWithMosaic() {
     {
       headline: (
         <>
-          Find freelance <span className="text-primary font-black">clients.</span>
+          Land premium global <span className="text-primary font-black">clients.</span>
         </>
       ),
       subtitle:
@@ -362,7 +362,7 @@ function HeroWithMosaic() {
     {
       headline: (
         <>
-          GET <span className="text-[#3B82F6] dark:text-[#60A5FA] font-black">HIRED.</span>
+          Build a predictable <span className="text-[#3B82F6] dark:text-[#60A5FA] font-black">pipeline.</span>
         </>
       ),
       subtitle:
@@ -372,8 +372,7 @@ function HeroWithMosaic() {
     {
       headline: (
         <>
-          Own your{" "}
-          <span className="text-[#F59E0B] dark:text-[#FBBF24] font-black">income.</span>
+          Scale your freelance <span className="text-[#F59E0B] dark:text-[#FBBF24] font-black">income.</span>
         </>
       ),
       subtitle:
@@ -411,6 +410,16 @@ function HeroWithMosaic() {
 
   return (
     <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28 transition-colors duration-300">
+      {/* Background dot-grid texture overlay */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none opacity-[0.06]"
+        style={{
+          backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+        aria-hidden="true"
+      />
+
       {/* Background — crossfade with horizontal parallax motion */}
       <AnimatePresence mode="popLayout">
         <motion.div
@@ -432,7 +441,13 @@ function HeroWithMosaic() {
 
       <div className="relative mx-auto max-w-7xl w-full px-4 lg:px-8 z-10">
         <div className="grid gap-12 lg:grid-cols-2 items-center">
-          <div className="text-left space-y-6">
+          <div className="text-left space-y-6 relative z-10">
+            {/* Subtle radial gradient glow centered behind headline */}
+            <div 
+              className="absolute -left-16 -top-16 w-[450px] h-[450px] pointer-events-none rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.18)_0%,transparent_70%)] z-[-1] blur-2xl"
+              aria-hidden="true"
+            />
+
             {/* Animated headline — horizontal scrolling effect */}
             <AnimatePresence mode="wait">
               <motion.div
@@ -442,7 +457,7 @@ function HeroWithMosaic() {
                 exit={{ opacity: 0, x: -80 }}
                 transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
               >
-                <h1 className="font-display text-5xl font-black text-white sm:text-6xl lg:text-7xl leading-[1.1] tracking-tight">
+                <h1 className="font-display text-5xl font-black text-white sm:text-6xl lg:text-7xl leading-[1.1] tracking-[-0.015em]">
                   {slide.headline}
                 </h1>
                 <p className="mt-4 text-base text-slate-300 leading-relaxed max-w-lg">
@@ -456,13 +471,13 @@ function HeroWithMosaic() {
                 to="/register"
                 className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
               >
-                Get 10 Free Leads <ArrowRight className="h-4 w-4" />
+                Claim Your 10 Free Leads <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/how-it-works"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3.5 text-sm font-medium hover:bg-slate-800 transition text-white hover:scale-[1.02]"
               >
-                <Play className="h-4 w-4 text-slate-400" /> Learn How It Works
+                <Play className="h-4 w-4 text-slate-400" /> See How It Works
               </Link>
             </div>
 
