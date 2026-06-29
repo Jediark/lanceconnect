@@ -58,6 +58,9 @@ import {
   Phone,
   Building2,
   MapPin,
+  MessageSquare,
+  TrendingUp,
+  Briefcase,
   Plus,
   Minus,
   Globe2,
@@ -719,8 +722,20 @@ function HeroWithMosaic() {
 
 function BlogTeaser() {
   const posts = BLOG_POSTS.slice(0, 3);
+  
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
   return (
-    <section className="border-y border-border bg-paper py-24">
+    <section 
+      className="border-y border-border bg-paper py-24"
+      aria-label="LanceConnect journal — freelancer guides on outreach, client acquisition, and pricing"
+    >
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-2xl">
@@ -731,7 +746,7 @@ function BlogTeaser() {
               Field notes from working freelancers.
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Real scripts, real numbers, real clients — written by the people doing the work.
+              Practical guides on outreach, pricing, and client work — written for freelancers in the field.
             </p>
           </div>
           <Link
@@ -750,13 +765,16 @@ function BlogTeaser() {
               params={{ slug: p.slug }}
               className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-card-hover"
             >
-              <div className="overflow-hidden">
-                <img
-                  src={p.cover}
-                  alt={p.title}
-                  loading="lazy"
-                  className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-                />
+              <div className="overflow-hidden aspect-[16/10] w-full">
+                <div className={cn(
+                  "w-full h-full flex items-center justify-center transition duration-500 group-hover:scale-[1.04]",
+                  p.category.toUpperCase() === "OUTREACH" ? "bg-blue-600" :
+                  p.category.toUpperCase() === "SALES" ? "bg-blue-500" : "bg-blue-700"
+                )}>
+                  {p.category.toUpperCase() === "OUTREACH" && <MessageSquare className="h-12 w-12 text-white/40" />}
+                  {p.category.toUpperCase() === "SALES" && <TrendingUp className="h-12 w-12 text-white/40" />}
+                  {p.category.toUpperCase() === "BUSINESS" && <Briefcase className="h-12 w-12 text-white/40" />}
+                </div>
               </div>
               <div className="flex flex-1 flex-col p-6">
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">
@@ -765,11 +783,9 @@ function BlogTeaser() {
                 <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{p.title}</h3>
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.excerpt}</p>
                 <div className="mt-5 flex items-center gap-2 border-t border-border pt-4 text-xs text-muted-foreground">
-                  <img
-                    src={p.authorAvatar}
-                    alt={p.author}
-                    className="h-6 w-6 rounded-full object-cover"
-                  />
+                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-[12px] font-bold text-white shrink-0">
+                    {getInitials(p.author)}
+                  </div>
                   <span>
                     {p.author} · {p.readMins} min read
                   </span>
