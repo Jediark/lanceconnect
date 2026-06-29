@@ -957,7 +957,7 @@ function LiveCounterRow() {
    ──────────────────────────────────────────────────────────── */
 function PlatformManifesto() {
   return (
-    <section className="bg-muted/30 border-b border-border py-12 select-none transition-colors duration-300">
+    <section className="bg-muted/30 border-b border-border py-12 select-none transition-colors duration-300" aria-label="LanceConnect philosophy — zero commission freelance client lead generation">
       <div className="mx-auto max-w-5xl px-4 lg:px-8">
         <div className="rounded-3xl border border-primary/20 bg-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-left">
@@ -968,9 +968,10 @@ function PlatformManifesto() {
               Built by freelancers, for freelancers.
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
-              We believe client relationships should be direct. LanceConnect extracts real contacts
-              and provides a public directory to connect you directly with clients. **0% commission,
-              100% direct outreach, zero bidding wars.**
+              We believe finding freelance clients should not require paying platform commissions or competing in bidding wars.{" "}
+              <strong>
+                We extract direct contact information so you can own your outreach and build relationships on your own terms.
+              </strong>
             </p>
           </div>
           <Link
