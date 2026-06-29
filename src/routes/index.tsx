@@ -810,10 +810,10 @@ function ValuePropositionCards() {
   ];
 
   return (
-    <section className="bg-background py-16 select-none border-b border-border transition-colors duration-300">
+    <section className="bg-background py-8 select-none border-b border-border transition-colors duration-300">
       <div className="mx-auto max-w-4xl px-4 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center mb-10">
-          <h2 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+        <div className="mx-auto max-w-2xl text-center mb-6">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Everything you need to find freelance clients faster.
           </h2>
         </div>
@@ -924,25 +924,25 @@ function LiveCounterRow() {
   return (
     <div 
       ref={ref}
-      className="mx-auto max-w-5xl px-4 lg:px-8 py-16 select-none relative"
+      className="mx-auto max-w-5xl px-4 lg:px-8 py-6 select-none relative"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0 items-center justify-center text-center">
         {/* Leads Surfaced */}
         <div className="space-y-2 md:pr-12">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/50">
             Leads Surfaced Today
           </p>
-          <p className="font-display font-bold text-white text-[3rem] sm:text-[4rem] lg:text-[5rem] leading-none tracking-tight">
+          <p className="font-display font-bold text-foreground text-[3rem] sm:text-[4rem] lg:text-[5rem] leading-none tracking-tight">
             {leadsDisplay}
           </p>
         </div>
 
         {/* Countries Active */}
-        <div className="space-y-2 md:pl-12 md:border-l md:border-white/15">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">
+        <div className="space-y-2 md:pl-12 md:border-l md:border-foreground/15">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/50">
             Countries Active
           </p>
-          <p className="font-display font-bold text-white text-[3rem] sm:text-[4rem] lg:text-[5rem] leading-none tracking-tight">
+          <p className="font-display font-bold text-foreground text-[3rem] sm:text-[4rem] lg:text-[5rem] leading-none tracking-tight">
             {countriesDisplay}
           </p>
         </div>
@@ -956,7 +956,7 @@ function LiveCounterRow() {
    ──────────────────────────────────────────────────────────── */
 function PlatformManifesto() {
   return (
-    <section className="bg-muted/30 border-b border-border py-12 select-none transition-colors duration-300" aria-label="LanceConnect philosophy — zero commission freelance client lead generation">
+    <section className="bg-muted/30 border-b border-border py-6 select-none transition-colors duration-300" aria-label="LanceConnect philosophy — zero commission freelance client lead generation">
       <div className="mx-auto max-w-5xl px-4 lg:px-8">
         <div className="rounded-3xl border border-primary/20 bg-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-left">

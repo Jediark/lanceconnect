@@ -13,13 +13,13 @@ export function FeatureTable() {
   ];
 
   return (
-    <section className="bg-background py-20 lg:py-24 border-b border-border select-none">
+    <section className="bg-background py-10 lg:py-12 border-b border-border select-none">
       <div className="mx-auto max-w-4xl px-4 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
             What you get
           </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">
+          <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
             The right plan to find freelance clients at every stage.
           </h2>
         </div>
@@ -27,13 +27,13 @@ export function FeatureTable() {
         {/* Feature Table Container with Horizontal Scroll Fade indicator on mobile */}
         <div className="relative overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
           {/* Scroll Fade Overlay */}
-          <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-[#020b21] to-transparent pointer-events-none md:hidden" />
+          <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
           
           <table className="w-full min-w-[600px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-white/10">
-                <th className="py-4 w-1/2 text-sm font-semibold text-white/50"></th>
-                <th className="py-4 w-1/4 text-center text-sm font-semibold text-white/70">
+              <tr className="border-b border-foreground/10">
+                <th className="py-4 w-1/2 text-sm font-semibold text-foreground/50"></th>
+                <th className="py-4 w-1/4 text-center text-sm font-semibold text-foreground/70">
                   FREE
                 </th>
                 <th className="py-4 w-1/4 text-center text-sm font-semibold text-primary relative">
@@ -48,17 +48,17 @@ export function FeatureTable() {
             </thead>
             <tbody>
               {features.map((f, idx) => (
-                <tr key={idx} className="border-b border-white/[0.08] last:border-0 hover:bg-white/[0.01] transition-colors">
-                  <td className="py-4 text-[14px] text-white/95 font-medium pr-4">
+                <tr key={idx} className="border-b border-foreground/[0.08] last:border-0 hover:bg-foreground/[0.01] transition-colors">
+                  <td className="py-4 text-[14px] text-foreground/90 font-medium pr-4">
                     {f.name}
                   </td>
                   <td className="py-4 text-center text-sm">
                     {f.isText ? (
-                      <span className="text-white/70 font-medium">{f.free}</span>
+                      <span className="text-foreground/70 font-medium">{f.free}</span>
                     ) : f.free ? (
                       <span className="inline-flex text-primary font-bold"><Check className="h-5 w-5" /></span>
                     ) : (
-                      <span className="inline-flex text-white/30"><X className="h-5 w-5" /></span>
+                      <span className="inline-flex text-foreground/30"><X className="h-5 w-5" /></span>
                     )}
                   </td>
                   <td className="py-4 text-center text-sm">
@@ -67,7 +67,7 @@ export function FeatureTable() {
                     ) : f.pro ? (
                       <span className="inline-flex text-primary font-bold"><Check className="h-5 w-5" /></span>
                     ) : (
-                      <span className="inline-flex text-white/30"><X className="h-5 w-5" /></span>
+                      <span className="inline-flex text-foreground/30"><X className="h-5 w-5" /></span>
                     )}
                   </td>
                 </tr>
@@ -77,7 +77,7 @@ export function FeatureTable() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             to="/register"
             className="w-full sm:w-auto text-center rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:brightness-110 transition shadow-lg shadow-primary/10 flex items-center justify-center gap-1.5 cursor-pointer"
@@ -86,7 +86,7 @@ export function FeatureTable() {
           </Link>
           <Link
             to="/pricing"
-            className="w-full sm:w-auto text-center rounded-xl border border-white/20 bg-transparent px-6 py-3 text-sm font-bold text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5 cursor-pointer"
+            className="w-full sm:w-auto text-center rounded-xl border border-foreground/20 bg-transparent px-6 py-3 text-sm font-bold text-foreground hover:bg-foreground/5 transition flex items-center justify-center gap-1.5 cursor-pointer"
           >
             View Pricing →
           </Link>
