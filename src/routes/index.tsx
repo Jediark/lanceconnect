@@ -292,46 +292,111 @@ const THEMES = {
   },
 };
 
-const LiveLeadCard = () => {
+const DEMO_LEADS = [
+  {
+    name: "Mario's Restaurant",
+    emoji: "🏪",
+    type: "Restaurant",
+    location: "Lagos, Nigeria",
+    score: 94,
+    hasWebsite: false,
+    websiteText: "No website",
+    rating: "3.2",
+    reviews: "18",
+    phone: "+234 803 080 6363",
+    hasWhatsApp: true,
+    email: "Not publicly listed",
+    isEmailVerified: false,
+  },
+  {
+    name: "Bloom & Thread Boutique",
+    emoji: "🛍️",
+    type: "Fashion Retail",
+    location: "Nairobi, Kenya",
+    score: 88,
+    hasWebsite: false,
+    websiteText: "No website",
+    rating: "4.1",
+    reviews: "43",
+    phone: "+254 712 445 900",
+    hasWhatsApp: true,
+    email: "Not publicly listed",
+    isEmailVerified: false,
+  },
+  {
+    name: "Pacific Ridge Renovations",
+    emoji: "🛠️",
+    type: "Home Services",
+    location: "Vancouver, Canada",
+    score: 79,
+    hasWebsite: true,
+    websiteText: "Basic site, no booking",
+    rating: "4.6",
+    reviews: "112",
+    phone: "+1 604 882 3347",
+    hasWhatsApp: false,
+    email: "contact@pacificridgereno.com",
+    isEmailVerified: true,
+  },
+];
+
+const LiveLeadCard = ({ card }: { card: typeof DEMO_LEADS[0] }) => {
   return (
-    <div className="w-[320px] sm:w-[360px] rounded-2xl border border-slate-200/80 dark:border-slate-800/60 bg-white/95 dark:bg-slate-900/95 shadow-2xl p-5 text-left text-slate-900 dark:text-white backdrop-blur-md">
+    <div className="w-[320px] sm:w-[360px] rounded-2xl border border-slate-200/80 dark:border-slate-800/60 bg-white/95 dark:bg-slate-900/95 shadow-2xl p-5 text-left text-slate-900 dark:text-white backdrop-blur-md animate-fade-in">
       <div className="flex justify-between items-start">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🏪</span>
-          <h3 className="text-base font-bold text-foreground">Mario's Restaurant</h3>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xl shrink-0">{card.emoji}</span>
+          <h3 className="text-base font-bold text-foreground truncate">{card.name}</h3>
         </div>
-        <div className="flex items-center gap-1 bg-red-500/10 text-red-650 dark:text-red-400 px-2.5 py-0.5 rounded-full border border-red-500/20 text-xs font-bold font-mono">
-          94 🔥
+        <div className="flex items-center gap-1 bg-red-500/10 text-red-650 dark:text-red-400 px-2.5 py-0.5 rounded-full border border-red-500/20 text-xs font-bold font-mono shrink-0">
+          {card.score} 🔥
         </div>
       </div>
       <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-        Restaurant · Lagos, Nigeria
+        {card.type} · {card.location}
       </p>
       
       <div className="mt-4 space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-3">
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-red-500">❌</span>
-          <span className="text-slate-700 dark:text-slate-350 font-medium">No website</span>
+          {card.hasWebsite ? (
+            <>
+              <span className="text-emerald-500 font-bold">✓</span>
+              <span className="text-slate-700 dark:text-slate-350 font-medium">{card.websiteText}</span>
+            </>
+          ) : (
+            <>
+              <span className="text-red-500">❌</span>
+              <span className="text-slate-700 dark:text-slate-350 font-medium">No website</span>
+            </>
+          )}
         </div>
         <div className="flex items-center gap-2 text-xs">
           <span className="text-amber-500">⭐</span>
-          <span className="text-slate-700 dark:text-slate-350">3.2 (18 reviews)</span>
+          <span className="text-slate-700 dark:text-slate-350">{card.rating} ({card.reviews} reviews)</span>
         </div>
       </div>
 
       <div className="mt-4 space-y-2 border-t border-slate-100 dark:border-slate-800/50 pt-3 font-mono text-xs">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between h-5">
           <div className="flex items-center gap-2">
             <span className="text-slate-400">📞</span>
-            <span className="text-foreground">+234 803 080 6363</span>
+            <span className="text-foreground">{card.phone}</span>
           </div>
-          <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
-            WhatsApp
-          </span>
+          {card.hasWhatsApp ? (
+            <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+              WhatsApp
+            </span>
+          ) : (
+            <span className="opacity-0 bg-transparent text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider select-none">
+              Spacer
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <span className="text-slate-455">📧</span>
-          <span className="text-slate-500">Not publicly listed</span>
+          <span className={card.isEmailVerified ? "text-foreground" : "text-slate-500"}>
+            {card.email}
+          </span>
         </div>
       </div>
 
@@ -382,6 +447,7 @@ function HeroWithMosaic() {
   ];
 
   const [activeSlide, setActiveSlide] = useState(0);
+  const [demoLeadIndex, setDemoLeadIndex] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const startAutoPlay = () => {
@@ -390,6 +456,13 @@ function HeroWithMosaic() {
       setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 5000);
   };
+
+  useEffect(() => {
+    const leadInterval = setInterval(() => {
+      setDemoLeadIndex((prev) => (prev + 1) % DEMO_LEADS.length);
+    }, 3500);
+    return () => clearInterval(leadInterval);
+  }, []);
 
   useEffect(() => {
     startAutoPlay();
@@ -513,9 +586,9 @@ function HeroWithMosaic() {
             </div>
           </div>
 
-          <div className="relative w-full flex items-center justify-center select-none overflow-visible lg:mt-0 mt-8">
+          <div className="relative w-full flex flex-col items-center justify-center select-none overflow-visible lg:mt-0 mt-8">
             <div
-              className="absolute bottom-4 w-[340px] h-[340px] rounded-full bg-gradient-to-b from-primary/30 to-transparent border border-primary/20 opacity-70 shadow-2xl transition-all duration-500"
+              className="absolute bottom-4 w-[340px] h-[340px] rounded-full bg-gradient-to-b from-primary/30 to-transparent border border-primary/20 opacity-70 shadow-2xl transition-all duration-500 animate-pulse"
               style={{ transform: "rotateX(72deg) translateY(60px)" }}
             >
               <div className="absolute inset-4 rounded-full border border-primary/20 bg-primary/5 animate-pulse" />
@@ -531,8 +604,34 @@ function HeroWithMosaic() {
                   "perspective(1000px) rotateY(-18deg) rotateX(12deg) rotateZ(1deg)",
               }}
             >
-              <LiveLeadCard />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={demoLeadIndex}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.35, ease: "easeInOut" }}
+                >
+                  <LiveLeadCard card={DEMO_LEADS[demoLeadIndex]} />
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
+
+            {/* Pagination Dots */}
+            <div className="flex gap-2 mt-8 relative z-20">
+              {DEMO_LEADS.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setDemoLeadIndex(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                    idx === demoLeadIndex
+                      ? "w-6 bg-primary shadow-lg shadow-primary/30"
+                      : "w-2 bg-slate-600 hover:bg-slate-500"
+                  }`}
+                  aria-label={`Go to demo slide ${idx + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
