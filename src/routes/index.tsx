@@ -73,8 +73,6 @@ import {
   Megaphone,
   AppWindow,
   Handshake,
-  ChevronLeft,
-  ChevronRight,
   GraduationCap,
   Leaf,
   Utensils,
@@ -224,12 +222,10 @@ function HomepageComponent() {
       {/* <TutorialVideoSection /> */}
       <FeatureTable />
       <ProductShowcase />
-      <Stats />
       <HowItWorks />
       <Features />
       <GlobalReach />
       <WhoFor />
-      <Testimonials />
       <MeetOurTeam />
       <Pricing />
       <BlogTeaser />
@@ -1849,142 +1845,7 @@ function categorySlug(id: string) {
   return map[id] ?? id;
 }
 
-/* ────────────────────────────────────────────────────────────
-   TESTIMONIALS — bigger human imagery, Ramp-credibility feel
-   ──────────────────────────────────────────────────────────── */
-function Testimonials() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  
-  const scroll = (direction: "left" | "right") => {
-    if (containerRef.current) {
-      const scrollAmount = direction === "left" ? -380 : 380;
-      containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
 
-  useEffect(() => {
-    if (isHovered) return;
-    const interval = setInterval(() => {
-      if (containerRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          containerRef.current.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          containerRef.current.scrollBy({ left: 380, behavior: "smooth" });
-        }
-      }
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isHovered]);
-
-  const items = [
-    {
-      quote: "Found 3 clients in my first week. The opportunity scores let me focus on high-conversion leads.",
-      name: "Taiwo Adeyemi",
-      role: "Web Developer",
-      city: "Lagos 🇳🇬",
-      avatar: IMG.face1,
-    },
-    {
-      quote: "The WhatsApp outreach templates are genius. I can pitch clients in under 30 seconds directly from my phone.",
-      name: "Maria Silva",
-      role: "Designer",
-      city: "São Paulo 🇧🇷",
-      avatar: IMG.face2,
-    },
-    {
-      quote: "LanceConnect completely replaced my manual prospecting. I get fresh local business leads daily with verified emails.",
-      name: "James Kariuki",
-      role: "SEO Specialist",
-      city: "Nairobi 🇰🇪",
-      avatar: IMG.face3,
-    },
-    {
-      quote: "Finding high-paying B2B leads used to take hours. Now I just filter by city and skill and start pitching immediately.",
-      name: "Priya Patel",
-      role: "App Developer",
-      city: "London 🇬🇧",
-      avatar: IMG.face4,
-    },
-    {
-      quote: "The system grades opportunity based on mobile speed and reviews. Clients are blown away when I send them their audit points.",
-      name: "Sofia Romano",
-      role: "Copywriter",
-      city: "Rome 🇮🇹",
-      avatar: IMG.face6,
-    },
-    {
-      quote: "Zero commissions. Zero bidding wars. I own the client relationship from day one, which is how freelancing should be.",
-      name: "Kenji Tanaka",
-      role: "Digital Marketer",
-      city: "Tokyo 🇯🇵",
-      avatar: IMG.face7,
-    },
-  ];
-
-  return (
-    <section className="border-t border-border bg-background py-20 relative overflow-hidden">
-      <div className="mx-auto max-w-5xl px-4 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Customer stories
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-4xl text-foreground">
-              Freelancers trust us
-            </h2>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => scroll("left")}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card hover:bg-accent text-foreground transition cursor-pointer"
-              aria-label="Previous Testimonial"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card hover:bg-accent text-foreground transition cursor-pointer"
-              aria-label="Next Testimonial"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
-        <div
-          ref={containerRef}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          className="flex gap-6 overflow-x-auto pb-8 pt-2 scroll-smooth snap-x snap-mandatory scrollbar-none"
-          style={{ scrollbarWidth: "none" }}
-        >
-          {items.map((t, idx) => (
-            <figure
-              key={idx}
-              className="flex-none w-[290px] sm:w-[350px] snap-center flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card shadow-sm hover:border-primary/40 transition duration-300"
-            >
-              <img
-                src={t.avatar}
-                alt={t.name}
-                className="h-16 w-16 rounded-full object-cover border border-border mb-4"
-                loading="lazy"
-              />
-              <blockquote className="text-sm font-semibold italic text-foreground/90 mb-4 leading-relaxed flex-1">
-                "{t.quote}"
-              </blockquote>
-              <figcaption className="text-xs text-muted-foreground mt-auto">
-                <span className="font-bold text-foreground">{t.name}</span>, {t.role} <br />
-                <span className="text-[10px] text-muted-foreground mt-0.5 block">{t.city}</span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ────────────────────────────────────────────────────────────
    MEET OUR TEAM
@@ -2205,43 +2066,7 @@ function CTA() {
   );
 }
 
-/* ────────────────────────────────────────────────────────────
-   STATS — bold numbers band with background image
-   ──────────────────────────────────────────────────────────── */
-function Stats() {
-  const stats = [
-    { k: "150+", v: "Countries covered" },
-    { k: "240k", v: "Businesses scored monthly" },
-    { k: "34%", v: "Average reply rate" },
-    { k: "4.8/5", v: "Customer satisfaction" },
-  ];
 
-  return (
-    <section className="relative overflow-hidden border-y border-border py-24 bg-background transition-colors duration-300">
-      <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-            // by.the.numbers
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-foreground">
-            A real product, with real traction.
-          </h2>
-        </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((s) => (
-            <div
-              key={s.k}
-              className="rounded-2xl border border-border bg-card p-6 shadow-card hover:shadow-card-hover transition duration-300"
-            >
-              <p className="font-display text-4xl font-semibold text-primary md:text-5xl">{s.k}</p>
-              <p className="mt-2 text-sm text-muted-foreground font-medium">{s.v}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ────────────────────────────────────────────────────────────
    FAQ — expandable, no library, calm
