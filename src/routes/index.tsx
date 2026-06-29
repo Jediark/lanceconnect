@@ -1821,13 +1821,16 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
    ──────────────────────────────────────────────────────────── */
 function WhoFor() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24 lg:px-8 bg-background">
+    <section 
+      className="mx-auto max-w-7xl px-4 py-24 lg:px-8 bg-background"
+      aria-label="LanceConnect skill categories — find client leads for web development, design, copywriting, SEO, and more"
+    >
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
-          Built for every freelancer
+          Client leads for freelancers in every niche.
         </h2>
         <p className="mt-3 text-muted-foreground">
-          Whatever skill you sell, we'll help you find businesses that need it.
+          Whatever your skill, we find the freelance clients that need you most.
         </p>
       </div>
       <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -1841,9 +1844,9 @@ function WhoFor() {
               className="group rounded-xl border border-border bg-card p-5 transition hover:border-foreground/30 hover:shadow-card-hover"
             >
               <div className="text-primary h-8 w-8 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20 transition group-hover:bg-primary/20">
-                <Icon className="h-4.5 w-4.5 text-primary" />
+                <Icon className="h-4.5 w-4.5 text-primary" aria-hidden="true" />
               </div>
-              <p className="mt-4 font-display text-sm font-semibold text-foreground">{c.label}</p>
+              <h3 className="mt-4 font-display text-sm font-semibold text-foreground">{c.label}</h3>
               <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{c.example}</p>
               <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition group-hover:opacity-100">
                 See leads <ArrowRight className="h-3 w-3" />
