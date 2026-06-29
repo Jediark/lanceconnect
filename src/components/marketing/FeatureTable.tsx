@@ -13,7 +13,7 @@ export function FeatureTable() {
   ];
 
   return (
-    <section className="bg-background py-10 lg:py-12 border-b border-border select-none">
+    <section className="relative bg-background py-10 lg:py-12 select-none">
       <div className="mx-auto max-w-4xl px-4 lg:px-8">
         <div className="text-center mb-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
@@ -92,6 +92,8 @@ export function FeatureTable() {
           </Link>
         </div>
       </div>
+      {/* Visual divider transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-12 md:h-16 pointer-events-none z-10 bg-gradient-to-b from-background to-transparent" />
     </section>
   );
 }

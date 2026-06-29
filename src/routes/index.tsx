@@ -492,6 +492,17 @@ const LiveLeadCard = ({ card }: { card: typeof DEMO_LEADS[0] }) => {
   );
 };
 
+/* ────────────────────────────────────────────────────────────
+   SECTION GRADIENT DIVIDER
+   ──────────────────────────────────────────────────────────── */
+function SectionDivider({ fromClass = "from-background" }: { fromClass?: string }) {
+  return (
+    <div 
+      className={`absolute bottom-0 left-0 right-0 h-12 md:h-16 pointer-events-none z-10 bg-gradient-to-b ${fromClass} to-transparent`}
+    />
+  );
+}
+
 function HeroWithMosaic() {
   const HERO_SLIDES = [
     {
@@ -562,7 +573,7 @@ function HeroWithMosaic() {
   const slide = HERO_SLIDES[activeSlide];
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-[#020b21] py-20 lg:py-28 transition-colors duration-300">
+    <section className="relative overflow-hidden bg-[#020b21] py-20 lg:py-28 transition-colors duration-300">
       {/* Background dot-grid texture overlay */}
       <div 
         className="absolute inset-0 z-0 pointer-events-none opacity-[0.06]"
@@ -715,6 +726,7 @@ function HeroWithMosaic() {
           </div>
         </div>
       </div>
+      <SectionDivider fromClass="from-[#020b21]" />
     </section>
   );
 }
@@ -733,7 +745,7 @@ function BlogTeaser() {
 
   return (
     <section 
-      className="border-y border-border bg-paper py-24"
+      className="relative bg-paper py-24"
       aria-label="LanceConnect journal — freelancer guides on outreach, client acquisition, and pricing"
     >
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
@@ -795,6 +807,7 @@ function BlogTeaser() {
           ))}
         </div>
       </div>
+      <SectionDivider fromClass="from-paper" />
     </section>
   );
 }
@@ -822,7 +835,7 @@ function ValuePropositionCards() {
   ];
 
   return (
-    <section className="bg-background py-8 select-none border-b border-border transition-colors duration-300">
+    <section className="relative bg-background py-8 select-none transition-colors duration-300">
       <div className="mx-auto max-w-4xl px-4 lg:px-8">
         <div className="mx-auto max-w-2xl text-center mb-6">
           <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -848,6 +861,7 @@ function ValuePropositionCards() {
           ))}
         </div>
       </div>
+      <SectionDivider fromClass="from-background" />
     </section>
   );
 }
@@ -934,7 +948,7 @@ function LiveCounterRow() {
       : "0";
 
   return (
-    <div 
+    <section 
       ref={ref}
       className="mx-auto max-w-5xl px-4 lg:px-8 py-6 select-none relative"
     >
@@ -959,7 +973,8 @@ function LiveCounterRow() {
           </p>
         </div>
       </div>
-    </div>
+      <SectionDivider fromClass="from-background" />
+    </section>
   );
 }
 
@@ -968,7 +983,7 @@ function LiveCounterRow() {
    ──────────────────────────────────────────────────────────── */
 function PlatformManifesto() {
   return (
-    <section className="bg-muted/30 border-b border-border py-6 select-none transition-colors duration-300" aria-label="LanceConnect philosophy — zero commission freelance client lead generation">
+    <section className="relative bg-muted/30 py-6 select-none transition-colors duration-300" aria-label="LanceConnect philosophy — zero commission freelance client lead generation">
       <div className="mx-auto max-w-5xl px-4 lg:px-8">
         <div className="rounded-3xl border border-primary/20 bg-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-left">
@@ -993,6 +1008,7 @@ function PlatformManifesto() {
           </Link>
         </div>
       </div>
+      <SectionDivider fromClass="from-muted/30" />
     </section>
   );
 }
@@ -1202,6 +1218,7 @@ function ProductShowcase() {
           })}
         </div>
       </div>
+      <div className="absolute bottom-0 left-0 right-0 h-12 md:h-16 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, var(--ink-bg), transparent)" }} />
     </section>
   );
 }
@@ -1284,7 +1301,7 @@ function HowItWorks() {
   const currentLead = getMockLeadForStep3(selectedSkill, selectedCity);
 
   return (
-    <section id="how" className="relative overflow-hidden border-y border-border py-24 bg-[#020b21] text-white">
+    <section id="how" className="relative overflow-hidden py-24 bg-[#020b21] text-white">
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8 z-20">
         <div className="mx-auto max-w-2xl text-center mb-16">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
@@ -1449,6 +1466,7 @@ function HowItWorks() {
           </div>
         </div>
       </div>
+      <SectionDivider fromClass="from-[#020b21]" />
     </section>
   );
 }
@@ -1656,7 +1674,7 @@ function Features() {
   return (
     <section 
       id="features" 
-      className="border-y border-border bg-background py-20 select-none"
+      className="relative bg-background py-20 select-none"
       aria-label="LanceConnect features — tools to find and contact freelance clients worldwide"
     >
       <div className="mx-auto max-w-5xl px-4 lg:px-8">
@@ -1693,6 +1711,7 @@ function Features() {
           })}
         </div>
       </div>
+      <SectionDivider fromClass="from-background" />
     </section>
   );
 }
@@ -1712,7 +1731,7 @@ function GlobalReach() {
   ];
 
   return (
-    <section className="hidden md:block relative overflow-hidden border-t border-border bg-background py-16 select-none">
+    <section className="hidden md:block relative overflow-hidden bg-background py-16 select-none">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
           {/* Left: Content */}
@@ -1807,6 +1826,7 @@ function GlobalReach() {
           </div>
         </div>
       </div>
+      <SectionDivider fromClass="from-background" />
     </section>
   );
 }
@@ -1838,7 +1858,7 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
 function WhoFor() {
   return (
     <section 
-      className="mx-auto max-w-7xl px-4 py-24 lg:px-8 bg-background"
+      className="relative mx-auto max-w-7xl px-4 py-24 lg:px-8 bg-background"
       aria-label="LanceConnect skill categories — find client leads for web development, design, copywriting, SEO, and more"
     >
       <div className="mx-auto max-w-2xl text-center">
@@ -1879,6 +1899,7 @@ function WhoFor() {
           Explore all 18+ services & niche trade directories <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
+      <SectionDivider fromClass="from-background" />
     </section>
   );
 }
@@ -1932,7 +1953,7 @@ function MeetOurTeam() {
 
   return (
     <section 
-      className="border-t border-border bg-[#020b21] py-20 text-white relative"
+      className="bg-[#020b21] py-20 text-white relative"
       aria-label="LanceConnect team — the people building the platform"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-40 pointer-events-none" />
@@ -1971,6 +1992,7 @@ function MeetOurTeam() {
           ))}
         </div>
       </div>
+      <SectionDivider fromClass="from-[#020b21]" />
     </section>
   );
 }
@@ -2030,7 +2052,7 @@ function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="mx-auto max-w-7xl px-4 py-24 lg:px-8 border-t border-border select-none bg-card/20 rounded-3xl">
+    <section id="pricing" className="relative mx-auto max-w-7xl px-4 py-24 lg:px-8 select-none bg-card/20 rounded-3xl">
       <div className="mx-auto max-w-3xl text-center mb-16 space-y-4">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
           // pricing.plans
@@ -2091,6 +2113,7 @@ function Pricing() {
 
       {/* Live Currency Calculator */}
       <CurrencyConverter className="mt-16 bg-slate-900/40 border-slate-800" mode="plans" />
+      <SectionDivider fromClass="from-background" />
     </section>
   );
 }
@@ -2099,8 +2122,9 @@ function Pricing() {
    CTA — Vercel-dark, calm
    ──────────────────────────────────────────────────────────── */
 function CTA() {
+  // Gap fix — reduced excessive padding-bottom on the CTA section to 0 to keep the gap under 64px to the footer
   return (
-    <section className="px-4 py-20 lg:px-8">
+    <section className="px-4 pt-20 pb-0 lg:px-8">
       <div
         className="mx-auto max-w-6xl overflow-hidden rounded-3xl p-14 text-center border border-white/10"
         style={{ 
@@ -2214,7 +2238,7 @@ function FAQ() {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden border-y border-border py-24 bg-[#020b21] transition-colors duration-300"
+      className="relative overflow-hidden bg-[#020b21] py-24 transition-colors duration-300"
       aria-label="Frequently asked questions about LanceConnect freelancer lead generation"
     >
       {/* FAQPage JSON-LD for Google rich snippets */}
@@ -2278,6 +2302,7 @@ function FAQ() {
           })}
         </div>
       </div>
+      <SectionDivider fromClass="from-[#020b21]" />
     </section>
   );
 }
