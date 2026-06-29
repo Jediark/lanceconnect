@@ -1081,7 +1081,7 @@ function ProductShowcase() {
     },
   ];
   return (
-    <section className="relative" style={{ background: "var(--ink-bg)", color: "var(--ink-fg)" }}>
+    <section className="relative" style={{ background: "var(--ink-bg)", color: "var(--ink-fg)" }} aria-label="LanceConnect dashboard — scored freelance leads with verified contact information.">
       <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8">
         <div className="grid items-end gap-6 md:grid-cols-[1.2fr_1fr]">
           <div>
@@ -1160,20 +1160,34 @@ function ProductShowcase() {
           </ul>
         </div>
 
-        <div
-          className="mt-10 grid gap-6 text-sm md:grid-cols-3"
-          style={{ color: "var(--ink-muted)" }}
-        >
+        <div className="mt-10 flex flex-col gap-4">
           {[
-            { k: "247", v: "leads surfaced this week in Italy alone" },
-            { k: "1.8s", v: "average time to load 100 scored leads" },
-            { k: "34%", v: "average reply rate using our templates" },
-          ].map((s) => (
-            <div key={s.k} className="border-l-2 pl-4" style={{ borderColor: "var(--ink-border)" }}>
-              <p className="font-display text-3xl font-semibold text-foreground">{s.k}</p>
-              <p className="mt-1">{s.v}</p>
-            </div>
-          ))}
+            {
+              icon: Search,
+              text: "Leads are sourced continuously — never recycled from a static database.",
+            },
+            {
+              icon: Zap,
+              text: "Scored results load instantly so you move to outreach without delay.",
+            },
+            {
+              icon: Phone,
+              text: "Every contact includes a phone number or email — no guessing, no gatekeeping.",
+            },
+          ].map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={idx}
+                className="flex items-start gap-3 border-l-2 border-primary pl-3 py-1.5"
+              >
+                <Icon className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <span className="text-[15px] text-white/90 font-normal leading-relaxed">
+                  {item.text}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
