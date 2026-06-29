@@ -31,6 +31,10 @@ async def scrape_leads(
         "maxCrawledPlaces": limit,
         "proxyConfig": {
             "useApifyProxy": True
+        },
+        "proxyConfiguration": {
+            "useApifyProxy": True,
+            "apifyProxyGroups": ["RESIDENTIAL"]
         }
     }
 

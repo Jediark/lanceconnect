@@ -203,6 +203,10 @@ async def fetch_fresh_leads(city: str, country: str, business_type: str, categor
           'searchStringsArray': [search_query],
           'maxCrawledPlacesPerSearch': 20,
           'language': 'en',
+          'proxyConfiguration': {
+            'useApifyProxy': True,
+            'apifyProxyGroups': ['RESIDENTIAL']
+          }
         },
         timeout=120.0
       )

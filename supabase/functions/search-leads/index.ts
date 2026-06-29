@@ -1009,6 +1009,10 @@ Deno.serve(async (req) => {
             "maxCrawledPlaces": 10,
             "proxyConfig": {
               "useApifyProxy": true
+            },
+            "proxyConfiguration": {
+              "useApifyProxy": true,
+              "apifyProxyGroups": ["RESIDENTIAL"]
             }
           };
 
