@@ -2102,29 +2102,38 @@ function CTA() {
   return (
     <section className="px-4 py-20 lg:px-8">
       <div
-        className="mx-auto max-w-6xl overflow-hidden rounded-3xl p-14 text-center"
-        style={{ background: "var(--ink-bg)", color: "var(--ink-fg)" }}
+        className="mx-auto max-w-6xl overflow-hidden rounded-3xl p-14 text-center border border-white/10"
+        style={{ 
+          background: "radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0), radial-gradient(ellipse at 50% 0%, #1d4ed8 0%, #040d1a 70%)",
+          backgroundSize: "24px 24px, 100% 100%",
+          color: "#ffffff"
+        }}
       >
-        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl">
+        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl text-white">
           Start finding clients today
         </h2>
-        <p className="mx-auto mt-4 max-w-xl text-base" style={{ color: "var(--ink-muted)" }}>
-          Join thousands of freelancers who've stopped waiting for work to come to them.
+        <p className="mx-auto mt-4 max-w-xl text-base text-slate-300">
+          Get instant access to scored freelance clients with verified phone numbers and emails the moment you sign up.
         </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-3 text-sm font-semibold text-background transition hover:opacity-90"
-          >
-            Create free account <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/pricing"
-            className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold text-foreground hover:bg-foreground/10 transition"
-            style={{ borderColor: "var(--ink-border)" }}
-          >
-            See pricing
-          </Link>
+        <div className="mt-8 flex flex-col items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-3 text-sm font-semibold text-background transition hover:opacity-90"
+            >
+              Find My First Client <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-semibold text-foreground hover:bg-foreground/10 transition"
+              style={{ borderColor: "var(--ink-border)" }}
+            >
+              See pricing
+            </Link>
+          </div>
+          <p className="mt-4 text-[13px] text-white/45 text-center">
+            No credit card required  •  Cancel anytime  •  150+ countries covered
+          </p>
         </div>
       </div>
     </section>
