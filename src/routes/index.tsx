@@ -89,11 +89,10 @@ import {
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
-import { HeroCarousel } from "@/components/marketing/HeroCarousel";
+import { FeatureTable } from "@/components/marketing/FeatureTable";
 import { CATEGORIES } from "@/data/mockData";
 import { IMG, BLOG_POSTS } from "@/data/content";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import useEmblaCarousel from "embla-carousel-react";
 import { CurrencyConverter } from "@/components/ui/CurrencyConverter";
 
 export const Route = createFileRoute("/")({
@@ -223,7 +222,7 @@ function HomepageComponent() {
       <LiveCounterRow />
       <PlatformManifesto />
       {/* <TutorialVideoSection /> */}
-      <HeroCarousel />
+      <FeatureTable />
       <ProductShowcase />
       <Stats />
       <HowItWorks />
