@@ -2162,6 +2162,22 @@ function FAQ() {
       q: "Is my data private?",
       a: "Absolutely. We never share your account info, your saved leads, or your outreach history with anyone. Read our Privacy Policy for full details.",
     },
+    {
+      q: "How do I reach out to leads?",
+      a: "Each lead includes a phone number, WhatsApp access, or email address — sometimes all three. You reach out directly using your own message or our AI outreach templates. No platform messaging system, no middleman.",
+    },
+    {
+      q: "Can I use LanceConnect on mobile?",
+      a: "Yes. LanceConnect is fully responsive and works on any device. You can browse leads, save contacts, and send outreach directly from your phone.",
+    },
+    {
+      q: "How often are leads updated?",
+      a: "Leads are sourced continuously — not from a static database. When you run a search, results reflect what is currently findable for that skill and city combination.",
+    },
+    {
+      q: "Is there a free trial?",
+      a: "The Free plan is the trial. Sign up with no credit card, get 10 scored leads per month, and see the platform for yourself. Upgrade only when it is earning you work.",
+    },
   ];
   const [open, setOpen] = useState<number | null>(0);
 
@@ -2190,6 +2206,7 @@ function FAQ() {
     <section
       ref={containerRef}
       className="relative overflow-hidden border-y border-border py-24 bg-[#020b21] transition-colors duration-300"
+      aria-label="Frequently asked questions about LanceConnect freelancer lead generation"
     >
       {/* FAQPage JSON-LD for Google rich snippets */}
       <script
@@ -2213,10 +2230,11 @@ function FAQ() {
             // questions.answered
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl text-white">
-            Questions, answered honestly
+            Honest answers to help you find freelance clients.
           </h2>
-          <p className="mt-3 text-slate-300">
+          <p className="mt-3 text-slate-350">
             Still curious?{" "}
+            {/* TODO: Update contact page link and contact details before launch — currently links to placeholder contact page. */}
             <Link to="/contact" className="text-blue-400 hover:text-blue-300 underline-offset-4 hover:underline">
               Talk to a human
             </Link>
