@@ -1917,21 +1917,24 @@ function MeetOurTeam() {
     {
       name: "AKINOLA OLUJOBI",
       role: "CEO / Founder",
-      bio: "Visionary founder driving strategic direction, platform growth, and global freelancer success programs.",
+      bio: "Akinola Olujobi is the founder of LanceConnect, managing the platform's strategic roadmap and product updates.",
       avatar: "/assets/team/akinola.jpg",
       location: "Lagos, Nigeria 🇳🇬",
     },
     {
       name: "TEARI BEY",
       role: "COO (Chief Operation Officer)",
-      bio: "Operations leader managing global workflows, scaling systems, and daily product operations.",
+      bio: "Teari Bey is the Chief Operating Officer of LanceConnect, managing global workflows and daily operations.",
       avatar: "/assets/team/teari.jpg",
       location: "USA 🇺🇸",
     },
   ];
 
   return (
-    <section className="border-t border-border bg-[#020b21] py-20 text-white relative">
+    <section 
+      className="border-t border-border bg-[#020b21] py-20 text-white relative"
+      aria-label="LanceConnect team — the people building the platform"
+    >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-40 pointer-events-none" />
       <div className="mx-auto max-w-5xl px-4 lg:px-8 relative z-10">
         <div className="mx-auto max-w-2xl text-center mb-16">
@@ -1942,7 +1945,7 @@ function MeetOurTeam() {
             Meet Our Team
           </h2>
           <p className="mt-4 text-sm text-slate-400">
-            Building the ultimate ecosystem connecting top-tier freelance talent with local and global clients.
+            Building a reliable directory and outreach platform to connect freelance talent with local businesses worldwide.
           </p>
         </div>
 
@@ -1955,7 +1958,7 @@ function MeetOurTeam() {
               <img
                 src={m.avatar}
                 alt={m.name}
-                className="h-32 w-32 rounded-full object-cover object-top border-2 border-primary/30 mb-4 shadow-lg ring-4 ring-primary/10"
+                className="h-20 w-20 md:h-24 md:w-24 rounded-full object-cover object-top border-2 border-white/15 mb-4 shadow-lg ring-4 ring-primary/10"
                 loading="lazy"
               />
               <h3 className="text-base font-bold text-white">{m.name}</h3>
