@@ -220,7 +220,7 @@ function HomepageComponent() {
         <TrendingSearches onSelectSearch={handleSelectSearch} />
       </div>
       <ValuePropositionCards />
-      <LogoStrip />
+      <LiveCounterRow />
       <PlatformManifesto />
       {/* <TutorialVideoSection /> */}
       <HeroCarousel />
@@ -841,27 +841,114 @@ function ValuePropositionCards() {
   );
 }
 
-/* ────────────────────────────────────────────────────────────
-   LOGO STRIP — text marks instead of fake company logos
-   ──────────────────────────────────────────────────────────── */
-function LogoStrip() {
-  const marks = ["Linear", "Notion", "Stripe", "Vercel", "Framer", "Mercury", "Loom", "Intercom"];
+function useCountUp(target: number, durationMs: number, trigger: boolean) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!trigger) return;
+    
+    let startTime: number | null = null;
+    let animationFrameId: number;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / durationMs, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(step);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [target, durationMs, trigger]);
+
+  return count;
+}
+
+function LiveCounterRow() {
+  const [leadsToday, setLeadsToday] = useState<number>(2400);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // TODO: Replace static value with live fetch from /api/stats/leads-today when endpoint is ready
+    const fetchLeadsToday = async () => {
+      try {
+        const res = await fetch("/api/stats/leads-today");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.count === "number") {
+            setLeadsToday(data.count);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch leads today stats, using fallback:", err);
+      }
+    };
+    fetchLeadsToday();
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          if (ref.current) observer.unobserve(ref.current);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const animatedLeads = useCountUp(leadsToday, 1800, isIntersecting);
+  const animatedCountries = useCountUp(150, 1500, isIntersecting);
+
+  const leadsDisplay = isIntersecting && animatedLeads === leadsToday 
+    ? `${leadsToday.toLocaleString()}+` 
+    : isIntersecting 
+      ? animatedLeads.toLocaleString() 
+      : "0";
+
+  const countriesDisplay = isIntersecting && animatedCountries === 150
+    ? "150+"
+    : isIntersecting
+      ? animatedCountries.toString()
+      : "0";
+
   return (
-    <section className="border-b border-border bg-background py-10">
-      <p className="text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-        Loved by freelancers serving teams at
-      </p>
-      <div className="mx-auto mt-6 grid max-w-5xl grid-cols-4 items-center gap-y-6 px-4 md:grid-cols-8">
-        {marks.map((m) => (
-          <span
-            key={m}
-            className="text-center font-display text-base font-semibold tracking-tight text-foreground/55"
-          >
-            {m}
-          </span>
-        ))}
+    <div 
+      ref={ref}
+      className="mx-auto max-w-5xl px-4 lg:px-8 py-16 select-none relative"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0 items-center justify-center text-center">
+        {/* Leads Surfaced */}
+        <div className="space-y-2 md:pr-12">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">
+            Leads Surfaced Today
+          </p>
+          <p className="font-display font-bold text-white text-[3rem] sm:text-[4rem] lg:text-[5rem] leading-none tracking-tight">
+            {leadsDisplay}
+          </p>
+        </div>
+
+        {/* Countries Active */}
+        <div className="space-y-2 md:pl-12 md:border-l md:border-white/15">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">
+            Countries Active
+          </p>
+          <p className="font-display font-bold text-white text-[3rem] sm:text-[4rem] lg:text-[5rem] leading-none tracking-tight">
+            {countriesDisplay}
+          </p>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 
